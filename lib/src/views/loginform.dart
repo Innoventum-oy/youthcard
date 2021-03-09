@@ -59,7 +59,7 @@ class _LoginState extends State<Login> {
           padding: EdgeInsets.only(left: 0.0),
           child: Text("Sign up", style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/register');
+            Navigator.pushNamed(context, '/register');
           },
         ),
       ],

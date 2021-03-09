@@ -107,7 +107,16 @@ class _RegisterState extends State<Register> {
                 SizedBox(height: 20.0),
                 auth.loggedInStatus == Status.Authenticating
                     ? loading
-                    : longButtons("Create", doRegister),
+                    : longButtons("Create", doRegister),FlatButton(
+                    padding: EdgeInsets.only(left: 0.0),
+            onPressed: () {
+              // Navigate back to the first screen by popping the current route
+              // off the stack.
+              Navigator.of(context, rootNavigator: true).pop(context);
+
+            },
+            child: Text('Back',style: TextStyle(fontWeight: FontWeight.w300)))
+
               ],
             ),
           ),
