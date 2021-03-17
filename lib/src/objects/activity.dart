@@ -15,9 +15,12 @@ class Activity {
 
   Activity({this.id, this.name, this.description, this.startdate, this.enddate, this.address, this.postcode,this.city,this.latitude,this.longitude,this.coverpicture,this.qrcode});
 
-  factory Activity.fromJson(Map<String, dynamic> responseData) {
+  factory Activity.fromJson(Map<String, dynamic> response) {
+      Map<String, dynamic> responseData = response['data'];
+      print(responseData);
+      Map<String, dynamic> cover = responseData['coverpicture'];
     return Activity(
-      id: responseData['id'],
+      id: int.parse(responseData['id']),
       name: responseData['name'],
       description: responseData['description'],
       startdate: responseData['startdate'],
@@ -28,7 +31,7 @@ class Activity {
       latitude: responseData['latitude'],
       longitude: responseData['longitude'],
       qrcode: responseData['qrcode'],
-      coverpicture: responseData['coverpicture'],
+      coverpicture: cover == null ? 'default' : cover['objectid'],
     );
   }
 }

@@ -2,9 +2,17 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
+import 'dart:convert';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-
-void main() => runApp(MaterialApp(home: QRScanner()));
+//geolocator for user location
+import 'package:geolocator/geolocator.dart';
+import 'package:youth_card/src/util/app_url.dart';
+import 'package:http/http.dart' as http;
+import 'package:youth_card/src/objects/user.dart';
+import 'package:provider/provider.dart';
+import 'package:youth_card/src/providers/user_provider.dart';
+//void main() => runApp(MaterialApp(home: QRScanner()));
 
 const flashOn = 'FLASH ON';
 const flashOff = 'FLASH OFF';
@@ -21,11 +29,18 @@ class QRScanner extends StatefulWidget {
 }
 
 class _QRScannerState extends State<QRScanner> {
+  String sentcode =null;
+  Future<Position> _currentPosition;
+  String _latitude;
+  String _longitude;
+  String _currentAddress;
   Barcode result;
   var flashState = flashOn;
   var cameraState = frontCamera;
   QRViewController controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+ // User user;
 
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
@@ -38,9 +53,107 @@ class _QRScannerState extends State<QRScanner> {
       controller.resumeCamera();
     }
   }
+  Notify(String text) {
+    final snackBar = SnackBar(
+      content: Text(text),
+    );
+
+    // Find the ScaffoldMessenger in the widget tree
+    // and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+    Future<String> sendData(scannedcode) async {
+    Map map;
+    User user = Provider.of<UserProvider>(context,listen: false).user;
+
+
+
+    if(_currentPosition == null){
+      Notify('Current position unknown, returning false from sendData. How to get the position first instead?');
+      return "Error";
+    }
+
+    if(user== null){
+      Notify('user is not set for sendData, returning false. Why is user not set?');
+      print(user);
+      return "error";
+    }
+    if(sentcode!=scannedcode.code) {
+      sentcode = scannedcode.code;
+      print('setting sentcode to '+scannedcode.code);
+    }
+    else {
+      print('code ' + sentcode + ' already sent to server, returning false from sendData');
+      return 'error';
+    }
+    Map<String, String> params ={
+       'action': 'handleqr',
+        'qraction': 'scanactivity',
+        'qr':scannedcode.code,
+        'scansource':'app',
+      'method':'json',
+        'latitude': _latitude,
+        'longitude':  _longitude
+
+    };
+   ;
+    var url = Uri.https(AppUrl.baseURL,'/api/dispatcher/activity/',params);
+    print('Sending scanned code '+scannedcode.code+' to url '+url.toString()+', using token '+user.token);
+    print('Using latitude '+_latitude+', longitude '+_longitude);
+    var response = await http.get(url,headers:{ 'api_key':user.token});
+
+    this.setState(() {
+      if(response.body.isNotEmpty) {
+        print('received data ' + response.body);
+        map = json.decode(response.body);
+       Notify(map['message']);
+
+      }
+      else print('no response received for request');
+      print('Unsetting sentcode');
+      sentcode = null;
+
+    });
+
+
+    return "Success";
+  }
+
+  //todo: move this to locationprovider or some util
+/*
+  _getAddressFromLatLng() async {
+    try {
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          _currentPosition.latitude, _currentPosition.longitude);
+      Placemark place = p[0];
+      setState(() {
+        _currentAddress =
+        "${place.locality}, ${place.postalCode}, ${place.country}";
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+*/
+  Future<Position>_getCurrentLocation() async {
+    print('retrieving current location');
+   var Location = await Geolocator().getCurrentPosition();
+    _latitude = Location.latitude.toString();
+    _longitude = Location.longitude.toString();
+    return Location;
+  }
+
+  @override
+  void initState() {
+    _currentPosition = _getCurrentLocation();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    User user = Provider.of<UserProvider>(context).user;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Scan QR Code"),
@@ -48,6 +161,7 @@ class _QRScannerState extends State<QRScanner> {
       ),
       body: Column(
         children: <Widget>[
+          Row(),
           Expanded(flex: 4, child: _buildQrView(context)),
           Expanded(
             flex: 1,
@@ -56,9 +170,24 @@ class _QRScannerState extends State<QRScanner> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+                  FutureBuilder(
+                    future: _getCurrentLocation(),
+
+                    builder: (context,data){
+                      if(data.hasData) {
+                        print('location retrieved for futurebuilder');
+                        return Text(data.data.toString());
+                      } else{
+                        return  Row(children:[
+                            CircularProgressIndicator(),
+                            Text('Retrieving coordinates'),
+                          ]
+                           );
+                      }
+                    }
+                  ),
                   if (result != null)
-                    Text(
-                        'Barcode Type: ${describeEnum(result.format)}   Data: ${result.code}')
+                    Text( 'Code Scanned ')
                   else
                     Text('Scan a code'),
                   Row(
@@ -182,8 +311,12 @@ class _QRScannerState extends State<QRScanner> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
+      if(sentcode==null || sentcode != scanData.code)
       setState(() {
         result = scanData;
+        sendData(result);
+
+
       });
     });
   }

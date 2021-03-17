@@ -5,8 +5,8 @@ import 'package:youth_card/src/objects/activity.dart';
 import 'package:http/http.dart' as http;
 class ActivityLoader {
   Future<List<Activity>> loadActivities(params) async {
-    var data = await http.get(
-        AppUrl.baseURL + 'activity/');
+    var data = await http.get(Uri.https(
+        AppUrl.baseURL, 'activity/'));
     var jsonData = json.decode(data.body);
     print('received data'+data.body);
     List<Activity> activityData = [];

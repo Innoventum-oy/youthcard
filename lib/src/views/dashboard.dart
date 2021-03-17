@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
+import 'package:youth_card/src/providers/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/views/card.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
+import 'package:youth_card/src/views/calendar.dart';
 import 'package:youth_card/src/views/activitylist.dart';
+import 'calendar.dart';
 class DashBoard extends StatefulWidget {
   @override
   _DashBoardState createState() => _DashBoardState();
@@ -13,7 +16,7 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
-
+    AuthProvider auth = Provider.of<AuthProvider>(context);
     User user = Provider.of<UserProvider>(context).user;
 
     return Scaffold(
@@ -43,13 +46,20 @@ class _DashBoardState extends State<DashBoard> {
           RaisedButton(onPressed: (){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ActivityList()),
+              MaterialPageRoute(builder: (context) => ActivityCalendar()),
             );
           }, child: Text("Calendar"), color: Colors.lightBlueAccent,),
           SizedBox(height: 50),
-          RaisedButton(onPressed: (){}, child: Text("Discover"), color: Colors.lightBlueAccent,),
+          RaisedButton(onPressed: (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ActivityList()),
+            );
+          }, child: Text("Discover"), color: Colors.lightBlueAccent,),
           SizedBox(height: 50),
-          RaisedButton(onPressed: (){}, child: Text("Logout"), color: Colors.lightBlueAccent,)
+          RaisedButton(onPressed: (){
+            auth.logout(user);
+          }, child: Text("Logout"), color: Colors.lightBlueAccent,)
         ],
       ),
     );

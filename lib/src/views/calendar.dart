@@ -12,12 +12,12 @@ final Map<DateTime, List> _holidays = {
   DateTime(2020, 4, 22): ['Easter Monday'],
 };
 
-class ActivityList extends StatefulWidget {
+class ActivityCalendar extends StatefulWidget {
   @override
-  _ActivityListState createState() => _ActivityListState();
+  _ActivityCalendarState createState() => _ActivityCalendarState();
 }
 
-class _ActivityListState extends State<ActivityList> with TickerProviderStateMixin {
+class _ActivityCalendarState extends State<ActivityCalendar> with TickerProviderStateMixin {
   Map<DateTime, List> _events;
   List _selectedEvents;
   AnimationController _animationController;

@@ -41,8 +41,7 @@ class AuthProvider with ChangeNotifier {
     _loggedInStatus = Status.Authenticating;
     notifyListeners();
 
-    Response response = await post(
-      AppUrl.login,
+    Response response = await post(Uri.https(AppUrl.baseURL,AppUrl.login),
       body: json.encode(loginData),
       headers: {'Content-Type': 'application/json'},
     );
@@ -81,8 +80,7 @@ class AuthProvider with ChangeNotifier {
       }
     };
     //Send logout request to server
-    Response response = await post(
-      AppUrl.logout,
+    Response response = await post(Uri.https(AppUrl.baseURL,AppUrl.logout),
       body: json.encode(logoutData),
       headers: {'Content-Type': 'application/json'},
     );
@@ -120,13 +118,20 @@ class AuthProvider with ChangeNotifier {
         'password_confirmation': passwordConfirmation
       }
     };
-    return await post(AppUrl.register,
+    return await post(Uri.https(AppUrl.baseURL,AppUrl.register),
         body: json.encode(registrationData),
         headers: {'Content-Type': 'application/json'})
         .then(onValue)
         .catchError(onError);
   }
+   void cancellogin()
+  {
+    print('running auth.cancellogin');
+    _loggedInStatus = Status.NotLoggedIn;
+    notifyListeners();
 
+
+  }
   static Future<FutureOr> onValue(Response response) async {
     var result;
     final Map<String, dynamic> responseData = json.decode(response.body);
@@ -158,7 +163,9 @@ class AuthProvider with ChangeNotifier {
 
   static onError(error) {
     print("the error is $error.detail");
+
     return {'status': false, 'message': 'Unsuccessful Request', 'data': error};
+
   }
 
 }

@@ -62,6 +62,16 @@ class _LoginState extends State<Login> {
             Navigator.pushNamed(context, '/register');
           },
         ),
+        FlatButton(
+          padding: EdgeInsets.all(0.0),
+          child: Text("Cancel",
+              style: TextStyle(fontWeight: FontWeight.w300)),
+          onPressed: () async {
+            print('cancelling login');
+            //auth.logout(user);
+            auth.cancellogin();
+          },
+        ),
       ],
     );
 
