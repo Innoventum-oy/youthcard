@@ -39,7 +39,7 @@ class _QRScannerState extends State<QRScanner> {
   var cameraState = frontCamera;
   QRViewController controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  final Geolocator geolocator = Geolocator();
  // User user;
 
   // In order to get hot reload to work we need to pause the camera if the platform
@@ -137,7 +137,7 @@ class _QRScannerState extends State<QRScanner> {
 */
   Future<Position>_getCurrentLocation() async {
     print('retrieving current location');
-   var Location = await Geolocator().getCurrentPosition();
+   var Location = await Geolocator.getCurrentPosition();
     _latitude = Location.latitude.toString();
     _longitude = Location.longitude.toString();
     return Location;
@@ -196,7 +196,7 @@ class _QRScannerState extends State<QRScanner> {
                     children: <Widget>[
                       Container(
                         margin: EdgeInsets.all(8),
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             if (controller != null) {
                               controller.toggleFlash();
@@ -217,7 +217,7 @@ class _QRScannerState extends State<QRScanner> {
                       ),
                       Container(
                         margin: EdgeInsets.all(8),
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             if (controller != null) {
                               controller.flipCamera();
@@ -244,7 +244,7 @@ class _QRScannerState extends State<QRScanner> {
                     children: <Widget>[
                       Container(
                         margin: EdgeInsets.all(8),
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             controller?.pauseCamera();
                           },
@@ -253,7 +253,7 @@ class _QRScannerState extends State<QRScanner> {
                       ),
                       Container(
                         margin: EdgeInsets.all(8),
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             controller?.resumeCamera();
                           },
@@ -287,25 +287,16 @@ class _QRScannerState extends State<QRScanner> {
         : 300.0;
     // To ensure the Scanner view is properly sizes after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
-    return NotificationListener<SizeChangedLayoutNotification>(
-        onNotification: (notification) {
-          Future.microtask(
-                  () => controller?.updateDimensions(qrKey, scanArea: scanArea));
-          return false;
-        },
-        child: SizeChangedLayoutNotifier(
-            key: const Key('qr-size-notifier'),
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: _onQRViewCreated,
-              overlay: QrScannerOverlayShape(
-                borderColor: Colors.red,
-                borderRadius: 10,
-                borderLength: 30,
-                borderWidth: 10,
-                cutOutSize: scanArea,
-              ),
-            )));
+    return QRView(
+      key: qrKey,
+      onQRViewCreated: _onQRViewCreated,
+      overlay: QrScannerOverlayShape(
+          borderColor: Colors.red,
+          borderRadius: 10,
+          borderLength: 30,
+          borderWidth: 10,
+          cutOutSize: scanArea),
+    );
   }
 
   void _onQRViewCreated(QRViewController controller) {

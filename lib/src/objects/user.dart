@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 class User {
   int id;
-  String name;
+  String firstname;
+  String lastname;
   String email;
   String phone;
   String type;
@@ -12,12 +13,13 @@ class User {
   String image;
   String qrcode;
 
-  User({this.id, this.name, this.email, this.phone, this.type, this.token, this.renewalToken,this.image,this.qrcode});
+  User({this.id, this.firstname, this.lastname, this.email, this.phone, this.type, this.token, this.renewalToken,this.image,this.qrcode});
 
   factory User.fromJson(Map<String, dynamic> responseData) {
     return User(
         id: responseData['id'],
-        name: responseData['name'],
+        firstname: responseData['firstname'],
+        lastname: responseData['lastname'],
         email: responseData['email'],
         phone: responseData['phone'],
         type: responseData['type'],

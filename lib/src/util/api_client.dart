@@ -9,7 +9,6 @@ import 'package:youth_card/src/providers/user_provider.dart';
 class ApiClient {
   static final _client = ApiClient._internal();
   final _http = HttpClient();
-
   ApiClient._internal();
 
   final String baseUrl = AppUrl.baseURL;
@@ -34,13 +33,26 @@ class ApiClient {
 
    */
   //todo: add user token
-  Future<List<Activity>> fetchActivities(Map params) async {
+  Future<List<Activity>> loadActivities(Map params) async {
     var url = Uri.https(baseUrl, 'api/activity/',
         params);
 
     return _getJson(url).then((json) => json['data']).then((data) => data
         .toList());
   }
+
+  Future<dynamic> getActivityDetails(int activityId, User user) async {
+    var url = Uri.https(baseUrl, 'api/activity/$activityId', { 'api_key': user.token});
+
+    return _getJson(url);
+  }
+
+  Future<dynamic> getImageDetails(int imageId, User user) async {
+    var url = Uri.https(baseUrl, 'api/image/$imageId', { 'api_key': user.token});
+
+    return _getJson(url);
+  }
+
  /*
   Future<List<MediaItem>> getSimilarMedia(int mediaId,
       {String type: "movie"}) async {

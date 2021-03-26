@@ -7,7 +7,8 @@ class UserPreferences {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.setInt("id", user.id);
-    prefs.setString("name", user.name);
+    prefs.setString("firstname", user.firstname);
+    prefs.setString("lastname", user.lastname);
     prefs.setString("email", user.email);
     prefs.setString("phone", user.phone);
     prefs.setString("type", user.type);
@@ -27,7 +28,8 @@ class UserPreferences {
     int id = prefs.getInt("id");
     String image = prefs.getString("image");
     String qrcode = prefs.getString("qrcode");
-    String name = prefs.getString("name");
+    String firstname = prefs.getString("firstname");
+    String lastname = prefs.getString("lastname");
     String email = prefs.getString("email");
     String phone = prefs.getString("phone");
     String type = prefs.getString("type");
@@ -36,7 +38,8 @@ class UserPreferences {
 
     return User(
         id: id,
-        name: name,
+        firstname: firstname,
+        lastname: lastname,
         email: email,
         phone: phone,
         type: type,
@@ -49,7 +52,8 @@ class UserPreferences {
   void removeUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.remove("name");
+    prefs.remove("firstname");
+    prefs.remove("lastname");
     prefs.remove("email");
     prefs.remove("phone");
     prefs.remove("type");

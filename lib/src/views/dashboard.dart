@@ -23,45 +23,91 @@ class _DashBoardState extends State<DashBoard> {
       appBar: AppBar(
         title: Text("YouthCard Dashboard"),
         elevation: 0.1,
+        actions: [
+          IconButton(
+            icon:user.image!=null ? Image.network(user.image,height:50) : Image.asset('images/profile.png'),
+            onPressed: () {
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MyCard()),
+              );
+            }
+            )
+          ],
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 100,),
-          Center(child: Text(user.email)),
-          SizedBox(height: 50),
+        body:
+          GridView.count(
+          // Create a grid with 2 columns. If you change the scrollDirection to
+          // horizontal, this produces 2 rows.
+          crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          children: [
+            MaterialButton(
+             //padding: EdgeInsets.all(8.0),
+              textColor: Colors.white,
+              splashColor: Colors.greenAccent,
+             // elevation: 8.0,
+              child: Stack(
+                children:[
+                  Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: user.image!=null ? NetworkImage(user.image) : AssetImage('images/profile.png'),
+                      fit: BoxFit.cover,
+                  ),
+                ),
+
+              /*  child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("SIGN OUT"),
+                ),
+
+               */
+              ),
+                Center(
+                child:Text('My Card'),
+                ),
+              ]),
+              // ),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyCard()),
+                );
+              },
+            ),
+
           RaisedButton(onPressed: (){
             Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MyCard()),
-            );
-          }, child: Text("My card"), color: Colors.lightBlueAccent,),
-          SizedBox(height: 50),
-          RaisedButton(onPressed: (){
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => QRScanner()),
-            );
-          }, child: Text("QR Scanner"), color: Colors.lightBlueAccent,),
-          SizedBox(height: 50),
+            context,
+            MaterialPageRoute(builder: (context) => QRScanner()),
+          );
+          }, child: Text("QR Scanner"),
+          color: Colors.lightBlueAccent,
+        ),
+
           RaisedButton(onPressed: (){
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ActivityCalendar()),
             );
-          }, child: Text("Calendar"), color: Colors.lightBlueAccent,),
-          SizedBox(height: 50),
+          }, child: Text("Calendar"),
+          color: Colors.lightBlueAccent,),
+
           RaisedButton(onPressed: (){
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ActivityList()),
             );
           }, child: Text("Discover"), color: Colors.lightBlueAccent,),
-          SizedBox(height: 50),
+
           RaisedButton(onPressed: (){
             auth.logout(user);
           }, child: Text("Logout"), color: Colors.lightBlueAccent,)
         ],
       ),
+
     );
   }
 }

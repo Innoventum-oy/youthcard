@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:http/http.dart' as http;
-import 'package:youth_card/src/providers/activityloader.dart';
+import 'package:youth_card/src/providers/objectprovider.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/app_url.dart';
@@ -45,7 +45,7 @@ class _ActivityListState extends State<ActivityList>  {
       Map<String, String> params = {
         'activitystatus': 'active',
         'activitytype': 'activity',
-        'limit' : '5',
+        'limit' : '50',
       };
       var url = Uri.https(AppUrl.baseURL, '/api/activity/', params);
       var response = await http.get(url, headers: { 'api_key': user.token});

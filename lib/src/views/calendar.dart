@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:youth_card/src/objects/activity.dart';
+import 'package:youth_card/src/objects/user.dart';
+import 'package:youth_card/src/util/app_url.dart';
+import 'package:http/http.dart' as http;
+import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:youth_card/src/providers/activityloader.dart';
+import 'package:youth_card/src/providers/objectprovider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 
 // Example events
 final Map<DateTime, List> _holidays = {
@@ -18,76 +27,22 @@ class ActivityCalendar extends StatefulWidget {
 }
 
 class _ActivityCalendarState extends State<ActivityCalendar> with TickerProviderStateMixin {
-  Map<DateTime, List> _events;
+  Map<DateTime, List> _events = {};
   List _selectedEvents;
   AnimationController _animationController;
   CalendarController _calendarController;
-
+  User user;
+  bool _dataloading = false;
+  int iteration =1;
+  int buildtime = 1;
+  Map<String,dynamic> map;
 
   @override
   void initState() {
     super.initState();
     final _selectedDay = DateTime.now();
-/*
-    setState(() async {
-      ActivityLoader activities;
-      _events = activities._getOnlineData();
-    });
-*/
+    _dataloading = false;
 
-    _events = {
-      _selectedDay.subtract(Duration(days: 30)): [
-        'Event A0',
-        'Event B0',
-        'Event C0'
-      ],
-      _selectedDay.subtract(Duration(days: 27)): ['Event A1'],
-      _selectedDay.subtract(Duration(days: 20)): [
-        'Event A2',
-        'Event B2',
-        'Event C2',
-        'Event D2'
-      ],
-      _selectedDay.subtract(Duration(days: 16)): ['Event A3', 'Event B3'],
-      _selectedDay.subtract(Duration(days: 10)): [
-        'Event A4',
-        'Event B4',
-        'Event C4'
-      ],
-      _selectedDay.subtract(Duration(days: 4)): [
-        'Event A5',
-        'Event B5',
-        'Event C5'
-      ],
-      _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
-      _selectedDay: ['Event A7', 'Event B7', 'Event C7', 'Event D7'],
-      _selectedDay.add(Duration(days: 1)): [
-        'Event A8',
-        'Event B8',
-        'Event C8',
-        'Event D8'
-      ],
-      _selectedDay.add(Duration(days: 3)):
-      Set.from(['Event A9', 'Event A9', 'Event B9']).toList(),
-      _selectedDay.add(Duration(days: 7)): [
-        'Event A10',
-        'Event B10',
-        'Event C10'
-      ],
-      _selectedDay.add(Duration(days: 11)): ['Event A11', 'Event B11'],
-      _selectedDay.add(Duration(days: 17)): [
-        'Event A12',
-        'Event B12',
-        'Event C12',
-        'Event D12'
-      ],
-      _selectedDay.add(Duration(days: 22)): ['Event A13', 'Event B13'],
-      _selectedDay.add(Duration(days: 26)): [
-        'Event A14',
-        'Event B14',
-        'Event C14'
-      ],
-    };
 
     _selectedEvents = _events[_selectedDay] ?? [];
     _calendarController = CalendarController();
@@ -99,6 +54,44 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
 
     _animationController.forward();
   }
+  Future<void> getData(user) async {
+    // print(user);
+    print('getdata called');
+    // try {
+    _dataloading = true;
+    print('attempt $iteration loading data from ' + AppUrl.baseURL +
+        '/api/activity/' + ' using token ' + user.token);
+    iteration++;
+    Map<String, String> params = {
+      'activitystatus': 'active',
+      'activitytype': 'activity',
+      'limit' : '50',
+    };
+    var url = Uri.https(AppUrl.baseURL, '/api/activity/', params);
+    var response = await http.get(url, headers: { 'api_key': user.token});
+
+    setState(() {
+      print('getdata is setting state');
+      map = json.decode(response.body);
+      if (map != null) {
+        print(map['data'].length.toString() + ' items loaded!');
+        for (var a in map['data']) {
+
+          Activity item = Activity.fromJson(a);
+
+          if(_events[item.startdate]==null) _events[item.startdate] = [];
+          _events[item.startdate].add(item);
+          print('populating date '+item.startdate.toString());
+        }
+      }
+      else print('null response received!');
+      _dataloading = false;
+    });
+    /*  } catch (e) {
+      print('error occurred: $e');
+    }*/
+  }
+
 
   @override
   void dispose() {
@@ -126,14 +119,24 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
-
+    User user = Provider.of<UserProvider>(context).user;
+    if(_events.length==0 && _dataloading==false) {
+      print('no events loaded, calling getdata');
+      this.getData(user);
+    }
+    else print('Events: '+_events.length.toString());
     return Scaffold(
       appBar: AppBar(
         title: Text('Activity Calendar'),
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
+        mainAxisAlignment:  (_dataloading || _events.length==0) ? MainAxisAlignment.center : MainAxisAlignment.start ,
+        children:
+        (_dataloading || _events.length==0) ?<Widget>[
+        Center(child:CircularProgressIndicator())
+]
+       :<Widget>[
           // Switch out 2 lines below to play with TableCalendar's settings
           //-----------------------
           _buildTableCalendar(),
@@ -361,8 +364,8 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
         margin:
         const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         child: ListTile(
-          title: Text(event.toString()),
-          onTap: () => print('$event tapped!'),
+          title: Text(event.name.toString()),
+          onTap: () => print('$event.name tapped!'),
         ),
       ))
           .toList(),
