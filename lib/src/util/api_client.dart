@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/user.dart';
@@ -16,39 +17,34 @@ class ApiClient {
   factory ApiClient() => _client;
 
   Future<dynamic> _getJson(Uri uri) async {
-    User user;
-    var response = await (await _http.getUrl(uri)).close();
-    var transformedResponse = await response.transform(utf8.decoder).join();
-    return json.decode(transformedResponse);
-  }
-  /*
-  Future<String> getResponse({Map params})
-  {
-    String objecttype = params.objecttype;
-    var url = Uri.https(baseUrl, '/$objecttype/',
-        { 'page': page.toString()});
+    var response = await http.get(uri);
+   return(json.decode(response.body));
 
-    return _getJson(url).then((json) => json['data'])
   }
 
-   */
-  //todo: add user token
+
   Future<List<Activity>> loadActivities(Map params) async {
+    params.forEach((key, value) {print('$key = $value');});
     var url = Uri.https(baseUrl, 'api/activity/',
         params);
 
-    return _getJson(url).then((json) => json['data']).then((data) => data
-        .toList());
+    return _getJson(url).then((json) => json['data']).then((data) {
+      return data
+        .map<Activity>((data) => Activity.fromJson(data))
+        .toList();
+      });
+
   }
 
   Future<dynamic> getActivityDetails(int activityId, User user) async {
-    var url = Uri.https(baseUrl, 'api/activity/$activityId', { 'api_key': user.token});
+
+    var url = Uri.https(baseUrl, 'api/activity/$activityId', { 'api-key': user.token});
 
     return _getJson(url);
   }
 
   Future<dynamic> getImageDetails(int imageId, User user) async {
-    var url = Uri.https(baseUrl, 'api/image/$imageId', { 'api_key': user.token});
+    var url = Uri.https(baseUrl, 'api/image/$imageId', { 'api-key': user.token});
 
     return _getJson(url);
   }

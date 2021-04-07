@@ -18,7 +18,7 @@ class ActivityView extends StatefulWidget {
   final Activity _activity;
   final objectmodel.ActivityProvider provider;
   final objectmodel.ImageProvider imageprovider;
-  final ApiClient _apiClient = ApiClient();
+
   ActivityView(this._activity,this.provider,this.imageprovider);
 
   @override
@@ -26,15 +26,14 @@ class ActivityView extends StatefulWidget {
 }
 
 class _ActivityViewState extends State<ActivityView> {
-
+  final ApiClient _apiClient = ApiClient();
   Map<String, dynamic> map;
-  //List<Activity> data = [];
-  User user;
-  bool _dataloading = false;
+
+
   int iteration = 1;
   int buildtime = 1;
   bool _visible = false;
-
+  User user;
   dynamic _activityDetails;
 
   Notify(String text) {
@@ -46,51 +45,24 @@ class _ActivityViewState extends State<ActivityView> {
     // and use it to show a SnackBar.
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-/*
-  Future<void> getData() async {
-    // try {
-    _dataloading = true;
-    print('attempt $iteration loading data from ' + AppUrl.baseURL +
-        '/api/activity/' + ' using token ' + user.token);
-    iteration++;
-    Map<String, String> params = {
-      'activitystatus': 'active',
-      'activitytype': 'activity',
-      'limit': '5',
-    };
-    var url = Uri.https(AppUrl.baseURL, '/api/activity/', params);
-    var response = await http.get(url, headers: { 'api_key': user.token});
 
-    setState(() {
-      print('getdata is setting state');
-      map = json.decode(response.body);
-      if (map != null) {
-        print(map['data'].length.toString() + ' items loaded!');
-        for (var a in map['data']) {
-          Activity item = Activity.fromJson(a);
-          data.add(item);
-        }
-      }
-      else
-        print('null response received!');
-      _dataloading = false;
-    });
-    /*  } catch (e) {
-      print('error occurred: $e');
-    }*/
-  }
-*/
   @override
   void initState() {
     super.initState();
-    print('initing state');
-    _dataloading = false;
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      print('addpostFrameCallback called');
+      User user = Provider.of<UserProvider>(context,listen: false).user;
+
+      _loadDetails(user);
+    });
+
     Timer(Duration(milliseconds: 100), () => setState(() => _visible = true));
   }
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<UserProvider>(context).user;
+  final user = Provider.of<UserProvider>(context,listen:false).user;
     return Scaffold(
         backgroundColor: primary,
         body: CustomScrollView(
@@ -179,11 +151,13 @@ class _ActivityViewState extends State<ActivityView> {
     );
   }
 
-  void _loadDetails() async {
+  void _loadDetails(user) async {
     try {
+
       dynamic details = await widget.provider.getDetails(widget._activity.id,user);
       setState(() => _activityDetails = details);
     } catch (e) {
+      Notify(e.toString());
       e.toString();
     }
   }
@@ -199,7 +173,7 @@ class _ActivityViewState extends State<ActivityView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "DESCRIPTION",
+                  activity.name,
                   style: const TextStyle(color: Colors.white),
                 ),
                 Container(

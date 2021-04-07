@@ -8,9 +8,9 @@ import 'package:youth_card/src/util/app_url.dart';
 import 'package:http/http.dart' as http;
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:youth_card/src/providers/objectprovider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 
 // Example events
 final Map<DateTime, List> _holidays = {
@@ -21,7 +21,14 @@ final Map<DateTime, List> _holidays = {
   DateTime(2020, 4, 22): ['Easter Monday'],
 };
 
+
 class ActivityCalendar extends StatefulWidget {
+
+  final objectmodel.ActivityProvider provider;
+  final objectmodel.ImageProvider imageprovider;
+
+  ActivityCalendar(this.provider,this.imageprovider);
+
   @override
   _ActivityCalendarState createState() => _ActivityCalendarState();
 }
@@ -68,7 +75,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
       'limit' : '50',
     };
     var url = Uri.https(AppUrl.baseURL, '/api/activity/', params);
-    var response = await http.get(url, headers: { 'api_key': user.token});
+    var response = await http.get(url, headers: { 'api-key': user.token});
 
     setState(() {
       print('getdata is setting state');
@@ -120,6 +127,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
   @override
   Widget build(BuildContext context) {
     User user = Provider.of<UserProvider>(context).user;
+    //todo: remodel to use objectprovider as activitylist
     if(_events.length==0 && _dataloading==false) {
       print('no events loaded, calling getdata');
       this.getData(user);

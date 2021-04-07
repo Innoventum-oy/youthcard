@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:youth_card/src/views/card.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
 import 'package:youth_card/src/views/calendar.dart';
+import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/views/activitylist.dart';
 import 'calendar.dart';
 class DashBoard extends StatefulWidget {
@@ -19,6 +20,8 @@ class _DashBoardState extends State<DashBoard> {
     AuthProvider auth = Provider.of<AuthProvider>(context);
     User user = Provider.of<UserProvider>(context).user;
 
+    objectmodel.ActivityProvider provider = objectmodel.ActivityProvider();
+    objectmodel.ImageProvider imageprovider = objectmodel.ImageProvider();
     return Scaffold(
       appBar: AppBar(
         title: Text("YouthCard Dashboard"),
@@ -42,6 +45,9 @@ class _DashBoardState extends State<DashBoard> {
           crossAxisCount: 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
+            padding:EdgeInsets.only(
+              top:10
+            ),
           children: [
             MaterialButton(
              //padding: EdgeInsets.all(8.0),
@@ -78,33 +84,33 @@ class _DashBoardState extends State<DashBoard> {
               },
             ),
 
-          RaisedButton(onPressed: (){
+          ElevatedButton(onPressed: (){
             Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => QRScanner()),
           );
           }, child: Text("QR Scanner"),
-          color: Colors.lightBlueAccent,
+
         ),
 
-          RaisedButton(onPressed: (){
+          ElevatedButton(onPressed: (){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ActivityCalendar()),
+              MaterialPageRoute(builder: (context) => ActivityCalendar(provider,imageprovider)),
             );
           }, child: Text("Calendar"),
-          color: Colors.lightBlueAccent,),
+          ),
 
-          RaisedButton(onPressed: (){
+          ElevatedButton(onPressed: (){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ActivityList()),
+              MaterialPageRoute(builder: (context) => ActivityList(provider,imageprovider)),
             );
-          }, child: Text("Discover"), color: Colors.lightBlueAccent,),
+          }, child: Text("Discover"), ),
 
-          RaisedButton(onPressed: (){
+          ElevatedButton(onPressed: (){
             auth.logout(user);
-          }, child: Text("Logout"), color: Colors.lightBlueAccent,)
+          }, child: Text("Logout"), )
         ],
       ),
 

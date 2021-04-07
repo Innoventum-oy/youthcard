@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:http/http.dart' as http;
-import 'package:youth_card/src/providers/objectprovider.dart';
+import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/objects/user.dart';
+import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/views/activitylist_item.dart';
@@ -12,6 +13,10 @@ import 'package:provider/provider.dart';
 
 
 class ActivityList extends StatefulWidget {
+  final objectmodel.ActivityProvider provider;
+  final objectmodel.ImageProvider imageprovider;
+
+  ActivityList(this.provider,this.imageprovider);
   @override
   _ActivityListState createState() => _ActivityListState();
 }
@@ -21,9 +26,13 @@ class _ActivityListState extends State<ActivityList>  {
   Map<String,dynamic> map;
   List<Activity> data =[];
   User user;
+  LoadingState _loadingState = LoadingState.LOADING;
   bool _dataloading = false;
+  bool _isLoading = false;
   int iteration =1;
   int buildtime = 1;
+  int limit = 50;
+  int _pageNumber = 0;
   Notify(String text) {
     final snackBar = SnackBar(
       content: Text(text),
@@ -34,58 +43,57 @@ class _ActivityListState extends State<ActivityList>  {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  Future<void> getData(user) async {
-    // print(user);
-    print('getdata called');
-   // try {
-      _dataloading = true;
-      print('attempt $iteration loading data from ' + AppUrl.baseURL +
-          '/api/activity/' + ' using token ' + user.token);
-      iteration++;
-      Map<String, String> params = {
-        'activitystatus': 'active',
-        'activitytype': 'activity',
-        'limit' : '50',
-      };
-      var url = Uri.https(AppUrl.baseURL, '/api/activity/', params);
-      var response = await http.get(url, headers: { 'api_key': user.token});
+  _loadNextPage(user) async {
+    _isLoading = true;
+    int offset = limit * _pageNumber;
+    Map<String, String> params = {
+      'activitystatus': 'active',
+      'activitytype': 'activity',
+      'limit' : '50',
+      'offset' : offset.toString(),
+      'api-key':user.token,
+      'api_key':user.token,
+    };
+    Notify('Loading page $_pageNumber');
+    try {
 
+      var nextActivities =
+      await widget.provider.loadItems(params);
       setState(() {
-        print('getdata is setting state');
-        map = json.decode(response.body);
-        if (map != null) {
-          print(map['data'].length.toString() + ' items loaded!');
-          for (var a in map['data']) {
-
-            Activity item = Activity.fromJson(a);
-            data.add(item);
-          }
-        }
-        else print('null response received!');
-        _dataloading = false;
+        _loadingState = LoadingState.DONE;
+        print(nextActivities.length.toString()+' activities loaded!');
+        data.addAll(nextActivities);
+        _isLoading = false;
+        _pageNumber++;
       });
-  /*  } catch (e) {
-      print('error occurred: $e');
-    }*/
+    } catch (e) {
+      _isLoading = false;
+      print('loadItems returned error $e');
+      if (_loadingState == LoadingState.LOADING) {
+        setState(() => _loadingState = LoadingState.ERROR);
+      }
+    }
   }
 
   @override
   void initState(){
-    print('initing state');
-    _dataloading = false;
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+
+      User user = Provider.of<UserProvider>(context,listen: false).user;
+
+      _loadNextPage(user);
+    });
+
+
   }
 
   @override
   Widget build(BuildContext context){
 
-    print('build $buildtime of activitylist view');
+    print('debug: build $buildtime of activitylist view');
     buildtime++;
 
-    User user = Provider.of<UserProvider>(context).user;
-    if(data.length==0 && _dataloading==false) {
-      print('data is null, calling getdata');
-      this.getData(user);
-    }
 
 
     return new Scaffold(
@@ -102,4 +110,30 @@ class _ActivityListState extends State<ActivityList>  {
       ),
     );
   }
+
+  Widget _getContentSection() {
+    switch (_loadingState) {
+      case LoadingState.DONE:
+        //data loaded
+        return ListView.builder(
+            itemCount: data.length,
+            itemBuilder: (BuildContext context, int index) {
+              if (!_isLoading && index > (data.length * 0.7)) {
+                _loadNextPage(user);
+              }
+
+              return ActivityListItem(data[index]);
+            });
+      case LoadingState.ERROR:
+        //data loading returned error state
+        return Text('Sorry, there was an error loading the data');
+
+      case LoadingState.LOADING:
+        //data loading in progress
+        return CircularProgressIndicator();
+      default:
+        return Container();
+    }
+  }
+
 }

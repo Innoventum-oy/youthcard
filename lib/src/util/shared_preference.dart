@@ -9,8 +9,8 @@ class UserPreferences {
     prefs.setInt("id", user.id);
     prefs.setString("firstname", user.firstname);
     prefs.setString("lastname", user.lastname);
-    prefs.setString("email", user.email);
-    prefs.setString("phone", user.phone);
+    if(user.email.isNotEmpty)prefs.setString("email", user.email);
+    if(user.phone.isNotEmpty) prefs.setString("phone", user.phone);
     prefs.setString("type", user.type);
     prefs.setString("token", user.token);
     prefs.setString("renewalToken", user.renewalToken);
