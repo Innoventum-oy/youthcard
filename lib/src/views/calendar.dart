@@ -1,25 +1,20 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/user.dart';
-import 'package:youth_card/src/util/app_url.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:http/http.dart' as http;
 import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:youth_card/src/util/utils.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/views/activitylist_item.dart';
 
-// Example events
-final Map<DateTime, List> _holidays = {
-  DateTime(2020, 1, 1): ['New Year\'s Day'],
-  DateTime(2020, 1, 6): ['Epiphany'],
-  DateTime(2020, 2, 14): ['Valentine\'s Day'],
-  DateTime(2020, 4, 21): ['Easter Sunday'],
-  DateTime(2020, 4, 22): ['Easter Monday'],
-};
 
 
 class ActivityCalendar extends StatefulWidget {
@@ -34,350 +29,252 @@ class ActivityCalendar extends StatefulWidget {
 }
 
 class _ActivityCalendarState extends State<ActivityCalendar> with TickerProviderStateMixin {
-  Map<DateTime, List> _events = {};
-  List _selectedEvents;
-  AnimationController _animationController;
-  CalendarController _calendarController;
-  User user;
-  bool _dataloading = false;
-  int iteration =1;
+
+  List<Activity> data = [];
+  Map<DateTime, List<Activity>> _events = {};
+
+  ValueNotifier<List<Activity>> _selectedEvents = ValueNotifier([]);
+
+  Map<DateTime, List<Activity>> eventsHashMap = <DateTime, List<Activity>>{};
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+
+  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
+      .toggledOff; // Can be toggled on/off by longpressing a date
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+  DateTime? kFirstDay;
+  DateTime? kLastDay;
+  DateTime? _rangeStart;
+  DateTime? _rangeEnd;
+  LoadingState _loadingState = LoadingState.LOADING;
+  bool _isLoading = false;
+
+  int iteration = 1;
   int buildtime = 1;
-  Map<String,dynamic> map;
+  Map<String, dynamic>? map;
+  int limit = 1000;
+  int _pageNumber = 0;
+  String? errormessage;
 
-  @override
-  void initState() {
-    super.initState();
-    final _selectedDay = DateTime.now();
-    _dataloading = false;
+  _loadCalendarEvents(user) async {
+    _isLoading = true;
+    int offset = limit * _pageNumber;
+    DateTime now = DateTime.now();
 
-
-    _selectedEvents = _events[_selectedDay] ?? [];
-    _calendarController = CalendarController();
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
-
-    _animationController.forward();
-  }
-  Future<void> getData(user) async {
-    // print(user);
-    print('getdata called');
-    // try {
-    _dataloading = true;
-    print('attempt $iteration loading data from ' + AppUrl.baseURL +
-        '/api/activity/' + ' using token ' + user.token);
-    iteration++;
     Map<String, String> params = {
       'activitystatus': 'active',
       'activitytype': 'activity',
-      'limit' : '50',
+      'limit': limit.toString(),
+      'offset': offset.toString(),
+      'startfrom': DateFormat('yyyy-MM-dd').format(kFirstDay ?? now),
+      'api-key': user.token,
+      'api_key': user.token,
+      'sort': 'nexteventdate',
     };
-    var url = Uri.https(AppUrl.baseURL, '/api/activity/', params);
-    var response = await http.get(url, headers: { 'api-key': user.token});
+    print('Loading page $_pageNumber');
+    try {
+      var nextActivities =
+      await widget.provider.loadItems(params);
+      setState(() {
+        _loadingState = LoadingState.DONE;
+        print('loadingstate set to DONE');
+        data.addAll(nextActivities);
 
-    setState(() {
-      print('getdata is setting state');
-      map = json.decode(response.body);
-      if (map != null) {
-        print(map['data'].length.toString() + ' items loaded!');
-        for (var a in map['data']) {
+        for (var item in data) {
+          if(item.nexteventdate!=null) {
+            if (_events[item.nexteventdate] == null) {
+              _events[item.nexteventdate??now] = [];
+            }
+            _events[item.nexteventdate]!.add(item);
+            print('populating date ' + item.nexteventdate.toString());
+          }
+        };
+        print(_events);
+        print('Adding all events to eventsHashMap');
+        eventsHashMap =
+        LinkedHashMap<DateTime, List<Activity>>(equals: isSameDay,
+          hashCode: getHashCode,
+        )
+          ..addAll(_events);
 
-          Activity item = Activity.fromJson(a);
-
-          if(_events[item.startdate]==null) _events[item.startdate] = [];
-          _events[item.startdate].add(item);
-          print('populating date '+item.startdate.toString());
-        }
+        _getEventsForDay(_selectedDay ?? now);
+        _isLoading = false;
+        _pageNumber++;
+      });
+    } catch (e, stack) {
+      _isLoading = false;
+      print('loadItems returned error $e\n Stack trace:\n $stack');
+      errormessage = e.toString();
+      if (_loadingState == LoadingState.LOADING) {
+        setState(() => _loadingState = LoadingState.ERROR);
       }
-      else print('null response received!');
-      _dataloading = false;
-    });
-    /*  } catch (e) {
-      print('error occurred: $e');
-    }*/
+    }
   }
 
+  int getHashCode(DateTime key) {
+    return key.day * 1000000 + key.month * 10000 + key.year;
+  }
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    print('_OnDaySelected was called');
+    if (!isSameDay(_selectedDay, selectedDay)) {
+      setState(() {
+        print('is not same day: '+selectedDay.toString());
+        _selectedDay = selectedDay;
+        _focusedDay = focusedDay;
+        _rangeStart = null; // Important to clean those
+        _rangeEnd = null;
+        _rangeSelectionMode = RangeSelectionMode.toggledOff;
+        _selectedEvents.value = _getEventsForDay(selectedDay);
+        print(_selectedEvents);
+      });
+
+
+    }
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      User user = Provider
+          .of<UserProvider>(context, listen: false)
+          .user;
+      print('writing selectedevents');
+      _loadCalendarEvents(user);
+      _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay?? DateTime.now()));
+
+    });
+  }
 
   @override
   void dispose() {
-    _animationController.dispose();
-    _calendarController.dispose();
+    _selectedEvents.dispose();
     super.dispose();
   }
 
-  void _onDaySelected(DateTime day, List events, List holidays) {
-    print('CALLBACK: _onDaySelected');
-    setState(() {
-      _selectedEvents = events;
-    });
+  List<Activity> _getEventsForDay(DateTime day) {
+
+    //if(eventsHashMap[day]!=null)print('events for $day: '+ eventsHashMap[day]!.length.toString());
+    return eventsHashMap[day] ?? [];
   }
 
-  void _onVisibleDaysChanged(
-      DateTime first, DateTime last, CalendarFormat format) {
-    print('CALLBACK: _onVisibleDaysChanged');
-  }
-
-  void _onCalendarCreated(
-      DateTime first, DateTime last, CalendarFormat format) {
-    print('CALLBACK: _onCalendarCreated');
-  }
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<UserProvider>(context).user;
-    //todo: remodel to use objectprovider as activitylist
-    if(_events.length==0 && _dataloading==false) {
-      print('no events loaded, calling getdata');
-      this.getData(user);
+    User user = Provider
+        .of<UserProvider>(context)
+        .user;
+
+
+    return new Scaffold(
+        appBar: new AppBar(title: new Text("Activities")),
+        body: _getCalendarSection(user)
+    );
+  }
+
+  Widget _getCalendarSection(user) {
+    switch (_loadingState) {
+      case LoadingState.DONE:
+      //data loaded
+        return _getCalendarContent(user);
+
+      case LoadingState.ERROR:
+      //data loading returned error state
+        return Align(alignment: Alignment.center,
+          child: ListTile(
+            leading: Icon(Icons.error),
+            title: Text(
+                'Sorry, there was an error loading the data: $errormessage'),
+          ),
+        );
+
+      case LoadingState.LOADING:
+       // if (!_isLoading) _loadCalendarEvents(user);
+        //data loading in progress
+        return Align(alignment: Alignment.center,
+          child: Center(
+            child: ListTile(
+              leading: CircularProgressIndicator(),
+              title: Text(AppLocalizations.of(context)!.loading,
+                  textAlign: TextAlign.center),
+            ),
+          ),
+        );
+      default:
+        return Container();
     }
-    else print('Events: '+_events.length.toString());
+  }
+
+  Widget _getCalendarContent(user) {
+    final kNow = DateTime.now();
+     kFirstDay = DateTime(kNow.year, kNow.month - 1, kNow.day);
+     kLastDay = DateTime(kNow.year, kNow.month + 3, kNow.day);
     return Scaffold(
       appBar: AppBar(
         title: Text('Activity Calendar'),
       ),
       body: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment:  (_dataloading || _events.length==0) ? MainAxisAlignment.center : MainAxisAlignment.start ,
-        children:
-        (_dataloading || _events.length==0) ?<Widget>[
-        Center(child:CircularProgressIndicator())
-]
-       :<Widget>[
-          // Switch out 2 lines below to play with TableCalendar's settings
-          //-----------------------
-          _buildTableCalendar(),
-          // _buildTableCalendarWithBuilders(),
-          const SizedBox(height: 8.0),
-          _buildButtons(),
-          const SizedBox(height: 8.0),
-          Expanded(child: _buildEventList()),
+        children: [
+          TableCalendar<Activity>(
+            firstDay: kFirstDay ?? kNow,
+            lastDay: kLastDay ?? kNow,
+            focusedDay: _focusedDay,
+            calendarFormat: _calendarFormat,
+            startingDayOfWeek: StartingDayOfWeek.monday,
+            selectedDayPredicate: (day) {
+              // Use `selectedDayPredicate` to determine which day is currently selected.
+              // If this returns true, then `day` will be marked as selected.
+
+              // Using `isSameDay` is recommended to disregard
+              // the time-part of compared DateTime objects.
+              return isSameDay(_selectedDay, day);
+            },
+            onDaySelected: (selectedDay, focusedDay) {
+              if (!isSameDay(_selectedDay, selectedDay)) {
+                // Call `setState()` when updating the selected day
+                setState(() {
+                  print('is not same day: '+selectedDay.toString());
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                  _rangeStart = null; // Important to clean those
+                  _rangeEnd = null;
+                  _rangeSelectionMode = RangeSelectionMode.toggledOff;
+                  _selectedEvents.value = _getEventsForDay(selectedDay);
+
+                });
+              }
+            },
+            onFormatChanged: (format) {
+              if (_calendarFormat != format) {
+                // Call `setState()` when updating calendar format
+                setState(() {
+                  _calendarFormat = format;
+                });
+              }
+            },
+            onPageChanged: (focusedDay) {
+              // No need to call `setState()` here
+              _focusedDay = focusedDay;
+            },
+            eventLoader: _getEventsForDay,
+          ), const SizedBox(height: 8.0),
+          Expanded(
+            child: ValueListenableBuilder<List<Activity>>(
+              valueListenable: _selectedEvents,
+              builder: (context, value, _) {
+                print(value);
+                return ListView.builder(
+                    itemCount: value.length,
+                    itemBuilder: (BuildContext context, int index) {
+
+
+                      return ActivityListItem(value[index]);
+                    });
+              },
+            ),
+          ),
         ],
       ),
     );
   }
-
-  // Simple TableCalendar configuration (using Styles)
-  Widget _buildTableCalendar() {
-    return TableCalendar(
-      calendarController: _calendarController,
-      events: _events,
-      holidays: _holidays,
-      startingDayOfWeek: StartingDayOfWeek.monday,
-      calendarStyle: CalendarStyle(
-        selectedColor: Colors.deepOrange[400],
-        todayColor: Colors.deepOrange[200],
-        markersColor: Colors.brown[700],
-        outsideDaysVisible: false,
-      ),
-      headerStyle: HeaderStyle(
-        formatButtonTextStyle:
-        TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
-        formatButtonDecoration: BoxDecoration(
-          color: Colors.deepOrange[400],
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-      ),
-      onDaySelected: _onDaySelected,
-      onVisibleDaysChanged: _onVisibleDaysChanged,
-      onCalendarCreated: _onCalendarCreated,
-    );
-  }
-
-  // More advanced TableCalendar configuration (using Builders & Styles)
-  Widget _buildTableCalendarWithBuilders() {
-    return TableCalendar(
-      locale: 'pl_PL',
-      calendarController: _calendarController,
-      events: _events,
-      holidays: _holidays,
-      initialCalendarFormat: CalendarFormat.month,
-      formatAnimation: FormatAnimation.slide,
-      startingDayOfWeek: StartingDayOfWeek.sunday,
-      availableGestures: AvailableGestures.all,
-      availableCalendarFormats: const {
-        CalendarFormat.month: '',
-        CalendarFormat.week: '',
-      },
-      calendarStyle: CalendarStyle(
-        outsideDaysVisible: false,
-        weekendStyle: TextStyle().copyWith(color: Colors.blue[800]),
-        holidayStyle: TextStyle().copyWith(color: Colors.blue[800]),
-      ),
-      daysOfWeekStyle: DaysOfWeekStyle(
-        weekendStyle: TextStyle().copyWith(color: Colors.blue[600]),
-      ),
-      headerStyle: HeaderStyle(
-        centerHeaderTitle: true,
-        formatButtonVisible: false,
-      ),
-      builders: CalendarBuilders(
-        selectedDayBuilder: (context, date, _) {
-          return FadeTransition(
-            opacity: Tween(begin: 0.0, end: 1.0).animate(_animationController),
-            child: Container(
-              margin: const EdgeInsets.all(4.0),
-              padding: const EdgeInsets.only(top: 5.0, left: 6.0),
-              color: Colors.deepOrange[300],
-              width: 100,
-              height: 100,
-              child: Text(
-                '${date.day}',
-                style: TextStyle().copyWith(fontSize: 16.0),
-              ),
-            ),
-          );
-        },
-        todayDayBuilder: (context, date, _) {
-          return Container(
-            margin: const EdgeInsets.all(4.0),
-            padding: const EdgeInsets.only(top: 5.0, left: 6.0),
-            color: Colors.amber[400],
-            width: 100,
-            height: 100,
-            child: Text(
-              '${date.day}',
-              style: TextStyle().copyWith(fontSize: 16.0),
-            ),
-          );
-        },
-        markersBuilder: (context, date, events, holidays) {
-          final children = <Widget>[];
-
-          if (events.isNotEmpty) {
-            children.add(
-              Positioned(
-                right: 1,
-                bottom: 1,
-                child: _buildEventsMarker(date, events),
-              ),
-            );
-          }
-
-          if (holidays.isNotEmpty) {
-            children.add(
-              Positioned(
-                right: -2,
-                top: -2,
-                child: _buildHolidaysMarker(),
-              ),
-            );
-          }
-
-          return children;
-        },
-      ),
-      onDaySelected: (date, events, holidays) {
-        _onDaySelected(date, events, holidays);
-        _animationController.forward(from: 0.0);
-      },
-      onVisibleDaysChanged: _onVisibleDaysChanged,
-      onCalendarCreated: _onCalendarCreated,
-    );
-  }
-
-  Widget _buildEventsMarker(DateTime date, List events) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: _calendarController.isSelected(date)
-            ? Colors.brown[500]
-            : _calendarController.isToday(date)
-            ? Colors.brown[300]
-            : Colors.blue[400],
-      ),
-      width: 16.0,
-      height: 16.0,
-      child: Center(
-        child: Text(
-          '${events.length}',
-          style: TextStyle().copyWith(
-            color: Colors.white,
-            fontSize: 12.0,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHolidaysMarker() {
-    return Icon(
-      Icons.add_box,
-      size: 20.0,
-      color: Colors.blueGrey[800],
-    );
-  }
-
-  Widget _buildButtons() {
-    final dateTime = _events.keys.elementAt(_events.length - 2);
-
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            RaisedButton(
-              child: Text('Month'),
-              onPressed: () {
-                setState(() {
-                  _calendarController.setCalendarFormat(CalendarFormat.month);
-                });
-              },
-            ),
-            RaisedButton(
-              child: Text('2 weeks'),
-              onPressed: () {
-                setState(() {
-                  _calendarController
-                      .setCalendarFormat(CalendarFormat.twoWeeks);
-                });
-              },
-            ),
-            RaisedButton(
-              child: Text('Week'),
-              onPressed: () {
-                setState(() {
-                  _calendarController.setCalendarFormat(CalendarFormat.week);
-                });
-              },
-            ),
-          ],
-        ),
-        const SizedBox(height: 8.0),
-        RaisedButton(
-          child: Text(
-              'Set day ${dateTime.day}-${dateTime.month}-${dateTime.year}'),
-          onPressed: () {
-            _calendarController.setSelectedDay(
-              DateTime(dateTime.year, dateTime.month, dateTime.day),
-              runCallback: true,
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildEventList() {
-    return ListView(
-      children: _selectedEvents
-          .map((event) => Container(
-        decoration: BoxDecoration(
-          border: Border.all(width: 0.8),
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        margin:
-        const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-        child: ListTile(
-          title: Text(event.name.toString()),
-          onTap: () => print('$event.name tapped!'),
-        ),
-      ))
-          .toList(),
-    );
-  }
 }
-

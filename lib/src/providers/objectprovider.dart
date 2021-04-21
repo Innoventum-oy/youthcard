@@ -5,7 +5,7 @@ import 'package:youth_card/src/objects/image.dart';
 import 'package:youth_card/src/util/api_client.dart';
 
 abstract class ObjectProvider{
-  User user;
+  User? user;
   Future<List<Activity>> loadItems(params);
   Future<dynamic> getDetails(int itemId,user);
 
@@ -36,7 +36,7 @@ class ActivityProvider extends ObjectProvider {
     return _apiClient.loadActivities(params);
 
   }
-
+// returns json-decoded response
   @override
   Future<dynamic> getDetails(int activityId,user) {
     return _apiClient.getActivityDetails(activityId,user);

@@ -8,7 +8,7 @@ import 'package:youth_card/src/views/qrscanner.dart';
 import 'package:youth_card/src/views/calendar.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/views/activitylist.dart';
-import 'calendar.dart';
+
 class DashBoard extends StatefulWidget {
   @override
   _DashBoardState createState() => _DashBoardState();
@@ -28,7 +28,7 @@ class _DashBoardState extends State<DashBoard> {
         elevation: 0.1,
         actions: [
           IconButton(
-            icon:user.image!=null ? Image.network(user.image,height:50) : Image.asset('images/profile.png'),
+            icon:user.image!=null ? Image.network(user.image!,height:50) : Image.asset('images/profile.png'),
             onPressed: () {
               Navigator.push(
               context,
@@ -59,7 +59,9 @@ class _DashBoardState extends State<DashBoard> {
                   Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: user.image!=null ? NetworkImage(user.image) : AssetImage('images/profile.png'),
+                    image: (user.image!=null ?
+                      NetworkImage(user.image!) :
+                      AssetImage('images/profile.png') as ImageProvider),
                       fit: BoxFit.cover,
                   ),
                 ),

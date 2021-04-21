@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/objects/activity.dart';
 //import 'package:http/http.dart' as http;
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-//import 'package:youth_card/src/util/app_url.dart';
-//import 'package:youth_card/src/views/activitylist_item.dart';
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:provider/provider.dart';
@@ -27,13 +28,13 @@ class ActivityView extends StatefulWidget {
 
 class _ActivityViewState extends State<ActivityView> {
   final ApiClient _apiClient = ApiClient();
-  Map<String, dynamic> map;
+  Map<String, dynamic>? map;
 
 
   int iteration = 1;
   int buildtime = 1;
   bool _visible = false;
-  User user;
+  User? user;
   dynamic _activityDetails;
 
   Notify(String text) {
@@ -50,8 +51,8 @@ class _ActivityViewState extends State<ActivityView> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      print('addpostFrameCallback called');
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+
       User user = Provider.of<UserProvider>(context,listen: false).user;
 
       _loadDetails(user);
@@ -62,6 +63,8 @@ class _ActivityViewState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
+    print('rebuilding activity view');
+
   final user = Provider.of<UserProvider>(context,listen:false).user;
     return Scaffold(
         backgroundColor: primary,
@@ -88,7 +91,7 @@ class _ActivityViewState extends State<ActivityView> {
                   fit: BoxFit.cover,
                   width: double.infinity,
                   placeholder: 'images/activity-placeholder.png',
-                   image:  widget._activity.coverpictureurl ,
+                   image:  widget._activity.coverpictureurl! ,
               ) : Image(image:AssetImage('images/activity-placeholder.png')),
             ),
             BottomGradient(),
@@ -100,6 +103,7 @@ class _ActivityViewState extends State<ActivityView> {
   }
 
   Widget _buildMetaSection(Activity activity) {
+    print('hello this is Metasection');
     return AnimatedOpacity(
       opacity: _visible ? 1.0 : 0.0,
       duration: Duration(milliseconds: 500),
@@ -126,7 +130,7 @@ class _ActivityViewState extends State<ActivityView> {
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(activity.name,
+              child: Text(activity.name!,
                   style: TextStyle(color: Color(0xFFEEEEEE), fontSize: 20.0)),
             ),
             /*
@@ -152,12 +156,15 @@ class _ActivityViewState extends State<ActivityView> {
   }
 
   void _loadDetails(user) async {
+   // print('called _loadDetails for activity '+widget._activity.id.toString()+', awaiting provider for details!');
     try {
-
-      dynamic details = await widget.provider.getDetails(widget._activity.id,user);
-      setState(() => _activityDetails = details);
-    } catch (e) {
-      Notify(e.toString());
+       dynamic details = await widget.provider.getDetails(widget._activity.id!,user);
+     // print(details.toString());
+     // print(details.runtimeType);
+      setState(() => _activityDetails = details.first);
+    } catch (e,stack) {
+      print('loadDetails returned error $e\n Stack trace:\n $stack');
+      //Notify(e.toString());
       e.toString();
     }
   }
@@ -173,13 +180,13 @@ class _ActivityViewState extends State<ActivityView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  activity.name,
+                  activity.name!=null ? activity.name.toString() : AppLocalizations.of(context)!.unnamedActivity,
                   style: const TextStyle(color: Colors.white),
                 ),
                 Container(
                   height: 8.0,
                 ),
-                Text(activity.description,
+                Text(activity.description!,
                     style:
                     const TextStyle(color: Colors.white, fontSize: 12.0)),
                 Container(
@@ -196,13 +203,18 @@ class _ActivityViewState extends State<ActivityView> {
               padding: const EdgeInsets.all(16.0),
               child: _activityDetails == null
                   ? Center(
-                child: CircularProgressIndicator(),
+                child: ListTile(
+                  leading:CircularProgressIndicator(),
+                  title: Text(AppLocalizations.of(context)!.loading,
+                      textAlign: TextAlign.center),
+                ),
               )
-                  : MetaSection(_activityDetails)),
+                  : MetaSection(_activityDetails),
         ),
-
+        ),
 
       ]),
     );
   }
+
 }

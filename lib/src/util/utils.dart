@@ -37,14 +37,9 @@ Map<int, String> _genreMap = {
   10768: 'War & Politics',
 };
 
-List<String> getGenresForIds(List<int> genreIds) =>
-    genreIds.map((id) => _genreMap[id]).toList();
 
-String getGenreString(List<int> genreIds) {
-  StringBuffer buffer = StringBuffer();
-  buffer.writeAll(getGenresForIds(genreIds), ", ");
-  return buffer.toString();
-}
+
+
 
 String concatListToString(List<dynamic> data, String mapKey) {
   StringBuffer buffer = StringBuffer();

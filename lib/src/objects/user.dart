@@ -2,16 +2,16 @@
 import 'package:flutter/material.dart';
 
 class User {
-  int id;
-  String firstname;
-  String lastname;
-  String email;
-  String phone;
-  String type;
-  String token;
-  String renewalToken;
-  String image;
-  String qrcode;
+  int? id;
+  String? firstname;
+  String? lastname;
+  String? email;
+  String? phone;
+  String? type;
+  String? token;
+  String? renewalToken;
+  String? image;
+  String? qrcode;
 
   User({this.id, this.firstname, this.lastname, this.email, this.phone, this.type, this.token, this.renewalToken,this.image,this.qrcode});
 

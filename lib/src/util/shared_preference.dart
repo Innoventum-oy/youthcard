@@ -6,16 +6,16 @@ class UserPreferences {
   Future<bool> saveUser(User user) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.setInt("id", user.id);
-    prefs.setString("firstname", user.firstname);
-    prefs.setString("lastname", user.lastname);
-    if(user.email.isNotEmpty)prefs.setString("email", user.email);
-    if(user.phone.isNotEmpty) prefs.setString("phone", user.phone);
-    prefs.setString("type", user.type);
-    prefs.setString("token", user.token);
-    prefs.setString("renewalToken", user.renewalToken);
-    prefs.setString("image", user.image);
-    prefs.setString('qrcode',user.qrcode);
+    prefs.setInt("id", user.id!);
+    prefs.setString("firstname", user.firstname ?? 'Unknown');
+    prefs.setString("lastname", user.lastname ?? 'User' );
+     prefs.setString("email", user.email ?? '');
+    prefs.setString("phone",user.phone?.toString()??'');
+    prefs.setString("type", user.type??'');
+    prefs.setString("token", user.token??'');
+    prefs.setString("renewalToken", user.renewalToken??'');
+    prefs.setString("image", user.image??'');
+    prefs.setString('qrcode',user.qrcode??'');
 
     print(user.renewalToken);
 
@@ -25,16 +25,16 @@ class UserPreferences {
   Future<User> getUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    int id = prefs.getInt("id");
-    String image = prefs.getString("image");
-    String qrcode = prefs.getString("qrcode");
-    String firstname = prefs.getString("firstname");
-    String lastname = prefs.getString("lastname");
-    String email = prefs.getString("email");
-    String phone = prefs.getString("phone");
-    String type = prefs.getString("type");
-    String token = prefs.getString("token");
-    String renewalToken = prefs.getString("renewalToken");
+    int? id = prefs.getInt("id");
+    String? image = prefs.getString("image");
+    String? qrcode = prefs.getString("qrcode");
+    String? firstname = prefs.getString("firstname");
+    String? lastname = prefs.getString("lastname");
+    String? email = prefs.getString("email");
+    String? phone = prefs.getString("phone");
+    String? type = prefs.getString("type");
+    String? token = prefs.getString("token");
+    String? renewalToken = prefs.getString("renewalToken");
 
     return User(
         id: id,
@@ -64,7 +64,7 @@ class UserPreferences {
 
   Future<String> getToken(args) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("token");
+    String token = prefs.getString("token").toString();
     return token;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/auth.dart';
@@ -15,7 +15,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final formKey = new GlobalKey<FormState>();
 
-  String _username, _password;
+  String? _username, _password;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class _LoginState extends State<Login> {
     final passwordField = TextFormField(
       autofocus: false,
       obscureText: true,
-      validator: (value) => value.isEmpty ? "Please enter password" : null,
+      validator: (value) => value!.isEmpty ? "Please enter password" : null,
       onSaved: (value) => _password = value,
       decoration: buildInputDecoration("Confirm password", Icons.lock),
     );
@@ -78,11 +78,11 @@ class _LoginState extends State<Login> {
     var doLogin = () {
       final form = formKey.currentState;
 
-      if (form.validate()) {
+      if (form!.validate()) {
         form.save();
 
         final Future<Map<String, dynamic>> successfulMessage =
-        auth.login(_username, _password);
+        auth.login(_username!, _password!);
 
         successfulMessage.then((response) {
           if (response['status']) {

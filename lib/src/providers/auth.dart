@@ -60,11 +60,13 @@ class AuthProvider with ChangeNotifier {
 
       result = {'status': true, 'message': 'Success', 'user': authUser};
     } else {
+      if(response.body!="")
+      print(response.body);
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();
       result = {
         'status': false,
-        'message': json.decode(response.body)['error']
+        'message': response.body!="" ? json.decode(response.body)['error'] : 'Login failed'
       };
     }
     return result;
@@ -109,7 +111,7 @@ class AuthProvider with ChangeNotifier {
     return result;
 
   }
-  Future<Map<String, dynamic>> register(String email, String password, String passwordConfirmation) async {
+  Future<Map<String, dynamic>>? register(String email, String password, String passwordConfirmation) async {
 
     final Map<String, dynamic> registrationData = {
       'user': {
@@ -122,7 +124,7 @@ class AuthProvider with ChangeNotifier {
         body: json.encode(registrationData),
         headers: {'Content-Type': 'application/json'})
         .then(onValue)
-        .catchError(onError);
+        .catchError(onError) as Map<String,dynamic>;
   }
    void cancellogin()
   {

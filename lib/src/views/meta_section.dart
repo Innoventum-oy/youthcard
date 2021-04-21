@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/util/utils.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
 class MetaSection extends StatelessWidget {
   final dynamic data;
 
@@ -7,18 +9,23 @@ class MetaSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          "About",
+          AppLocalizations.of(context)!.about,
           style: TextStyle(color: Colors.white),
         ),
         Container(
           height: 8.0,
         ),
-        _getSectionOrContainer('Original Title', 'original_title'),
-        _getSectionOrContainer('Original Title', 'original_name'),
+        _parseHtml(data['data']['contactinfo']?? ''),
+        _getSectionOrContainer(AppLocalizations.of(context)!.address,'address',),
+        _getSectionOrContainer(AppLocalizations.of(context)!.postcode,'postcode'),
+        _getSectionOrContainer(AppLocalizations.of(context)!.city,'city'),
+
+      /*  _getSectionOrContainer('Original Title', 'original_name'),
         _getSectionOrContainer('Status', 'status'),
         _getSectionOrContainer('Runtime', 'runtime',
             formatterFunction: formatRuntime),
@@ -44,7 +51,7 @@ class MetaSection extends StatelessWidget {
             formatterFunction: formatNumberToDollars),
         _getSectionOrContainer('Homepage', 'homepage', isLink: true),
         _getSectionOrContainer('Imdb', 'imdb_id',
-            formatterFunction: getImdbUrl, isLink: true),
+            formatterFunction: getImdbUrl, isLink: true),*/
       ],
     );
   }
@@ -58,20 +65,30 @@ class MetaSection extends StatelessWidget {
 
   Widget _getSectionOrContainer(String title, String content,
       {dynamic formatterFunction, bool isLink: false}) {
-    return data[content] == null
+
+
+    print('_getSectionOrContainer called with title '+title+', content '+content);
+   // print('value is:'+data[content].toString());
+    data.forEach((key, value) {print('$key = $value');});
+    return data['data'][content] == null
         ? Container()
         : _getMetaInfoSection(
         title,
         (formatterFunction != null
-            ? formatterFunction(data[content])
-            : data[content]),
+            ? formatterFunction(data['data'][content])
+            : data['data'][content]),
         isLink: isLink);
   }
-
+  Widget _parseHtml(content){
+    print('returning parsed content for '+content.toString());
+    return Html(
+        data: content
+    );
+  }
   Widget _getMetaInfoSection(String title, String content,
       {bool isLink: false}) {
     if (content == null) return Container();
-
+    print('getMetaInfoSection called for '+title);
     var contentSection = Expanded(
       flex: 4,
       child: GestureDetector(

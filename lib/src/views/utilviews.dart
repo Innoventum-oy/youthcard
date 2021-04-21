@@ -58,11 +58,11 @@ class TextBubble extends StatelessWidget {
 class FittedCircleAvatar extends StatelessWidget {
   /// Creates a circle that represents a user.
   const FittedCircleAvatar({
-    Key key,
-    this.child,
-    this.backgroundColor,
-    this.backgroundImage,
-    this.foregroundColor,
+    Key? key,
+    required this.child,
+    required this.backgroundColor,
+    required this.backgroundImage,
+    required this.foregroundColor,
     this.radius: 20.0,
     this.fit: BoxFit.cover,
   }) : super(key: key);
@@ -106,7 +106,7 @@ class FittedCircleAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     assert(debugCheckHasMediaQuery(context));
     final ThemeData theme = Theme.of(context);
-    TextStyle textStyle = theme.primaryTextTheme.title;
+    TextStyle textStyle = theme.primaryTextTheme.title!;
     if (foregroundColor != null) {
       textStyle = textStyle.copyWith(color: foregroundColor);
     } else if (backgroundColor != null) {
@@ -124,7 +124,7 @@ class FittedCircleAvatar extends StatelessWidget {
       height: radius * 2.0,
       duration: kThemeChangeDuration,
       decoration: BoxDecoration(
-        color: backgroundColor ?? theme.primaryColor,
+        color: backgroundColor,
         image: backgroundImage != null
             ? DecorationImage(
           image: backgroundImage,

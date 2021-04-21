@@ -18,17 +18,24 @@ class ApiClient {
 
   Future<dynamic> _getJson(Uri uri) async {
     var response = await http.get(uri);
-   return(json.decode(response.body));
+    Map<String,dynamic> body = json.decode(response.body);
+    print('GETJSON DATA RECEIVED:');
+    body.forEach((key,value){
+      if(key!='data') print('$key = $value');
+    });
+    print('END GETJSON');
+   return(body);
 
   }
 
 
-  Future<List<Activity>> loadActivities(Map params) async {
+  Future<List<Activity>> loadActivities(Map<String,dynamic> params) async {
+    //debug: print params
     params.forEach((key, value) {print('$key = $value');});
     var url = Uri.https(baseUrl, 'api/activity/',
         params);
-
     return _getJson(url).then((json) => json['data']).then((data) {
+      //print(data);
       return data
         .map<Activity>((data) => Activity.fromJson(data))
         .toList();
@@ -38,13 +45,17 @@ class ApiClient {
 
   Future<dynamic> getActivityDetails(int activityId, User user) async {
 
-    var url = Uri.https(baseUrl, 'api/activity/$activityId', { 'api-key': user.token});
+    var url = Uri.https(baseUrl, 'api/activity/$activityId', { 'api-key': user.token,'api_key':user.token});
 
-    return _getJson(url);
+    return _getJson(url).then((json) => json['data']).then((data) {
+       // print(data);
+        return data;
+      });
+
   }
 
   Future<dynamic> getImageDetails(int imageId, User user) async {
-    var url = Uri.https(baseUrl, 'api/image/$imageId', { 'api-key': user.token});
+    var url = Uri.https(baseUrl, 'api/image/$imageId', { 'api-key': user.token,'api_key':user.token});
 
     return _getJson(url);
   }

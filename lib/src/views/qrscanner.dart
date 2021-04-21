@@ -21,7 +21,7 @@ const backCamera = 'BACK CAMERA';
 
 class QRScanner extends StatefulWidget {
   const QRScanner({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -29,15 +29,15 @@ class QRScanner extends StatefulWidget {
 }
 
 class _QRScannerState extends State<QRScanner> {
-  String sentcode =null;
-  Future<Position> _currentPosition;
-  String _latitude;
-  String _longitude;
-  String _currentAddress;
-  Barcode result;
+  String? sentcode;
+  Future<Position>? _currentPosition;
+  String? _latitude;
+  String? _longitude;
+  String? _currentAddress;
+  Barcode? result;
   var flashState = flashOn;
   var cameraState = frontCamera;
-  QRViewController controller;
+  QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   final Geolocator geolocator = Geolocator();
  // User user;
@@ -48,9 +48,9 @@ class _QRScannerState extends State<QRScanner> {
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      controller.pauseCamera();
+      controller!.pauseCamera();
     } else if (Platform.isIOS) {
-      controller.resumeCamera();
+      controller!.resumeCamera();
     }
   }
   Notify(String text) {
@@ -83,7 +83,7 @@ class _QRScannerState extends State<QRScanner> {
       print('setting sentcode to '+scannedcode.code);
     }
     else {
-      print('code ' + sentcode + ' already sent to server, returning false from sendData');
+      print('code ' + sentcode! + ' already sent to server, returning false from sendData');
       return 'error';
     }
     Map<String, String> params ={
@@ -92,15 +92,15 @@ class _QRScannerState extends State<QRScanner> {
         'qr':scannedcode.code,
         'scansource':'app',
       'method':'json',
-        'latitude': _latitude,
-        'longitude':  _longitude
+        'latitude': _latitude.toString(),
+        'longitude':  _longitude.toString()
 
     };
    ;
     var url = Uri.https(AppUrl.baseURL,'/api/dispatcher/activity/',params);
-    print('Sending scanned code '+scannedcode.code+' to url '+url.toString()+', using token '+user.token);
-    print('Using latitude '+_latitude+', longitude '+_longitude);
-    var response = await http.get(url,headers:{ 'api_key':user.token});
+    print('Sending scanned code '+scannedcode.code+' to url '+url.toString()+', using token '+user.token!);
+    print('Using latitude '+_latitude!+', longitude '+_longitude!);
+    var response = await http.get(url,headers:{ 'api_key':user.token!});
 
     this.setState(() {
       if(response.body.isNotEmpty) {
@@ -199,7 +199,7 @@ class _QRScannerState extends State<QRScanner> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (controller != null) {
-                              controller.toggleFlash();
+                              controller!.toggleFlash();
                               if (_isFlashOn(flashState)) {
                                 setState(() {
                                   flashState = flashOff;
@@ -220,7 +220,7 @@ class _QRScannerState extends State<QRScanner> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (controller != null) {
-                              controller.flipCamera();
+                              controller!.flipCamera();
                               if (_isBackCamera(cameraState)) {
                                 setState(() {
                                   cameraState = frontCamera;
@@ -314,7 +314,7 @@ class _QRScannerState extends State<QRScanner> {
 
   @override
   void dispose() {
-    controller.dispose();
+    controller!.dispose();
     super.dispose();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
 import 'package:youth_card/src/views/dashboard.dart';
 import 'package:youth_card/src/views/loginform.dart';
 import 'package:youth_card/src/views/register.dart';
@@ -22,7 +23,7 @@ class YouthCard extends StatelessWidget {
   // This widget is the root of Youth Card application.
   @override
   Widget build(BuildContext context) {
-    Future<User> getUserData() => UserPreferences().getUser();
+    Future<User>? getUserData() => UserPreferences().getUser();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
@@ -30,6 +31,8 @@ class YouthCard extends StatelessWidget {
       ],
     child: MaterialApp(
       title: 'Youth Card',
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -55,13 +58,14 @@ class YouthCard extends StatelessWidget {
             case ConnectionState.waiting:
               return CircularProgressIndicator();
             default:
+              User userdata = snapshot.data as User;
               if (snapshot.hasError)
                 return Text('Error: ${snapshot.error}');
-              else if (snapshot.data.token == null)
+              else if (userdata.token == null)
                 return Login();
               else
                 UserPreferences().removeUser();
-            return Welcome(user: snapshot.data);
+            return Welcome(user: snapshot.data as User);
           }
       }),
         routes: {
@@ -74,7 +78,7 @@ class YouthCard extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
+  HomePage({Key? key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -85,7 +89,7 @@ class HomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
+  final String? title;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -105,7 +109,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(widget.title.toString()),
       ),
       body: Container(
         decoration: BoxDecoration(

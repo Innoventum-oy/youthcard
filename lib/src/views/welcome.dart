@@ -3,29 +3,17 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/views/dashboard.dart';
-import 'package:splashscreen/splashscreen.dart';
+//import 'package:splashscreen/splashscreen.dart';
 class Welcome extends StatelessWidget {
   final User user;
 
-  Welcome({Key key, @required this.user}) : super(key: key);
+  Welcome({Key? key , required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
 
     Provider.of<UserProvider>(context).setUser(user);
 
-    return new SplashScreen(
-      seconds: 14,
-      navigateAfterSeconds: new DashBoard(),
-      title: new Text(
-        'Welcome to Youthcard',
-        style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-      ),
-      image: new Image.asset('images/splash.png'),
-      backgroundColor: Colors.white,
-      loaderColor: Colors.red,
-    );
-/*
     return Scaffold(
       body: Container(
         child: Center(
@@ -45,6 +33,5 @@ class Welcome extends StatelessWidget {
         ),
       );
 
- */
   } // Widget
 } // Class

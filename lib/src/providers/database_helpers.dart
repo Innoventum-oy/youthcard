@@ -12,14 +12,14 @@ final String columnFrequency = 'frequency';
 // data model class
 class Word {
 
-  int id;
-  String word;
-  int frequency;
+  int? id;
+  String? word;
+  int? frequency;
 
   Word();
 
   // convenience constructor to create a Word object
-  Word.fromMap(Map<String, dynamic> map) {
+  Word.fromMap(Map<dynamic, dynamic> map) {
     id = map[columnId];
     word = map[columnWord];
     frequency = map[columnFrequency];
@@ -51,11 +51,11 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
   // Only allow a single open connection to the database.
-  static Database _database;
+  static Database? _database;
   Future<Database> get database async {
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   // open the database
@@ -88,7 +88,7 @@ class DatabaseHelper {
     return id;
   }
 
-  Future<Word> queryWord(int id) async {
+  Future<Word?> queryWord(int id) async {
     Database db = await database;
     List<Map> maps = await db.query(tableWords,
         columns: [columnId, columnWord, columnFrequency],

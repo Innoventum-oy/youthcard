@@ -27,9 +27,9 @@ class _MyCardState extends State<MyCard> {
         children: [
           SizedBox(height: 50,),
            Center(
-               child:user.image!=null ? Image.network(user.image,height:150) : Image.asset('images/profile.png')
+               child:user.image!=null ? Image.network(user.image!,height:150) : Image.asset('images/profile.png')
            ),
-          Center(child:user.email!=null ? Text(user.email) : Text('Unknown user')
+          Center(child:user.email!=null ? Text(user.email!) : Text('Unknown user')
          ),
 
           SizedBox(height: 50),
