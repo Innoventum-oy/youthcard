@@ -27,16 +27,16 @@ class Activity {
      Map<String, dynamic> responseData =  response['data'];
      // print('creating activity '+responseData['objectid'].toString()+' fromJSON');
 
-   // responseData.forEach((key, value) {print('$key = $value');});
+    responseData.forEach((key, value) {print('$key = $value');});
       Map<String, dynamic>? cover = responseData['coverpicture'] ?? null;
-      //print(responseData.toString());
+    // print(responseData.toString());
     return Activity(
       id: responseData['objectid'] !=null ? int.parse(responseData['objectid']) : null,
       name: responseData['name'],
       description: responseData['description'],
       startdate: responseData['startdate']!=null ? DateFormat('dd.MM.yyyy HH:mm:ss').parse(responseData['startdate'])  : null,
       enddate: responseData['enddate']!=null ?DateFormat('dd.MM.yyyy HH:mm:ss').parse(responseData['enddate']) : null ,
-      nexteventdate: responseData['nexteventdate']!=null ? DateFormat('yyyy-MM-dd HH:mm:ss').parse(responseData['nexteventdate']) :null ,
+      nexteventdate: responseData['nexteventdate']!=false ? DateFormat('yyyy-MM-dd HH:mm:ss').parse(responseData['nexteventdate']) :null ,
       address: responseData['address'],
       postcode: responseData['postcode'],
       city: responseData['city'],

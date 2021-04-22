@@ -28,6 +28,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "loading" : MessageLookupByLibrary.simpleMessage("loading"),
     "moreInformation" : MessageLookupByLibrary.simpleMessage("more information"),
     "postcode" : MessageLookupByLibrary.simpleMessage("postcode"),
-    "unnamedActivity" : MessageLookupByLibrary.simpleMessage("Unnamed activity")
+    "unnamedActivity" : MessageLookupByLibrary.simpleMessage("Unnamed activity"),
+    "youthcardDashboard" : MessageLookupByLibrary.simpleMessage("YouthCard")
   };
 }

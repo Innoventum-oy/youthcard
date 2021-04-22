@@ -8,6 +8,8 @@ import 'package:youth_card/src/views/qrscanner.dart';
 import 'package:youth_card/src/views/calendar.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/views/activitylist.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/src/views/settings.dart';
 
 class DashBoard extends StatefulWidget {
   @override
@@ -24,7 +26,7 @@ class _DashBoardState extends State<DashBoard> {
     objectmodel.ImageProvider imageprovider = objectmodel.ImageProvider();
     return Scaffold(
       appBar: AppBar(
-        title: Text("YouthCard Dashboard"),
+        title: Text(AppLocalizations.of(context)!.youthcardDashboard),
         elevation: 0.1,
         actions: [
           IconButton(
@@ -109,6 +111,13 @@ class _DashBoardState extends State<DashBoard> {
               MaterialPageRoute(builder: (context) => ActivityList(provider,imageprovider)),
             );
           }, child: Text("Discover"), ),
+
+            ElevatedButton(onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsScreen()),
+              );
+            }, child: Text("Settings"), ),
 
           ElevatedButton(onPressed: (){
             auth.logout(user);

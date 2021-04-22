@@ -6,5 +6,6 @@
   "about" : "tietoja",
   "address" : "osoite",
   "postcode" : "postinumero",
-  "city" : "kaupunki"
+  "city" : "kaupunki",
+  "youthcardDashboard" : "Nuorisokortti"
 }

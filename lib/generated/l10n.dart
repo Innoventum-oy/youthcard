@@ -126,6 +126,16 @@ class S {
       args: [],
     );
   }
+
+  /// `YouthCard`
+  String get youthcardDashboard {
+    return Intl.message(
+      'YouthCard',
+      name: 'youthcardDashboard',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

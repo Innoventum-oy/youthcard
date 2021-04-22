@@ -167,7 +167,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
 
 
     return new Scaffold(
-        appBar: new AppBar(title: new Text("Activities")),
+        appBar: new AppBar(title: new Text("Activity Calendar")),
         body: _getCalendarSection(user)
     );
   }
@@ -209,11 +209,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
     final kNow = DateTime.now();
      kFirstDay = DateTime(kNow.year, kNow.month - 1, kNow.day);
      kLastDay = DateTime(kNow.year, kNow.month + 3, kNow.day);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Activity Calendar'),
-      ),
-      body: Column(
+    return Column(
         children: [
           TableCalendar<Activity>(
             firstDay: kFirstDay ?? kNow,
@@ -274,7 +270,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
             ),
           ),
         ],
-      ),
-    );
+      );
+
   }
 }

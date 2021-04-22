@@ -6,5 +6,6 @@
   "about" : "about",
   "address" : "address",
   "postcode" : "postcode",
-  "city" : "city"
+  "city" : "city",
+  "youthcardDashboard": "YouthCard"
 }

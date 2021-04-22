@@ -28,6 +28,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "loading" : MessageLookupByLibrary.simpleMessage("ladataan"),
     "moreInformation" : MessageLookupByLibrary.simpleMessage("lisätiedot"),
     "postcode" : MessageLookupByLibrary.simpleMessage("postinumero"),
-    "unnamedActivity" : MessageLookupByLibrary.simpleMessage("Nimetön tapahtuma")
+    "unnamedActivity" : MessageLookupByLibrary.simpleMessage("Nimetön tapahtuma"),
+    "youthcardDashboard" : MessageLookupByLibrary.simpleMessage("Nuorisokortti")
   };
 }
