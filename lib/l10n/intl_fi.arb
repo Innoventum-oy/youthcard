@@ -1,11 +1,76 @@
 {
-  "unnamedActivity": "Nimetön tapahtuma",
-  "loading" : "ladataan",
-  "contactInformation" : "yhteystiedot",
-  "moreInformation" : "lisätiedot",
   "about" : "tietoja",
+  "activities":"tapahtumat",
+  "activityCalendar": "Tapahtumakalenteri",
   "address" : "osoite",
-  "postcode" : "postinumero",
+  "authenticating" : "kirjautuminen käynnissä",
+
+  "btnLogin" : "Kirjaudu",
+  "btnReturn" : "takaisin",
+  "btnSend" : "lähetä",
+  "btnSetNewPassword" : "Aseta salasana",
+
+  "calendar": "Kalenteri",
+  "cancel" : "peruuta",
   "city" : "kaupunki",
-  "youthcardDashboard" : "Nuorisokortti"
+  "codeScanned": "koodi skannattu" ,
+  "confirmationKey" : "Vahvistusavain",
+  "confirmPassword" : "vahvista salasana",
+  "contactInformation" : "yhteystiedot",
+  "createAccount" : "Luo käyttäjätili",
+
+  "discover" : "Tapahtumat",
+
+  "email" : "Sähköpostiosoite",
+  "emailOrPhoneNumber" : "Puhelinnumero tai sähköpostiosoite",
+  "eventLog" : "Tapahtumaloki",
+  "errorsInForm": "Lomakkeen sisällössä on virheitä",
+
+  "flashOn" : "Valo päälle",
+  "flashOff" : "Valo pois",
+  "forgotPassword" : "Unohditko salasanan?",
+  "frontCamera" : "Etukamera",
+
+  "getCode" : "Pyydä koodi",
+  "loading" : "ladataan",
+  "login" : "Kirjautuminen",
+  "loginFailed" : "kirjautuminen epäonnistui",
+  "logout" : "kirjaudu ulos",
+
+  "moreInformation" : "lisätiedot",
+  "myActivities": "Omat harrastukset",
+  "myCard" : "Oma kortti",
+
+  "password" : "salasana",
+  "passwordChanged" : "Salasana vaihdettu",
+  "passwordIsRequired" : "Salasana on pakollinen",
+  "pause" : "tauota",
+  "phone" : "puhelin",
+  "pleaseCompleteFormProperly" : "Täytäthän kaikki vaadittavat kohdat",
+  "pleaseEnterPassword" : "Anna salasana",
+  "pleaseEnterConfirmationKey": "Anna vahvistuskoodi",
+  "pleaseWaitRegistering" : "Käyttäjätiliä rekisteröidään",
+  "postcode" : "postinumero",
+  "previous" : "Edellinen",
+  "processing" : "käsitellään",
+
+  "qrScanner" : "QR-skanneri",
+
+  "readMore" : "Lue lisää",
+  "rearCamera" : "Takakamera",
+  "registrationFailed" : "Tilin luonti epäonnistui",
+  "requestFailed" : "Pyyntö epaonnistui",
+  "requestNewCode" : "Pyydä uusi koodi",
+  "resume" : "jatka",
+  "retrievingCoordinates" : "Haetaan sijaintia",
+
+  "scanCode"  : "skannaa koodi",
+  "settings" : "asetukset",
+  "signUp" : "ilmoittaudu",
+
+  "unknownUser" : "tuntematon käyttäjä",
+  "unnamedActivity": "Nimetön tapahtuma",
+
+  "youthcardLoginTitle" : "Nuorisokortti - kirjaudu sisään",
+  "youthcardDashboard": "Nuorisokortti"
 }

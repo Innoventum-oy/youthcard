@@ -10,16 +10,16 @@ import 'package:youth_card/src/views/activitylist_item.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-class ActivityList extends StatefulWidget {
+class ActivityChooserList extends StatefulWidget {
   final objectmodel.ActivityProvider provider;
   final objectmodel.ImageProvider imageprovider;
-  String viewtype;
-  ActivityList(this.provider,this.imageprovider,{this.viewtype='all'});
+
+  ActivityChooserList(this.provider,this.imageprovider);
   @override
-  _ActivityListState createState() => _ActivityListState();
+  _ActivityChooserListState createState() => _ActivityChooserListState();
 }
 
-class _ActivityListState extends State<ActivityList>  {
+class _ActivityChooserListState extends State<ActivityChooserList>  {
 
   Map<String,dynamic>? map;
   List<Activity> data =[];
@@ -46,7 +46,7 @@ class _ActivityListState extends State<ActivityList>  {
     _isLoading = true;
     int offset = limit * _pageNumber;
     DateTime now = DateTime.now();
-    final Map<String, String> params = {
+    Map<String, String> params = {
       'activitystatus': 'active',
       'activitytype': 'activity',
       'limit' : limit.toString(),
@@ -56,17 +56,6 @@ class _ActivityListState extends State<ActivityList>  {
       'api_key':user.token,
       'sort' : 'nexteventdate',
     };
-    print("activitylist type:"+widget.viewtype);
-
-    switch(widget.viewtype)
-    {
-      case 'locations':
-        params['activitytype'] = 'location';
-        break;
-      case 'own':
-        params['accesslevel']='modify';
-     //   params['limit']='NULL';
-    }
     print('Loading page $_pageNumber');
     try {
 
@@ -103,48 +92,48 @@ class _ActivityListState extends State<ActivityList>  {
 
   @override
   Widget build(BuildContext context){
-  print('viewtype: '+widget.viewtype);
-  User user = Provider.of<UserProvider>(context,listen: false).user;
+
+    User user = Provider.of<UserProvider>(context,listen: false).user;
     return new Scaffold(
-      appBar: new AppBar(title: new Text(AppLocalizations.of(context)!.activities)),
-      body: _getContentSection(user)
+        appBar: new AppBar(title: new Text(AppLocalizations.of(context)!.activities)),
+        body: _getContentSection(user)
     );
   }
 
   Widget _getContentSection(user) {
-   // User user = Provider.of<UserProvider>(context).user;
+    // User user = Provider.of<UserProvider>(context).user;
 
     switch (_loadingState) {
       case LoadingState.DONE:
 
-        //data loaded
+      //data loaded
         return ListView.builder(
             itemCount: data.length,
             itemBuilder: (BuildContext context, int index) {
               if (!_isLoading && index > (data.length * 0.7)) {
-              print('calling loadnextpage, user token is '+user.token);
+                print('calling loadnextpage, user token is '+user.token);
                 _loadNextPage(user);
               }
 
               return ActivityListItem(data[index]);
             });
       case LoadingState.ERROR:
-        //data loading returned error state
+      //data loading returned error state
         return Align(alignment:Alignment.center,
-            child:ListTile(
-              leading: Icon(Icons.error),
-              title: Text('Sorry, there was an error loading the data: $errormessage'),
-            ),
+          child:ListTile(
+            leading: Icon(Icons.error),
+            title: Text('Sorry, there was an error loading the data: $errormessage'),
+          ),
         );
 
       case LoadingState.LOADING:
-        //data loading in progress
+      //data loading in progress
         return Align(alignment:Alignment.center,
           child:Center(
             child:ListTile(
               leading:CircularProgressIndicator(),
               title: Text(AppLocalizations.of(context)!.loading,textAlign: TextAlign.center),
-          ),
+            ),
           ),
         );
       default:

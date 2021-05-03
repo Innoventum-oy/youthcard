@@ -69,7 +69,8 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
       'startfrom': DateFormat('yyyy-MM-dd').format(kFirstDay ?? now),
       'api-key': user.token,
       'api_key': user.token,
-      'sort': 'nexteventdate',
+    //  'fields': ['id','startdate','enddate','']
+     // 'sort': 'nexteventdate',
     };
     print('Loading page $_pageNumber');
     try {
@@ -86,7 +87,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
               _events[item.nexteventdate??now] = [];
             }
             _events[item.nexteventdate]!.add(item);
-            print('populating date ' + item.nexteventdate.toString());
+         //   print('populating date ' + item.nexteventdate.toString());
           }
         };
         print(_events);

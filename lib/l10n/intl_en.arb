@@ -1,11 +1,75 @@
 {
-  "unnamedActivity": "Unnamed activity",
-  "loading" : "loading",
-  "contactInformation" : "contact information",
-  "moreInformation" : "more information",
   "about" : "about",
+  "activities" : "activities",
+  "activityCalendar": "Activity calendar",
   "address" : "address",
-  "postcode" : "postcode",
+  "authenticating" : "Authenticating ... Please wait",
+
+  "btnLogin" : "Login",
+  "btnReturn" : "return",
+  "btnSend" : "Send",
+  "btnSetNewPassword": "Set Password",
+  "calendar": "calendar",
+  "cancel" : "cancel",
   "city" : "city",
-  "youthcardDashboard": "YouthCard"
+  "codeScanned" : "code scanned",
+  "confirmPassword" : "confirm password",
+  "confirmationKey" : "Confirmation key",
+  "contactInformation" : "contact information",
+  "createAccount" : "Create account",
+  "discover" : "discover",
+
+  "email": "Email",
+  "emailOrPhoneNumber" : "Email or Phone number",
+  "eventLog" : "Event Log",
+  "errorsInForm" : "Errors in form contents",
+
+  "flashOn" : "Flash On",
+  "flashOff" : "Flash Off",
+  "forgotPassword" : "Forgot password?",
+  "frontCamera" : "Front Camera",
+
+  "getCode" : "Get code",
+  "loading" : "loading",
+  "login" : "Login",
+  "loginFailed" : "Login failed",
+  "logout" : "logout",
+
+  "moreInformation" : "more information",
+  "myActivities" : "my activities",
+  "myCard" : "My Card",
+
+  "password" : "password",
+  "passwordChanged" : "Password changed",
+  "passwordIsRequired": "Password is required",
+  "pause" : "pause",
+  "phone" : "phone",
+  "pleaseCompleteFormProperly" : "Please complete the form properly",
+  "pleaseEnterPassword" : "Please enter password",
+  "pleaseEnterConfirmationKey": "Please enter confirmation key",
+  "pleaseWaitRegistering" : "Registering account, please wait",
+  "postcode" : "postcode",
+  "previous" : "Previous",
+  "processing" : "processing",
+
+  "qrScanner" : "QR Scanner",
+
+  "readMore" : "Read more",
+  "rearCamera" : "Rear Camera",
+  "registrationFailed" : "Registration failed",
+  "requestFailed" : "Request failed",
+  "requestNewCode" : "Get new code",
+  "requestNewPasswordTitle" : "Get new Password",
+  "resume" : "Resume",
+  "retrievingCoordinates" : "Retrieving coordinates",
+
+  "scanCode": "Scan Code",
+  "settings" : "settings",
+  "signUp"  : "Sign up",
+
+  "unnamedActivity": "Unnamed activity",
+  "unknownUser" : "unknown user",
+
+  "youthcardLoginTitle" : "Youth Card Login",
+  "youthcardDashboard": "Youth Card"
 }

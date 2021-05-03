@@ -6,6 +6,7 @@ import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/validators.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -25,22 +26,22 @@ class _LoginState extends State<Login> {
       autofocus: false,
       validator: validateEmail,
       onSaved: (value) => _username = value,
-      decoration: buildInputDecoration("Confirm password", Icons.email),
+      decoration: buildInputDecoration(AppLocalizations.of(context)!.email, Icons.email),
     );
 
     final passwordField = TextFormField(
       autofocus: false,
       obscureText: true,
-      validator: (value) => value!.isEmpty ? "Please enter password" : null,
+      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.pleaseEnterPassword : null,
       onSaved: (value) => _password = value,
-      decoration: buildInputDecoration("Confirm password", Icons.lock),
+      decoration: buildInputDecoration(AppLocalizations.of(context)!.confirmPassword, Icons.lock),
     );
 
     var loading = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CircularProgressIndicator(),
-        Text(" Authenticating ... Please wait")
+        Text(AppLocalizations.of(context)!.authenticating)
       ],
     );
 
@@ -49,25 +50,25 @@ class _LoginState extends State<Login> {
       children: <Widget>[
         TextButton(
 
-          child: Text("Forgot password?",
+          child: Text(AppLocalizations.of(context)!.forgotPassword,
               style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
-//            Navigator.pushReplacementNamed(context, '/reset-password');
+            Navigator.pushReplacementNamed(context, '/reset-password');
           },
         ),
         TextButton(
 
-          child: Text("Sign up", style: TextStyle(fontWeight: FontWeight.w300)),
+          child: Text(AppLocalizations.of(context)!.signUp, style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
             Navigator.pushNamed(context, '/register');
           },
         ),
         TextButton(
 
-          child: Text("Cancel",
+          child: Text(AppLocalizations.of(context)!.cancel,
               style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () async {
-            print('cancelling login');
+
             //auth.logout(user);
             auth.cancellogin();
           },
@@ -91,7 +92,7 @@ class _LoginState extends State<Login> {
             Navigator.pushReplacementNamed(context, '/dashboard');
           } else {
             Flushbar(
-              title: "Failed Login",
+              title: AppLocalizations.of(context)!.loginFailed,
               message: response['message'].toString(),
               duration: Duration(seconds: 3),
             ).show(context);
@@ -105,7 +106,7 @@ class _LoginState extends State<Login> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("YouthCard - Login"),
+          title: Text(AppLocalizations.of(context)!.youthcardLoginTitle),
           elevation: 0.1,
         ),
         body: Container(
@@ -120,13 +121,13 @@ class _LoginState extends State<Login> {
                 SizedBox(height: 5.0),
                 usernameField,
                 SizedBox(height: 20.0),
-                label("Password"),
+                label(AppLocalizations.of(context)!.password),
                 SizedBox(height: 5.0),
                 passwordField,
                 SizedBox(height: 20.0),
                 auth.loggedInStatus == Status.Authenticating
                     ? loading
-                    : longButtons("Login", doLogin),
+                    : longButtons(AppLocalizations.of(context)!.btnLogin, doLogin),
                 SizedBox(height: 5.0),
                 forgotLabel
               ],

@@ -28,6 +28,7 @@ class User {
         qrcode: responseData['qrcode'],
         image: responseData['image'],
     );
+
   }
 }
 

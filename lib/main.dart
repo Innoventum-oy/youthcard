@@ -3,6 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
 import 'package:youth_card/src/views/dashboard.dart';
 import 'package:youth_card/src/views/loginform.dart';
 import 'package:youth_card/src/views/register.dart';
+import 'package:youth_card/src/views/passwordform.dart';
+
 import 'package:youth_card/src/views/welcome.dart';
 import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
@@ -23,7 +25,9 @@ class YouthCard extends StatelessWidget {
   // This widget is the root of Youth Card application.
   @override
   Widget build(BuildContext context) {
+    print('build called for youthcard class');
     Future<User>? getUserData() => UserPreferences().getUser();
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
@@ -69,14 +73,18 @@ class YouthCard extends StatelessWidget {
           }
       }),
         routes: {
+
       '/dashboard': (context) => DashBoard(),
       '/login': (context) => Login(),
       '/register': (context) => Register(),
+          '/reset-password': (context) => ResetPassword(),
       }),
     );
   }
 }
 
+/*
+this homepage implementation is not used:
 class HomePage extends StatefulWidget {
   HomePage({Key? key, this.title}) : super(key: key);
 
@@ -143,5 +151,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
+*/
 

@@ -17,8 +17,10 @@ class Activity {
   String? coverpicture;
   String? coverpictureurl;
   String? qrcode;
+  int accesslevel;
+  bool registration;
 
-  Activity({this.id, this.name, this.description, this.startdate, this.enddate, this.nexteventdate, this.address, this.postcode,this.city,this.latitude,this.longitude,this.coverpicture,this.coverpictureurl,this.qrcode});
+  Activity({this.id, this.name, this.description, this.startdate, this.enddate, this.nexteventdate, this.address, this.postcode,this.city,this.latitude,this.longitude,this.coverpicture,this.coverpictureurl,this.qrcode,this.registration=false,this.accesslevel=0});
 
 
 
@@ -27,25 +29,30 @@ class Activity {
      Map<String, dynamic> responseData =  response['data'];
      // print('creating activity '+responseData['objectid'].toString()+' fromJSON');
 
-    responseData.forEach((key, value) {print('$key = $value');});
+
       Map<String, dynamic>? cover = responseData['coverpicture'] ?? null;
-    // print(responseData.toString());
-    return Activity(
-      id: responseData['objectid'] !=null ? int.parse(responseData['objectid']) : null,
-      name: responseData['name'],
-      description: responseData['description'],
-      startdate: responseData['startdate']!=null ? DateFormat('dd.MM.yyyy HH:mm:ss').parse(responseData['startdate'])  : null,
-      enddate: responseData['enddate']!=null ?DateFormat('dd.MM.yyyy HH:mm:ss').parse(responseData['enddate']) : null ,
-      nexteventdate: responseData['nexteventdate']!=false ? DateFormat('yyyy-MM-dd HH:mm:ss').parse(responseData['nexteventdate']) :null ,
-      address: responseData['address'],
-      postcode: responseData['postcode'],
-      city: responseData['city'],
-      latitude: responseData['latitude'],
-      longitude: responseData['longitude'],
-      qrcode: responseData['qrcode'],
-      coverpicture: cover == null ? 'default' : cover['objectid'],
-      coverpictureurl: responseData['coverpictureurl'],
-    );
+      if(int.parse(responseData['accesslevel'])>10) {
+        //print("Access to object {$responseData['objectid']}: " + responseData['accesslevel'].toString());
+          responseData.forEach((key, value) { print('$key = $value');});
+      }
+        return Activity(
+            id: responseData['objectid'] !=null ? int.parse(responseData['objectid']) : null,
+            name: responseData['name'],
+            description: responseData['description'],
+            startdate: responseData['startdate']!=null ? DateFormat('dd.MM.yyyy HH:mm:ss').parse(responseData['startdate'])  : null,
+            enddate: responseData['enddate']!=null ?DateFormat('dd.MM.yyyy HH:mm:ss').parse(responseData['enddate']) : null ,
+            nexteventdate: responseData['nexteventdate']!=null ? DateFormat('yyyy-MM-dd HH:mm:ss').parse(responseData['nexteventdate']) :null ,
+            address: responseData['address'],
+            postcode: responseData['postcode'],
+            city: responseData['city'],
+            latitude: responseData['latitude'],
+            longitude: responseData['longitude'],
+            qrcode: responseData['qrcode'],
+            coverpicture: cover == null ? 'default' : cover['objectid'],
+            coverpictureurl: responseData['coverpictureurl'],
+            registration: responseData['registration'] == 'true' || responseData['registration']==true ? true : false,
+            accesslevel:  int.parse(responseData['accesslevel'])
+        );
   }
 
   Map toJson() => {

@@ -48,6 +48,7 @@ dependencies:
   url_launcher: ^6.0.2
   another_flushbar: ^1.10.17
   flutter_html: ^2.0.0-nullsafety.0
+  settings_ui: ^1.0.0
 
 dev_dependencies:
   flutter_test:

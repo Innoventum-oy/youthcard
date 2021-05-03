@@ -7,5 +7,7 @@ class AppUrl {
   static const String logout = "/api/logout";
   static const String register =  "/api/registration";
   static const String forgotPassword =  "/api/forgot-password";
+  static const String requestValidationToken = "/api/dispatcher/registration/";
+  static const String checkValidationToken = "/api/dispatcher/registration/";
 
 }

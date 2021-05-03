@@ -2,6 +2,30 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
+class EventLog{
+  Future<bool> saveMessage(String message) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> currentContent = (prefs.getStringList('eventlog') ?? <String>[]);
+    currentContent.add(message);
+    prefs.setStringList('eventlog',currentContent);
+    return true;
+  }
+
+  void clearLog() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.remove("eventlog");
+
+  }
+
+  Future<List<String>?> getMessages() async
+  {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList('eventlog');
+  }
+
+}
+
 class UserPreferences {
   Future<bool> saveUser(User user) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -19,7 +43,7 @@ class UserPreferences {
 
     print(user.renewalToken);
 
-    return prefs.commit();
+    return true;
   }
 
   Future<User> getUser() async {
@@ -51,7 +75,9 @@ class UserPreferences {
 
   void removeUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    print('removing user from sharedpreferences');
+    prefs.remove('id');
+    prefs.remove('renewalToken');
     prefs.remove("firstname");
     prefs.remove("lastname");
     prefs.remove("email");

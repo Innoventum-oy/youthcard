@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/style.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
@@ -9,7 +10,7 @@ class MetaSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+ // print(data);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -20,7 +21,7 @@ class MetaSection extends StatelessWidget {
         Container(
           height: 8.0,
         ),
-        _parseHtml(data['data']['contactinfo']?? ''),
+        data['data']['contactinfo'].toString().length>0? _parseHtml(data['data']['contactinfo']?? ''):Container(),
         _getSectionOrContainer(AppLocalizations.of(context)!.address,'address',),
         _getSectionOrContainer(AppLocalizations.of(context)!.postcode,'postcode'),
         _getSectionOrContainer(AppLocalizations.of(context)!.city,'city'),
@@ -70,6 +71,8 @@ class MetaSection extends StatelessWidget {
     print('_getSectionOrContainer called with title '+title+', content '+content);
    // print('value is:'+data[content].toString());
     data.forEach((key, value) {print('$key = $value');});
+    print('--DATA--');
+    data['data'].forEach((key, value) {print('$key = $value');});
     return data['data'][content] == null
         ? Container()
         : _getMetaInfoSection(
@@ -82,7 +85,8 @@ class MetaSection extends StatelessWidget {
   Widget _parseHtml(content){
     print('returning parsed content for '+content.toString());
     return Html(
-        data: content
+        data: content,
+      style: {"*" : Style(color:Colors.white)}
     );
   }
   Widget _getMetaInfoSection(String title, String content,
@@ -96,7 +100,7 @@ class MetaSection extends StatelessWidget {
         child: Text(
           content,
           style: TextStyle(
-              color: isLink ? Colors.blue : Colors.white, fontSize: 11.0),
+              color: isLink ? Colors.blue : Colors.white, fontSize: 12.0),
         ),
       ),
     );
@@ -109,7 +113,7 @@ class MetaSection extends StatelessWidget {
               flex: 2,
               child: Text(
                 '$title:',
-                style: TextStyle(color: Colors.grey, fontSize: 11.0),
+                style: TextStyle(color: Colors.white, fontSize: 12.0),
               ),
             ),
             contentSection

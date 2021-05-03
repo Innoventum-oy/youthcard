@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:youth_card/src/objects/activity.dart';
-//import 'package:http/http.dart' as http;
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-
+import 'package:youth_card/src/util/navigator.dart';
 import 'dart:async';
-import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/util/styles.dart';
 import 'package:youth_card/src/views/utilviews.dart';
 import 'package:youth_card/src/views/meta_section.dart';
+import 'package:youth_card/src/views/qrscanner.dart';
 
 class ActivityView extends StatefulWidget {
   final Activity _activity;
@@ -65,7 +64,8 @@ class _ActivityViewState extends State<ActivityView> {
   Widget build(BuildContext context) {
     print('rebuilding activity view');
 
-  final user = Provider.of<UserProvider>(context,listen:false).user;
+
+
     return Scaffold(
         backgroundColor: primary,
         body: CustomScrollView(
@@ -75,7 +75,35 @@ class _ActivityViewState extends State<ActivityView> {
           ],
         ));
   }
+  List<Widget> buttons(Activity activity)
+  {
+    final user = Provider.of<UserProvider>(context,listen:false).user;
+    List<Widget> buttons=[];
 
+
+    if(activity.registration) {
+      buttons.add(TextButton(
+        child: Text(AppLocalizations.of(context)!.signUp),
+        onPressed: () {
+          print('signing up for activity {$activity.name}');
+          _apiClient.registerForActivity(activity.id, user);
+        },
+      ));
+      buttons.add(const SizedBox(width: 8));
+    }
+    if(activity.accesslevel >= 20) {
+      buttons.add(TextButton(
+        child: Text(AppLocalizations.of(context)!.qrScanner),
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => QRScanner(activity: activity)));
+        },
+      ));
+      buttons.add(const SizedBox(width: 8));
+    }
+    return buttons;
+  }
   Widget _buildAppBar(Activity activity) {
     return SliverAppBar(
       expandedHeight: 240.0,
@@ -159,7 +187,7 @@ class _ActivityViewState extends State<ActivityView> {
    // print('called _loadDetails for activity '+widget._activity.id.toString()+', awaiting provider for details!');
     try {
        dynamic details = await widget.provider.getDetails(widget._activity.id!,user);
-     // print(details.toString());
+     //print(details.toString());
      // print(details.runtimeType);
       setState(() => _activityDetails = details.first);
     } catch (e,stack) {
@@ -169,6 +197,13 @@ class _ActivityViewState extends State<ActivityView> {
     }
   }
   Widget _buildContentSection(Activity activity) {
+
+    int calculateDifference(DateTime date) {
+      DateTime now = DateTime.now();
+      return DateTime(date.year, date.month, date.day).difference(DateTime(now.year, now.month, now.day)).inDays;
+    }
+
+    String dateinfo = activity.nexteventdate==null ? '':(calculateDifference(activity.nexteventdate!)!=0 ? DateFormat('kk:mm dd.MM.yyyy').format(activity.nexteventdate!) : 'Today '+DateFormat('kk:mm ').format(activity.startdate!));
     return SliverList(
       delegate: SliverChildListDelegate(<Widget>[
         Container(
@@ -186,12 +221,19 @@ class _ActivityViewState extends State<ActivityView> {
                 Container(
                   height: 8.0,
                 ),
+                Text(dateinfo, style: const TextStyle(color: Colors.white)),
+                Container(
+                  height: 8.0,
+                ),
                 Text(activity.description!,
                     style:
                     const TextStyle(color: Colors.white, fontSize: 12.0)),
                 Container(
                   height: 8.0,
                 ),
+                Row(
+                  children: buttons(activity),
+                )
               ],
             ),
           ),

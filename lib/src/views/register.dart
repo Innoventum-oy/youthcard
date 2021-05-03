@@ -6,6 +6,7 @@ import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/validators.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -25,30 +26,30 @@ class _RegisterState extends State<Register> {
       autofocus: false,
       validator: validateEmail,
       onSaved: (value) => _username = value,
-      decoration: buildInputDecoration("Confirm password", Icons.email),
+      decoration: buildInputDecoration(AppLocalizations.of(context)!.confirmPassword, Icons.email),
     );
 
     final passwordField = TextFormField(
       autofocus: false,
       obscureText: true,
-      validator: (value) => value!.isEmpty ? "Please enter password" : null,
+      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.pleaseEnterPassword : null,
       onSaved: (value) => _password = value,
-      decoration: buildInputDecoration("Confirm password", Icons.lock),
+      decoration: buildInputDecoration(AppLocalizations.of(context)!.confirmPassword, Icons.lock),
     );
 
     final confirmPassword = TextFormField(
       autofocus: false,
-      validator: (value) => value!.isEmpty ? "Your password is required" : null,
+      validator: (value) => value!.isEmpty ?AppLocalizations.of(context)!.passwordIsRequired : null,
       onSaved: (value) => _confirmPassword = value,
       obscureText: true,
-      decoration: buildInputDecoration("Confirm password", Icons.lock),
+      decoration: buildInputDecoration(AppLocalizations.of(context)!.confirmPassword, Icons.lock),
     );
 
     var loading = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CircularProgressIndicator(),
-        Text(" Registering ... Please wait")
+        Text(AppLocalizations.of(context)!.pleaseWaitRegistering)
       ],
     );
 
@@ -65,7 +66,7 @@ class _RegisterState extends State<Register> {
             Navigator.pushReplacementNamed(context, '/dashboard');
           } else {
             Flushbar(
-              title: "Registration Failed",
+              title: AppLocalizations.of(context)!.registrationFailed,
               message: response.toString(),
               duration: Duration(seconds: 10),
             ).show(context);
@@ -73,8 +74,8 @@ class _RegisterState extends State<Register> {
         });
       } else {
         Flushbar(
-          title: "Invalid form",
-          message: "Please Complete the form properly",
+          title: AppLocalizations.of(context)!.errorsInForm,
+          message: AppLocalizations.of(context)!.pleaseCompleteFormProperly,
           duration: Duration(seconds: 10),
         ).show(context);
       }
@@ -84,7 +85,7 @@ class _RegisterState extends State<Register> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Create Account"),
+          title: Text(AppLocalizations.of(context)!.createAccount),
           elevation: 0.1,
         ),
         body: Container(
@@ -95,29 +96,29 @@ class _RegisterState extends State<Register> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 15.0),
-                label("Email"),
+                label(AppLocalizations.of(context)!.email),
                 SizedBox(height: 5.0),
                 usernameField,
                 SizedBox(height: 15.0),
-                label("Password"),
+                label(AppLocalizations.of(context)!.password),
                 SizedBox(height: 10.0),
                 passwordField,
                 SizedBox(height: 15.0),
-                label("Confirm Password"),
+                label(AppLocalizations.of(context)!.confirmPassword),
                 SizedBox(height: 10.0),
                 confirmPassword,
                 SizedBox(height: 20.0),
                 auth.loggedInStatus == Status.Authenticating
                     ? loading
-                    : longButtons("Create", doRegister),FlatButton(
-                    padding: EdgeInsets.only(left: 0.0),
+                    : longButtons(AppLocalizations.of(context)!.createAccount, doRegister),TextButton(
+
             onPressed: () {
               // Navigate back to the first screen by popping the current route
               // off the stack.
               Navigator.of(context, rootNavigator: true).pop(context);
 
             },
-            child: Text('Back',style: TextStyle(fontWeight: FontWeight.w300)))
+            child: Text(AppLocalizations.of(context)!.btnReturn,style: TextStyle(fontWeight: FontWeight.w300)))
 
               ],
             ),

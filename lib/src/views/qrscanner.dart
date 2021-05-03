@@ -7,20 +7,25 @@ import 'dart:convert';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 //geolocator for user location
 import 'package:geolocator/geolocator.dart';
+import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:http/http.dart' as http;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/src/views/eventlog.dart';
+import 'package:youth_card/src/util/shared_preference.dart';
 //void main() => runApp(MaterialApp(home: QRScanner()));
 
-const flashOn = 'FLASH ON';
-const flashOff = 'FLASH OFF';
-const frontCamera = 'FRONT CAMERA';
-const backCamera = 'BACK CAMERA';
+const flashOn = 'flashOn';
+const flashOff = 'flashOff';
+const frontCamera = 'frontCamera';
+const backCamera = 'rearCamera';
 
 class QRScanner extends StatefulWidget {
-  const QRScanner({
+  Activity? activity;
+  QRScanner({Activity? this.activity,
     Key? key,
   }) : super(key: key);
 
@@ -40,6 +45,8 @@ class _QRScannerState extends State<QRScanner> {
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   final Geolocator geolocator = Geolocator();
+
+
  // User user;
 
   // In order to get hot reload to work we need to pause the camera if the platform
@@ -88,7 +95,7 @@ class _QRScannerState extends State<QRScanner> {
     }
     Map<String, String> params ={
        'action': 'handleqr',
-        'qraction': 'scanactivity',
+       // 'qraction': 'scanactivity',
         'qr':scannedcode.code,
         'scansource':'app',
       'method':'json',
@@ -96,17 +103,21 @@ class _QRScannerState extends State<QRScanner> {
         'longitude':  _longitude.toString()
 
     };
-   ;
+    if(widget.activity!=null) params['activityid'] =widget.activity!.id.toString();
+    params.forEach((key, value) {print('$key = $value');});
     var url = Uri.https(AppUrl.baseURL,'/api/dispatcher/activity/',params);
     print('Sending scanned code '+scannedcode.code+' to url '+url.toString()+', using token '+user.token!);
     print('Using latitude '+_latitude!+', longitude '+_longitude!);
-    var response = await http.get(url,headers:{ 'api_key':user.token!});
+    var response = await http.get(url,headers:{ 'api-key':user.token!});
 
     this.setState(() {
       if(response.body.isNotEmpty) {
         print('received data ' + response.body);
         map = json.decode(response.body);
-       Notify(map['message']);
+        if(map['message']!=null) {
+          Notify(map['message']);
+          EventLog().saveMessage(map['message']);
+        }
 
       }
       else print('no response received for request');
@@ -153,11 +164,28 @@ class _QRScannerState extends State<QRScanner> {
   Widget build(BuildContext context) {
 
     User user = Provider.of<UserProvider>(context).user;
-
+    String titleText = AppLocalizations.of(context)!.qrScanner;
+    if(widget.activity!=null) {
+      titleText += '\n'+widget.activity!.name!;
+      print('Current activity: {$widget.activity!.name}');
+    }
+    else print('no activity passed');
     return Scaffold(
       appBar: AppBar(
-        title: Text("Scan QR Code"),
+        centerTitle: true,
+        title: Text(titleText),
         elevation: 0.1,
+        actions: [
+          IconButton(
+              icon:Icon(Icons.book),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EventLogView()),
+                );
+              }
+          )
+        ],
       ),
       body: Column(
         children: <Widget>[
@@ -175,21 +203,21 @@ class _QRScannerState extends State<QRScanner> {
 
                     builder: (context,data){
                       if(data.hasData) {
-                        print('location retrieved for futurebuilder');
+                        print('location retrieved for futurebuilder: '+data.data.toString());
                         return Text(data.data.toString());
                       } else{
                         return  Row(children:[
                             CircularProgressIndicator(),
-                            Text('Retrieving coordinates'),
+                            Text(AppLocalizations.of(context)!.retrievingCoordinates),
                           ]
                            );
                       }
                     }
                   ),
                   if (result != null)
-                    Text( 'Code Scanned ')
+                    Text(AppLocalizations.of(context)!.codeScanned)
                   else
-                    Text('Scan a code'),
+                    Text(AppLocalizations.of(context)!.scanCode),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -212,7 +240,7 @@ class _QRScannerState extends State<QRScanner> {
                             }
                           },
                           child:
-                          Text(flashState, style: TextStyle(fontSize: 20)),
+                          Text(flashState==flashOff ? AppLocalizations.of(context)!.flashOff : AppLocalizations.of(context)!.flashOn, style: TextStyle(fontSize: 20)),
                         ),
                       ),
                       Container(
@@ -233,7 +261,7 @@ class _QRScannerState extends State<QRScanner> {
                             }
                           },
                           child:
-                          Text(cameraState, style: TextStyle(fontSize: 20)),
+                          Text(flashState==frontCamera? AppLocalizations.of(context)!.frontCamera : AppLocalizations.of(context)!.rearCamera, style: TextStyle(fontSize: 20)),
                         ),
                       )
                     ],
@@ -248,7 +276,7 @@ class _QRScannerState extends State<QRScanner> {
                           onPressed: () {
                             controller?.pauseCamera();
                           },
-                          child: Text('pause', style: TextStyle(fontSize: 20)),
+                          child: Text(AppLocalizations.of(context)!.pause, style: TextStyle(fontSize: 20)),
                         ),
                       ),
                       Container(
@@ -257,7 +285,7 @@ class _QRScannerState extends State<QRScanner> {
                           onPressed: () {
                             controller?.resumeCamera();
                           },
-                          child: Text('resume', style: TextStyle(fontSize: 20)),
+                          child: Text(AppLocalizations.of(context)!.resume, style: TextStyle(fontSize: 20)),
                         ),
                       )
                     ],
@@ -305,6 +333,7 @@ class _QRScannerState extends State<QRScanner> {
       if(sentcode==null || sentcode != scanData.code)
       setState(() {
         result = scanData;
+        Notify(AppLocalizations.of(context)!.codeScanned);
         sendData(result);
 
 

@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+
 import 'package:youth_card/src/objects/user.dart';
+
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
+
 
 
 enum Status {
@@ -18,15 +20,50 @@ enum Status {
   Registering,
   LoggedOut
 }
+enum VerificationStatus{
+  CodeNotRequested,
+  Validating,
+  UserNotFound,
+  CodeReceived,
+  Verified,
+  PasswordChanged
 
+}
 class AuthProvider with ChangeNotifier {
 
   Status _loggedInStatus = Status.NotLoggedIn;
   Status _registeredInStatus = Status.NotRegistered;
+  VerificationStatus _verificationStatus = VerificationStatus.CodeNotRequested;
+  String? _contactMethodId;
+  String? _userId;
+  String? _singlePass;
 
   Status get loggedInStatus => _loggedInStatus;
   Status get registeredInStatus => _registeredInStatus;
 
+  VerificationStatus get verificationStatus => _verificationStatus;
+  String? get contactMethodId => _contactMethodId;
+  String? get userId => _userId;
+  String? get singlePass => _singlePass;
+
+  void setContactMethodId(newId)
+  {
+    _contactMethodId = newId;
+    notifyListeners();
+  }
+  void setUserId(newId)
+  {
+    print('userid set to '+newId);
+    _userId = newId;
+    notifyListeners();
+  }
+
+  void setSinglePass(pass)
+  {
+
+    _singlePass = pass;
+    notifyListeners();
+  }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     var result;
@@ -71,9 +108,10 @@ class AuthProvider with ChangeNotifier {
     }
     return result;
   }
+
   // user logout method
-  Future<Map<String, dynamic>> logout(User user) async {
-    var result;
+  Future<bool> logout(User user) async {
+    print('logging out user');
 
     final Map<String, dynamic> logoutData = {
        'user': {
@@ -89,28 +127,25 @@ class AuthProvider with ChangeNotifier {
 
     //handle response
     if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      var userData = responseData['data'];
+      if(response.body.isNotEmpty) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        print(responseData);
+        User authUser = User.fromJson(responseData);
+      }
 
-      User authUser = User.fromJson(userData);
+      UserPreferences().removeUser();
 
-      UserPreferences().saveUser(authUser);
-
-      _loggedInStatus = Status.LoggedIn;
-      notifyListeners();
-
-      result = {'status': true, 'message': 'Success', 'user': authUser};
-    } else {
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();
-      result = {
-        'status': false,
-        'message': json.decode(response.body)['error']
-      };
-    }
-    return result;
+      print('user logged out');
+
+      return true;
+      }
+    print('logout response code was '+response.statusCode.toString());
+    return false;
 
   }
+
   Future<Map<String, dynamic>>? register(String email, String password, String passwordConfirmation) async {
 
     final Map<String, dynamic> registrationData = {
@@ -126,7 +161,8 @@ class AuthProvider with ChangeNotifier {
         .then(onValue)
         .catchError(onError) as Map<String,dynamic>;
   }
-   void cancellogin()
+
+  void cancellogin()
   {
     print('running auth.cancellogin');
     _loggedInStatus = Status.NotLoggedIn;
@@ -134,6 +170,13 @@ class AuthProvider with ChangeNotifier {
 
 
   }
+
+  void setVerificationStatus(newstatus)
+  {
+    _verificationStatus = newstatus;
+    notifyListeners();
+  }
+
   static Future<FutureOr> onValue(Response response) async {
     var result;
     final Map<String, dynamic> responseData = json.decode(response.body);
