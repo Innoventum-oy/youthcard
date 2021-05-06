@@ -69,7 +69,9 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
       'startfrom': DateFormat('yyyy-MM-dd').format(kFirstDay ?? now),
       'api-key': user.token,
       'api_key': user.token,
-    //  'fields': ['id','startdate','enddate','']
+      'fields': 'id, nexteventdate,  name, description'
+
+      //  'fields': ['id','startdate','enddate','']
      // 'sort': 'nexteventdate',
     };
     print('Loading page $_pageNumber');
@@ -78,7 +80,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
       await widget.provider.loadItems(params);
       setState(() {
         _loadingState = LoadingState.DONE;
-        print('loadingstate set to DONE');
+        print('loadingstate set to DONE after loading ' + nextActivities.length.toString()+ ' items');
         data.addAll(nextActivities);
 
         for (var item in data) {
@@ -91,7 +93,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
           }
         };
         print(_events);
-        print('Adding all events to eventsHashMap');
+        print('Adding all '+ _events.length.toString() +' events to eventsHashMap');
         eventsHashMap =
         LinkedHashMap<DateTime, List<Activity>>(equals: isSameDay,
           hashCode: getHashCode,
