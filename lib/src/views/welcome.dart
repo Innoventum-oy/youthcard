@@ -12,29 +12,39 @@ class Welcome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Welcome called');
+
     Provider.of<UserProvider>(context).setUser(user);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("images/splash.png"), fit: BoxFit.cover)),
-        child: Center(
-            child: Column(
-              //mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("YOUTH CARD"),
-                  ElevatedButton(
-                      child: Text('Continue'),
-                      onPressed: () {
-                        // Navigate to the second screen using a named route.
-                        Navigator.pushNamed(context, '/dashboard');
-                      }
-                  ),
-                ] //children
-            )
+                image: AssetImage("images/splash.png"),
+                fit: BoxFit.cover
+            ),
+
         ),
-      ),
-    );
+          constraints: BoxConstraints.expand(),
+          child:
+                Expanded(
+                  child:
+                   Center(
+                   child:
+                    Row(
+                      children:<Widget>[
+                        Text("YOUTH CARD"),
+                        ElevatedButton(
+                            child: Text('Continue'),
+                            onPressed: () {
+                              // Navigate to the second screen using a named route.
+                              Navigator.pushNamed(context, '/dashboard');
+                            }
+                        ),
+                      ] //children
+                   )//row
+                )//center
+                )//expanded
+
+              )
+        );
   }
 }

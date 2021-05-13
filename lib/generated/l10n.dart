@@ -50,20 +50,30 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `about`
+  /// `About`
   String get about {
     return Intl.message(
-      'about',
+      'About',
       name: 'about',
       desc: '',
       args: [],
     );
   }
 
-  /// `activities`
+  /// `Account created`
+  String get accountCreated {
+    return Intl.message(
+      'Account created',
+      name: 'accountCreated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Activities`
   String get activities {
     return Intl.message(
-      'activities',
+      'Activities',
       name: 'activities',
       desc: '',
       args: [],
@@ -80,10 +90,10 @@ class S {
     );
   }
 
-  /// `address`
+  /// `Address`
   String get address {
     return Intl.message(
-      'address',
+      'Address',
       name: 'address',
       desc: '',
       args: [],
@@ -110,10 +120,10 @@ class S {
     );
   }
 
-  /// `return`
+  /// `Return`
   String get btnReturn {
     return Intl.message(
-      'return',
+      'Return',
       name: 'btnReturn',
       desc: '',
       args: [],
@@ -140,50 +150,90 @@ class S {
     );
   }
 
-  /// `calendar`
+  /// `Use Email`
+  String get btnUseEmail {
+    return Intl.message(
+      'Use Email',
+      name: 'btnUseEmail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use Phone number`
+  String get btnUsePhone {
+    return Intl.message(
+      'Use Phone number',
+      name: 'btnUsePhone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Validate contact information now`
+  String get btnValidateContact {
+    return Intl.message(
+      'Validate contact information now',
+      name: 'btnValidateContact',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Later`
+  String get btnValidateContactLater {
+    return Intl.message(
+      'Later',
+      name: 'btnValidateContactLater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Calendar`
   String get calendar {
     return Intl.message(
-      'calendar',
+      'Calendar',
       name: 'calendar',
       desc: '',
       args: [],
     );
   }
 
-  /// `cancel`
+  /// `Cancel`
   String get cancel {
     return Intl.message(
-      'cancel',
+      'Cancel',
       name: 'cancel',
       desc: '',
       args: [],
     );
   }
 
-  /// `city`
+  /// `City`
   String get city {
     return Intl.message(
-      'city',
+      'City',
       name: 'city',
       desc: '',
       args: [],
     );
   }
 
-  /// `code scanned`
+  /// `Code scanned`
   String get codeScanned {
     return Intl.message(
-      'code scanned',
+      'Code scanned',
       name: 'codeScanned',
       desc: '',
       args: [],
     );
   }
 
-  /// `confirm password`
+  /// `Confirm password`
   String get confirmPassword {
     return Intl.message(
-      'confirm password',
+      'Confirm password',
       name: 'confirmPassword',
       desc: '',
       args: [],
@@ -200,10 +250,10 @@ class S {
     );
   }
 
-  /// `contact information`
+  /// `Contact information`
   String get contactInformation {
     return Intl.message(
-      'contact information',
+      'Contact information',
       name: 'contactInformation',
       desc: '',
       args: [],
@@ -220,10 +270,10 @@ class S {
     );
   }
 
-  /// `discover`
+  /// `Discover`
   String get discover {
     return Intl.message(
-      'discover',
+      'Discover',
       name: 'discover',
       desc: '',
       args: [],
@@ -265,6 +315,16 @@ class S {
     return Intl.message(
       'Errors in form contents',
       name: 'errorsInForm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `First name`
+  String get firstName {
+    return Intl.message(
+      'First name',
+      name: 'firstName',
       desc: '',
       args: [],
     );
@@ -320,10 +380,20 @@ class S {
     );
   }
 
-  /// `loading`
+  /// `Last name`
+  String get lastName {
+    return Intl.message(
+      'Last name',
+      name: 'lastName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading`
   String get loading {
     return Intl.message(
-      'loading',
+      'Loading',
       name: 'loading',
       desc: '',
       args: [],
@@ -350,30 +420,30 @@ class S {
     );
   }
 
-  /// `logout`
+  /// `Logout`
   String get logout {
     return Intl.message(
-      'logout',
+      'Logout',
       name: 'logout',
       desc: '',
       args: [],
     );
   }
 
-  /// `more information`
+  /// `More information`
   String get moreInformation {
     return Intl.message(
-      'more information',
+      'More information',
       name: 'moreInformation',
       desc: '',
       args: [],
     );
   }
 
-  /// `my activities`
+  /// `My activities`
   String get myActivities {
     return Intl.message(
-      'my activities',
+      'My activities',
       name: 'myActivities',
       desc: '',
       args: [],
@@ -390,10 +460,10 @@ class S {
     );
   }
 
-  /// `password`
+  /// `Password`
   String get password {
     return Intl.message(
-      'password',
+      'Password',
       name: 'password',
       desc: '',
       args: [],
@@ -420,20 +490,20 @@ class S {
     );
   }
 
-  /// `pause`
+  /// `Pause`
   String get pause {
     return Intl.message(
-      'pause',
+      'Pause',
       name: 'pause',
       desc: '',
       args: [],
     );
   }
 
-  /// `phone`
+  /// `Phone`
   String get phone {
     return Intl.message(
-      'phone',
+      'Phone',
       name: 'phone',
       desc: '',
       args: [],
@@ -480,10 +550,10 @@ class S {
     );
   }
 
-  /// `postcode`
+  /// `Postcode`
   String get postcode {
     return Intl.message(
-      'postcode',
+      'Postcode',
       name: 'postcode',
       desc: '',
       args: [],
@@ -500,10 +570,10 @@ class S {
     );
   }
 
-  /// `processing`
+  /// `Processing`
   String get processing {
     return Intl.message(
-      'processing',
+      'Processing',
       name: 'processing',
       desc: '',
       args: [],

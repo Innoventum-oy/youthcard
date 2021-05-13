@@ -100,7 +100,7 @@ class _DashBoardState extends State<DashBoard> {
           elevation: 0.1,
           actions: [
             IconButton(
-                icon: user.image != null ? Image.network(
+                icon: user.image != null && user.image!.isNotEmpty ? Image.network(
                     user.image!, height: 50) : Image.asset(
                     'images/profile.png'),
                 onPressed: () {
@@ -133,7 +133,7 @@ class _DashBoardState extends State<DashBoard> {
                     Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: (user.image != null ?
+                          image: (user.image != null && user.image!.isNotEmpty ?
                           NetworkImage(user.image!) :
                           AssetImage('images/profile.png') as ImageProvider),
                           fit: BoxFit.cover,

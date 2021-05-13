@@ -69,6 +69,7 @@ class YouthCard extends StatelessWidget {
                 return Login();
               else
                 UserPreferences().removeUser();
+              print(snapshot.data);
             return Welcome(user: snapshot.data as User);
           }
       }),

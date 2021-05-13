@@ -32,20 +32,28 @@ enum VerificationStatus{
 class AuthProvider with ChangeNotifier {
 
   Status _loggedInStatus = Status.NotLoggedIn;
-  Status _registeredInStatus = Status.NotRegistered;
+  Status _registeredStatus = Status.NotRegistered;
   VerificationStatus _verificationStatus = VerificationStatus.CodeNotRequested;
   String? _contactMethodId;
   String? _userId;
   String? _singlePass;
 
   Status get loggedInStatus => _loggedInStatus;
-  Status get registeredInStatus => _registeredInStatus;
+  Status get registeredStatus => _registeredStatus;
 
   VerificationStatus get verificationStatus => _verificationStatus;
   String? get contactMethodId => _contactMethodId;
   String? get userId => _userId;
   String? get singlePass => _singlePass;
 
+  void setRegisteredStatus(newStatus)
+  {
+    _registeredStatus = newStatus;
+  }
+  void setLoggedInStatus(newStatus)
+  {
+    _loggedInStatus = newStatus;
+  }
   void setContactMethodId(newId)
   {
     _contactMethodId = newId;
@@ -87,7 +95,7 @@ class AuthProvider with ChangeNotifier {
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       var userData = responseData['data'];
-
+      print(userData);
       User authUser = User.fromJson(userData);
 
       UserPreferences().saveUser(authUser);
@@ -146,21 +154,6 @@ class AuthProvider with ChangeNotifier {
 
   }
 
-  Future<Map<String, dynamic>>? register(String email, String password, String passwordConfirmation) async {
-
-    final Map<String, dynamic> registrationData = {
-      'user': {
-        'email': email,
-        'password': password,
-        'password_confirmation': passwordConfirmation
-      }
-    };
-    return await post(Uri.https(AppUrl.baseURL,AppUrl.register),
-        body: json.encode(registrationData),
-        headers: {'Content-Type': 'application/json'})
-        .then(onValue)
-        .catchError(onError) as Map<String,dynamic>;
-  }
 
   void cancellogin()
   {
@@ -181,7 +174,7 @@ class AuthProvider with ChangeNotifier {
     var result;
     final Map<String, dynamic> responseData = json.decode(response.body);
 
-    print(response.statusCode);
+    //print(response.statusCode);
     if (response.statusCode == 200) {
 
       var userData = responseData['data'];

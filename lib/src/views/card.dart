@@ -31,7 +31,7 @@ class _MyCardState extends State<MyCard> {
 
           SizedBox(height: 50),
           Center(
-              child:user.qrcode!=null ? Image.network(user.qrcode!,height:200) : Container()
+              child:user.qrcode!=null && user.qrcode!.isNotEmpty ? Image.network(user.qrcode!,height:200) : Container()
           ),
          SizedBox(height: 50),
          ElevatedButton(onPressed: (){Navigator.pop(context);
@@ -50,7 +50,7 @@ class _MyCardState extends State<MyCard> {
     String username = nameparts.join(' ');
     return Column(
       children: <Widget>[
-        _drawAvatar(user.image!=null ? NetworkImage(user.image) : Image.asset('images/profile.png').image),
+        _drawAvatar(user.image!=null && user.image!.isNotEmpty ? NetworkImage(user.image) : Image.asset('images/profile.png').image),
         _drawLabel(context, username),
         Text(user.email),
 

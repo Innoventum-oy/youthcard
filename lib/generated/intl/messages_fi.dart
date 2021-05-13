@@ -21,28 +21,37 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "about": MessageLookupByLibrary.simpleMessage("tietoja"),
-        "activities": MessageLookupByLibrary.simpleMessage("tapahtumat"),
+        "about": MessageLookupByLibrary.simpleMessage("Tietoja"),
+        "accountCreated": MessageLookupByLibrary.simpleMessage("Tili luotu"),
+        "activities": MessageLookupByLibrary.simpleMessage("Tapahtumat"),
         "activityCalendar":
             MessageLookupByLibrary.simpleMessage("Tapahtumakalenteri"),
-        "address": MessageLookupByLibrary.simpleMessage("osoite"),
+        "address": MessageLookupByLibrary.simpleMessage("Osoite"),
         "authenticating":
-            MessageLookupByLibrary.simpleMessage("kirjautuminen käynnissä"),
+            MessageLookupByLibrary.simpleMessage("Kirjautuminen käynnissä"),
         "btnLogin": MessageLookupByLibrary.simpleMessage("Kirjaudu"),
-        "btnReturn": MessageLookupByLibrary.simpleMessage("takaisin"),
-        "btnSend": MessageLookupByLibrary.simpleMessage("lähetä"),
+        "btnReturn": MessageLookupByLibrary.simpleMessage("Takaisin"),
+        "btnSend": MessageLookupByLibrary.simpleMessage("Lähetä"),
         "btnSetNewPassword":
             MessageLookupByLibrary.simpleMessage("Aseta salasana"),
+        "btnUseEmail":
+            MessageLookupByLibrary.simpleMessage("Käytä sähköpostiosoitetta"),
+        "btnUsePhone":
+            MessageLookupByLibrary.simpleMessage("Käytä puhelinnumeroa"),
+        "btnValidateContact":
+            MessageLookupByLibrary.simpleMessage("Vahvista yhteystieto nyt"),
+        "btnValidateContactLater":
+            MessageLookupByLibrary.simpleMessage("Myöhemmin"),
         "calendar": MessageLookupByLibrary.simpleMessage("Kalenteri"),
-        "cancel": MessageLookupByLibrary.simpleMessage("peruuta"),
-        "city": MessageLookupByLibrary.simpleMessage("kaupunki"),
-        "codeScanned": MessageLookupByLibrary.simpleMessage("koodi skannattu"),
+        "cancel": MessageLookupByLibrary.simpleMessage("Peruuta"),
+        "city": MessageLookupByLibrary.simpleMessage("Kaupunki"),
+        "codeScanned": MessageLookupByLibrary.simpleMessage("Koodi skannattu"),
         "confirmPassword":
-            MessageLookupByLibrary.simpleMessage("vahvista salasana"),
+            MessageLookupByLibrary.simpleMessage("Vahvista salasana"),
         "confirmationKey":
             MessageLookupByLibrary.simpleMessage("Vahvistusavain"),
         "contactInformation":
-            MessageLookupByLibrary.simpleMessage("yhteystiedot"),
+            MessageLookupByLibrary.simpleMessage("Yhteystiedot"),
         "createAccount":
             MessageLookupByLibrary.simpleMessage("Luo käyttäjätili"),
         "discover": MessageLookupByLibrary.simpleMessage("Tapahtumat"),
@@ -52,12 +61,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "errorsInForm": MessageLookupByLibrary.simpleMessage(
             "Lomakkeen sisällössä on virheitä"),
         "eventLog": MessageLookupByLibrary.simpleMessage("Tapahtumaloki"),
+        "firstName": MessageLookupByLibrary.simpleMessage("Etunimi"),
         "flashOff": MessageLookupByLibrary.simpleMessage("Valo pois"),
         "flashOn": MessageLookupByLibrary.simpleMessage("Valo päälle"),
         "forgotPassword":
             MessageLookupByLibrary.simpleMessage("Unohditko salasanan?"),
         "frontCamera": MessageLookupByLibrary.simpleMessage("Etukamera"),
         "getCode": MessageLookupByLibrary.simpleMessage("Pyydä koodi"),
+        "lastName": MessageLookupByLibrary.simpleMessage("Sukunimi"),
         "loading": MessageLookupByLibrary.simpleMessage("ladataan"),
         "login": MessageLookupByLibrary.simpleMessage("Kirjautuminen"),
         "loginFailed":
@@ -67,13 +78,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "myActivities":
             MessageLookupByLibrary.simpleMessage("Omat harrastukset"),
         "myCard": MessageLookupByLibrary.simpleMessage("Oma kortti"),
-        "password": MessageLookupByLibrary.simpleMessage("salasana"),
+        "password": MessageLookupByLibrary.simpleMessage("Salasana"),
         "passwordChanged":
             MessageLookupByLibrary.simpleMessage("Salasana vaihdettu"),
         "passwordIsRequired":
             MessageLookupByLibrary.simpleMessage("Salasana on pakollinen"),
-        "pause": MessageLookupByLibrary.simpleMessage("tauota"),
-        "phone": MessageLookupByLibrary.simpleMessage("puhelin"),
+        "pause": MessageLookupByLibrary.simpleMessage("Tauota"),
+        "phone": MessageLookupByLibrary.simpleMessage("Puhelin"),
         "pleaseCompleteFormProperly": MessageLookupByLibrary.simpleMessage(
             "Täytäthän kaikki vaadittavat kohdat"),
         "pleaseEnterConfirmationKey":
@@ -82,9 +93,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Anna salasana"),
         "pleaseWaitRegistering": MessageLookupByLibrary.simpleMessage(
             "Käyttäjätiliä rekisteröidään"),
-        "postcode": MessageLookupByLibrary.simpleMessage("postinumero"),
+        "postcode": MessageLookupByLibrary.simpleMessage("Postinumero"),
         "previous": MessageLookupByLibrary.simpleMessage("Edellinen"),
-        "processing": MessageLookupByLibrary.simpleMessage("käsitellään"),
+        "processing": MessageLookupByLibrary.simpleMessage("Käsitellään"),
         "qrScanner": MessageLookupByLibrary.simpleMessage("QR-skanneri"),
         "readMore": MessageLookupByLibrary.simpleMessage("Lue lisää"),
         "rearCamera": MessageLookupByLibrary.simpleMessage("Takakamera"),
@@ -94,6 +105,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Pyyntö epaonnistui"),
         "requestNewCode":
             MessageLookupByLibrary.simpleMessage("Pyydä uusi koodi"),
+        "requestNewPasswordTitle":
+            MessageLookupByLibrary.simpleMessage("Vaihda salasana"),
         "resume": MessageLookupByLibrary.simpleMessage("jatka"),
         "retrievingCoordinates":
             MessageLookupByLibrary.simpleMessage("Haetaan sijaintia"),

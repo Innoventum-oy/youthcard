@@ -8,7 +8,9 @@ import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/utils.dart';
+
 class ApiClient {
+
   static final _client = ApiClient._internal();
   final _http = HttpClient();
   ApiClient._internal();
@@ -17,6 +19,43 @@ class ApiClient {
 
   factory ApiClient() => _client;
 
+  /*
+  * _postJson handles POST request and returns the json decoded data from server back to caller function
+  */
+  Future<dynamic> _postJson(Uri uri, Map<String, dynamic> data) async
+  {
+    var response = await http.post(uri,
+      body: json.encode(data),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200) {
+      if(response.body.isNotEmpty) {
+        Map<String, dynamic> responseData = json.decode(response.body);
+       //debug
+        print(responseData);
+        return responseData;
+      }
+      else{
+        print('response body was empty');
+        return false;
+      }
+
+    }
+    else{
+      print(response.statusCode);
+      if(response.body.isNotEmpty) {
+        Map<String, dynamic> responseData = json.decode(response.body);
+        //debug
+        return(responseData);
+      }
+      return false;
+    }
+
+  }
+
+  /*
+  * _getJson handles request and returns the json decoded data from server back to caller function
+  */
   Future<dynamic> _getJson(Uri uri) async {
 
     var response = await http.get(uri);
@@ -25,12 +64,12 @@ class ApiClient {
       if(response.body.isNotEmpty) {
         print(response.body);
         Map<String, dynamic> body = json.decode(response.body);
-      /*  print('GETJSON DATA RECEIVED:');
+        print('GETJSON DATA RECEIVED:');
         body.forEach((key, value) {
           if (key != 'data') print('$key = $value');
         });
         print('END GETJSON');
-        */
+
 
         return (body);
       }
@@ -43,6 +82,9 @@ class ApiClient {
 
   }
 
+    /*
+    * Request verificationcode / confirmation key from server
+    */
     Future<Map<String, dynamic>> getConfirmationKey(String email) async {
      // print( 'requesting getverificationcode for '+email);
       final Map<String, dynamic> params = {
@@ -50,12 +92,16 @@ class ApiClient {
         'action': 'getverificationcode',
         'email': email
       };
-    var url = Uri.https(AppUrl.baseURL, AppUrl.requestValidationToken,params);
-  //   var response = _getJson(url) as Map<String, dynamic>;
+      var url = Uri.https(AppUrl.baseURL, AppUrl.requestValidationToken,params);
       return _getJson(url).then((json){
         return json;
       });
   }
+
+  /*
+  * Send the received confirmation key, entered by user, back to server
+  * on success returns singlepass for changing user password
+  */
   Future<Map<String, dynamic>> sendConfirmationKey({contact,code,userid}) async {
     final Map<String, dynamic> params = {
       'method' : 'json',
@@ -65,7 +111,6 @@ class ApiClient {
       'userid' : userid,
       'code': code
     };
-
     var url = Uri.https(AppUrl.baseURL, AppUrl.checkValidationToken,params);
     //   var response = _getJson(url) as Map<String, dynamic>;
 
@@ -75,8 +120,35 @@ class ApiClient {
     });
   }
 
-  Future<Map<String, dynamic>> changePassword({password,userid,singlepass}) async {
+  /* Send user registration information (register.dart) to server
+  * Required data: first name, last name, email or phone, password.
+  * On success, returns user object.
+  * returns status (success / error) + possible related message from server
+   */
+  Future<Map<String, dynamic>>? register({required String firstname, required String lastname,String? phone,String? email, required String password, String? passwordConfirmation}) async {
 
+    final Map<String, dynamic> registrationData = {
+      'user': {
+        'firstname' : firstname,
+        'lastname' : lastname,
+        'phone': phone ?? false,
+        'email': email,
+        'password': password,
+       // 'password_confirmation': passwordConfirmation ?? false
+      }
+    };
+    var url = Uri.https(AppUrl.baseURL,AppUrl.registration);
+
+    return _postJson(url,registrationData).then((json){
+       print(json);
+      return json!=null ? json : false;
+    });
+  }
+
+  /*
+  * Send new password and required singlepass to authorize password change to server
+   */
+  Future<Map<String, dynamic>> changePassword({password,userid,singlepass}) async {
 
     final Map<String, dynamic> params = {
       'method' : 'json',
@@ -89,21 +161,23 @@ class ApiClient {
    //params.forEach((key, value) {print('$key = $value');});
     var url = Uri.https(AppUrl.baseURL, AppUrl.checkValidationToken,params);
     //   var response = _getJson(url) as Map<String, dynamic>;
-
     return _getJson(url).then((json){
-    //  print(json);
       return json;
 
     });
 
   }
+
+  /*
+  * Load list of activities for the activitylist view
+   */
   Future<List<Activity>> loadActivities(Map<String,dynamic> params) async {
     //debug: print params
     params.forEach((key, value) {print('$key = $value');});
     var url = Uri.https(baseUrl, 'api/activity/',
         params);
     return _getJson(url).then((json) => json['data']).then((data) {
-      //print(data);
+      if(data==null) return [];
       return data
         .map<Activity>((data) => Activity.fromJson(data))
         .toList();
@@ -111,8 +185,10 @@ class ApiClient {
 
   }
 
+  /*
+  * Load detailed activity information for the activity view
+   */
   Future<dynamic> getActivityDetails(int activityId, User user) async {
-
     var url = Uri.https(baseUrl, 'api/activity/$activityId', { 'api-key': user.token,'api_key':user.token});
 
     return _getJson(url).then((json) => json['data']).then((data) {
@@ -122,11 +198,18 @@ class ApiClient {
 
   }
 
+  /*
+  * Get image details based on image id
+   */
   Future<dynamic> getImageDetails(int imageId, User user) async {
     var url = Uri.https(baseUrl, 'api/image/$imageId', { 'api-key': user.token,'api_key':user.token});
 
     return _getJson(url);
   }
+
+  /*
+  * Register current user for attending to activity
+   */
   Future<void> registerForActivity(activityId,User user) async{
 
     return updateActivityRegistration(activityId:activityId,user:user);
@@ -164,90 +247,5 @@ class ApiClient {
     if (response['message'].isNotEmpty)
       Notify(response['message']);
   }
- /*
-  Future<List<MediaItem>> getSimilarMedia(int mediaId,
-      {String type: "movie"}) async {
-    var url = Uri.https(baseUrl, '3/$type/$mediaId/similar', {
-      'api_key': API_KEY,
-    });
 
-    return _getJson(url).then((json) => json['results']).then((data) => data
-        .map<MediaItem>((item) => MediaItem(
-        item, (type == "movie") ? MediaType.movie : MediaType.show))
-        .toList());
-  }
-
-  Future<List<MediaItem>> getMoviesForActor(int actorId) async {
-    var url = Uri.https(baseUrl, '3/discover/movie', {
-      'api_key': API_KEY,
-      'with_cast': actorId.toString(),
-      'sort_by': 'popularity.desc'
-    });
-
-    return _getJson(url).then((json) => json['results']).then((data) => data
-        .map<MediaItem>((item) => MediaItem(item, MediaType.movie))
-        .toList());
-  }
-
-  Future<List<MediaItem>> getShowsForActor(int actorId) async {
-    var url = Uri.https(baseUrl, '3/person/$actorId/tv_credits', {
-      'api_key': API_KEY,
-    });
-
-    return _getJson(url).then((json) => json['cast']).then((data) => data
-        .map<MediaItem>((item) => MediaItem(item, MediaType.show))
-        .toList());
-  }
-
-  Future<List<Actor>> getMediaCredits(int mediaId,
-      {String type: "movie"}) async {
-    var url =
-    Uri.https(baseUrl, '3/$type/$mediaId/credits', {'api_key': API_KEY});
-
-    return _getJson(url).then((json) =>
-        json['cast'].map<Actor>((item) => Actor.fromJson(item)).toList());
-  }
-
-  Future<dynamic> getMediaDetails(int mediaId, {String type: "movie"}) async {
-    var url = Uri.https(baseUrl, '3/$type/$mediaId', {'api_key': API_KEY});
-
-    return _getJson(url);
-  }
-
-  Future<List<TvSeason>> getShowSeasons(int showId) async {
-    var detailJson = await getMediaDetails(showId, type: 'tv');
-    return detailJson['seasons']
-        .map<TvSeason>((item) => TvSeason.fromMap(item))
-        .toList();
-  }
-
-  Future<List<SearchResult>> getSearchResults(String query) {
-    var url = Uri
-        .https(baseUrl, '3/search/multi', {'api_key': API_KEY, 'query': query});
-
-    return _getJson(url).then((json) => json['results']
-        .map<SearchResult>((item) => SearchResult.fromJson(item))
-        .toList());
-  }
-
-  Future<List<MediaItem>> fetchShows(
-      {int page: 1, String category: "popular"}) async {
-    var url = Uri.https(baseUrl, '3/tv/$category',
-        {'api_key': API_KEY, 'page': page.toString()});
-
-    return _getJson(url).then((json) => json['results']).then((data) => data
-        .map<MediaItem>((item) => MediaItem(item, MediaType.show))
-        .toList());
-  }
-
-  Future<List<Episode>> fetchEpisodes(int showId, int seasonNumber) {
-    var url = Uri.https(baseUrl, '3/tv/$showId/season/$seasonNumber', {
-      'api_key': API_KEY,
-    });
-
-    return _getJson(url).then((json) => json['episodes']).then(
-            (data) => data.map<Episode>((item) => Episode.fromJson(item)).toList());
-  }
-
-  */
 }

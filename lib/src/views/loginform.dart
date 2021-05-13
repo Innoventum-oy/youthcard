@@ -58,11 +58,18 @@ class _LoginState extends State<Login> {
         ),
         TextButton(
 
-          child: Text(AppLocalizations.of(context)!.signUp, style: TextStyle(fontWeight: FontWeight.w300)),
+          child: Text(AppLocalizations.of(context)!.createAccount, style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
             Navigator.pushNamed(context, '/register');
           },
         ),
+
+      ],
+    );
+    final cancelButton = Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget> [
         TextButton(
 
           child: Text(AppLocalizations.of(context)!.cancel,
@@ -75,6 +82,7 @@ class _LoginState extends State<Login> {
         ),
       ],
     );
+
 
     var doLogin = () {
       final form = formKey.currentState;
@@ -91,6 +99,7 @@ class _LoginState extends State<Login> {
             Provider.of<UserProvider>(context, listen: false).setUser(user);
             Navigator.pushReplacementNamed(context, '/dashboard');
           } else {
+            Provider.of<UserProvider>(context, listen: false).clearUser();
             Flushbar(
               title: AppLocalizations.of(context)!.loginFailed,
               message: response['message'].toString(),
@@ -129,7 +138,9 @@ class _LoginState extends State<Login> {
                     ? loading
                     : longButtons(AppLocalizations.of(context)!.btnLogin, doLogin),
                 SizedBox(height: 5.0),
-                forgotLabel
+                forgotLabel,
+                SizedBox(height: 15.0),
+                cancelButton,
               ],
             ),
           ),

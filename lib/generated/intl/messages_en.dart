@@ -21,57 +21,67 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "about": MessageLookupByLibrary.simpleMessage("about"),
-        "activities": MessageLookupByLibrary.simpleMessage("activities"),
+        "about": MessageLookupByLibrary.simpleMessage("About"),
+        "accountCreated":
+            MessageLookupByLibrary.simpleMessage("Account created"),
+        "activities": MessageLookupByLibrary.simpleMessage("Activities"),
         "activityCalendar":
             MessageLookupByLibrary.simpleMessage("Activity calendar"),
-        "address": MessageLookupByLibrary.simpleMessage("address"),
+        "address": MessageLookupByLibrary.simpleMessage("Address"),
         "authenticating": MessageLookupByLibrary.simpleMessage(
             "Authenticating ... Please wait"),
         "btnLogin": MessageLookupByLibrary.simpleMessage("Login"),
-        "btnReturn": MessageLookupByLibrary.simpleMessage("return"),
+        "btnReturn": MessageLookupByLibrary.simpleMessage("Return"),
         "btnSend": MessageLookupByLibrary.simpleMessage("Send"),
         "btnSetNewPassword":
             MessageLookupByLibrary.simpleMessage("Set Password"),
-        "calendar": MessageLookupByLibrary.simpleMessage("calendar"),
-        "cancel": MessageLookupByLibrary.simpleMessage("cancel"),
-        "city": MessageLookupByLibrary.simpleMessage("city"),
-        "codeScanned": MessageLookupByLibrary.simpleMessage("code scanned"),
+        "btnUseEmail": MessageLookupByLibrary.simpleMessage("Use Email"),
+        "btnUsePhone": MessageLookupByLibrary.simpleMessage("Use Phone number"),
+        "btnValidateContact": MessageLookupByLibrary.simpleMessage(
+            "Validate contact information now"),
+        "btnValidateContactLater":
+            MessageLookupByLibrary.simpleMessage("Later"),
+        "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
+        "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "city": MessageLookupByLibrary.simpleMessage("City"),
+        "codeScanned": MessageLookupByLibrary.simpleMessage("Code scanned"),
         "confirmPassword":
-            MessageLookupByLibrary.simpleMessage("confirm password"),
+            MessageLookupByLibrary.simpleMessage("Confirm password"),
         "confirmationKey":
             MessageLookupByLibrary.simpleMessage("Confirmation key"),
         "contactInformation":
-            MessageLookupByLibrary.simpleMessage("contact information"),
+            MessageLookupByLibrary.simpleMessage("Contact information"),
         "createAccount": MessageLookupByLibrary.simpleMessage("Create account"),
-        "discover": MessageLookupByLibrary.simpleMessage("discover"),
+        "discover": MessageLookupByLibrary.simpleMessage("Discover"),
         "email": MessageLookupByLibrary.simpleMessage("Email"),
         "emailOrPhoneNumber":
             MessageLookupByLibrary.simpleMessage("Email or Phone number"),
         "errorsInForm":
             MessageLookupByLibrary.simpleMessage("Errors in form contents"),
         "eventLog": MessageLookupByLibrary.simpleMessage("Event Log"),
+        "firstName": MessageLookupByLibrary.simpleMessage("First name"),
         "flashOff": MessageLookupByLibrary.simpleMessage("Flash Off"),
         "flashOn": MessageLookupByLibrary.simpleMessage("Flash On"),
         "forgotPassword":
             MessageLookupByLibrary.simpleMessage("Forgot password?"),
         "frontCamera": MessageLookupByLibrary.simpleMessage("Front Camera"),
         "getCode": MessageLookupByLibrary.simpleMessage("Get code"),
-        "loading": MessageLookupByLibrary.simpleMessage("loading"),
+        "lastName": MessageLookupByLibrary.simpleMessage("Last name"),
+        "loading": MessageLookupByLibrary.simpleMessage("Loading"),
         "login": MessageLookupByLibrary.simpleMessage("Login"),
         "loginFailed": MessageLookupByLibrary.simpleMessage("Login failed"),
-        "logout": MessageLookupByLibrary.simpleMessage("logout"),
+        "logout": MessageLookupByLibrary.simpleMessage("Logout"),
         "moreInformation":
-            MessageLookupByLibrary.simpleMessage("more information"),
-        "myActivities": MessageLookupByLibrary.simpleMessage("my activities"),
+            MessageLookupByLibrary.simpleMessage("More information"),
+        "myActivities": MessageLookupByLibrary.simpleMessage("My activities"),
         "myCard": MessageLookupByLibrary.simpleMessage("My Card"),
-        "password": MessageLookupByLibrary.simpleMessage("password"),
+        "password": MessageLookupByLibrary.simpleMessage("Password"),
         "passwordChanged":
             MessageLookupByLibrary.simpleMessage("Password changed"),
         "passwordIsRequired":
             MessageLookupByLibrary.simpleMessage("Password is required"),
-        "pause": MessageLookupByLibrary.simpleMessage("pause"),
-        "phone": MessageLookupByLibrary.simpleMessage("phone"),
+        "pause": MessageLookupByLibrary.simpleMessage("Pause"),
+        "phone": MessageLookupByLibrary.simpleMessage("Phone"),
         "pleaseCompleteFormProperly": MessageLookupByLibrary.simpleMessage(
             "Please complete the form properly"),
         "pleaseEnterConfirmationKey": MessageLookupByLibrary.simpleMessage(
@@ -80,9 +90,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Please enter password"),
         "pleaseWaitRegistering": MessageLookupByLibrary.simpleMessage(
             "Registering account, please wait"),
-        "postcode": MessageLookupByLibrary.simpleMessage("postcode"),
+        "postcode": MessageLookupByLibrary.simpleMessage("Postcode"),
         "previous": MessageLookupByLibrary.simpleMessage("Previous"),
-        "processing": MessageLookupByLibrary.simpleMessage("processing"),
+        "processing": MessageLookupByLibrary.simpleMessage("Processing"),
         "qrScanner": MessageLookupByLibrary.simpleMessage("QR Scanner"),
         "readMore": MessageLookupByLibrary.simpleMessage("Read more"),
         "rearCamera": MessageLookupByLibrary.simpleMessage("Rear Camera"),
