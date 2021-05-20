@@ -18,7 +18,7 @@ class _EventLogViewState extends State<EventLogView> {
         initialData: [],
           future: getEventLog(),
           builder: (context, AsyncSnapshot snapshot) {
-            if(snapshot.data.length>0){
+            if(snapshot.data!=null && snapshot.data.length>0){
               List<String> messages = snapshot.data ?? [];
               return ListView.builder(
               itemCount: messages.length,

@@ -1,5 +1,14 @@
 class AppUrl {
-  static const String liveBaseURL = "nuortenjoensuu.webweb.fi";
+  static const Map<String,String> servers = {
+    'Nuortenjoensuu' : 'nuortenjoensuu.fi',
+    'Lousada' : 'lousada.youthcard.pt',
+    'Dresden' : 'dresden-youthcard.eu',
+    'Czech Republic' : 'youthcard.cz',
+    'Medjimurje' : 'medimurje.youthcard.eu',
+    'Development' : 'nuortenjoensuu.webweb.fi'
+  };
+
+  static const String liveBaseURL = "nuortenjoensuu.fi";
   static const String localBaseURL = "http://10.0.2.2:4000/api/";
 
   static const String baseURL = liveBaseURL;

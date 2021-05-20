@@ -28,6 +28,13 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
               },
             ),
             SettingsTile(
+              title: "Czech",
+              trailing: trailingWidget(1),
+              onPressed: (BuildContext context) {
+                changeLanguage(4);
+              },
+            ),
+            SettingsTile(
               title: "Finnish",
               trailing: trailingWidget(1),
               onPressed: (BuildContext context) {

@@ -5,7 +5,7 @@
   "activityCalendar": "Tapahtumakalenteri",
   "address" : "Osoite",
   "authenticating" : "Kirjautuminen käynnissä",
-
+  "btnContinue" : "Jatka",
   "btnLogin" : "Kirjaudu",
   "btnReturn" : "Takaisin",
   "btnSend" : "Lähetä",
@@ -22,12 +22,14 @@
   "confirmationKey" : "Vahvistusavain",
   "confirmPassword" : "Vahvista salasana",
   "contactInformation" : "Yhteystiedot",
+
   "createAccount" : "Luo käyttäjätili",
 
   "discover" : "Tapahtumat",
 
   "email" : "Sähköpostiosoite",
   "emailOrPhoneNumber" : "Puhelinnumero tai sähköpostiosoite",
+  "environment" : "Kohdepalvelin",
   "eventLog" : "Tapahtumaloki",
   "errorsInForm": "Lomakkeen sisällössä on virheitä",
 
@@ -43,7 +45,7 @@
   "login" : "Kirjautuminen",
   "loginFailed" : "kirjautuminen epäonnistui",
   "logout" : "kirjaudu ulos",
-
+  "miscSettings" : "Muut asetukset",
   "moreInformation" : "lisätiedot",
   "myActivities": "Omat harrastukset",
   "myCard" : "Oma kortti",
@@ -53,6 +55,8 @@
   "passwordIsRequired" : "Salasana on pakollinen",
   "pause" : "Tauota",
   "phone" : "Puhelin",
+  "phoneNumber": "Puhelinnumero",
+  "phoneOrEmail" : "Puhelin tai sähköpostiosoite",
   "pleaseCompleteFormProperly" : "Täytäthän kaikki vaadittavat kohdat",
   "pleaseEnterPassword" : "Anna salasana",
   "pleaseEnterConfirmationKey": "Anna vahvistuskoodi",
@@ -80,5 +84,6 @@
   "unnamedActivity": "Nimetön tapahtuma",
 
   "youthcardLoginTitle" : "Nuorisokortti - kirjaudu sisään",
-  "youthcardDashboard": "Nuorisokortti"
+  "youthcardDashboard": "Nuorisokortti",
+  "youthcardSettings" : "Nuorisokortti - asetukset"
 }

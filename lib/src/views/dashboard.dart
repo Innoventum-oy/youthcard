@@ -14,6 +14,7 @@ import 'package:youth_card/src/views/settings.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:youth_card/src/views/loginform.dart';
+import 'package:youth_card/src/util/shared_preference.dart';
 
 class DashBoard extends StatefulWidget {
 
@@ -195,7 +196,7 @@ class _DashBoardState extends State<DashBoard> {
 
             ElevatedButton(onPressed: () {
               // auth.logout(user);
-
+              UserPreferences().removeUser();
               Provider.of<UserProvider>(context, listen: false).clearUser();
 
               //Navigator.pushNamed(context, '/login');

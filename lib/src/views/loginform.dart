@@ -24,7 +24,7 @@ class _LoginState extends State<Login> {
 
     final usernameField = TextFormField(
       autofocus: false,
-      validator: validateEmail,
+      validator: validateContact,
       onSaved: (value) => _username = value,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.email, Icons.email),
     );
@@ -126,7 +126,7 @@ class _LoginState extends State<Login> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 15.0),
-                label("Email"),
+                label(AppLocalizations.of(context)!.phoneOrEmail),
                 SizedBox(height: 5.0),
                 usernameField,
                 SizedBox(height: 20.0),

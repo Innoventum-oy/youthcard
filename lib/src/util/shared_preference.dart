@@ -1,5 +1,6 @@
 import 'package:youth_card/src/objects/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:youth_card/src/util/app_url.dart';
 import 'dart:async';
 
 class EventLog{
@@ -92,5 +93,31 @@ class UserPreferences {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token").toString();
     return token;
+  }
+}
+class Settings{
+  Future<String> getServer() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String server = prefs.getString('server').toString() ;
+    print('current server setting is '+server);
+    return server.isNotEmpty ? server : AppUrl.servers.values.first;
+  }
+  Future<String> getServerName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String server = prefs.getString('servername').toString() ;
+    print('current server setting is '+server);
+    return server.isNotEmpty ? server : AppUrl.servers.keys.first;
+  }
+  Future<String> getValue(arg) async {
+    print('retrieving '+arg);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString(arg).toString() ;
+    return token;
+  }
+  Future<bool> setValue(String arg,dynamic val) async {
+    print('storing '+arg+':'+val);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(arg,val);
+    return true;
   }
 }

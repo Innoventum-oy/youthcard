@@ -110,6 +110,16 @@ class S {
     );
   }
 
+  /// `Continue`
+  String get btnContinue {
+    return Intl.message(
+      'Continue',
+      name: 'btnContinue',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Login`
   String get btnLogin {
     return Intl.message(
@@ -300,6 +310,16 @@ class S {
     );
   }
 
+  /// `Environment`
+  String get environment {
+    return Intl.message(
+      'Environment',
+      name: 'environment',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Event Log`
   String get eventLog {
     return Intl.message(
@@ -380,6 +400,16 @@ class S {
     );
   }
 
+  /// `Language`
+  String get language {
+    return Intl.message(
+      'Language',
+      name: 'language',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Last name`
   String get lastName {
     return Intl.message(
@@ -425,6 +455,16 @@ class S {
     return Intl.message(
       'Logout',
       name: 'logout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Misc`
+  String get miscSettings {
+    return Intl.message(
+      'Misc',
+      name: 'miscSettings',
       desc: '',
       args: [],
     );
@@ -505,6 +545,26 @@ class S {
     return Intl.message(
       'Phone',
       name: 'phone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone number`
+  String get phoneNumber {
+    return Intl.message(
+      'Phone number',
+      name: 'phoneNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone or Email`
+  String get phoneOrEmail {
+    return Intl.message(
+      'Phone or Email',
+      name: 'phoneOrEmail',
       desc: '',
       args: [],
     );
@@ -700,6 +760,16 @@ class S {
     );
   }
 
+  /// `Terms of Service`
+  String get termsOfService {
+    return Intl.message(
+      'Terms of Service',
+      name: 'termsOfService',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Unnamed activity`
   String get unnamedActivity {
     return Intl.message(
@@ -735,6 +805,16 @@ class S {
     return Intl.message(
       'Youth Card',
       name: 'youthcardDashboard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Youth Card Settings`
+  String get youthcardSettings {
+    return Intl.message(
+      'Youth Card Settings',
+      name: 'youthcardSettings',
       desc: '',
       args: [],
     );

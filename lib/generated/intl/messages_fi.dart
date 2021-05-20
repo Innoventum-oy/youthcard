@@ -29,6 +29,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "address": MessageLookupByLibrary.simpleMessage("Osoite"),
         "authenticating":
             MessageLookupByLibrary.simpleMessage("Kirjautuminen käynnissä"),
+        "btnContinue": MessageLookupByLibrary.simpleMessage("Jatka"),
         "btnLogin": MessageLookupByLibrary.simpleMessage("Kirjaudu"),
         "btnReturn": MessageLookupByLibrary.simpleMessage("Takaisin"),
         "btnSend": MessageLookupByLibrary.simpleMessage("Lähetä"),
@@ -58,6 +59,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "email": MessageLookupByLibrary.simpleMessage("Sähköpostiosoite"),
         "emailOrPhoneNumber": MessageLookupByLibrary.simpleMessage(
             "Puhelinnumero tai sähköpostiosoite"),
+        "environment": MessageLookupByLibrary.simpleMessage("Kohdepalvelin"),
         "errorsInForm": MessageLookupByLibrary.simpleMessage(
             "Lomakkeen sisällössä on virheitä"),
         "eventLog": MessageLookupByLibrary.simpleMessage("Tapahtumaloki"),
@@ -74,6 +76,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "loginFailed":
             MessageLookupByLibrary.simpleMessage("kirjautuminen epäonnistui"),
         "logout": MessageLookupByLibrary.simpleMessage("kirjaudu ulos"),
+        "miscSettings": MessageLookupByLibrary.simpleMessage("Muut asetukset"),
         "moreInformation": MessageLookupByLibrary.simpleMessage("lisätiedot"),
         "myActivities":
             MessageLookupByLibrary.simpleMessage("Omat harrastukset"),
@@ -85,6 +88,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Salasana on pakollinen"),
         "pause": MessageLookupByLibrary.simpleMessage("Tauota"),
         "phone": MessageLookupByLibrary.simpleMessage("Puhelin"),
+        "phoneNumber": MessageLookupByLibrary.simpleMessage("Puhelinnumero"),
+        "phoneOrEmail": MessageLookupByLibrary.simpleMessage(
+            "Puhelin tai sähköpostiosoite"),
         "pleaseCompleteFormProperly": MessageLookupByLibrary.simpleMessage(
             "Täytäthän kaikki vaadittavat kohdat"),
         "pleaseEnterConfirmationKey":
@@ -120,6 +126,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Nuorisokortti"),
         "youthcardLoginTitle": MessageLookupByLibrary.simpleMessage(
-            "Nuorisokortti - kirjaudu sisään")
+            "Nuorisokortti - kirjaudu sisään"),
+        "youthcardSettings":
+            MessageLookupByLibrary.simpleMessage("Nuorisokortti - asetukset")
       };
 }

@@ -30,6 +30,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "address": MessageLookupByLibrary.simpleMessage("Address"),
         "authenticating": MessageLookupByLibrary.simpleMessage(
             "Authenticating ... Please wait"),
+        "btnContinue": MessageLookupByLibrary.simpleMessage("Continue"),
         "btnLogin": MessageLookupByLibrary.simpleMessage("Login"),
         "btnReturn": MessageLookupByLibrary.simpleMessage("Return"),
         "btnSend": MessageLookupByLibrary.simpleMessage("Send"),
@@ -56,6 +57,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "email": MessageLookupByLibrary.simpleMessage("Email"),
         "emailOrPhoneNumber":
             MessageLookupByLibrary.simpleMessage("Email or Phone number"),
+        "environment": MessageLookupByLibrary.simpleMessage("Environment"),
         "errorsInForm":
             MessageLookupByLibrary.simpleMessage("Errors in form contents"),
         "eventLog": MessageLookupByLibrary.simpleMessage("Event Log"),
@@ -66,11 +68,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Forgot password?"),
         "frontCamera": MessageLookupByLibrary.simpleMessage("Front Camera"),
         "getCode": MessageLookupByLibrary.simpleMessage("Get code"),
+        "language": MessageLookupByLibrary.simpleMessage("Language"),
         "lastName": MessageLookupByLibrary.simpleMessage("Last name"),
         "loading": MessageLookupByLibrary.simpleMessage("Loading"),
         "login": MessageLookupByLibrary.simpleMessage("Login"),
         "loginFailed": MessageLookupByLibrary.simpleMessage("Login failed"),
         "logout": MessageLookupByLibrary.simpleMessage("Logout"),
+        "miscSettings": MessageLookupByLibrary.simpleMessage("Misc"),
         "moreInformation":
             MessageLookupByLibrary.simpleMessage("More information"),
         "myActivities": MessageLookupByLibrary.simpleMessage("My activities"),
@@ -82,6 +86,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Password is required"),
         "pause": MessageLookupByLibrary.simpleMessage("Pause"),
         "phone": MessageLookupByLibrary.simpleMessage("Phone"),
+        "phoneNumber": MessageLookupByLibrary.simpleMessage("Phone number"),
+        "phoneOrEmail": MessageLookupByLibrary.simpleMessage("Phone or Email"),
         "pleaseCompleteFormProperly": MessageLookupByLibrary.simpleMessage(
             "Please complete the form properly"),
         "pleaseEnterConfirmationKey": MessageLookupByLibrary.simpleMessage(
@@ -108,12 +114,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "scanCode": MessageLookupByLibrary.simpleMessage("Scan Code"),
         "settings": MessageLookupByLibrary.simpleMessage("settings"),
         "signUp": MessageLookupByLibrary.simpleMessage("Sign up"),
+        "termsOfService":
+            MessageLookupByLibrary.simpleMessage("Terms of Service"),
         "unknownUser": MessageLookupByLibrary.simpleMessage("unknown user"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Unnamed activity"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Youth Card"),
         "youthcardLoginTitle":
-            MessageLookupByLibrary.simpleMessage("Youth Card Login")
+            MessageLookupByLibrary.simpleMessage("Youth Card Login"),
+        "youthcardSettings":
+            MessageLookupByLibrary.simpleMessage("Youth Card Settings")
       };
 }

@@ -4,7 +4,7 @@ import 'package:youth_card/src/views/dashboard.dart';
 import 'package:youth_card/src/views/loginform.dart';
 import 'package:youth_card/src/views/register.dart';
 import 'package:youth_card/src/views/passwordform.dart';
-
+import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/views/welcome.dart';
 import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
@@ -13,9 +13,6 @@ import 'package:youth_card/src/util/styles.dart';
 import 'package:provider/provider.dart';
 
 import 'src/objects/user.dart';
-
-
-
 
 void main() {
   runApp(YouthCard());
@@ -26,6 +23,7 @@ class YouthCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('build called for youthcard class');
+
     Future<User>? getUserData() => UserPreferences().getUser();
 
     return MultiProvider(
@@ -33,53 +31,59 @@ class YouthCard extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
-    child: MaterialApp(
-      title: 'Youth Card',
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.deepOrange,
-        accentColor: Colors.teal,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: FutureBuilder(
-        future: getUserData(),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-              return CircularProgressIndicator();
-            default:
-              User userdata = snapshot.data as User;
-              if (snapshot.hasError)
-                return Text('Error: ${snapshot.error}');
-              else if (userdata.token == null)
-                return Login();
-              else
-                UserPreferences().removeUser();
-              print(snapshot.data);
-            return Welcome(user: snapshot.data as User);
-          }
-      }),
-        routes: {
+      child: MaterialApp(
+          title: 'Youth Card',
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: ThemeData(
+            // This is the theme of your application.
+            //
+            // Try running your application with "flutter run". You'll see the
+            // application has a blue toolbar. Then, without quitting the app, try
+            // changing the primarySwatch below to Colors.green and then invoke
+            // "hot reload" (press "r" in the console where you ran "flutter run",
+            // or simply save your changes to "hot reload" in a Flutter IDE).
+            // Notice that the counter didn't reset back to zero; the application
+            // is not restarted.
+            primarySwatch: Colors.deepOrange,
+            accentColor: Colors.teal,
+            // This makes the visual density adapt to the platform that you run
+            // the app on. For desktop platforms, the controls will be smaller and
+            // closer together (more dense) than on mobile platforms.
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+          ),
+          home: FutureBuilder(
+              future: getUserData(),
+              builder: (context, snapshot) {
+                print('main.dart, snapshot connectionstate:' +
+                    snapshot.connectionState.toString());
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                    print('returning circular progress indicator');
+                    return CircularProgressIndicator();
+                  default:
 
-      '/dashboard': (context) => DashBoard(),
-      '/login': (context) => Login(),
-      '/register': (context) => Register(),
-          '/reset-password': (context) => ResetPassword(),
-      }),
+                    User userdata = snapshot.data as User;
+
+                    if (snapshot.hasError)
+                      return Text('Error: ${snapshot.error}');
+
+                    else if (userdata.token == null )
+
+                      return Welcome();
+
+                    else
+                    print('user token: '+userdata.token.toString());
+                    return Login();
+                }
+              }),
+          routes: {
+            '/dashboard': (context) => DashBoard(),
+            '/login': (context) => Login(),
+            '/register': (context) => Register(),
+            '/reset-password': (context) => ResetPassword(),
+          }),
     );
   }
 }
@@ -153,4 +157,3 @@ class _HomePageState extends State<HomePage> {
   }
 }
 */
-

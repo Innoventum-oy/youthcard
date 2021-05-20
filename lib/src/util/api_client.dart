@@ -8,6 +8,7 @@ import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/utils.dart';
+import 'package:youth_card/src/util/shared_preference.dart';
 
 class ApiClient {
 
@@ -15,7 +16,8 @@ class ApiClient {
   final _http = HttpClient();
   ApiClient._internal();
 
-  final String baseUrl = AppUrl.baseURL;
+
+
 
   factory ApiClient() => _client;
 
@@ -24,6 +26,7 @@ class ApiClient {
   */
   Future<dynamic> _postJson(Uri uri, Map<String, dynamic> data) async
   {
+
     var response = await http.post(uri,
       body: json.encode(data),
       headers: {'Content-Type': 'application/json'},
@@ -57,7 +60,7 @@ class ApiClient {
   * _getJson handles request and returns the json decoded data from server back to caller function
   */
   Future<dynamic> _getJson(Uri uri) async {
-
+  print('calling '+uri.toString());
     var response = await http.get(uri);
     print(response.statusCode);
     if(response.statusCode==200) {
@@ -87,12 +90,13 @@ class ApiClient {
     */
     Future<Map<String, dynamic>> getConfirmationKey(String email) async {
      // print( 'requesting getverificationcode for '+email);
+      String baseUrl = await Settings().getServer();
       final Map<String, dynamic> params = {
         'method' : 'json',
         'action': 'getverificationcode',
         'email': email
       };
-      var url = Uri.https(AppUrl.baseURL, AppUrl.requestValidationToken,params);
+      var url = Uri.https(baseUrl, AppUrl.requestValidationToken,params);
       return _getJson(url).then((json){
         return json;
       });
@@ -103,6 +107,7 @@ class ApiClient {
   * on success returns singlepass for changing user password
   */
   Future<Map<String, dynamic>> sendConfirmationKey({contact,code,userid}) async {
+    String baseUrl = await Settings().getServer();
     final Map<String, dynamic> params = {
       'method' : 'json',
       'action': 'verify',
@@ -111,7 +116,7 @@ class ApiClient {
       'userid' : userid,
       'code': code
     };
-    var url = Uri.https(AppUrl.baseURL, AppUrl.checkValidationToken,params);
+    var url = Uri.https(baseUrl, AppUrl.checkValidationToken,params);
     //   var response = _getJson(url) as Map<String, dynamic>;
 
     return _getJson(url).then((json){
@@ -137,7 +142,8 @@ class ApiClient {
        // 'password_confirmation': passwordConfirmation ?? false
       }
     };
-    var url = Uri.https(AppUrl.baseURL,AppUrl.registration);
+    String baseUrl = await Settings().getServer();
+    var url = Uri.https(baseUrl,AppUrl.registration);
 
     return _postJson(url,registrationData).then((json){
        print(json);
@@ -149,7 +155,7 @@ class ApiClient {
   * Send new password and required singlepass to authorize password change to server
    */
   Future<Map<String, dynamic>> changePassword({password,userid,singlepass}) async {
-
+    String baseUrl = await Settings().getServer();
     final Map<String, dynamic> params = {
       'method' : 'json',
       'action': 'setpassword',
@@ -159,7 +165,7 @@ class ApiClient {
       'verification' : password
     };
    //params.forEach((key, value) {print('$key = $value');});
-    var url = Uri.https(AppUrl.baseURL, AppUrl.checkValidationToken,params);
+    var url = Uri.https(baseUrl, AppUrl.checkValidationToken,params);
     //   var response = _getJson(url) as Map<String, dynamic>;
     return _getJson(url).then((json){
       return json;
@@ -174,6 +180,7 @@ class ApiClient {
   Future<List<Activity>> loadActivities(Map<String,dynamic> params) async {
     //debug: print params
     params.forEach((key, value) {print('$key = $value');});
+    String baseUrl = await Settings().getServer();
     var url = Uri.https(baseUrl, 'api/activity/',
         params);
     return _getJson(url).then((json) => json['data']).then((data) {
@@ -189,6 +196,7 @@ class ApiClient {
   * Load detailed activity information for the activity view
    */
   Future<dynamic> getActivityDetails(int activityId, User user) async {
+    String baseUrl = await Settings().getServer();
     var url = Uri.https(baseUrl, 'api/activity/$activityId', { 'api-key': user.token,'api_key':user.token});
 
     return _getJson(url).then((json) => json['data']).then((data) {
@@ -202,6 +210,7 @@ class ApiClient {
   * Get image details based on image id
    */
   Future<dynamic> getImageDetails(int imageId, User user) async {
+    String baseUrl = await Settings().getServer();
     var url = Uri.https(baseUrl, 'api/image/$imageId', { 'api-key': user.token,'api_key':user.token});
 
     return _getJson(url);
