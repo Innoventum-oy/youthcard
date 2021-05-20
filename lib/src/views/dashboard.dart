@@ -198,6 +198,7 @@ class _DashBoardState extends State<DashBoard> {
               // auth.logout(user);
               UserPreferences().removeUser();
               Provider.of<UserProvider>(context, listen: false).clearUser();
+              Navigator.pushReplacementNamed(context, '/login');
 
               //Navigator.pushNamed(context, '/login');
 

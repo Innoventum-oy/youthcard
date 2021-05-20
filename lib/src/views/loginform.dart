@@ -66,7 +66,7 @@ class _LoginState extends State<Login> {
 
       ],
     );
-    final cancelButton = Row(
+   /* final cancelButton = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget> [
@@ -81,7 +81,7 @@ class _LoginState extends State<Login> {
           },
         ),
       ],
-    );
+    );*/
 
 
     var doLogin = () {
@@ -139,8 +139,8 @@ class _LoginState extends State<Login> {
                     : longButtons(AppLocalizations.of(context)!.btnLogin, doLogin),
                 SizedBox(height: 5.0),
                 forgotLabel,
-                SizedBox(height: 15.0),
-                cancelButton,
+               /* SizedBox(height: 15.0),
+                cancelButton,*/
               ],
             ),
           ),
