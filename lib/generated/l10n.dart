@@ -730,11 +730,11 @@ class S {
     );
   }
 
-  /// `Scan Code`
-  String get scanCode {
+  /// `Scanner ready`
+  String get readyToScan {
     return Intl.message(
-      'Scan Code',
-      name: 'scanCode',
+      'Scanner ready',
+      name: 'readyToScan',
       desc: '',
       args: [],
     );

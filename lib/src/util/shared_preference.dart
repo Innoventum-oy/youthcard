@@ -72,15 +72,15 @@ class UserPreferences {
 class Settings{
   Future<String> getServer() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String server = prefs.getString('server').toString() ;
-    print('current server setting is '+server);
-    return server.isNotEmpty ? server : AppUrl.servers.values.first;
+    String server = prefs.getString('server') ?? AppUrl.servers.values.first ;
+
+    return server ;
   }
   Future<String> getServerName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String server = prefs.getString('servername').toString() ;
-    print('current server setting is '+server);
-    return server.isNotEmpty ? server : AppUrl.servers.keys.first;
+    String server = prefs.getString('servername') ?? AppUrl.servers.keys.first ;
+
+    return server  ;
   }
   Future<String> getValue(arg) async {
     print('retrieving '+arg);

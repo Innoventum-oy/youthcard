@@ -104,6 +104,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "processing": MessageLookupByLibrary.simpleMessage("Käsitellään"),
         "qrScanner": MessageLookupByLibrary.simpleMessage("QR-skanneri"),
         "readMore": MessageLookupByLibrary.simpleMessage("Lue lisää"),
+        "readyToScan":
+            MessageLookupByLibrary.simpleMessage("Valmis skannaamaan"),
         "rearCamera": MessageLookupByLibrary.simpleMessage("Takakamera"),
         "registrationFailed":
             MessageLookupByLibrary.simpleMessage("Tilin luonti epäonnistui"),
@@ -116,7 +118,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "resume": MessageLookupByLibrary.simpleMessage("jatka"),
         "retrievingCoordinates":
             MessageLookupByLibrary.simpleMessage("Haetaan sijaintia"),
-        "scanCode": MessageLookupByLibrary.simpleMessage("skannaa koodi"),
         "settings": MessageLookupByLibrary.simpleMessage("asetukset"),
         "signUp": MessageLookupByLibrary.simpleMessage("ilmoittaudu"),
         "unknownUser":
