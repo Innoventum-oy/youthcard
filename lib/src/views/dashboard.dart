@@ -17,7 +17,6 @@ import 'package:youth_card/src/views/loginform.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 
 class DashBoard extends StatefulWidget {
-
   final objectmodel.ActivityProvider provider = objectmodel.ActivityProvider();
 
   @override
@@ -26,23 +25,24 @@ class DashBoard extends StatefulWidget {
 
 class _DashBoardState extends State<DashBoard> {
   LoadingState _loadingState = LoadingState.LOADING;
-  List<Activity> myActivities =[];
+  List<Activity> myActivities = [];
   bool _isLoading = false;
   String? errormessage;
 
   @override
-  void initState(){
+  void initState() {
     print('Initializing dashboard state');
+
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-
-      User user = Provider.of<UserProvider>(context,listen:false).user;
-
+      User user = Provider.of<UserProvider>(context, listen: false).user;
+      //Check if user has activities available that they can edit / log visits for
       _loadMyActivities(user);
     });
-
-
   }
 
+  /*
+  Check if user has activities with MODIFY or greater access, for displaying 'my activities' link
+   */
   _loadMyActivities(user) async {
     _isLoading = true;
     int offset = 0;
@@ -51,26 +51,25 @@ class _DashBoardState extends State<DashBoard> {
     Map<String, String> params = {
       'activitystatus': 'active',
       'activitytype': 'activity',
-      'accesslevel' : 'modify',
-      'limit' : limit.toString(),
-      'offset' : offset.toString(),
-      'startfrom' : DateFormat('yyyy-MM-dd').format(now),
-      'api-key':user.token,
-      'api_key':user.token,
-      'sort' : 'nexteventdate',
+      'accesslevel': 'modify',
+      'limit': limit.toString(),
+      'offset': offset.toString(),
+      'startfrom': DateFormat('yyyy-MM-dd').format(now),
+      'api-key': user.token,
+      'api_key': user.token,
+      'sort': 'nexteventdate',
     };
     try {
-    print('checking for user own activities');
-      var nextActivities =
-      await widget.provider.loadItems(params);
+      print('checking for user own activities');
+      var nextActivities = await widget.provider.loadItems(params);
       setState(() {
         _loadingState = LoadingState.DONE;
         myActivities.addAll(nextActivities);
-        print(myActivities.length.toString()+' own activities currently loaded!');
+        print(myActivities.length.toString() +
+            ' own activities currently loaded!');
         _isLoading = false;
-
       });
-    } catch (e,stack) {
+    } catch (e, stack) {
       _isLoading = false;
       print('loadItems returned error $e\n Stack trace:\n $stack');
       errormessage = e.toString();
@@ -80,63 +79,91 @@ class _DashBoardState extends State<DashBoard> {
     }
   }
 
+  Widget getInitials(user) {
+    String initials = '';
+    if (user.firstname.isNotEmpty) initials += user.firstname[0];
+    if (user.lastname!.isNotEmpty) initials += user.lastname[0];
+    return Text(initials);
+  }
+
   @override
   Widget build(BuildContext context) {
+    //for debugging, track builds in print
     print('building dasboard state');
     AuthProvider auth = Provider.of<AuthProvider>(context);
     User user = Provider.of<UserProvider>(context).user;
 
-    if(user.token==null) {
+    if (user.token == null) {
       print('user token not found, pushing named route /login');
       return Login();
-    }
-    else {
-      print('Current token: ' + user.token.toString() + ', id: ' +
+    } else {
+      print('Current token: ' +
+          user.token.toString() +
+          ', id: ' +
           user.id.toString());
       objectmodel.ActivityProvider provider = objectmodel.ActivityProvider();
       objectmodel.ImageProvider imageprovider = objectmodel.ImageProvider();
+
       return Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.youthcardDashboard),
           elevation: 0.1,
           actions: [
             IconButton(
-                icon: user.image != null && user.image!.isNotEmpty ? Image.network(
-                    user.image!, height: 50) : Image.asset(
-                    'images/profile.png'),
+                icon: Icon(Icons.refresh),
                 onPressed: () {
+                  print('Refreshing view');
+                  setState(() {
+                    _loadingState = LoadingState.LOADING;
+                    _isLoading = false;
+                  });
+                }),
+            InkWell(
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: user.image != null && user.image!.isNotEmpty
+                      ? NetworkImage(user.image!)
+                      : null,
+                  child: user != null ? getInitials(user) : Container(),
+                ),
+                onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => MyCard()),
                   );
-                }
-            )
+                }),
           ],
         ),
-        body:
-        GridView.count(
-          // Create a grid with 2 columns. If you change the scrollDirection to
-          // horizontal, this produces 2 rows.
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          padding: EdgeInsets.only(
-              top: 10
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("images/splash.png"), fit: BoxFit.cover),
           ),
-          children: [
-            MaterialButton(
-              //padding: EdgeInsets.all(8.0),
-              textColor: Colors.white,
-              splashColor: Colors.greenAccent,
-              // elevation: 8.0,
-              child: Stack(
-                  children: [
+          constraints: BoxConstraints.expand(),
+          child: GridView.count(
+            // Create a grid with 2 columns. If you change the scrollDirection to
+            // horizontal, this produces 2 rows.
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            padding: EdgeInsets.only(top: 10),
+            children: [
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: MaterialButton(
+                  //padding: EdgeInsets.all(8.0),
+                  textColor: Colors.white,
+                  splashColor: Colors.greenAccent,
+                  // elevation: 8.0,
+                  child: Stack(children: [
                     Container(
                       decoration: BoxDecoration(
+                        shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: (user.image != null && user.image!.isNotEmpty ?
-                          NetworkImage(user.image!) :
-                          AssetImage('images/profile.png') as ImageProvider),
+                          image: (user.image != null && user.image!.isNotEmpty
+                              ? NetworkImage(user.image!)
+                              : AssetImage('images/profile.png')
+                                  as ImageProvider),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -152,90 +179,131 @@ class _DashBoardState extends State<DashBoard> {
                       child: Text(AppLocalizations.of(context)!.myCard),
                     ),
                   ]),
-              // ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MyCard()),
-                );
-              },
-            ),
+                  // ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyCard()),
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: ElevatedButton.icon(
+                  icon: Icon(Icons.qr_code),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => QRScanner()),
+                    );
+                  },
+                  label: Text(AppLocalizations.of(context)!.qrScanner),
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: ElevatedButton.icon(
+                    icon: Icon(Icons.calendar_today),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ActivityCalendar(provider, imageprovider)),
+                      );
+                    },
+                    label: Text(AppLocalizations.of(context)!.calendar),
+                    style: ElevatedButton.styleFrom(shape: CircleBorder())),
+              ),
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: ElevatedButton.icon(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ActivityList(provider, imageprovider)),
+                      );
+                    },
+                    label: Text(AppLocalizations.of(context)!.discover),
+                    style: ElevatedButton.styleFrom(shape: CircleBorder())),
+              ),
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: ElevatedButton.icon(
+                    icon: Icon(Icons.settings),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SettingsScreen()),
+                      );
+                    },
+                    label: Text(AppLocalizations.of(context)!.settings),
+                    style: ElevatedButton.styleFrom(shape: CircleBorder())),
+              ),
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: ElevatedButton.icon(
+                    icon: Icon(Icons.logout),
+                    onPressed: () {
+                      // auth.logout(user);
+                      UserPreferences().removeUser();
+                      Provider.of<UserProvider>(context, listen: false)
+                          .clearUser();
+                      Navigator.pushReplacementNamed(context, '/login');
 
-            ElevatedButton(onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => QRScanner()),
-              );
-            }, child: Text(AppLocalizations.of(context)!.qrScanner),
-
-            ),
-
-            ElevatedButton(onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>
-                    ActivityCalendar(provider, imageprovider)),
-              );
-            }, child: Text(AppLocalizations.of(context)!.calendar),
-            ),
-
-            ElevatedButton(onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>
-                    ActivityList(provider, imageprovider)),
-              );
-            }, child: Text(AppLocalizations.of(context)!.discover),),
-
-            ElevatedButton(onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsScreen()),
-              );
-            }, child: Text(AppLocalizations.of(context)!.settings),),
-
-            ElevatedButton(onPressed: () {
-              // auth.logout(user);
-              UserPreferences().removeUser();
-              Provider.of<UserProvider>(context, listen: false).clearUser();
-              Navigator.pushReplacementNamed(context, '/login');
-
-              //Navigator.pushNamed(context, '/login');
-
-            }, child: Text(AppLocalizations.of(context)!.logout),),
-            myActivitiesListLink(user, provider, imageprovider)
-          ],
+                      //Navigator.pushNamed(context, '/login');
+                    },
+                    label: Text(AppLocalizations.of(context)!.logout),
+                    style: ElevatedButton.styleFrom(shape: CircleBorder())),
+              ),
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: myActivitiesListLink(user, provider, imageprovider),
+              ),
+            ],
+          ),
         ),
-
       );
     }
   }
-  Widget myActivitiesListLink(user,userprovider,imageprovider)
-  {
-    switch (_loadingState)
-    {
-      case LoadingState.DONE:
-      //data loaded
-      if(myActivities.length>0)
-        return  ElevatedButton(onPressed: (){
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ActivityList(userprovider,imageprovider,viewtype:'own')),
-          );
 
-        }, child: Text(AppLocalizations.of(context)!.myActivities), );
-      else return Container();
+  Widget myActivitiesListLink(user, userprovider, imageprovider) {
+    switch (_loadingState) {
+      case LoadingState.DONE:
+        //data loaded
+        if (myActivities.length > 0)
+          return ElevatedButton.icon(
+              icon: Icon(Icons.list_alt_outlined),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ActivityList(
+                          userprovider, imageprovider,
+                          viewtype: 'own')),
+                );
+              },
+              label: Text(AppLocalizations.of(context)!.myActivities),
+              style: ElevatedButton.styleFrom(shape: CircleBorder()));
+        else
+          return Container();
 
       case LoadingState.LOADING:
-      //data loading in progress
-      if(! _isLoading) _loadMyActivities(user);
-       return ElevatedButton(onPressed: (){
+        //data loading in progress
+        if (!_isLoading) _loadMyActivities(user);
+        return ElevatedButton(
+            onPressed: () {}, child: CircularProgressIndicator());
 
-        }, child: CircularProgressIndicator()
-        );
-
-    default:
-   return  Container();
-  }//switch
+      default:
+        return Container();
+    } //switch
   }
 }

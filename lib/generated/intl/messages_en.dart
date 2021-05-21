@@ -101,6 +101,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "processing": MessageLookupByLibrary.simpleMessage("Processing"),
         "qrScanner": MessageLookupByLibrary.simpleMessage("QR Scanner"),
         "readMore": MessageLookupByLibrary.simpleMessage("Read more"),
+        "readyToScan": MessageLookupByLibrary.simpleMessage("Scanner ready"),
         "rearCamera": MessageLookupByLibrary.simpleMessage("Rear Camera"),
         "registrationFailed":
             MessageLookupByLibrary.simpleMessage("Registration failed"),
@@ -111,7 +112,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "resume": MessageLookupByLibrary.simpleMessage("Resume"),
         "retrievingCoordinates":
             MessageLookupByLibrary.simpleMessage("Retrieving coordinates"),
-        "scanCode": MessageLookupByLibrary.simpleMessage("Scan Code"),
         "settings": MessageLookupByLibrary.simpleMessage("settings"),
         "signUp": MessageLookupByLibrary.simpleMessage("Sign up"),
         "termsOfService":

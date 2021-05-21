@@ -75,8 +75,7 @@
   "requestNewPasswordTitle" : "Vaihda salasana",
   "resume" : "jatka",
   "retrievingCoordinates" : "Haetaan sijaintia",
-
-  "scanCode"  : "skannaa koodi",
+  "readyToScan" : "Valmis skannaamaan",
   "settings" : "asetukset",
   "signUp" : "ilmoittaudu",
 

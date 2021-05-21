@@ -16,18 +16,36 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool lockInBackground = true;
   bool notificationsEnabled = true;
+  String servername='Loading..';
+  String appName ='';
+  String packageName = '';
+  String version = '';
+  String buildNumber = '';
+
+  _SettingsScreenState() {
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) =>setState(() {
+      //print('loaded packageinfo from platform');
+      appName = packageInfo.appName;
+      packageName = packageInfo.packageName;
+      version = packageInfo.version;
+      buildNumber = packageInfo.buildNumber;
+    }));
+    Settings().getValue('servername').then((val) => setState((){
+     // print('loaded servername');
+      servername = val;
+    }));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.youthcardSettings)),
+      appBar:
+          AppBar(title: Text(AppLocalizations.of(context)!.youthcardSettings)),
       body: buildSettingsList(),
     );
   }
 
   Widget buildSettingsList() {
-
-
     return SettingsList(
       sections: [
         SettingsSection(
@@ -45,7 +63,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             SettingsTile(
               title: AppLocalizations.of(context)!.environment,
-              subtitle: Settings().getValue('servername').toString(),
+              subtitle: servername,
               leading: Icon(Icons.cloud_queue),
               onPressed: (context) {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -58,9 +76,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         SettingsSection(
           title: 'Account',
           tiles: [
-            SettingsTile(title: AppLocalizations.of(context)!.phoneNumber, leading: Icon(Icons.phone)),
-            SettingsTile(title: AppLocalizations.of(context)!.email, leading: Icon(Icons.email)),
-            SettingsTile(title: AppLocalizations.of(context)!.logout, leading: Icon(Icons.exit_to_app)),
+            SettingsTile(
+                title: AppLocalizations.of(context)!.phoneNumber,
+                leading: Icon(Icons.phone)),
+            SettingsTile(
+                title: AppLocalizations.of(context)!.email,
+                leading: Icon(Icons.email)),
+            SettingsTile(
+                title: AppLocalizations.of(context)!.logout,
+                leading: Icon(Icons.exit_to_app)),
           ],
         ),
         /*
@@ -104,7 +128,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: AppLocalizations.of(context)!.miscSettings,
           tiles: [
             SettingsTile(
-                title: AppLocalizations.of(context)!.termsOfService, leading: Icon(Icons.description)),
+                title: AppLocalizations.of(context)!.termsOfService,
+                leading: Icon(Icons.description)),
             SettingsTile(
                 title: AppLocalizations.of(context)!.about,
                 leading: Icon(Icons.collections_bookmark)),
@@ -123,23 +148,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               getVersionInfo(),
-
             ],
           ),
         ),
       ],
     );
   }
-  Widget getVersionInfo(){
+
+  Widget getVersionInfo() {
     print('getVersionInfo called');
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      String appName = packageInfo.appName;
-      String packageName = packageInfo.packageName;
-      String version = packageInfo.version;
-      String buildNumber = packageInfo.buildNumber;
-      print(appName+' version '+version);
-      return Text(appName+' v.'+version+'('+buildNumber+')', style: TextStyle(color: Color(0xFF777777)));
-    }).catchError((e){return Text(e.toString());});
-      return Container();
-  }
+
+      return Text(appName + ' v.' + version + '(' + buildNumber + ')',
+          style: TextStyle(color: Color(0xFF777777)));
+    }
+
 }
