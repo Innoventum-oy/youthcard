@@ -17,7 +17,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> responseData) {
     return User(
-        id: responseData['id'],
+        id: int.parse(responseData['id'].toString()),
         firstname: responseData['firstname'],
         lastname: responseData['lastname'],
         email: responseData['email'],
@@ -28,7 +28,18 @@ class User {
         qrcode: responseData['qrcode'],
         image: responseData['image'],
     );
-
   }
+   Map<String, dynamic> toJson() => {
+    'id': id.toString(),
+    'firstname': firstname,
+    'lastname': lastname,
+    'email': email,
+    'phone': phone,
+    'type': type,
+    'token': token,
+    'image': image,
+    'qrcode': qrcode,
+    'renewalToken': renewalToken,
+  };
 }
 

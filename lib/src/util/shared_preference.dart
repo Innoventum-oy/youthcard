@@ -1,6 +1,10 @@
 import 'package:youth_card/src/objects/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youth_card/src/util/app_url.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'dart:convert';
+
 import 'dart:async';
 
 class EventLog{
@@ -28,19 +32,13 @@ class EventLog{
 }
 
 class UserPreferences {
-  Future<bool> saveUser(User user) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final filename = "local_user";
 
-    prefs.setInt("id", user.id!);
-    prefs.setString("firstname", user.firstname ?? 'Unknown');
-    prefs.setString("lastname", user.lastname ?? 'User' );
-     prefs.setString("email", user.email ?? '');
-    prefs.setString("phone",user.phone?.toString()??'');
-    prefs.setString("type", user.type??'');
-    prefs.setString("token", user.token??'');
-    prefs.setString("renewalToken", user.renewalToken??'');
-    prefs.setString("image", user.image??'');
-    prefs.setString('qrcode',user.qrcode??'');
+  Future<bool> saveUser(User user) async {
+
+
+    final file = File('${(await getApplicationDocumentsDirectory()).path}/$this.filename.json');
+    file.writeAsString(jsonEncode(user));
 
     print(user.renewalToken);
 
@@ -48,45 +46,21 @@ class UserPreferences {
   }
 
   Future<User> getUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final file = File('${(await getApplicationDocumentsDirectory()).path}/$this.filename.json');
+    if(await file.exists()) {
+      print('returning user from local storage');
 
-    int? id = prefs.getInt("id");
-    String? image = prefs.getString("image");
-    String? qrcode = prefs.getString("qrcode");
-    String? firstname = prefs.getString("firstname");
-    String? lastname = prefs.getString("lastname");
-    String? email = prefs.getString("email");
-    String? phone = prefs.getString("phone");
-    String? type = prefs.getString("type");
-    String? token = prefs.getString("token");
-    String? renewalToken = prefs.getString("renewalToken");
-
-    return User(
-        id: id,
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-        phone: phone,
-        type: type,
-        token: token,
-        image : image,
-        qrcode: qrcode,
-        renewalToken: renewalToken);
+      return User.fromJson(jsonDecode(await file.readAsString()));
+      }
+    return User();
   }
 
   void removeUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    print('removing user from sharedpreferences');
-    prefs.remove('id');
-    prefs.remove('renewalToken');
-    prefs.remove("firstname");
-    prefs.remove("lastname");
-    prefs.remove("email");
-    prefs.remove("phone");
-    prefs.remove("type");
-    prefs.remove("token");
-    prefs.remove('qrcode');
-    prefs.remove('image');
+     final file =  File('${(await getApplicationDocumentsDirectory()).path}/$this.filename.json');
+     if(await file.exists()) {
+       print('removing user from local storage');
+       file.delete();
+      }
   }
 
   Future<String> getToken(args) async {

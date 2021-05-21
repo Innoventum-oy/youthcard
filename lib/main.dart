@@ -63,19 +63,19 @@ class YouthCard extends StatelessWidget {
                     print('returning circular progress indicator');
                     return CircularProgressIndicator();
                   default:
-
-                    User userdata = snapshot.data as User;
+                    User userdata = User();
+                    if(snapshot.hasData)
+                      userdata = snapshot.data as User;
 
                     if (snapshot.hasError)
                       return Text('Error: ${snapshot.error}');
 
                     else if (userdata.token == null )
-
                       return Welcome();
 
                     else
                     print('user token: '+userdata.token.toString());
-                    return Login();
+                       return Login();
                 }
               }),
           routes: {
