@@ -1,0 +1,6 @@
+{
+  "fi": [
+    "language",
+    "termsOfService"
+  ]
+}

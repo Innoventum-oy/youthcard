@@ -21,7 +21,7 @@ class _LoginState extends State<Login> {
   String servername='';
 
   _LoginState(){
-    Settings().getValue('servername').then((val) => setState((){
+    Settings().getServerName().then((val) => setState((){
 
       servername = val;
     }));
