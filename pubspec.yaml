@@ -43,6 +43,8 @@ dependencies:
   cupertino_icons: ^1.0.0
   #for qr code scanner
   qr_code_scanner: ^0.4.0
+  #cached images
+  cached_network_image: ^3.0.0
   #for getting user location
   geolocator: ^7.0.1
   url_launcher: ^6.0.2
@@ -50,6 +52,7 @@ dependencies:
   flutter_html: ^2.0.0-nullsafety.0
   settings_ui: ^1.0.0
   package_info: ^2.0.0
+
 
 dev_dependencies:
   flutter_test:

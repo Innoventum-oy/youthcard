@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/providers/auth.dart';
@@ -122,7 +123,7 @@ class _DashBoardState extends State<DashBoard> {
                 child: CircleAvatar(
                   radius: 20,
                   backgroundImage: user.image != null && user.image!.isNotEmpty
-                      ? NetworkImage(user.image!)
+                      ? CachedNetworkImageProvider(user.image!)
                       : null,
                   child: user != null ? getInitials(user) : Container(),
                 ),
@@ -161,7 +162,7 @@ class _DashBoardState extends State<DashBoard> {
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           image: (user.image != null && user.image!.isNotEmpty
-                              ? NetworkImage(user.image!)
+                              ? CachedNetworkImageProvider(user.image!)
                               : AssetImage('images/profile.png')
                                   as ImageProvider),
                           fit: BoxFit.cover,
