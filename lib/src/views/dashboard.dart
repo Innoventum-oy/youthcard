@@ -146,7 +146,7 @@ class _DashBoardState extends State<DashBoard> {
             crossAxisCount: 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
-            padding: EdgeInsets.only(top: 10),
+            padding: EdgeInsets.only(top: 10,left:20,right:20),
             children: [
               Padding(
                 padding: EdgeInsets.all(10),
@@ -190,79 +190,145 @@ class _DashBoardState extends State<DashBoard> {
               ),
               Padding(
                 padding: EdgeInsets.all(20),
-                child: ElevatedButton.icon(
-                  icon: Icon(Icons.qr_code),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => QRScanner()),
-                    );
-                  },
-                  label: Text(AppLocalizations.of(context)!.qrScanner),
-                  style: ElevatedButton.styleFrom(
-                    shape: CircleBorder(),
+                child: ClipOval(
+                  child: Material(
+                    color: Theme.of(context).primaryColor, // button color
+                    child: InkWell(
+                      splashColor: Colors.green, // splash color
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => QRScanner()),
+                        );
+                      }, // button pressed
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.qr_code,
+                              size: 40, color: Colors.white), // icon
+                          Text(AppLocalizations.of(context)!.qrScanner,
+                              style: TextStyle(color: Colors.white)), // text
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.all(20),
-                child: ElevatedButton.icon(
-                    icon: Icon(Icons.calendar_today),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ActivityCalendar(provider, imageprovider)),
-                      );
-                    },
-                    label: Text(AppLocalizations.of(context)!.calendar),
-                    style: ElevatedButton.styleFrom(shape: CircleBorder())),
+                child: ClipOval(
+                  child: Material(
+                    color: Theme.of(context).primaryColor, // button color
+                    child: InkWell(
+                      splashColor: Colors.green, // splash color
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ActivityCalendar(provider, imageprovider)),
+                        );
+                      }, // button pressed
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.calendar_today,
+                              size: 40, color: Colors.white), // icon
+                          Text(AppLocalizations.of(context)!.calendar,
+                              style: TextStyle(color: Colors.white)), // text
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
               Padding(
                 padding: EdgeInsets.all(20),
-                child: ElevatedButton.icon(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ActivityList(provider, imageprovider)),
-                      );
-                    },
-                    label: Text(AppLocalizations.of(context)!.discover),
-                    style: ElevatedButton.styleFrom(shape: CircleBorder())),
+                child: ClipOval(
+                  child: Material(
+                    color: Theme.of(context).primaryColor, // button color
+                    child: InkWell(
+                      splashColor: Colors.green, // splash color
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ActivityList(provider, imageprovider)),
+                        );
+                      }, // button pressed
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.search,
+                            size: 40,
+                            color: Colors.white,
+                          ), // icon
+                          Text(AppLocalizations.of(context)!.discover,
+                              style: TextStyle(color: Colors.white)), // text
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
               Padding(
                 padding: EdgeInsets.all(20),
-                child: ElevatedButton.icon(
-                    icon: Icon(Icons.settings),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SettingsScreen()),
-                      );
-                    },
-                    label: Text(AppLocalizations.of(context)!.settings),
-                    style: ElevatedButton.styleFrom(shape: CircleBorder())),
+                child: ClipOval(
+                  child: Material(
+                    color: Theme.of(context).primaryColor, // button color
+                    child: InkWell(
+                      splashColor: Colors.green, // splash color
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsScreen()),
+                        );
+                      }, // button pressed
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.settings, size: 40, color: Colors.white),
+                          // icon
+                          Text(AppLocalizations.of(context)!.settings,
+                              style: TextStyle(color: Colors.white)),
+                          // text
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
               Padding(
                 padding: EdgeInsets.all(20),
-                child: ElevatedButton.icon(
-                    icon: Icon(Icons.logout),
-                    onPressed: () {
-                      // auth.logout(user);
-                      UserPreferences().removeUser();
-                      Provider.of<UserProvider>(context, listen: false)
-                          .clearUser();
-                      Navigator.pushReplacementNamed(context, '/login');
-
-                      //Navigator.pushNamed(context, '/login');
-                    },
-                    label: Text(AppLocalizations.of(context)!.logout),
-                    style: ElevatedButton.styleFrom(shape: CircleBorder())),
+                child: ClipOval(
+                  child: Material(
+                    color: Theme.of(context).primaryColor, // button color
+                    child: InkWell(
+                      splashColor: Colors.green, // splash color
+                      onTap: () {
+                        UserPreferences().removeUser();
+                        Provider.of<UserProvider>(context, listen: false)
+                            .clearUser();
+                        Navigator.pushReplacementNamed(context, '/login');
+                      }, // button pressed
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.logout,
+                            size: 40,
+                            color: Colors.white,
+                          ), // icon
+                          Text(AppLocalizations.of(context)!.logout,
+                              style: TextStyle(color: Colors.white)), // text
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
               Padding(
                 padding: EdgeInsets.all(20),
@@ -280,7 +346,34 @@ class _DashBoardState extends State<DashBoard> {
       case LoadingState.DONE:
         //data loaded
         if (myActivities.length > 0)
-          return ElevatedButton.icon(
+          return ClipOval(
+            child: Material(
+              color: Theme.of(context).primaryColor, // button color
+              child: InkWell(
+                splashColor: Colors.green, // splash color
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ActivityList(
+                            userprovider, imageprovider,
+                            viewtype: 'own')),
+                  );
+                }, // button pressed
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.list_alt_outlined, size: 40, color: Colors.white),
+                    // icon
+                    Text(AppLocalizations.of(context)!.myActivities,
+                        style: TextStyle(color: Colors.white)),
+                    // text
+                  ],
+                ),
+              ),
+            ),
+          );
+    /*ElevatedButton.icon(
               icon: Icon(Icons.list_alt_outlined),
               onPressed: () {
                 Navigator.push(
@@ -293,6 +386,7 @@ class _DashBoardState extends State<DashBoard> {
               },
               label: Text(AppLocalizations.of(context)!.myActivities),
               style: ElevatedButton.styleFrom(shape: CircleBorder()));
+              */
         else
           return Container();
 

@@ -71,15 +71,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "frontCamera": MessageLookupByLibrary.simpleMessage("Etukamera"),
         "getCode": MessageLookupByLibrary.simpleMessage("Pyydä koodi"),
         "lastName": MessageLookupByLibrary.simpleMessage("Sukunimi"),
-        "loading": MessageLookupByLibrary.simpleMessage("ladataan"),
+        "loading": MessageLookupByLibrary.simpleMessage("Ladataan"),
         "login": MessageLookupByLibrary.simpleMessage("Kirjautuminen"),
         "loginFailed":
-            MessageLookupByLibrary.simpleMessage("kirjautuminen epäonnistui"),
-        "logout": MessageLookupByLibrary.simpleMessage("kirjaudu ulos"),
+            MessageLookupByLibrary.simpleMessage("Kirjautuminen epäonnistui"),
+        "logout": MessageLookupByLibrary.simpleMessage("Kirjaudu ulos"),
         "miscSettings": MessageLookupByLibrary.simpleMessage("Muut asetukset"),
         "moreInformation": MessageLookupByLibrary.simpleMessage("lisätiedot"),
-        "myActivities":
-            MessageLookupByLibrary.simpleMessage("Omat harrastukset"),
+        "myActivities": MessageLookupByLibrary.simpleMessage("Omat tapahtumat"),
         "myCard": MessageLookupByLibrary.simpleMessage("Oma kortti"),
         "password": MessageLookupByLibrary.simpleMessage("Salasana"),
         "passwordChanged":
@@ -118,10 +117,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "resume": MessageLookupByLibrary.simpleMessage("jatka"),
         "retrievingCoordinates":
             MessageLookupByLibrary.simpleMessage("Haetaan sijaintia"),
-        "settings": MessageLookupByLibrary.simpleMessage("asetukset"),
-        "signUp": MessageLookupByLibrary.simpleMessage("ilmoittaudu"),
+        "settings": MessageLookupByLibrary.simpleMessage("Asetukset"),
+        "signUp": MessageLookupByLibrary.simpleMessage("Ilmoittaudu"),
         "unknownUser":
-            MessageLookupByLibrary.simpleMessage("tuntematon käyttäjä"),
+            MessageLookupByLibrary.simpleMessage("Tuntematon käyttäjä"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Nimetön tapahtuma"),
         "youthcardDashboard":

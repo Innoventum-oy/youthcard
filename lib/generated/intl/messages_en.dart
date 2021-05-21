@@ -112,7 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "resume": MessageLookupByLibrary.simpleMessage("Resume"),
         "retrievingCoordinates":
             MessageLookupByLibrary.simpleMessage("Retrieving coordinates"),
-        "settings": MessageLookupByLibrary.simpleMessage("settings"),
+        "settings": MessageLookupByLibrary.simpleMessage("Settings"),
         "signUp": MessageLookupByLibrary.simpleMessage("Sign up"),
         "termsOfService":
             MessageLookupByLibrary.simpleMessage("Terms of Service"),

@@ -24,14 +24,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   _SettingsScreenState() {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) =>setState(() {
-      //print('loaded packageinfo from platform');
+
       appName = packageInfo.appName;
       packageName = packageInfo.packageName;
       version = packageInfo.version;
       buildNumber = packageInfo.buildNumber;
     }));
-    Settings().getValue('servername').then((val) => setState((){
-     // print('loaded servername');
+    Settings().getServerName().then((val) => setState((){
+
       servername = val;
     }));
   }

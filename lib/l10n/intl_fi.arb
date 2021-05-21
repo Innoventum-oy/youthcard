@@ -41,13 +41,13 @@
 
   "getCode" : "Pyydä koodi",
   "lastName" : "Sukunimi",
-  "loading" : "ladataan",
+  "loading" : "Ladataan",
   "login" : "Kirjautuminen",
-  "loginFailed" : "kirjautuminen epäonnistui",
-  "logout" : "kirjaudu ulos",
+  "loginFailed" : "Kirjautuminen epäonnistui",
+  "logout" : "Kirjaudu ulos",
   "miscSettings" : "Muut asetukset",
   "moreInformation" : "lisätiedot",
-  "myActivities": "Omat harrastukset",
+  "myActivities": "Omat tapahtumat",
   "myCard" : "Oma kortti",
 
   "password" : "Salasana",
@@ -76,10 +76,10 @@
   "resume" : "jatka",
   "retrievingCoordinates" : "Haetaan sijaintia",
   "readyToScan" : "Valmis skannaamaan",
-  "settings" : "asetukset",
-  "signUp" : "ilmoittaudu",
+  "settings" : "Asetukset",
+  "signUp" : "Ilmoittaudu",
 
-  "unknownUser" : "tuntematon käyttäjä",
+  "unknownUser" : "Tuntematon käyttäjä",
   "unnamedActivity": "Nimetön tapahtuma",
 
   "youthcardLoginTitle" : "Nuorisokortti - kirjaudu sisään",
