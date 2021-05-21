@@ -7,6 +7,7 @@ import 'package:youth_card/src/util/validators.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/src/util/shared_preference.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -17,9 +18,17 @@ class _LoginState extends State<Login> {
   final formKey = new GlobalKey<FormState>();
 
   String? _username, _password;
+  String servername='';
 
+  _LoginState(){
+    Settings().getValue('servername').then((val) => setState((){
+
+      servername = val;
+    }));
+  }
   @override
   Widget build(BuildContext context) {
+    //servername = AppLocalizations.of(context)!.loading;
     AuthProvider auth = Provider.of<AuthProvider>(context);
 
     final usernameField = TextFormField(
@@ -139,6 +148,9 @@ class _LoginState extends State<Login> {
                     : longButtons(AppLocalizations.of(context)!.btnLogin, doLogin),
                 SizedBox(height: 5.0),
                 forgotLabel,
+                SizedBox(height: 15.0),
+               Text(AppLocalizations.of(context)!.environment+': '+servername),
+               servername.isEmpty ? CircularProgressIndicator(): Container()
                /* SizedBox(height: 15.0),
                 cancelButton,*/
               ],
