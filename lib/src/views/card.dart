@@ -17,30 +17,56 @@ class _MyCardState extends State<MyCard> {
   Widget build(BuildContext context) {
 
     User user = Provider.of<UserProvider>(context).user;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.myCard),
-        elevation: 0.1,
-      ),
-      body: Column(
-        children: [
-
-
-          SizedBox(height: 50),
-          Center(child:_loggedInView(context, user)),
-
-          SizedBox(height: 50),
-          Center(
-              child:user.qrcode!=null && user.qrcode!.isNotEmpty ? Image.network(user.qrcode!,height:200) : Container()
+    return OrientationBuilder(
+      builder: (context,orientation)
+    {
+      print(orientation);
+      return Scaffold(
+          appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.myCard),
+            elevation: 0.1,
           ),
-         SizedBox(height: 50),
-         ElevatedButton(onPressed: (){Navigator.pop(context);
-          }, child: Text(AppLocalizations.of(context)!.btnReturn)
-    ),
-        ],
-      ),
-    );
+          body: orientation == Orientation.portrait
+              ? _portraitLayout(user)
+              : _landscapeLayout(user)
+      );
+    });
 
+  }
+  Widget _portraitLayout(user)
+  {
+    return Column(
+      children: [
+
+        SizedBox(height: 20),
+        Center(
+            child:user.qrcode!=null && user.qrcode!.isNotEmpty ? Image.network(user.qrcode!,height:200) : Container()
+        ),
+
+        SizedBox(height: 20),
+        Center(child:_loggedInView(context, user)),
+        SizedBox(height: 20),
+        ElevatedButton(onPressed: (){Navigator.pop(context);
+        }, child: Text(AppLocalizations.of(context)!.btnReturn)
+        ),
+      ],
+    );
+  }
+  Widget _landscapeLayout(user)
+  {
+    return Padding(
+        padding:EdgeInsets.all(30),
+    child:Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        user.qrcode!=null && user.qrcode!.isNotEmpty ?
+          Image.network(user.qrcode!,height:200) :
+          Container(),
+        _loggedInView(context, user),
+
+      ],
+    )
+    );
   }
   Widget _loggedInView(BuildContext context, user) {
     List<String> nameparts=[];
@@ -48,13 +74,22 @@ class _MyCardState extends State<MyCard> {
     nameparts.add(user.lastname ?? 'Doe');
 
     String username = nameparts.join(' ');
-    return Column(
+    return Padding(
+        padding:EdgeInsets.only(left:20,right:20),
+    child:Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         _drawAvatar(user.image!=null && user.image!.isNotEmpty ? NetworkImage(user.image) : Image.asset('images/profile.png').image),
-        _drawLabel(context, username),
-        Text(user.email),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children:[
+            _drawLabel(context, username),
+            Text(user.email),
+          ]
+        )
 
       ],
+    ),
     );
   }
   Padding _drawLabel(BuildContext context, String label) {
@@ -62,7 +97,7 @@ class _MyCardState extends State<MyCard> {
       padding: const EdgeInsets.all(16.0),
       child: Text(
         label,
-        style: Theme.of(context).textTheme.display1,
+        style: Theme.of(context).textTheme.headline5,
       ),
     );
   }
