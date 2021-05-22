@@ -230,6 +230,16 @@ class S {
     );
   }
 
+  /// `Close`
+  String get close {
+    return Intl.message(
+      'Close',
+      name: 'close',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Code scanned`
   String get codeScanned {
     return Intl.message(

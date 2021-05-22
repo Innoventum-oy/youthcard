@@ -67,7 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               leading: Icon(Icons.cloud_queue),
               onPressed: (context) {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => EnvironmentScreen(),
+                  builder: (_) => EnvironmentScreen(wrap:true),
                 ));
               },
             ),

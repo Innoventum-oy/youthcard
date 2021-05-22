@@ -8,6 +8,7 @@ import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
+import 'package:youth_card/src/views/settings/environment.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -18,14 +19,14 @@ class _LoginState extends State<Login> {
   final formKey = new GlobalKey<FormState>();
 
   String? _username, _password;
-  String servername='';
+  String servername = '';
 
-  _LoginState(){
-    Settings().getServerName().then((val) => setState((){
-
-      servername = val;
-    }));
+  _LoginState() {
+    Settings().getServerName().then((val) => setState(() {
+          servername = val;
+        }));
   }
+
   @override
   Widget build(BuildContext context) {
     //servername = AppLocalizations.of(context)!.loading;
@@ -35,15 +36,19 @@ class _LoginState extends State<Login> {
       autofocus: false,
       validator: validateContact,
       onSaved: (value) => _username = value,
-      decoration: buildInputDecoration(AppLocalizations.of(context)!.email, Icons.email),
+      decoration: buildInputDecoration(
+          AppLocalizations.of(context)!.email, Icons.email),
     );
 
     final passwordField = TextFormField(
       autofocus: false,
       obscureText: true,
-      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.pleaseEnterPassword : null,
+      validator: (value) => value!.isEmpty
+          ? AppLocalizations.of(context)!.pleaseEnterPassword
+          : null,
       onSaved: (value) => _password = value,
-      decoration: buildInputDecoration(AppLocalizations.of(context)!.confirmPassword, Icons.lock),
+      decoration: buildInputDecoration(
+          AppLocalizations.of(context)!.confirmPassword, Icons.lock),
     );
 
     var loading = Row(
@@ -58,7 +63,6 @@ class _LoginState extends State<Login> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         TextButton(
-
           child: Text(AppLocalizations.of(context)!.forgotPassword,
               style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
@@ -66,16 +70,15 @@ class _LoginState extends State<Login> {
           },
         ),
         TextButton(
-
-          child: Text(AppLocalizations.of(context)!.createAccount, style: TextStyle(fontWeight: FontWeight.w300)),
+          child: Text(AppLocalizations.of(context)!.createAccount,
+              style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
             Navigator.pushNamed(context, '/register');
           },
         ),
-
       ],
     );
-   /* final cancelButton = Row(
+    /* final cancelButton = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget> [
@@ -92,7 +95,6 @@ class _LoginState extends State<Login> {
       ],
     );*/
 
-
     var doLogin = () {
       final form = formKey.currentState;
 
@@ -100,7 +102,7 @@ class _LoginState extends State<Login> {
         form.save();
 
         final Future<Map<String, dynamic>> successfulMessage =
-        auth.login(_username!, _password!);
+            auth.login(_username!, _password!);
 
         successfulMessage.then((response) {
           if (response['status']) {
@@ -145,13 +147,38 @@ class _LoginState extends State<Login> {
                 SizedBox(height: 20.0),
                 auth.loggedInStatus == Status.Authenticating
                     ? loading
-                    : longButtons(AppLocalizations.of(context)!.btnLogin, doLogin),
+                    : longButtons(
+                        AppLocalizations.of(context)!.btnLogin, doLogin),
                 SizedBox(height: 5.0),
                 forgotLabel,
-                SizedBox(height: 15.0),
-               Text(AppLocalizations.of(context)!.environment+': '+servername),
-               servername.isEmpty ? CircularProgressIndicator(): Container()
-               /* SizedBox(height: 15.0),
+                SizedBox(height: 5.0),
+                TextButton(
+                  child: Text(
+                      AppLocalizations.of(context)!.environment +
+                          ': ' +
+                          servername,
+                      style: TextStyle(fontWeight: FontWeight.w300)),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => new AlertDialog(
+                          title: new Text(
+                              AppLocalizations.of(context)!.environment),
+                          content: EnvironmentScreen(wrap:false),
+                          insetPadding: EdgeInsets.symmetric(horizontal: 50),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text(AppLocalizations.of(context)!.close),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ]),
+                    );
+                  },
+                ),
+
+                /* SizedBox(height: 15.0),
                 cancelButton,*/
               ],
             ),
