@@ -172,7 +172,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
         ? ''
         : (calculateDifference(activity.nexteventdate!) != 0
             ? DateFormat('kk:mm dd.MM.yyyy').format(activity.nexteventdate!)
-            : 'Today ' + DateFormat('kk:mm ').format(activity.startdate!));
+            : AppLocalizations.of(context)!.today + DateFormat('kk:mm ').format(activity.startdate!));
 
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 4.0),

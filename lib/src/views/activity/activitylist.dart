@@ -11,10 +11,10 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class ActivityList extends StatefulWidget {
-  final objectmodel.ActivityProvider provider;
-  final objectmodel.ImageProvider imageprovider;
-  final String viewtype;
-  ActivityList(this.provider,this.imageprovider,{this.viewtype='all'});
+  final objectmodel.ActivityProvider activityProvider;
+  final objectmodel.ImageProvider imageProvider;
+  final String viewType;
+  ActivityList(this.activityProvider,this.imageProvider,{this.viewType='all'});
   @override
   _ActivityListState createState() => _ActivityListState();
 }
@@ -56,9 +56,9 @@ class _ActivityListState extends State<ActivityList>  {
       'api_key':user.token,
       'sort' : 'nexteventdate',
     };
-    print("activitylist type:"+widget.viewtype);
+    print("activitylist type:"+widget.viewType);
 
-    switch(widget.viewtype)
+    switch(widget.viewType)
     {
       case 'locations':
         params['activitytype'] = 'location';
@@ -71,7 +71,7 @@ class _ActivityListState extends State<ActivityList>  {
     try {
 
       var nextActivities =
-      await widget.provider.loadItems(params);
+      await widget.activityProvider.loadItems(params);
       setState(() {
         _loadingState = LoadingState.DONE;
         data.addAll(nextActivities);
@@ -103,7 +103,7 @@ class _ActivityListState extends State<ActivityList>  {
 
   @override
   Widget build(BuildContext context){
-  print('viewtype: '+widget.viewtype);
+  print('viewtype: '+widget.viewType);
   User user = Provider.of<UserProvider>(context,listen: false).user;
     return new Scaffold(
       appBar: new AppBar(title: new Text(AppLocalizations.of(context)!.activities)),

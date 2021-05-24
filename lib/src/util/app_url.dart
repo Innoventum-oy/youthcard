@@ -2,7 +2,7 @@ class AppUrl {
   static const Map<String,String> servers = {
     'Nuortenjoensuu' : 'nuortenjoensuu.fi',
     'Lousada' : 'lousada.youthcard.pt',
-    'Dresden' : 'dresden-youthcard.eu',
+    'Dresden' : 'dresden-youthcard.de',
     'Czech Republic' : 'youthcard.cz',
     'Medjimurje' : 'medimurje.youthcard.eu',
     'Development' : 'nuortenjoensuu.webweb.fi'

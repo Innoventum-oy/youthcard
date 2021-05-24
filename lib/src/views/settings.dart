@@ -21,7 +21,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String packageName = '';
   String version = '';
   String buildNumber = '';
-
+  String language = 'Loading..';
   _SettingsScreenState() {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) =>setState(() {
 
@@ -33,6 +33,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Settings().getServerName().then((val) => setState((){
 
       servername = val;
+    }));
+    Settings().getLanguage().then((val) => setState((){
+    print('current language:'+val);
+      language = val;
     }));
   }
 
@@ -49,11 +53,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return SettingsList(
       sections: [
         SettingsSection(
-          title: 'Common',
+          title: AppLocalizations.of(context)!.settingsCommon,
           tiles: [
             SettingsTile(
               title: AppLocalizations.of(context)!.language,
-              subtitle: 'English',
+              subtitle: language,
               leading: Icon(Icons.language),
               onPressed: (context) {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -74,7 +78,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         ),
         SettingsSection(
-          title: 'Account',
+          title: AppLocalizations.of(context)!.settingsAccount,
           tiles: [
             SettingsTile(
                 title: AppLocalizations.of(context)!.phoneNumber,
@@ -125,7 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         */
         SettingsSection(
-          title: AppLocalizations.of(context)!.miscSettings,
+          title: AppLocalizations.of(context)!.settingsMisc,
           tiles: [
             SettingsTile(
                 title: AppLocalizations.of(context)!.termsOfService,
@@ -156,7 +160,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget getVersionInfo() {
-    print('getVersionInfo called');
+
 
       return Text(appName + ' v.' + version + '(' + buildNumber + ')',
           style: TextStyle(color: Color(0xFF777777)));

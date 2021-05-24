@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:youth_card/src/util/shared_preference.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
 
 class LanguagesScreen extends StatefulWidget {
   @override
@@ -8,7 +10,13 @@ class LanguagesScreen extends StatefulWidget {
 }
 
 class _LanguagesScreenState extends State<LanguagesScreen> {
-  int languageIndex = 0;
+  String currentLocale = '';
+
+  _LanguagesScreenState() {
+    Settings().getLanguage().then((val) => setState(() {
+      currentLocale = val;
+    }));
+  }
 
   @override
   Widget build(BuildContext context){
@@ -19,57 +27,37 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
       appBar: AppBar(title: Text('Languages')),
       body: SettingsList(
         sections: [
-          SettingsSection(tiles: [
-            SettingsTile(
-              title: "English",
-              trailing: trailingWidget(0),
-              onPressed: (BuildContext context) {
-                changeLanguage(0);
-              },
-            ),
-            SettingsTile(
-              title: "Czech",
-              trailing: trailingWidget(1),
-              onPressed: (BuildContext context) {
-                changeLanguage(4);
-              },
-            ),
-            SettingsTile(
-              title: "Finnish",
-              trailing: trailingWidget(1),
-              onPressed: (BuildContext context) {
-                changeLanguage(1);
-              },
-            ),
-            SettingsTile(
-              title: "German",
-              trailing: trailingWidget(2),
-              onPressed: (BuildContext context) {
-                changeLanguage(2);
-              },
-            ),
-            SettingsTile(
-              title: "Portuguese",
-              trailing: trailingWidget(3),
-              onPressed: (BuildContext context) {
-                changeLanguage(3);
-              },
-            ),
-          ]),
+          SettingsSection(tiles: languageOptions()),
         ],
       ),
     );
   }
-
-  Widget trailingWidget(int index) {
-    return (languageIndex == index)
+  List<SettingsTile> languageOptions()
+  {
+    List<SettingsTile> options = [];
+    for(var locale in AppLocalizations.supportedLocales)
+      {
+      options.add(
+        SettingsTile(
+          title: locale.toLanguageTag(),
+          trailing: trailingWidget(locale.languageCode),
+          onPressed: (BuildContext context) {
+            changeLanguage(locale.languageCode);
+          },
+        ),
+      );
+      }
+    return options;
+  }
+  Widget trailingWidget(String locale) {
+    return (locale == currentLocale)
         ? Icon(Icons.check, color: Colors.blue)
         : Icon(null);
   }
 
-  void changeLanguage(int index) {
+  void changeLanguage(String locale) {
     setState(() {
-      languageIndex = index;
+      Settings().setValue('language',locale);
     });
   }
 }

@@ -18,7 +18,7 @@ class EnvironmentScreen extends StatefulWidget {
 }
 
 class _EnvironmentScreenState extends State<EnvironmentScreen> {
-  int languageIndex = 0;
+
   String servername = '';
 
   _EnvironmentScreenState() {
@@ -30,44 +30,33 @@ class _EnvironmentScreenState extends State<EnvironmentScreen> {
   @override
   Widget build(BuildContext context) {
     List<SettingsTile> tiles;
-   // todo: handle wrap parameter and return widget with or without scaffold depending of use case
+    // todo: handle wrap parameter and return widget with or without scaffold depending of use case
     // print('Wrap:'+(widget.wrap ? 'yes' :'no'));
     return wrappedList();
-
-
   }
-  Widget environmentSettingsList()
-  {
-   return CustomScrollView(
-      slivers: [
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: Column(
-            children: <Widget>[
 
-              Expanded(child: SettingsSection(tiles: environmentOptions())),
-
-            ],
-          ),
-        ),
+  Widget environmentSettingsList() {
+    return Column(
+      children: <Widget>[
+        Expanded(child: SettingsSection(tiles: environmentOptions())),
       ],
     );
   }
-  Widget wrappedList()
-  {
+
+  Widget wrappedList() {
     return Scaffold(
         appBar: AppBar(title: Text(AppLocalizations.of(context)!.environment)),
-      body: environmentSettingsList()
-    );
+        body: environmentSettingsList());
   }
+
   List<SettingsTile> environmentOptions() {
     final Map servers = AppUrl.servers;
     List<SettingsTile> tiles = [];
     servers.forEach((serverTitle, serverUrl) {
       tiles.add(SettingsTile(
         title: serverTitle,
-       // subtitle: serverUrl,
-        titleMaxLines:3,
+        // subtitle: serverUrl,
+        titleMaxLines: 3,
         trailing: trailingWidget(serverTitle),
         onPressed: (BuildContext context) {
           Settings().setValue('server', serverUrl);

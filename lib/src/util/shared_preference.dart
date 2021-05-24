@@ -3,10 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+
 import 'dart:convert';
-
+import 'package:intl/intl.dart';
 import 'dart:async';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class EventLog{
   Future<bool> saveMessage(String message) async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -70,6 +71,15 @@ class UserPreferences {
   }
 }
 class Settings{
+
+  Future<String> getLanguage() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String systemLocale = Intl.getCurrentLocale();
+
+    String language = prefs.getString('language') ?? systemLocale ;
+
+    return language ;
+  }
   Future<String> getServer() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String server = prefs.getString('server') ?? AppUrl.servers.values.first ;
