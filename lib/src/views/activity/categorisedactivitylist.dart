@@ -72,8 +72,10 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
         _loadingState = LoadingState.DONE;
         data.addAll(activityCategories);
         print(data.length.toString() + ' activitycategories currently loaded!');
-        _isLoading = false;
-        _pageNumber++;
+        if(activityCategories.length >= limit) {
+          _isLoading = false;
+          _pageNumber++;
+        }
       });
     } catch (e, stack) {
       _isLoading = false;
@@ -120,6 +122,8 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
         onPressed: () {
           print('Refreshing view');
           setState(() {
+            data = [];
+            _pageNumber = 0;
             _loadingState = LoadingState.LOADING;
             _isLoading = false;
           });
@@ -133,8 +137,9 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
     switch (_loadingState) {
       case LoadingState.DONE:
       //data loaded
-      print('data loaded, returning customscrollview');
-        return data.isEmpty ? Container() : CustomScrollView(
+      print('data loaded, returning customscrollview for '+data.length.toString()+' categories');
+        return data.isEmpty ? Container(
+            child:Text('Could not find any activities')) : CustomScrollView(
             slivers: <Widget>[
               SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
@@ -166,7 +171,9 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
             child: ListTile(
               leading: CircularProgressIndicator(),
               title: Text(AppLocalizations.of(context)!.loading,
-                  textAlign: TextAlign.center),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white)
+              ),
             ),
           ),
         );
@@ -190,8 +197,8 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
               children: <Widget>[
                 Text(activityClass.name,
                   style: const TextStyle(
-                      color: Colors.lightGreen,
-                      fontSize: 20.0,
+                      color: Colors.white,
+                      fontSize: 25.0,
                       fontWeight: FontWeight.bold),
                 ),
                 Container(
@@ -199,8 +206,8 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
                   decoration: BoxDecoration(color: primaryDark),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Container()
-                      //ActivityListSliver(  activityProvider, widget.imageProvider, activityClass.id),
+                    child:
+                      ActivityListSliver(  activityProvider, widget.imageProvider, activityClass),
                   ),
                 ),
               ]

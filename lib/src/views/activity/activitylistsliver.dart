@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/activity.dart';
+import 'package:youth_card/src/objects/activityclass.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/objects/user.dart';
@@ -12,9 +13,10 @@ import 'package:youth_card/src/util/navigator.dart';
 class ActivityListSliver extends StatefulWidget {
   final objectmodel.ActivityProvider activityProvider;
   final objectmodel.ImageProvider imageProvider;
-  final int activityclass;
+  final ActivityClass activityClass;
 
-  ActivityListSliver(this.activityProvider, this.imageProvider, this.activityclass);
+  ActivityListSliver(
+      this.activityProvider, this.imageProvider, this.activityClass);
 
   @override
   _ActivityListSliverState createState() => _ActivityListSliverState();
@@ -29,6 +31,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
   int iteration = 1;
   int buildtime = 1;
   int limit = 20;
+  int count = 0;
   int _pageNumber = 0;
   String? errormessage;
 
@@ -44,14 +47,17 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
 
   int calculateDifference(DateTime date) {
     DateTime now = DateTime.now();
-    return DateTime(date.year, date.month, date.day).difference(DateTime(now.year, now.month, now.day)).inDays;
+    return DateTime(date.year, date.month, date.day)
+        .difference(DateTime(now.year, now.month, now.day))
+        .inDays;
   }
+
   _loadNextPage(user, activityclass) async {
     _isLoading = true;
     int offset = limit * _pageNumber;
     DateTime now = DateTime.now();
     final Map<String, String> params = {
-      'activityclass': activityclass.toString(),
+      'activityclass': activityclass.id.toString(),
       'activitystatus': 'active',
       'activitytype': 'activity',
       'limit': limit.toString(),
@@ -67,10 +73,14 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
       var nextActivities = await widget.activityProvider.loadItems(params);
       setState(() {
         _loadingState = LoadingState.DONE;
-        data.addAll(nextActivities);
-        print(data.length.toString() + ' activities currently loaded!');
-        _isLoading = false;
-        _pageNumber++;
+        if (!nextActivities.isEmpty) {
+          data.addAll(nextActivities);
+          print(data.length.toString() + ' activities currently loaded!');
+          if (nextActivities.length < limit) {
+            _isLoading = false;
+            _pageNumber++;
+          }
+        }
       });
     } catch (e, stack) {
       _isLoading = false;
@@ -87,13 +97,12 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       User user = Provider.of<UserProvider>(context, listen: false).user;
 
-      _loadNextPage(user, widget.activityclass);
+      _loadNextPage(user, widget.activityClass);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     User user = Provider.of<UserProvider>(context, listen: false).user;
 
     return _getContentSection(user);
@@ -102,7 +111,6 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
   Widget _getContentSection(user) {
     switch (_loadingState) {
       case LoadingState.DONE:
-
         return ListView.builder(
             padding: EdgeInsets.symmetric(vertical: 16.0),
             scrollDirection: Axis.horizontal,
@@ -110,7 +118,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
             itemBuilder: (BuildContext context, int index) {
               if (!_isLoading && index > (data.length * 0.7)) {
                 print('calling loadnextpage, user token is ' + user.token);
-                _loadNextPage(user,widget.activityclass);
+                _loadNextPage(user, widget.activityClass);
               }
 
               return activityHorizontal(data[index]);
@@ -135,7 +143,8 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
             child: ListTile(
               leading: CircularProgressIndicator(),
               title: Text(AppLocalizations.of(context)!.loading,
-                  textAlign: TextAlign.center),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white)),
             ),
           ),
         );
@@ -159,8 +168,11 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
       //user has modify access
     }
 
-    String dateinfo = activity.nexteventdate==null ? '':(calculateDifference(activity.nexteventdate!)!=0 ? DateFormat('kk:mm dd.MM.yyyy').format(activity.nexteventdate!) : 'Today '+DateFormat('kk:mm ').format(activity.startdate!));
-
+    String dateinfo = activity.nexteventdate == null
+        ? ''
+        : (calculateDifference(activity.nexteventdate!) != 0
+            ? DateFormat('kk:mm dd.MM.yyyy').format(activity.nexteventdate!)
+            : 'Today ' + DateFormat('kk:mm ').format(activity.startdate!));
 
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 4.0),
@@ -175,12 +187,20 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
                     child: activity.coverpictureurl != null
                         ? Image.network(activity.coverpictureurl!,
                             width: 150, height: 230, fit: BoxFit.cover)
-                        : Icon(Icons.book),
+                        : widget.activityClass.coverpictureurl != null
+                            ? Image.network(
+                                widget.activityClass.coverpictureurl!,
+                                width: 150,
+                                height: 230,
+                                fit: BoxFit.cover)
+                            : Icon(Icons.group_rounded, size: 150),
                   ),
-                  Text((activity.name != null
-                      ? activity.name
-                      : AppLocalizations.of(context)!.unnamedActivity)!),
-                  Text(dateinfo),
+                  Text(
+                      (activity.name != null
+                          ? activity.name
+                          : AppLocalizations.of(context)!.unnamedActivity)!,
+                      style: TextStyle(color: Colors.white)),
+                  Text(dateinfo, style: TextStyle(color: Colors.white)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: buttons,

@@ -68,7 +68,7 @@ class ApiClient {
     print(response.statusCode);
     if(response.statusCode==200) {
       if(response.body!=null && response.body.isNotEmpty) {
-        print(response.body);
+       // print(response.body);
         Map<String, dynamic> body = json.decode(response.body);
         print('GETJSON DATA RECEIVED:');
         body.forEach((key, value) {
