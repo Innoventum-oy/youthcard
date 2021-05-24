@@ -72,7 +72,7 @@ class YouthCard extends StatelessWidget {
 
                       userdata = snapshot.data!=null ? snapshot.data as User : User();
                       String currentToken = userdata.token ?? 'empty';
-                      print('current user from snapshot:'+userdata.firstname!+' '+userdata.lastname!+' token: '+currentToken);
+
                     }
 
                     if (snapshot.hasError)

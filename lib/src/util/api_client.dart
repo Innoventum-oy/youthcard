@@ -63,19 +63,19 @@ class ApiClient {
   * _getJson handles request and returns the json decoded data from server back to caller function
   */
   Future<dynamic> _getJson(Uri uri) async {
-  print('calling '+uri.toString());
+  //print('calling '+uri.toString());
     var response = await http.get(uri);
     print(response.statusCode);
     if(response.statusCode==200) {
       if(response.body!=null && response.body.isNotEmpty) {
        // print(response.body);
         Map<String, dynamic> body = json.decode(response.body);
-        print('GETJSON DATA RECEIVED:');
+      /*  print('GETJSON DATA RECEIVED:');
         body.forEach((key, value) {
           if (key != 'data') print('$key = $value');
         });
         print('END GETJSON');
-
+*/
 
         return (body);
       }
@@ -149,7 +149,7 @@ class ApiClient {
     var url = Uri.https(baseUrl,AppUrl.registration);
 
     return _postJson(url,registrationData).then((json){
-       print(json);
+      // print(json);
       return json!=null ? json : false;
     });
   }
