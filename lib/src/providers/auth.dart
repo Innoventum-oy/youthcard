@@ -75,7 +75,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     var result;
-
+    String baseUrl = await Settings().getServer();
     final Map<String, dynamic> loginData = {
       'user': {
         'email': email,
@@ -86,7 +86,7 @@ class AuthProvider with ChangeNotifier {
     _loggedInStatus = Status.Authenticating;
     notifyListeners();
 
-    Response response = await post(Uri.https(AppUrl.baseURL,AppUrl.login),
+    Response response = await post(Uri.https(baseUrl,AppUrl.login),
       body: json.encode(loginData),
       headers: {'Content-Type': 'application/json'},
     );
@@ -95,7 +95,7 @@ class AuthProvider with ChangeNotifier {
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       var userData = responseData['data'];
-      print(userData);
+      print('User logged in, saving local userdata: '+userData.toString());
       User authUser = User.fromJson(userData);
 
       UserPreferences().saveUser(authUser);
@@ -120,7 +120,7 @@ class AuthProvider with ChangeNotifier {
   // user logout method
   Future<bool> logout(User user) async {
     print('logging out user');
-
+    String baseUrl = await Settings().getServer();
     final Map<String, dynamic> logoutData = {
        'user': {
         'email': user.email,
@@ -128,7 +128,7 @@ class AuthProvider with ChangeNotifier {
       }
     };
     //Send logout request to server
-    Response response = await post(Uri.https(AppUrl.baseURL,AppUrl.logout),
+    Response response = await post(Uri.https(baseUrl,AppUrl.logout),
       body: json.encode(logoutData),
       headers: {'Content-Type': 'application/json'},
     );

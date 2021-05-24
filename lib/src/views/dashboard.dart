@@ -9,7 +9,8 @@ import 'package:youth_card/src/views/qrscanner.dart';
 import 'package:youth_card/src/views/calendar.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
-import 'package:youth_card/src/views/activitylist.dart';
+import 'package:youth_card/src/views/activity/activitylist.dart';
+import 'package:youth_card/src/views/activity/categorisedactivitylist.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/views/settings.dart';
 import 'package:youth_card/src/util/utils.dart';
@@ -56,8 +57,8 @@ class _DashBoardState extends State<DashBoard> {
       'limit': limit.toString(),
       'offset': offset.toString(),
       'startfrom': DateFormat('yyyy-MM-dd').format(now),
-      'api-key': user.token,
-      'api_key': user.token,
+      'api-key': user.token ?? '',
+      'api_key': user.token ?? '',
       'sort': 'nexteventdate',
     };
     try {
@@ -96,7 +97,7 @@ class _DashBoardState extends State<DashBoard> {
 
     if (user.token == null) {
       print('user token not found, pushing named route /login');
-      return Login();
+      return Login(user:user);
     } else {
       print('Current token: ' +
           user.token.toString() +
@@ -255,7 +256,7 @@ class _DashBoardState extends State<DashBoard> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  ActivityList(provider, imageprovider)),
+                                  CategorisedActivityList(imageprovider)),
                         );
                       }, // button pressed
                       child: Column(

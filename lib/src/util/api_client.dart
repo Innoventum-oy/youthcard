@@ -4,8 +4,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:youth_card/src/util/app_url.dart';
+import 'package:youth_card/src/objects/activityclass.dart';
 import 'package:youth_card/src/objects/activity.dart';
+import 'package:youth_card/src/objects/image.dart';
 import 'package:youth_card/src/objects/user.dart';
+import 'package:youth_card/src/objects/userbenefit.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
@@ -64,10 +67,10 @@ class ApiClient {
     var response = await http.get(uri);
     print(response.statusCode);
     if(response.statusCode==200) {
-      if(response.body.isNotEmpty) {
+      if(response.body!=null && response.body.isNotEmpty) {
         print(response.body);
         Map<String, dynamic> body = json.decode(response.body);
-        print('GETJSON DATA RECEIVED:');
+        print('GETJSON DATA RECEIVED:');
         body.forEach((key, value) {
           if (key != 'data') print('$key = $value');
         });
@@ -177,6 +180,38 @@ class ApiClient {
   /*
   * Load list of activities for the activitylist view
    */
+  Future<List<ActivityClass>> loadActivityClasses(Map<String,dynamic> params) async {
+    //debug: print params
+    params.forEach((key, value) {print('$key = $value');});
+    String baseUrl = await Settings().getServer();
+    var url = Uri.https(baseUrl, 'api/activityclass/',
+        params);
+    return _getJson(url).then((json) => json['data']).then((data) {
+      if(data==null) return [];
+      return data
+          .map<ActivityClass>((data) => ActivityClass.fromJson(data))
+          .toList();
+    });
+
+  }
+
+  /*
+  * Load detailed activity information for the activity view
+   */
+  Future<dynamic> getActivityClassDetails(int activityClassId, User user) async {
+    String baseUrl = await Settings().getServer();
+    var url = Uri.https(baseUrl, 'api/activityclass/$activityClassId', { 'api-key': user.token,'api_key':user.token});
+
+    return _getJson(url).then((json) => json['data']).then((data) {
+      // print(data);
+      return data;
+    });
+
+  }
+
+  /*
+  * Load list of activities for the activitylist view
+   */
   Future<List<Activity>> loadActivities(Map<String,dynamic> params) async {
     //debug: print params
     params.forEach((key, value) {print('$key = $value');});
@@ -203,6 +238,56 @@ class ApiClient {
        // print(data);
         return data;
       });
+
+  }
+
+  /*
+  * Load list of userbenefits
+   */
+  Future<List<UserBenefit>> loadUserBenefits(Map<String,dynamic> params) async {
+    //debug: print params
+    params.forEach((key, value) {print('$key = $value');});
+    String baseUrl = await Settings().getServer();
+    var url = Uri.https(baseUrl, 'api/activity/',
+        params);
+    return _getJson(url).then((json) => json['data']).then((data) {
+      if(data==null) return [];
+      return data
+          .map<UserBenefit>((data) => UserBenefit.fromJson(data))
+          .toList();
+    });
+
+  }
+
+  /*
+  * Load detailed userbenefit information
+   */
+  Future<dynamic> getUserBenefitDetails(int benefitId, User user) async {
+    String baseUrl = await Settings().getServer();
+    var url = Uri.https(baseUrl, 'api/usebenefit/$benefitId', { 'api-key': user.token,'api_key':user.token});
+
+    return _getJson(url).then((json) => json['data']).then((data) {
+      // print(data);
+      return data;
+    });
+
+  }
+
+  /*
+  * Load list of images with given parameters
+   */
+  Future<List<ImageObject>> loadImages(Map<String,dynamic> params) async {
+    //debug: print params
+    params.forEach((key, value) {print('$key = $value');});
+    String baseUrl = await Settings().getServer();
+    var url = Uri.https(baseUrl, 'api/activity/',
+        params);
+    return _getJson(url).then((json) => json['data']).then((data) {
+      if(data==null) return [];
+      return data
+          .map<ImageObject>((data) => ImageObject.fromJson(data))
+          .toList();
+    });
 
   }
 

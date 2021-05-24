@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
-import 'package:youth_card/src/objects/image.dart';
+
 class Activity {
   int? id;
   String? name;
@@ -51,7 +49,7 @@ class Activity {
             coverpicture: cover == null ? 'default' : cover['objectid'],
             coverpictureurl: responseData['coverpictureurl'],
             registration: responseData['registration'] == 'true' || responseData['registration']==true ? true : false,
-            accesslevel:  int.parse(responseData['accesslevel'])
+            accesslevel: responseData['accesslevel'] is int ? responseData['accesslevel'] : int.parse(responseData['accesslevel'])
         );
   }
 

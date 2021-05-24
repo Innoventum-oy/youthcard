@@ -24,7 +24,10 @@ class YouthCard extends StatelessWidget {
   Widget build(BuildContext context) {
     print('build called for youthcard class');
 
-    Future<User>? getUserData() => UserPreferences().getUser();
+    Future<User>? getUserData(){
+      print('returning UserPreferences().getUser()');
+      return UserPreferences().getUser();
+    };
 
     return MultiProvider(
       providers: [
@@ -62,20 +65,29 @@ class YouthCard extends StatelessWidget {
                   case ConnectionState.waiting:
                     print('returning circular progress indicator');
                     return CircularProgressIndicator();
+
                   default:
                     User userdata = User();
-                    if(snapshot.hasData)
-                      userdata = snapshot.data as User;
+                    if(snapshot.hasData) {
+
+                      userdata = snapshot.data!=null ? snapshot.data as User : User();
+                      String currentToken = userdata.token ?? 'empty';
+                      print('current user from snapshot:'+userdata.firstname!+' '+userdata.lastname!+' token: '+currentToken);
+                    }
 
                     if (snapshot.hasError)
                       return Text('Error: ${snapshot.error}');
-
+                    else if (userdata.token != null) {
+                      print('setting userdata to userprovider');
+                      Provider.of<UserProvider>(context, listen: false).setUserSilent(userdata);
+                      return DashBoard();
+                    }
                     else if (userdata.token == null )
                       return Welcome();
 
                     else
                     print('user token: '+userdata.token.toString());
-                       return Login();
+                       return Login(user:userdata);
                 }
               }),
           routes: {

@@ -5,7 +5,7 @@ import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:youth_card/src/views/activitylist_item.dart';
+import 'package:youth_card/src/views/activity/activitylist_item.dart';
 
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 class ActivityList extends StatefulWidget {
   final objectmodel.ActivityProvider provider;
   final objectmodel.ImageProvider imageprovider;
-  String viewtype;
+  final String viewtype;
   ActivityList(this.provider,this.imageprovider,{this.viewtype='all'});
   @override
   _ActivityListState createState() => _ActivityListState();

@@ -40,7 +40,7 @@ class UserPreferences {
     final file = File('${(await getApplicationDocumentsDirectory()).path}/$this.filename.json');
     file.writeAsString(jsonEncode(user));
 
-    print(user.renewalToken);
+  //  print('accestoken: '+user.token!+', renewaltoken: '+user.renewalToken!);
 
     return true;
   }

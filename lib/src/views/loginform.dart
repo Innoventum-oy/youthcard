@@ -11,6 +11,10 @@ import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:youth_card/src/views/settings/environment.dart';
 
 class Login extends StatefulWidget {
+  dynamic? user;
+
+  Login({this.user});
+
   @override
   _LoginState createState() => _LoginState();
 }
@@ -18,7 +22,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final formKey = new GlobalKey<FormState>();
 
-  String? _username, _password;
+  String? _contact, _password;
   String servername = '';
 
   _LoginState() {
@@ -31,14 +35,22 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     //servername = AppLocalizations.of(context)!.loading;
     AuthProvider auth = Provider.of<AuthProvider>(context);
-
-    final usernameField = TextFormField(
-      autofocus: false,
-      validator: validateContact,
-      onSaved: (value) => _username = value,
-      decoration: buildInputDecoration(
-          AppLocalizations.of(context)!.email, Icons.email),
-    );
+    User? user = widget.user;
+    String contact = '';
+    if (user != null) {
+      contact = user.phone!=null
+          ? user.phone!
+          : user.email!=null
+              ? user.email!
+              : '';
+    }
+    final contactField = TextFormField(
+        autofocus: false,
+        validator: validateContact,
+        onSaved: (value) => _contact = value,
+        decoration: buildInputDecoration(
+            AppLocalizations.of(context)!.email, Icons.email),
+        initialValue: contact);
 
     final passwordField = TextFormField(
       autofocus: false,
@@ -102,7 +114,7 @@ class _LoginState extends State<Login> {
         form.save();
 
         final Future<Map<String, dynamic>> successfulMessage =
-            auth.login(_username!, _password!);
+            auth.login(_contact!, _password!);
 
         successfulMessage.then((response) {
           if (response['status']) {
@@ -139,7 +151,7 @@ class _LoginState extends State<Login> {
                 SizedBox(height: 15.0),
                 label(AppLocalizations.of(context)!.phoneOrEmail),
                 SizedBox(height: 5.0),
-                usernameField,
+                contactField,
                 SizedBox(height: 20.0),
                 label(AppLocalizations.of(context)!.password),
                 SizedBox(height: 5.0),
@@ -164,7 +176,7 @@ class _LoginState extends State<Login> {
                       builder: (_) => new AlertDialog(
                           title: new Text(
                               AppLocalizations.of(context)!.environment),
-                          content: EnvironmentScreen(wrap:false),
+                          content: EnvironmentScreen(wrap: false),
                           insetPadding: EdgeInsets.symmetric(horizontal: 50),
                           actions: <Widget>[
                             TextButton(

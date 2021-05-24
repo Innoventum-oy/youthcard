@@ -7,8 +7,14 @@ class UserProvider with ChangeNotifier {
   User get user => _user;
 
   void setUser(User user) {
+
     _user = user;
-    notifyListeners();
+   notifyListeners();
+  }
+  void setUserSilent(User user) {
+
+    _user = user;
+
   }
   void clearUser(){
     _user = new User();

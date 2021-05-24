@@ -13,7 +13,7 @@ import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import 'package:youth_card/src/views/activitylist_item.dart';
+import 'package:youth_card/src/views/activity/activitylist_item.dart';
 
 
 
