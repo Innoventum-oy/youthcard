@@ -1,26 +1,22 @@
-import 'package:youth_card/src/objects/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youth_card/src/util/app_url.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-import 'dart:convert';
-
+import 'package:youth_card/src/util/local_storage.dart';
+import 'package:youth_card/src/objects/user.dart';
 import 'dart:async';
 
-class EventLog{
-  Future<bool> saveMessage(String message) async{
+class EventLog {
+  Future<bool> saveMessage(String message) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> currentContent = (prefs.getStringList('eventlog') ?? <String>[]);
+    List<String> currentContent = (prefs.getStringList('eventlog') ??
+        <String>[]);
     currentContent.add(message);
-    prefs.setStringList('eventlog',currentContent);
+    prefs.setStringList('eventlog', currentContent);
     return true;
   }
 
   void clearLog() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-
     prefs.remove("eventlog");
-
   }
 
   Future<List<String>?> getMessages() async
@@ -29,39 +25,6 @@ class EventLog{
     return prefs.getStringList('eventlog');
   }
 
-}
-
-class UserPreferences {
-  final filename = "local_user";
-
-  Future<bool> saveUser(User user) async {
-
-
-    final file = File('${(await getApplicationDocumentsDirectory()).path}/$this.filename.json');
-    file.writeAsString(jsonEncode(user));
-
-  //  print('accestoken: '+user.token!+', renewaltoken: '+user.renewalToken!);
-
-    return true;
-  }
-
-  Future<User> getUser() async {
-    final file = File('${(await getApplicationDocumentsDirectory()).path}/$this.filename.json');
-    if(await file.exists()) {
-      print('returning user from local storage');
-
-      return User.fromJson(jsonDecode(await file.readAsString()));
-      }
-    return User();
-  }
-
-  void removeUser() async {
-     final file =  File('${(await getApplicationDocumentsDirectory()).path}/$this.filename.json');
-     if(await file.exists()) {
-       print('removing user from local storage');
-       file.delete();
-      }
-  }
 
   Future<String> getToken(args) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -94,4 +57,24 @@ class Settings{
     prefs.setString(arg,val);
     return true;
   }
+}
+class UserPreferences {
+  final filename = "local_user";
+
+  Future<bool> saveUser(User user) async {
+    return FileStorage.write(user, this.filename);
+  }
+
+  Future<User> getUser() async {
+    await FileStorage.read(this.filename).then((userdata){
+      return(userdata!=false ? User.fromJson(userdata) : User());
+    });
+    return User();
+  }
+
+  void removeUser() async {
+    FileStorage.delete(this.filename);
+
+    }
+
 }

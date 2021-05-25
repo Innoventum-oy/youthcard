@@ -5,6 +5,8 @@ import 'package:youth_card/src/objects/activityclass.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/image.dart';
 import 'package:youth_card/src/util/api_client.dart';
+import 'package:youth_card/src/util/local_storage.dart';
+
 
 abstract class ObjectProvider {
   User? user;
@@ -59,8 +61,19 @@ class ActivityProvider extends ObjectProvider {
 
 // returns json-decoded response
   @override
-  Future<dynamic> getDetails(int activityId, user) {
-    return _apiClient.getActivityDetails(activityId, user);
+  Future<dynamic> getDetails(int activityId, user) async {
+    final activitydata = await FileStorage.read("activity_" + activityId.toString() + "_user_"+user.id.toString());
+    if (activitydata != false)
+      {
+          //@todo refresh
+          print('Loaded activity details from local storage for activity ${activityId.toString()}');
+          return activitydata;
+        }
+
+    final remoteactivitydata = await _apiClient.getActivityDetails(activityId, user);
+    FileStorage.write(remoteactivitydata,"activity_" + activityId.toString() + "_user_"+user.id.toString());
+    return remoteactivitydata;
+
   }
 }
 
