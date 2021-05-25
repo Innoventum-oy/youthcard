@@ -70,12 +70,12 @@ class ApiClient {
       if(response.body!=null && response.body.isNotEmpty) {
        // print(response.body);
         Map<String, dynamic> body = json.decode(response.body);
-      /*  print('GETJSON DATA RECEIVED:');
+        print('GETJSON DATA RECEIVED:');
         body.forEach((key, value) {
           if (key != 'data') print('$key = $value');
         });
         print('END GETJSON');
-*/
+
 
         return (body);
       }

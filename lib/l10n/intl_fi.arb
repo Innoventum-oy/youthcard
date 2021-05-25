@@ -41,6 +41,7 @@
   "frontCamera" : "Etukamera",
 
   "getCode" : "Pyydä koodi",
+  "language" : "Kieli",
   "lastName" : "Sukunimi",
   "loading" : "Ladataan",
   "login" : "Kirjautuminen",
@@ -78,11 +79,15 @@
   "retrievingCoordinates" : "Haetaan sijaintia",
   "readyToScan" : "Valmis skannaamaan",
   "settings" : "Asetukset",
+  "settingsAccount" : "Tili",
+  "settingsCommon" : "Yleiset",
+  "settingsMisc" : "Sekalaisia",
   "signUp" : "Ilmoittaudu",
 
   "unknownUser" : "Tuntematon käyttäjä",
   "unnamedActivity": "Nimetön tapahtuma",
-
+  "termsOfService" : "Käyttöehdot",
+  "today" : "Tänään",
   "youthcardLoginTitle" : "Nuorisokortti - kirjaudu sisään",
   "youthcardDashboard": "Nuorisokortti",
   "youthcardSettings" : "Nuorisokortti - asetukset"

@@ -75,7 +75,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "login": MessageLookupByLibrary.simpleMessage("Login"),
         "loginFailed": MessageLookupByLibrary.simpleMessage("Login failed"),
         "logout": MessageLookupByLibrary.simpleMessage("Logout"),
-        "miscSettings": MessageLookupByLibrary.simpleMessage("Misc"),
         "moreInformation":
             MessageLookupByLibrary.simpleMessage("More information"),
         "myActivities": MessageLookupByLibrary.simpleMessage("My activities"),
@@ -114,9 +113,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "retrievingCoordinates":
             MessageLookupByLibrary.simpleMessage("Retrieving coordinates"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "settingsAccount": MessageLookupByLibrary.simpleMessage("Account"),
+        "settingsCommon": MessageLookupByLibrary.simpleMessage("Common"),
+        "settingsMisc": MessageLookupByLibrary.simpleMessage("Misc"),
         "signUp": MessageLookupByLibrary.simpleMessage("Sign up"),
         "termsOfService":
             MessageLookupByLibrary.simpleMessage("Terms of Service"),
+        "today": MessageLookupByLibrary.simpleMessage("Today"),
         "unknownUser": MessageLookupByLibrary.simpleMessage("unknown user"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Unnamed activity"),

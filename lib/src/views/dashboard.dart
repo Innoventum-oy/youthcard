@@ -359,7 +359,7 @@ class _DashBoardState extends State<DashBoard> {
                     MaterialPageRoute(
                         builder: (context) => ActivityList(
                             userprovider, imageprovider,
-                            viewtype: 'own')),
+                            viewType: 'own')),
                   );
                 }, // button pressed
                 child: Column(

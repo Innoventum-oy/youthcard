@@ -1,22 +1,24 @@
+import 'package:youth_card/src/objects/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/util/local_storage.dart';
-import 'package:youth_card/src/objects/user.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
-
-class EventLog {
-  Future<bool> saveMessage(String message) async {
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+class EventLog{
+  Future<bool> saveMessage(String message) async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> currentContent = (prefs.getStringList('eventlog') ??
-        <String>[]);
+    List<String> currentContent = (prefs.getStringList('eventlog') ?? <String>[]);
     currentContent.add(message);
-    prefs.setStringList('eventlog', currentContent);
+    prefs.setStringList('eventlog',currentContent);
     return true;
   }
 
   void clearLog() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     prefs.remove("eventlog");
+
   }
 
   Future<List<String>?> getMessages() async
@@ -25,14 +27,43 @@ class EventLog {
     return prefs.getStringList('eventlog');
   }
 
+}
 
+class UserPreferences {
+  final filename = "local_user";
+
+  Future<bool> saveUser(User user) async {
+    return FileStorage.write(user, this.filename);
+  }
+
+  Future<User> getUser() async {
+    await FileStorage.read(this.filename).then((userdata){
+      return(userdata!=false ? User.fromJson(userdata) : User());
+    });
+    return User();
+  }
+
+  void removeUser() async {
+    FileStorage.delete(this.filename);
+
+  }
   Future<String> getToken(args) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("token").toString();
     return token;
   }
 }
+
 class Settings{
+
+  Future<String> getLanguage() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String systemLocale = Intl.getCurrentLocale();
+
+    String language = prefs.getString('language') ?? systemLocale ;
+
+    return language ;
+  }
   Future<String> getServer() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String server = prefs.getString('server') ?? AppUrl.servers.values.first ;
@@ -57,24 +88,4 @@ class Settings{
     prefs.setString(arg,val);
     return true;
   }
-}
-class UserPreferences {
-  final filename = "local_user";
-
-  Future<bool> saveUser(User user) async {
-    return FileStorage.write(user, this.filename);
-  }
-
-  Future<User> getUser() async {
-    await FileStorage.read(this.filename).then((userdata){
-      return(userdata!=false ? User.fromJson(userdata) : User());
-    });
-    return User();
-  }
-
-  void removeUser() async {
-    FileStorage.delete(this.filename);
-
-    }
-
 }

@@ -38,6 +38,7 @@ class YouthCard extends StatelessWidget {
           title: 'Youth Card',
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
+
           theme: ThemeData(
             // This is the theme of your application.
             //

@@ -8,7 +8,12 @@ import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
-import 'package:youth_card/src/views/settings/environment.dart';
+import 'package:package_info/package_info.dart';
+
+//import 'package:youth_card/src/views/settings/environment.dart';
+import 'package:youth_card/src/util/app_url.dart';
+import 'package:flutter/material.dart';
+import 'package:settings_ui/settings_ui.dart';
 
 class Login extends StatefulWidget {
   dynamic? user;
@@ -23,11 +28,22 @@ class _LoginState extends State<Login> {
   final formKey = new GlobalKey<FormState>();
 
   String? _contact, _password;
-  String servername = '';
+  String serverName = '';
+  String appName = '';
+  String packageName = '';
+  String version = '';
+  String buildNumber = '';
 
   _LoginState() {
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) => setState(() {
+          appName = packageInfo.appName;
+          packageName = packageInfo.packageName;
+          version = packageInfo.version;
+          buildNumber = packageInfo.buildNumber;
+        }));
+
     Settings().getServerName().then((val) => setState(() {
-          servername = val;
+          serverName = val;
         }));
   }
 
@@ -38,9 +54,9 @@ class _LoginState extends State<Login> {
     User? user = widget.user;
     String contact = '';
     if (user != null) {
-      contact = user.phone!=null
+      contact = user.phone != null
           ? user.phone!
-          : user.email!=null
+          : user.email != null
               ? user.email!
               : '';
     }
@@ -90,22 +106,21 @@ class _LoginState extends State<Login> {
         ),
       ],
     );
-    /* final cancelButton = Row(
+
+    final cancelButton = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget> [
+      children: <Widget>[
         TextButton(
-
           child: Text(AppLocalizations.of(context)!.cancel,
               style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () async {
-
             //auth.logout(user);
             auth.cancellogin();
           },
         ),
       ],
-    );*/
+    );
 
     var doLogin = () {
       final form = formKey.currentState;
@@ -142,61 +157,115 @@ class _LoginState extends State<Login> {
           elevation: 0.1,
         ),
         body: Container(
-          padding: EdgeInsets.all(40.0),
+          padding: EdgeInsets.all(30.0),
           child: Form(
             key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 15.0),
-                label(AppLocalizations.of(context)!.phoneOrEmail),
-                SizedBox(height: 5.0),
-                contactField,
-                SizedBox(height: 20.0),
-                label(AppLocalizations.of(context)!.password),
-                SizedBox(height: 5.0),
-                passwordField,
-                SizedBox(height: 20.0),
-                auth.loggedInStatus == Status.Authenticating
-                    ? loading
-                    : longButtons(
-                        AppLocalizations.of(context)!.btnLogin, doLogin),
-                SizedBox(height: 5.0),
-                forgotLabel,
-                SizedBox(height: 5.0),
-                TextButton(
-                  child: Text(
-                      AppLocalizations.of(context)!.environment +
-                          ': ' +
-                          servername,
-                      style: TextStyle(fontWeight: FontWeight.w300)),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => new AlertDialog(
-                          title: new Text(
-                              AppLocalizations.of(context)!.environment),
-                          content: EnvironmentScreen(wrap: false),
-                          insetPadding: EdgeInsets.symmetric(horizontal: 50),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text(AppLocalizations.of(context)!.close),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ]),
-                    );
-                  },
-                ),
+            child:  Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
 
-                /* SizedBox(height: 15.0),
-                cancelButton,*/
-              ],
+                  label(AppLocalizations.of(context)!.phoneOrEmail),
+                  SizedBox(height: 5.0),
+                  contactField,
+                  SizedBox(height: 10.0),
+                  label(AppLocalizations.of(context)!.password),
+                  SizedBox(height: 5.0),
+                  passwordField,
+                  SizedBox(height: 10.0),
+                  auth.loggedInStatus == Status.Authenticating
+                      ? loading
+                      : longButtons(
+                          AppLocalizations.of(context)!.btnLogin, doLogin),
+                  SizedBox(height: 5.0),
+                  forgotLabel,
+                  SizedBox(height: 5.0),
+                  TextButton(
+                    child: Text(
+                        AppLocalizations.of(context)!.environment +
+                            ': ' +
+                            serverName,
+                        style: TextStyle(fontWeight: FontWeight.w300)),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => new AlertDialog(
+                            title: new Text(
+                                AppLocalizations.of(context)!.environment),
+                            content: Container(
+                              width: double.maxFinite,
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                    maxHeight:
+                                        MediaQuery.of(context).size.height *
+                                            0.9,
+                                    minHeight:
+                                        MediaQuery.of(context).size.height *
+                                            0.5,
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width * 0.9,
+                                    minWidth:
+                                        MediaQuery.of(context).size.width *
+                                            0.9),
+                                child: SettingsSection(
+                                    tiles: environmentOptions()),
+                              ),
+                            ),
+                            insetPadding: EdgeInsets.symmetric(horizontal: 20),
+                            actions: <Widget>[
+                              TextButton(
+                                child:
+                                    Text(AppLocalizations.of(context)!.close),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ]),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 10.0),
+                  auth.loggedInStatus == Status.Authenticating
+                      ? cancelButton
+                      : Container(),
+                  getVersionInfo()
+                ],
+              ),
             ),
           ),
         ),
-      ),
     );
+  }
+
+  List<SettingsTile> environmentOptions() {
+    final Map servers = AppUrl.servers;
+    List<SettingsTile> tiles = [];
+    servers.forEach((serverTitle, serverUrl) {
+      tiles.add(SettingsTile(
+        title: serverTitle,
+        // subtitle: serverUrl,
+        titleMaxLines: 3,
+        trailing: trailingWidget(serverTitle),
+        onPressed: (BuildContext context) {
+          Settings().setValue('server', serverUrl);
+          Settings().setValue('servername', serverTitle);
+
+          UserPreferences().removeUser();
+          Provider.of<UserProvider>(context, listen: false).clearUser();
+          Navigator.pushReplacementNamed(context, '/login');
+        },
+      ));
+    });
+    return tiles;
+  }
+
+  Widget trailingWidget(String currentname) {
+    return (serverName == currentname)
+        ? Icon(Icons.check, color: Colors.blue)
+        : Icon(null);
+  }
+
+  Widget getVersionInfo() {
+    return Text(appName + ' v.' + version + '(' + buildNumber + ')',
+        style: TextStyle(color: Color(0xFF777777)));
   }
 }

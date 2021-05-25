@@ -71,13 +71,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Unohditko salasanan?"),
         "frontCamera": MessageLookupByLibrary.simpleMessage("Etukamera"),
         "getCode": MessageLookupByLibrary.simpleMessage("Pyydä koodi"),
+        "language": MessageLookupByLibrary.simpleMessage("Kieli"),
         "lastName": MessageLookupByLibrary.simpleMessage("Sukunimi"),
         "loading": MessageLookupByLibrary.simpleMessage("Ladataan"),
         "login": MessageLookupByLibrary.simpleMessage("Kirjautuminen"),
         "loginFailed":
             MessageLookupByLibrary.simpleMessage("Kirjautuminen epäonnistui"),
         "logout": MessageLookupByLibrary.simpleMessage("Kirjaudu ulos"),
-        "miscSettings": MessageLookupByLibrary.simpleMessage("Muut asetukset"),
         "moreInformation": MessageLookupByLibrary.simpleMessage("lisätiedot"),
         "myActivities": MessageLookupByLibrary.simpleMessage("Omat tapahtumat"),
         "myCard": MessageLookupByLibrary.simpleMessage("Oma kortti"),
@@ -119,7 +119,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "retrievingCoordinates":
             MessageLookupByLibrary.simpleMessage("Haetaan sijaintia"),
         "settings": MessageLookupByLibrary.simpleMessage("Asetukset"),
+        "settingsAccount": MessageLookupByLibrary.simpleMessage("Tili"),
+        "settingsCommon": MessageLookupByLibrary.simpleMessage("Yleiset"),
+        "settingsMisc": MessageLookupByLibrary.simpleMessage("Sekalaisia"),
         "signUp": MessageLookupByLibrary.simpleMessage("Ilmoittaudu"),
+        "termsOfService": MessageLookupByLibrary.simpleMessage("Käyttöehdot"),
+        "today": MessageLookupByLibrary.simpleMessage("Tänään"),
         "unknownUser":
             MessageLookupByLibrary.simpleMessage("Tuntematon käyttäjä"),
         "unnamedActivity":

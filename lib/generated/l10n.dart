@@ -470,16 +470,6 @@ class S {
     );
   }
 
-  /// `Misc`
-  String get miscSettings {
-    return Intl.message(
-      'Misc',
-      name: 'miscSettings',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `More information`
   String get moreInformation {
     return Intl.message(
@@ -760,6 +750,36 @@ class S {
     );
   }
 
+  /// `Account`
+  String get settingsAccount {
+    return Intl.message(
+      'Account',
+      name: 'settingsAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Common`
+  String get settingsCommon {
+    return Intl.message(
+      'Common',
+      name: 'settingsCommon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Misc`
+  String get settingsMisc {
+    return Intl.message(
+      'Misc',
+      name: 'settingsMisc',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Sign up`
   String get signUp {
     return Intl.message(
@@ -775,6 +795,16 @@ class S {
     return Intl.message(
       'Terms of Service',
       name: 'termsOfService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Today`
+  String get today {
+    return Intl.message(
+      'Today',
+      name: 'today',
       desc: '',
       args: [],
     );
