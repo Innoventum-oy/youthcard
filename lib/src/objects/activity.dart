@@ -31,7 +31,7 @@ class Activity {
       Map<String, dynamic>? cover = responseData['coverpicture'] ?? null;
       if(int.parse(responseData['accesslevel'])>10) {
         //print("Access to object {$responseData['objectid']}: " + responseData['accesslevel'].toString());
-          responseData.forEach((key, value) { print('$key = $value');});
+       //   responseData.forEach((key, value) { print('$key = $value');});
       }
         return Activity(
             id: responseData['objectid'] !=null ? int.parse(responseData['objectid']) : null,

@@ -1,5 +1,6 @@
 {
-  "about": "O",
+  "@@locale" : "cs",
+  "about": "Informace o kartě",
   "accountCreated": "Účet vytvořen",
   "activities": "Aktivity",
   "activityCalendar": "Kalendář aktivit",

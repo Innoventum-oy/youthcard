@@ -27,7 +27,7 @@ class Welcome extends StatelessWidget {
           child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children:<Widget>[
-                        Image.asset('images/logowhite.png'),
+                        Image.asset('images/colortextlogo.png'),
                         SizedBox(height: 25.0),
                         ElevatedButton(
                             child: Text(AppLocalizations.of(context)!.btnContinue),

@@ -143,13 +143,14 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
             slivers: <Widget>[
               SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
-              if (!_isLoading && index > (data.length * 0.7) && data.length>0) {
+              if (!_isLoading && index > (data.length * 0.7) && data.length==limit) {
                 print('calling loadnextpage, user token is ' + user.token);
                 _loadNextPage(user);
               }
              if(data.isNotEmpty) return activityClassView(data[index]);
              else return Container();
-            }))]
+            },
+            childCount: data.length))]
             );
       case LoadingState.ERROR:
       //data loading returned error state
