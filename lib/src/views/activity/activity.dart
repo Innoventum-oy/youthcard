@@ -203,7 +203,7 @@ class _ActivityViewState extends State<ActivityView> {
       return DateTime(date.year, date.month, date.day).difference(DateTime(now.year, now.month, now.day)).inDays;
     }
 
-    String dateinfo = activity.nexteventdate==null ? '':(calculateDifference(activity.nexteventdate!)!=0 ? DateFormat('kk:mm dd.MM.yyyy').format(activity.nexteventdate!) : 'Today '+DateFormat('kk:mm ').format(activity.startdate!));
+    String dateinfo = activity.nexteventdate==null ? '':(calculateDifference(activity.nexteventdate!)!=0 ? DateFormat('kk:mm dd.MM.yyyy').format(activity.nexteventdate!) : 'Today '+DateFormat('kk:mm ').format(activity.nexteventdate!));
     return SliverList(
       delegate: SliverChildListDelegate(<Widget>[
         Container(
