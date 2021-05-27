@@ -6,8 +6,8 @@ import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/image.dart';
 import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/util/local_storage.dart';
-
-
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 abstract class ObjectProvider {
   User? user;
 
@@ -56,7 +56,23 @@ class ActivityProvider extends ObjectProvider {
 
   @override
   Future<List<Activity>> loadItems(params) async {
-    return _apiClient.loadActivities(params);
+    String filename = md5.convert(utf8.encode(params.toString())).toString();
+   // FileStorage.delete(filename);
+    var activitydata = await FileStorage.read(filename);
+   /* (activitydata as Activity).map<Activity>((data) => Activity.fromJson(data))
+        .toList();*/
+    if (activitydata != false)
+    {
+      //@todo refresh
+      print('Loaded activity list from local storage $filename');
+      print(activitydata.runtimeType.toString());
+//  List<int> intList2 = dynList.cast<int>();
+       return activitydata.cast<Activity>();
+    }
+    final remoteactivitydata =  await _apiClient.loadActivities(params);
+    FileStorage.write(remoteactivitydata,filename);
+    return remoteactivitydata;
+
   }
 
 // returns json-decoded response

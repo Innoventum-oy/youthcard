@@ -24,7 +24,8 @@ class Activity {
 
   factory Activity.fromJson(Map<String, dynamic> response) {
 
-     Map<String, dynamic> responseData =  response['data'];
+     // print (response);
+     Map<String, dynamic> responseData =  response['data']??response;
      // print('creating activity '+responseData['objectid'].toString()+' fromJSON');
 
 
@@ -54,12 +55,12 @@ class Activity {
   }
 
   Map toJson() => {
-    'id' : id,
-    'name': name,
+    'id' : id.toString(),
+   'name': name,
     'description' : description,
-    'startdate' : startdate,
-    'enddate' : enddate,
-    'nexteventdate' : nexteventdate,
+    'startdate' : startdate.toString(),
+    'enddate' : enddate.toString(),
+    'nexteventdate' : nexteventdate.toString(),
     'address' : address,
     'postcode' : postcode,
     'city' : city,

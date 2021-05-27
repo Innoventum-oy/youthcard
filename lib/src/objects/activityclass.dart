@@ -15,7 +15,7 @@ class ActivityClass {
   factory ActivityClass.fromJson(Map<String, dynamic> response) {
 
     Map<String, dynamic> responseData =  response['data'];
-    responseData.forEach((key, value) { print('$key = $value');});
+    //responseData.forEach((key, value) { print('$key = $value');});
     Map<String, dynamic>? cover = responseData['coverpicture'] ?? null;
     return ActivityClass(
         id: responseData['objectid'] !=null ? int.parse(responseData['objectid']) : null,
