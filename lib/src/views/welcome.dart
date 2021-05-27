@@ -33,7 +33,7 @@ class Welcome extends StatelessWidget {
                             child: Text(AppLocalizations.of(context)!.btnContinue),
                             onPressed: () {
                               // Navigate to the second screen using a named route.
-                              Navigator.pushNamed(context, '/login');
+                              Navigator.pushReplacementNamed(context, '/login');
                             }
                         ),
                       ] //children

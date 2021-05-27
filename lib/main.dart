@@ -64,8 +64,8 @@ class YouthCard extends StatelessWidget {
                 switch (snapshot.connectionState) {
                   case ConnectionState.none:
                   case ConnectionState.waiting:
-                    print('returning circular progress indicator');
-                    return CircularProgressIndicator();
+                    print('returning welcome splash screen');
+                    return Welcome(); //return CircularProgressIndicator();
 
                   default:
                     User userdata = User();
@@ -75,6 +75,7 @@ class YouthCard extends StatelessWidget {
                       String currentToken = userdata.token ?? 'empty';
 
                     }
+                    else print("Snapshot has no data. User remains empty.");
 
                     if (snapshot.hasError)
                       return Text('Error: ${snapshot.error}');
@@ -83,8 +84,7 @@ class YouthCard extends StatelessWidget {
                       Provider.of<UserProvider>(context, listen: false).setUserSilent(userdata);
                       return DashBoard();
                     }
-                    else if (userdata.token == null )
-                      return Welcome();
+
 
                     else
                     print('user token: '+userdata.token.toString());

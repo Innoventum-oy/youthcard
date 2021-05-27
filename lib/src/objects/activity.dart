@@ -53,26 +53,32 @@ class Activity {
 
     // print (response);
     Map<String, dynamic> responseData = response['data'] ?? response;
-    if (responseData['accesslevel'] !=
-        null) if (int.parse(responseData['accesslevel']) > 10) {
+   /* if (responseData['accesslevel'] != null) if ((responseData.runtimeType ==
+                String
+            ? int.parse(responseData['accesslevel'])
+            : responseData['accesslevel']) >
+        10) {
       //print("Access to object {$responseData['objectid']}: " + responseData['accesslevel'].toString());
       //   responseData.forEach((key, value) { print('$key = $value');});
-    }
+    }*/
     Map<String, dynamic> coverpicture;
     if (responseData['coverpicture'].runtimeType == String) {
       print('setting coverpicture from String to map');
       coverpicture = {'objectid': responseData['coverpicture']};
-    } else {
-      print('setting coverpicture to ' +
+    } else if (responseData['coverpicture'].runtimeType == int)
+      coverpicture = {'objectid': responseData['coverpicture'].toString()};
+    else if (responseData['coverpicture'] != null) {
+      /* print('setting coverpicture to ' +
           responseData['coverpicture'].runtimeType.toString() +
           ': ' +
-          responseData['coverpicture']);
+          (responseData['coverpicture']??''));*/
       coverpicture = responseData['coverpicture'];
-    }
-    print('coverpicture: ' +
+    } else
+      coverpicture = Map<String, dynamic>();
+    /* print('coverpicture: ' +
         coverpicture.runtimeType.toString() +
         ' : ' +
-        coverpicture.toString());
+        coverpicture.toString());*/
 
     return Activity(
         id: responseData['objectid'] != null
@@ -103,7 +109,7 @@ class Activity {
             : false,
         accesslevel: responseData['accesslevel'] is int
             ? responseData['accesslevel']
-            : int.parse(responseData['accesslevel'] ??'0') );
+            : int.parse(responseData['accesslevel'] ?? '0'));
   }
 
   Map toJson() => {
