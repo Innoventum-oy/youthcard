@@ -37,11 +37,9 @@ class UserPreferences {
   }
 
   Future<User> getUser() async {
-    await FileStorage.read(this.filename).then((userdata){
-      return(userdata!=false ? User.fromJson(userdata) : User());
-    });
-    return User();
-  }
+    final userdata = await FileStorage.read(this.filename);
+    return(userdata!=false ? User.fromJson(userdata) : User());
+    }
 
   void removeUser() async {
     FileStorage.delete(this.filename);

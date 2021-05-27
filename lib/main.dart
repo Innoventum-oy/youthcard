@@ -71,7 +71,9 @@ class YouthCard extends StatelessWidget {
                     User userdata = User();
                     if(snapshot.hasData) {
 
-                      userdata = snapshot.data!=null ? snapshot.data as User : User();
+                      userdata = snapshot.data as User;
+                      if(snapshot.data == null) print("Snapshot.data was null");
+                      else print("snapshot data was not null");
                       String currentToken = userdata.token ?? 'empty';
 
                     }
@@ -83,12 +85,11 @@ class YouthCard extends StatelessWidget {
                       print('setting userdata to userprovider');
                       Provider.of<UserProvider>(context, listen: false).setUserSilent(userdata);
                       return DashBoard();
-                    }
-
-
-                    else
-                    print('user token: '+userdata.token.toString());
+                    } else
+                      {
+                      print('user token: '+userdata.token.toString());
                        return Login(user:userdata);
+                      }
                 }
               }),
           routes: {

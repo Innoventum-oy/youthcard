@@ -29,13 +29,7 @@ class Welcome extends StatelessWidget {
                       children:<Widget>[
                         Image.asset('images/colortextlogo.png'),
                         SizedBox(height: 25.0),
-                        ElevatedButton(
-                            child: Text(AppLocalizations.of(context)!.btnContinue),
-                            onPressed: () {
-                              // Navigate to the second screen using a named route.
-                              Navigator.pushReplacementNamed(context, '/login');
-                            }
-                        ),
+
                       ] //children
                    )//row
 
