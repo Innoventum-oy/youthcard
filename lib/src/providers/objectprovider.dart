@@ -65,10 +65,22 @@ class ActivityProvider extends ObjectProvider {
     {
       //@todo refresh
       print('Loaded activity list from local storage $filename');
-      print(activitydata.runtimeType.toString());
-//  List<int> intList2 = dynList.cast<int>();
-       return activitydata.cast<Activity>();
-    }
+      List <Activity> activities = [];
+      for(var data in activitydata) {
+        data.forEach((key,value){
+          if(value!=null)print(key+': '+value.toString());
+
+        });
+
+        print(data.runtimeType.toString());
+        Activity a = Activity.fromJson(data);
+        activities.add(a);
+
+          }
+      return activities;
+      }
+
+
     final remoteactivitydata =  await _apiClient.loadActivities(params);
     FileStorage.write(remoteactivitydata,filename);
     return remoteactivitydata;
