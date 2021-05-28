@@ -83,8 +83,8 @@ class _DashBoardState extends State<DashBoard> {
 
   Widget getInitials(user) {
     String initials = '';
-    if (user.firstname.isNotEmpty) initials += user.firstname[0];
-    if (user.lastname!.isNotEmpty) initials += user.lastname[0];
+    if (user.firstname!= null && user.firstname.isNotEmpty) initials += user.firstname[0];
+    if (user.lastname != null && user.lastname!.isNotEmpty) initials += user.lastname[0];
     return Text(initials);
   }
 
@@ -94,11 +94,11 @@ class _DashBoardState extends State<DashBoard> {
     print('building dasboard state');
     AuthProvider auth = Provider.of<AuthProvider>(context);
     User user = Provider.of<UserProvider>(context).user;
-
+/*
     if (user.token == null) {
       print('user token not found, pushing named route /login');
-      return Login(user:user);
-    } else {
+      return Login();
+    } else */{
       print('Current token: ' +
           user.token.toString() +
           ', id: ' +

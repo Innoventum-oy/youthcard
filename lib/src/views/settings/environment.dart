@@ -62,9 +62,11 @@ class _EnvironmentScreenState extends State<EnvironmentScreen> {
           Settings().setValue('server', serverUrl);
           Settings().setValue('servername', serverTitle);
 
+
+          Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+          //pushReplacementNamed(context, '/login');
           UserPreferences().removeUser();
           Provider.of<UserProvider>(context, listen: false).clearUser();
-          Navigator.pushReplacementNamed(context, '/login');
         },
       ));
     });
