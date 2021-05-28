@@ -55,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         SettingsSection(
           title: AppLocalizations.of(context)!.settingsCommon,
           tiles: [
-            SettingsTile(
+           /* SettingsTile(
               title: AppLocalizations.of(context)!.language,
               subtitle: language,
               leading: Icon(Icons.language),
@@ -64,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   builder: (_) => LanguagesScreen(),
                 ));
               },
-            ),
+            ),*/
             SettingsTile(
               title: AppLocalizations.of(context)!.environment,
               subtitle: servername,
