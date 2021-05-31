@@ -46,6 +46,7 @@ class Activity {
       } catch (e) {
         try {
           val = DateFormat('yyyy-MM-dd HH:mm:ss').parse(value);
+          return val;
         } catch (e) {}
       }
       return DateTime.now();
