@@ -14,6 +14,12 @@ void Notify(String text) {
     content: Text(text),
   );
 }
+Widget getInitials(user) {
+  String initials = '';
+  if (user.firstname!= null && user.firstname.isNotEmpty) initials += user.firstname[0];
+  if (user.lastname != null && user.lastname!.isNotEmpty) initials += user.lastname[0];
+  return Text(initials);
+}
 String concatListToString(List<dynamic> data, String mapKey) {
   StringBuffer buffer = StringBuffer();
   buffer.writeAll(data.map<String>((map) => map[mapKey]).toList(), ", ");

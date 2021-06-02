@@ -2,29 +2,29 @@ import 'package:intl/intl.dart';
 
 class UserBenefit {
   int? id;
-  String? name;
+  String? title;
   String? description;
 
   DateTime? expirationdate;
 
-  String? icon;
+  Map<String, dynamic>? icon;
   String? iconurl;
 
   int accesslevel;
 
   UserBenefit(
       {this.id,
-      this.name,
+      this.title,
       this.description,
       this.expirationdate,
       this.icon,
       this.iconurl,
       this.accesslevel = 0});
 
-  factory UserBenefit.fromJson(Map<String, dynamic> response) {
-    Map<String, dynamic> responseData = response['data'];
+  factory UserBenefit.fromJson(Map<String, dynamic> responseData) {
+    //Map<String, dynamic> responseData = response['data'];
 
-    Map<String, dynamic>? icon = responseData['icon'] ?? null;
+
     if (int.parse(responseData['accesslevel']) > 10) {
       responseData.forEach((key, value) {
         print('$key = $value');
@@ -34,7 +34,7 @@ class UserBenefit {
         id: responseData['objectid'] != null
             ? int.parse(responseData['objectid'])
             : null,
-        name: responseData['name'],
+        title: responseData['title'],
         description: responseData['description'],
 
         expirationdate: responseData['expiration'] != null
@@ -42,7 +42,7 @@ class UserBenefit {
             : null,
 
 
-        icon: icon == null ? 'default' : icon['objectid'],
+        icon:  responseData['icon'] ?? null,
         iconurl: responseData['iconurl'],
 
         accesslevel: responseData['accesslevel'] is int ? responseData['accesslevel'] : int.parse(responseData['accesslevel'])
@@ -51,7 +51,7 @@ class UserBenefit {
 
   Map toJson() => {
         'id': id,
-        'name': name,
+        'title': title,
         'description': description,
         'expirationdate': expirationdate,
         'icon': icon,

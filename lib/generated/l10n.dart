@@ -440,6 +440,16 @@ class S {
     );
   }
 
+  /// `Loading benefits`
+  String get loadingBenefits {
+    return Intl.message(
+      'Loading benefits',
+      name: 'loadingBenefits',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Login`
   String get login {
     return Intl.message(
@@ -815,6 +825,16 @@ class S {
     return Intl.message(
       'Unnamed activity',
       name: 'unnamedActivity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unnamed`
+  String get unnamed {
+    return Intl.message(
+      'Unnamed',
+      name: 'unnamed',
       desc: '',
       args: [],
     );

@@ -72,6 +72,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "lastName": MessageLookupByLibrary.simpleMessage("Last name"),
         "loading": MessageLookupByLibrary.simpleMessage("Loading"),
+        "loadingBenefits":
+            MessageLookupByLibrary.simpleMessage("Loading benefits"),
         "login": MessageLookupByLibrary.simpleMessage("Login"),
         "loginFailed": MessageLookupByLibrary.simpleMessage("Login failed"),
         "logout": MessageLookupByLibrary.simpleMessage("Logout"),
@@ -121,6 +123,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Terms of Service"),
         "today": MessageLookupByLibrary.simpleMessage("Today"),
         "unknownUser": MessageLookupByLibrary.simpleMessage("unknown user"),
+        "unnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Unnamed activity"),
         "youthcardDashboard":

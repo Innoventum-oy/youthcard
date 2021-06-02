@@ -12,6 +12,7 @@ class User {
   String? renewalToken;
   String? image;
   String? qrcode;
+  Map<String, dynamic>? benefits;
 
   User({this.id, this.firstname, this.lastname, this.email, this.phone, this.type, this.token, this.renewalToken,this.image,this.qrcode});
 

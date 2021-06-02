@@ -1,1 +1,26 @@
-{}
+{
+  "cs": [
+    "loadingBenefits",
+    "unnamed"
+  ],
+
+  "de": [
+    "loadingBenefits",
+    "unnamed"
+  ],
+
+  "fi": [
+    "loadingBenefits",
+    "unnamed"
+  ],
+
+  "hr": [
+    "loadingBenefits",
+    "unnamed"
+  ],
+
+  "pt": [
+    "loadingBenefits",
+    "unnamed"
+  ]
+}

@@ -68,9 +68,9 @@ class ApiClient {
     print(response.statusCode);
     if(response.statusCode==200) {
       if(response.body!=null && response.body.isNotEmpty) {
-       // print(response.body);
+        print(response.body);
         Map<String, dynamic> body = json.decode(response.body);
-        /*print('GETJSON DATA RECEIVED:');
+       /* print('GETJSON DATA RECEIVED:');
         body.forEach((key, value) {
           if (key != 'data') print('$key = $value');
         });
@@ -248,7 +248,7 @@ class ApiClient {
     //debug: print params
     params.forEach((key, value) {print('$key = $value');});
     String baseUrl = await Settings().getServer();
-    var url = Uri.https(baseUrl, 'api/activity/',
+    var url = Uri.https(baseUrl, '/api/dispatcher/activity/',
         params);
     return _getJson(url).then((json) => json['data']).then((data) {
       if(data==null) return [];
@@ -264,7 +264,7 @@ class ApiClient {
    */
   Future<dynamic> getUserBenefitDetails(int benefitId, User user) async {
     String baseUrl = await Settings().getServer();
-    var url = Uri.https(baseUrl, 'api/usebenefit/$benefitId', { 'api-key': user.token,'api_key':user.token});
+    var url = Uri.https(baseUrl, 'api/userbenefit/$benefitId', { 'api-key': user.token,'api_key':user.token});
 
     return _getJson(url).then((json) => json['data']).then((data) {
       // print(data);

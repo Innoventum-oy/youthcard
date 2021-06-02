@@ -81,12 +81,6 @@ class _DashBoardState extends State<DashBoard> {
     }
   }
 
-  Widget getInitials(user) {
-    String initials = '';
-    if (user.firstname!= null && user.firstname.isNotEmpty) initials += user.firstname[0];
-    if (user.lastname != null && user.lastname!.isNotEmpty) initials += user.lastname[0];
-    return Text(initials);
-  }
 
   @override
   Widget build(BuildContext context) {
