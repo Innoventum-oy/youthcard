@@ -58,7 +58,7 @@ class ActivityProvider extends ObjectProvider {
   Future<List<Activity>> loadItems(params) async {
     String filename = md5.convert(utf8.encode(params.toString())).toString();
    // FileStorage.delete(filename);
-    var activitydata = await FileStorage.read(filename,expiration:30);
+    var activitydata = await FileStorage.read(filename,expiration: 30);
    /* (activitydata as Activity).map<Activity>((data) => Activity.fromJson(data))
         .toList();*/
     if (activitydata != false)
@@ -90,7 +90,7 @@ class ActivityProvider extends ObjectProvider {
 // returns json-decoded response
   @override
   Future<dynamic> getDetails(int activityId, user) async {
-    final activitydata = await FileStorage.read("activity_" + activityId.toString() + "_user_"+user.id.toString(),expiration:30);
+    final activitydata = await FileStorage.read("activity_" + activityId.toString() + "_user_"+user.id.toString(),expiration: 30);
     if (activitydata != false)
       {
           //@todo refresh

@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:flutter/foundation.dart';
@@ -7,6 +8,8 @@ import 'package:youth_card/src/views/settings/environment.dart';
 import 'package:package_info/package_info.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
+import 'package:youth_card/src/util/local_storage.dart';
+import 'package:youth_card/src/providers/user_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -88,7 +91,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 leading: Icon(Icons.email)),
             SettingsTile(
                 title: AppLocalizations.of(context)!.logout,
-                leading: Icon(Icons.exit_to_app)),
+                leading: Icon(Icons.logout),
+                onPressed: (BuildContext context) {
+                Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+                UserPreferences().removeUser();
+                Provider.of<UserProvider>(context, listen: false).clearUser();
+              }),
           ],
         ),
         /*
@@ -137,7 +145,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             SettingsTile(
                 title: AppLocalizations.of(context)!.about,
                 leading: Icon(Icons.collections_bookmark)),
-          ],
+            SettingsTile(
+            title: AppLocalizations.of(context)!.clearCache,
+            leading: Icon(Icons.clear), onPressed: (BuildContext context) {
+              FileStorage.clear();
+            }),
+      ],
         ),
         CustomSection(
           child: Column(
