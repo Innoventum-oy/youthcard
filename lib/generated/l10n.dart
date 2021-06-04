@@ -220,6 +220,16 @@ class S {
     );
   }
 
+  /// `Clear cache`
+  String get clearCache {
+    return Intl.message(
+      'Clear cache',
+      name: 'clearCache',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `City`
   String get city {
     return Intl.message(

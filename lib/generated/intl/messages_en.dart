@@ -45,6 +45,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "city": MessageLookupByLibrary.simpleMessage("City"),
+        "clearCache": MessageLookupByLibrary.simpleMessage("Clear cache"),
         "close": MessageLookupByLibrary.simpleMessage("Close"),
         "codeScanned": MessageLookupByLibrary.simpleMessage("Code scanned"),
         "confirmPassword":

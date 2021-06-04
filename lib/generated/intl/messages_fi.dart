@@ -46,6 +46,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "calendar": MessageLookupByLibrary.simpleMessage("Kalenteri"),
         "cancel": MessageLookupByLibrary.simpleMessage("Peruuta"),
         "city": MessageLookupByLibrary.simpleMessage("Kaupunki"),
+        "clearCache":
+            MessageLookupByLibrary.simpleMessage("Tyhjennä välimuisti"),
         "close": MessageLookupByLibrary.simpleMessage("Sulje"),
         "codeScanned": MessageLookupByLibrary.simpleMessage("Koodi skannattu"),
         "confirmPassword":

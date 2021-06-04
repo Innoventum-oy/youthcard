@@ -250,8 +250,9 @@ class ApiClient {
     String baseUrl = await Settings().getServer();
     var url = Uri.https(baseUrl, '/api/dispatcher/activity/',
         params);
-    return _getJson(url).then((json) => json['data']).then((data) {
-      if(data==null) return [];
+    return _getJson(url).then((json){ if(json==null || json == false) return [];
+    var data = json['data'];
+    if(data==null) return [];
       return data
           .map<UserBenefit>((data) => UserBenefit.fromJson(data))
           .toList();

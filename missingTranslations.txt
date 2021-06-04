@@ -1,10 +1,12 @@
 {
   "cs": [
+    "clearCache",
     "loadingBenefits",
     "unnamed"
   ],
 
   "de": [
+    "clearCache",
     "loadingBenefits",
     "unnamed"
   ],
@@ -15,11 +17,13 @@
   ],
 
   "hr": [
+    "clearCache",
     "loadingBenefits",
     "unnamed"
   ],
 
   "pt": [
+    "clearCache",
     "loadingBenefits",
     "unnamed"
   ]
