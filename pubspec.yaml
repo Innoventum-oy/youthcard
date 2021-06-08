@@ -55,10 +55,23 @@ dependencies:
   glob: ^2.0.1
 
 dev_dependencies:
+  flutter_native_splash: ^1.1.8+4
+  flutter_launcher_icons: "^0.9.0"
+
   flutter_test:
     sdk: flutter
 
+#if you make changes, regenerate with flutter pub run flutter_native_splash:create
+flutter_native_splash:
+  background_image: "images/splash.png"
+  image: images/squarelogotransparent.png
 
+#if you make changes, regenerate with flutter pub run flutter_launcher_icons:main
+flutter_icons:
+    android: true
+    ios: true
+    image_path: "images/icon.png"
+  #color: 65afb8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
