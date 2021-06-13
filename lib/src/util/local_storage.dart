@@ -40,16 +40,11 @@ class FileStorage {
     final filemask = Glob("${(await getApplicationDocumentsDirectory()).path}/$servername.*.json");
     Directory dir = await getApplicationDocumentsDirectory();
     print("clearing with mask " + filemask.toString());
-    var directoryListing = dir.listSync();
+    var directoryListing = dir.listSync().where((e) => e is File);
     for (var directoryEntry in directoryListing)
     {
-        //print("Considering removal of " + directoryEntry.toString());
-       // if(filemask.matches(directoryEntry.toString()) && await directoryEntry.exists())
-        if(await File( directoryEntry.toString()).exists() )
-           {
              directoryEntry.delete();
              print("deleted "+ directoryEntry.toString());
-           }else print("Not removing " + directoryEntry.toString());
 
     }
 
