@@ -48,7 +48,7 @@ class ApiClient {
 
     }
     else{
-      print(response.statusCode);
+    //  print(response.statusCode);
       if(response.body.isNotEmpty) {
         Map<String, dynamic> responseData = json.decode(response.body);
         //debug
@@ -65,10 +65,10 @@ class ApiClient {
   Future<dynamic> _getJson(Uri uri) async {
   //print('calling '+uri.toString());
     var response = await http.get(uri);
-    print(response.statusCode);
+   // print(response.statusCode);
     if(response.statusCode==200) {
       if(response.body!=null && response.body.isNotEmpty) {
-        print(response.body);
+      //  print(response.body);
         Map<String, dynamic> body = json.decode(response.body);
        /* print('GETJSON DATA RECEIVED:');
         body.forEach((key, value) {
@@ -214,7 +214,7 @@ class ApiClient {
    */
   Future<List<Activity>> loadActivities(Map<String,dynamic> params) async {
     //debug: print params
-    params.forEach((key, value) {print('$key = $value');});
+ //   params.forEach((key, value) {print('$key = $value');});
     String baseUrl = await Settings().getServer();
     var url = Uri.https(baseUrl, 'api/activity/',
         params);

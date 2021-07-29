@@ -184,7 +184,7 @@ class _ActivityViewState extends State<ActivityView> {
   }
 
   void _loadDetails(user) async {
-   // print('called _loadDetails for activity '+widget._activity.id.toString()+', awaiting provider for details!');
+    print('called _loadDetails for activity '+widget._activity.id.toString()+', awaiting provider for details!');
     try {
        dynamic details = await widget.provider.getDetails(widget._activity.id!,user);
      //print(details.toString());

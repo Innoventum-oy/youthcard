@@ -2,29 +2,39 @@
   "cs": [
     "clearCache",
     "loadingBenefits",
-    "unnamed"
+    "unnamed",
+    "validateContactTitle",
+    "contactInformationValidated"
   ],
 
   "de": [
     "clearCache",
     "loadingBenefits",
-    "unnamed"
+    "unnamed",
+    "validateContactTitle",
+    "contactInformationValidated"
   ],
 
   "fi": [
     "loadingBenefits",
-    "unnamed"
+    "unnamed",
+    "validateContactTitle",
+    "contactInformationValidated"
   ],
 
   "hr": [
     "clearCache",
     "loadingBenefits",
-    "unnamed"
+    "unnamed",
+    "validateContactTitle",
+    "contactInformationValidated"
   ],
 
   "pt": [
     "clearCache",
     "loadingBenefits",
-    "unnamed"
+    "unnamed",
+    "validateContactTitle",
+    "contactInformationValidated"
   ]
 }

@@ -68,7 +68,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
       'sort': 'nexteventdate',
     };
 
-    print('Loading page $_pageNumber');
+    print('Loading activities (activitylistsliver) $activityclass.name page $_pageNumber');
     try {
       var nextActivities = await widget.activityProvider.loadItems(params);
       setState(() {
@@ -81,6 +81,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
             _pageNumber++;
           }
         }
+        else print('no activities currently loaded');
       });
     } catch (e, stack) {
       _isLoading = false;

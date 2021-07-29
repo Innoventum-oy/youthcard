@@ -5,6 +5,7 @@ import 'package:youth_card/src/views/loginform.dart';
 import 'package:youth_card/src/views/register.dart';
 import 'package:youth_card/src/views/passwordform.dart';
 import 'package:youth_card/src/util/app_url.dart';
+import 'package:youth_card/src/views/validatecontact.dart';
 import 'package:youth_card/src/views/welcome.dart';
 import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
@@ -97,6 +98,7 @@ class YouthCard extends StatelessWidget {
             '/login': (context) => Login(),
             '/register': (context) => Register(),
             '/reset-password': (context) => ResetPassword(),
+            '/validatecontact' : (context) => ValidateContact(),
           }),
     );
   }

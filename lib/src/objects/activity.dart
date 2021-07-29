@@ -52,7 +52,7 @@ class Activity {
       return DateTime.now();
     }
 
-    // print (response);
+  //   print (response);
     Map<String, dynamic> responseData = response['data'] ?? response;
    /* if (responseData['accesslevel'] != null) if ((responseData.runtimeType ==
                 String
@@ -84,7 +84,7 @@ class Activity {
     return Activity(
         id: responseData['objectid'] != null
             ? int.parse(responseData['objectid'])
-            : null,
+            :  int.parse(responseData['id']),
         name: responseData['name'],
         description: responseData['description'],
         startdate: responseData['startdate'] != null

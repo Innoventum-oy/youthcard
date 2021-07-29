@@ -860,6 +860,26 @@ class S {
     );
   }
 
+  /// `Validate contact information`
+  String get validateContactTitle {
+    return Intl.message(
+      'Validate contact information',
+      name: 'validateContactTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact information validated`
+  String get contactInformationValidated {
+    return Intl.message(
+      'Contact information validated',
+      name: 'contactInformationValidated',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Youth Card Login`
   String get youthcardLoginTitle {
     return Intl.message(

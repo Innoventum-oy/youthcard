@@ -238,14 +238,14 @@ class _RegisterState extends State<Register> {
                 SizedBox(height: 15.0),
                 TextButton(
                     onPressed: () {
-                      // Change to email field
+                      // continue to validate contact information
                       Navigator.pushReplacementNamed(context, '/dashboard');
                     },
                     child: Text(AppLocalizations.of(context)!.btnValidateContact,style: TextStyle(fontWeight: FontWeight.w300))),
                 SizedBox(height: 15.0),
                 TextButton(
                     onPressed: () {
-                      // Change to email field
+                      // continue to dashboard
                       Navigator.pushReplacementNamed(context, '/dashboard');
                     },
                     child: Text(AppLocalizations.of(context)!.btnValidateContactLater,style: TextStyle(fontWeight: FontWeight.w300)))

@@ -56,30 +56,34 @@ class ActivityProvider extends ObjectProvider {
 
   @override
   Future<List<Activity>> loadItems(params) async {
+    print('Activityprovider loadItems called');
     String filename = md5.convert(utf8.encode(params.toString())).toString();
    // FileStorage.delete(filename);
     var activitydata = await FileStorage.read(filename,expiration: 30);
    /* (activitydata as Activity).map<Activity>((data) => Activity.fromJson(data))
         .toList();*/
-    if (activitydata != false)
+    if (activitydata != false && activitydata.length>0)
     {
+     // print(activitydata);
       //@todo refresh
       print('Loaded activity list from local storage $filename');
       List <Activity> activities = [];
+
       for(var data in activitydata) {
+        /*
         data.forEach((key,value){
-          if(value!=null)print(key+': '+value.toString());
 
+          if(value!=null) print(key+': '+value.toString());
         });
-
-        print(data.runtimeType.toString());
+      */
+       // print(data.runtimeType.toString());
         Activity a = Activity.fromJson(data);
         activities.add(a);
 
           }
       return activities;
       }
-
+    else print('activitydata was false');
 
     final remoteactivitydata =  await _apiClient.loadActivities(params);
     FileStorage.write(remoteactivitydata,filename);

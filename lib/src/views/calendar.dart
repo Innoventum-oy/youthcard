@@ -92,21 +92,21 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
          //   print('populating date ' + item.nexteventdate.toString());
           }
         };
-        print(_events);
-        print('Adding all '+ _events.length.toString() +' events to eventsHashMap');
+
+        //print('Adding all '+ _events.length.toString() +' events to eventsHashMap');
         eventsHashMap =
         LinkedHashMap<DateTime, List<Activity>>(equals: isSameDay,
           hashCode: getHashCode,
         )
           ..addAll(_events);
-
+        _onDaySelected(_focusedDay, _focusedDay);
         _getEventsForDay(_selectedDay ?? now);
         _isLoading = false;
         _pageNumber++;
       });
     } catch (e, stack) {
       _isLoading = false;
-      print('loadItems returned error $e\n Stack trace:\n $stack');
+      //print('loadItems returned error $e\n Stack trace:\n $stack');
       errormessage = e.toString();
       if (_loadingState == LoadingState.LOADING) {
         setState(() => _loadingState = LoadingState.ERROR);
@@ -119,21 +119,22 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    print('_OnDaySelected was called');
+    //print('_OnDaySelected was called');
     if (!isSameDay(_selectedDay, selectedDay)) {
       setState(() {
-        print('is not same day: '+selectedDay.toString());
+        //print('is not same day: '+selectedDay.toString());
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
         _rangeStart = null; // Important to clean those
         _rangeEnd = null;
         _rangeSelectionMode = RangeSelectionMode.toggledOff;
         _selectedEvents.value = _getEventsForDay(selectedDay);
-        print(_selectedEvents);
+        //print(_selectedEvents);
       });
 
 
     }
+   // else print('was same day');
   }
 
   @override
@@ -142,7 +143,8 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
       User user = Provider
           .of<UserProvider>(context, listen: false)
           .user;
-      print('writing selectedevents');
+      //print('writing selectedevents');
+      //_selectedDay = _focusedDay;
       _loadCalendarEvents(user);
       _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay?? DateTime.now()));
 
@@ -157,7 +159,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
 
   List<Activity> _getEventsForDay(DateTime day) {
 
-    //if(eventsHashMap[day]!=null)print('events for $day: '+ eventsHashMap[day]!.length.toString());
+    if(eventsHashMap[day]!=null)print('events for $day: '+ eventsHashMap[day]!.length.toString());
     return eventsHashMap[day] ?? [];
   }
 
@@ -170,7 +172,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
 
 
     return new Scaffold(
-        appBar: new AppBar(title: new Text("Activity Calendar")),
+        appBar: new AppBar(title: new Text(AppLocalizations.of(context)!.activityCalendar)),
         body: _getCalendarSection(user)
     );
   }
@@ -228,21 +230,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
               // the time-part of compared DateTime objects.
               return isSameDay(_selectedDay, day);
             },
-            onDaySelected: (selectedDay, focusedDay) {
-              if (!isSameDay(_selectedDay, selectedDay)) {
-                // Call `setState()` when updating the selected day
-                setState(() {
-                  print('is not same day: '+selectedDay.toString());
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                  _rangeStart = null; // Important to clean those
-                  _rangeEnd = null;
-                  _rangeSelectionMode = RangeSelectionMode.toggledOff;
-                  _selectedEvents.value = _getEventsForDay(selectedDay);
-
-                });
-              }
-            },
+            onDaySelected: _onDaySelected,
             onFormatChanged: (format) {
               if (_calendarFormat != format) {
                 // Call `setState()` when updating calendar format

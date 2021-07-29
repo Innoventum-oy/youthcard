@@ -20,6 +20,7 @@ class _ValidateContactState extends State<ValidateContact> {
   String?  _confirmkey, _contactfieldid;
 
   ApiClient _apiClient = ApiClient();
+
   Widget getConfirmationKeyForm(auth) {
     final _contactController = TextEditingController();
     var getVerificationCode = () {
@@ -162,75 +163,9 @@ class _ValidateContactState extends State<ValidateContact> {
     );
   }
 
-  Widget updatePasswordForm(auth) {
-
-    var loading = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        CircularProgressIndicator(),
-        Text(AppLocalizations.of(context)!.processing)
-      ],
-    );
-
-    final passwordField = TextFormField(
-      autofocus: false,
-      obscureText: true,
-      validator: (value) =>
-      value!.isEmpty ? AppLocalizations.of(context)!.pleaseEnterPassword : null,
-      onSaved: (value) => _password = value,
-      decoration: buildInputDecoration(
-          AppLocalizations.of(context)!.confirmPassword, Icons.lock),
-    );
-
-    var setPassword= () {
-      final form = formKey.currentState;
-
-      if (form!.validate()) {
-        form.save();
-        final Future<Map<String, dynamic>> successfulMessage =
-        _apiClient.changePassword(userid: auth.userId, password:_password, singlepass: auth.singlePass);
-
-        successfulMessage.then((response) {
-          if (response['status'] == 'success') {
-            setState(() {
-              print('password successfully changed for user');
-              auth.setVerificationStatus(VerificationStatus.PasswordChanged);
-
-            });
-
-          } else {
-            Flushbar(
-              title: AppLocalizations.of(context)!.requestFailed,
-              message: response['message'].toString(),
-              duration: Duration(seconds: 3),
-            ).show(context);
-          }
-        });
-      } else {
-        print("form is invalid");
-      }
-    };
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 15.0),
-        label(AppLocalizations.of(context)!.password),
-        SizedBox(height: 5.0),
-        passwordField,
-        SizedBox(height: 20.0),
-        auth.loggedInStatus == Status.Authenticating
-            ? loading
-            : longButtons(AppLocalizations.of(context)!.btnSetNewPassword,
-            setPassword),
-        SizedBox(height: 5.0),
-
-      ],
-    );
-  }
   Widget successForm()
   {
-    return Text(AppLocalizations.of(context)!.passwordChanged,
+    return Text(AppLocalizations.of(context)!.contactInformationValidated,
         style: TextStyle(fontWeight: FontWeight.w300));
 
   }
@@ -292,7 +227,7 @@ class _ValidateContactState extends State<ValidateContact> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.requestNewPasswordTitle),
+          title: Text(AppLocalizations.of(context)!.validateContactTitle),
           elevation: 0.1,
         ),
         body: Container(
@@ -301,7 +236,7 @@ class _ValidateContactState extends State<ValidateContact> {
               children:
               [Form(
                   key: formKey,
-                  child: passwordRetrievalFormBody(auth)
+                  child: contactValidationFormBody(auth)
               ),
                 bottomNavigation(auth),
               ]
@@ -311,7 +246,7 @@ class _ValidateContactState extends State<ValidateContact> {
     );
   }
 
-  Widget passwordRetrievalFormBody(auth)
+  Widget contactValidationFormBody(auth)
   {
 
     print('verification status:'+auth.verificationStatus.toString());
@@ -326,8 +261,6 @@ class _ValidateContactState extends State<ValidateContact> {
         return enterConfirmationKeyForm(auth);
 
       case VerificationStatus.Verified:
-        return updatePasswordForm(auth);
-      case VerificationStatus.PasswordChanged:
         return successForm();
       default:
         return Container();

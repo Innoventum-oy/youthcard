@@ -82,6 +82,8 @@
   "unnamedActivity": "Unnamed activity",
   "unnamed":"Unnamed",
   "unknownUser": "unknown user",
+  "validateContactTitle": "Validate contact information",
+  "contactInformationValidated": "Contact information validated",
   "youthcardLoginTitle": "Youth Card Login",
   "youthcardDashboard": "Youth Card",
   "youthcardSettings" : "Youth Card Settings"

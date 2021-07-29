@@ -67,17 +67,23 @@ class _ActivityListState extends State<ActivityList>  {
         params['accesslevel']='modify';
      //   params['limit']='NULL';
     }
-    print('Loading page $_pageNumber');
+    print('Loading activitylist page $_pageNumber');
     try {
 
       var nextActivities =
       await widget.activityProvider.loadItems(params);
       setState(() {
         _loadingState = LoadingState.DONE;
-        data.addAll(nextActivities);
-        print(data.length.toString()+' activities currently loaded!');
-        _isLoading = false;
-        _pageNumber++;
+        if(nextActivities.isNotEmpty) {
+          data.addAll(nextActivities);
+          print(data.length.toString() + ' activities currently loaded!');
+          _isLoading = false;
+          _pageNumber++;
+        }
+        else
+          {
+            print('no more activities were found');
+          }
       });
     } catch (e,stack) {
       _isLoading = false;

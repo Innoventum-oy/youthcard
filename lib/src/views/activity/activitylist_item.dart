@@ -44,7 +44,7 @@ class ActivityListItem extends StatelessWidget{
       ));
       buttons.add(const SizedBox(width: 8));
     }
-    print(activityItem.name!+' access:'+ activityItem.accesslevel.toString());
+  //  print(activityItem.name!+' access:'+ activityItem.accesslevel.toString());
     if(activityItem.accesslevel >= 20) {
       buttons.add(TextButton(
         child: Text(AppLocalizations.of(context)!.qrScanner),

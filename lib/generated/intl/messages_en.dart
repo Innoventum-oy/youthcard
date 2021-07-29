@@ -54,6 +54,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Confirmation key"),
         "contactInformation":
             MessageLookupByLibrary.simpleMessage("Contact information"),
+        "contactInformationValidated": MessageLookupByLibrary.simpleMessage(
+            "Contact information validated"),
         "createAccount": MessageLookupByLibrary.simpleMessage("Create account"),
         "discover": MessageLookupByLibrary.simpleMessage("Discover"),
         "email": MessageLookupByLibrary.simpleMessage("Email"),
@@ -127,6 +129,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "unnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Unnamed activity"),
+        "validateContactTitle": MessageLookupByLibrary.simpleMessage(
+            "Validate contact information"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Youth Card"),
         "youthcardLoginTitle":
