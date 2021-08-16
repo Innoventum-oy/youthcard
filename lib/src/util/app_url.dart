@@ -18,5 +18,6 @@ class AppUrl {
   static const String forgotPassword =  "/api/forgot-password";
   static const String requestValidationToken = "/api/dispatcher/registration/";
   static const String checkValidationToken = "/api/dispatcher/registration/";
+  static const String getContactMethods = "/api/dispatcher/registration/";
 
 }

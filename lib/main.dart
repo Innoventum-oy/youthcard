@@ -98,7 +98,7 @@ class YouthCard extends StatelessWidget {
             '/login': (context) => Login(),
             '/register': (context) => Register(),
             '/reset-password': (context) => ResetPassword(),
-            '/validatecontact' : (context) => ValidateContact(),
+            '/validateContact' : (context) => ValidateContact(),
           }),
     );
   }

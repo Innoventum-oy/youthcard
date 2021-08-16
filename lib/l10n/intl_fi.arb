@@ -52,7 +52,7 @@
   "moreInformation" : "lisätiedot",
   "myActivities": "Omat tapahtumat",
   "myCard" : "Oma kortti",
-
+  "participants" : "Osallistujat",
   "password" : "Salasana",
   "passwordChanged" : "Salasana vaihdettu",
   "passwordIsRequired" : "Salasana on pakollinen",
@@ -90,6 +90,8 @@
   "termsOfService" : "Käyttöehdot",
   "clearCache": "Tyhjennä välimuisti",
   "today" : "Tänään",
+  "verified" : "Vahvistettu",
+  "notVerified" : "Ei vahvistettu",
   "youthcardLoginTitle" : "Nuorisokortti - kirjaudu sisään",
   "youthcardDashboard": "Nuorisokortti",
   "youthcardSettings" : "Nuorisokortti - asetukset"

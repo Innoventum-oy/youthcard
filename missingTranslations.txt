@@ -2,16 +2,22 @@
   "cs": [
     "clearCache",
     "loadingBenefits",
+    "participants",
     "unnamed",
     "validateContactTitle",
+    "verified",
+    "notVerified",
     "contactInformationValidated"
   ],
 
   "de": [
     "clearCache",
     "loadingBenefits",
+    "participants",
     "unnamed",
     "validateContactTitle",
+    "verified",
+    "notVerified",
     "contactInformationValidated"
   ],
 
@@ -25,16 +31,22 @@
   "hr": [
     "clearCache",
     "loadingBenefits",
+    "participants",
     "unnamed",
     "validateContactTitle",
+    "verified",
+    "notVerified",
     "contactInformationValidated"
   ],
 
   "pt": [
     "clearCache",
     "loadingBenefits",
+    "participants",
     "unnamed",
     "validateContactTitle",
+    "verified",
+    "notVerified",
     "contactInformationValidated"
   ]
 }

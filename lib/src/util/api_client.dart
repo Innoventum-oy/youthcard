@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/objects/activityclass.dart';
 import 'package:youth_card/src/objects/activity.dart';
+import 'package:youth_card/src/objects/activitydate.dart';
 import 'package:youth_card/src/objects/image.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/objects/userbenefit.dart';
-import 'package:youth_card/src/providers/user_provider.dart';
+import 'package:youth_card/src/objects/contactmethod.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 
@@ -29,7 +31,7 @@ class ApiClient {
   */
   Future<dynamic> _postJson(Uri uri, Map<String, dynamic> data) async
   {
-
+    print('calling (post) '+uri.toString());
     var response = await http.post(uri,
       body: json.encode(data),
       headers: {'Content-Type': 'application/json'},
@@ -63,12 +65,12 @@ class ApiClient {
   * _getJson handles request and returns the json decoded data from server back to caller function
   */
   Future<dynamic> _getJson(Uri uri) async {
-  //print('calling '+uri.toString());
+  print('calling '+uri.toString());
     var response = await http.get(uri);
-   // print(response.statusCode);
+    print(response.statusCode);
     if(response.statusCode==200) {
       if(response.body!=null && response.body.isNotEmpty) {
-      //  print(response.body);
+        print(response.body);
         Map<String, dynamic> body = json.decode(response.body);
        /* print('GETJSON DATA RECEIVED:');
         body.forEach((key, value) {
@@ -86,6 +88,29 @@ class ApiClient {
     }
     else return false;
 
+  }
+
+  /*
+    * Get user contactmethods from server
+    */
+  Future<List<ContactMethod>> getContactMethods(User user) async {
+
+    String baseUrl = await Settings().getServer();
+    final Map<String, dynamic> params = {
+      'method' : 'json',
+      'action': 'getcontactmethods',
+      'userid': user.id.toString(),
+      'api-key':user.token,
+      'api_key':user.token,
+    };
+
+    var url = Uri.https(baseUrl, AppUrl.getContactMethods,params);
+    return _getJson(url).then((json) => json['data']).then((data) {
+      if(data==null) return [];
+      return data
+          .map<ContactMethod>((data) => ContactMethod.fromJson(data))
+          .toList();
+    });
   }
 
     /*
@@ -109,6 +134,7 @@ class ApiClient {
   * Send the received confirmation key, entered by user, back to server
   * on success returns singlepass for changing user password
   */
+
   Future<Map<String, dynamic>> sendConfirmationKey({contact,code,userid}) async {
     String baseUrl = await Settings().getServer();
     final Map<String, dynamic> params = {
@@ -228,6 +254,85 @@ class ApiClient {
   }
 
   /*
+  * Load list of activitydates for selected activity
+   */
+  Future<List<ActivityDate>> loadActivitydates(Activity activity, User user) async {
+    String baseUrl = await Settings().getServer();
+    final Map<String, dynamic> params = {
+      'method' : 'json',
+      'activityid' : activity.id.toString(),
+      'api-key': user.token,
+      'api_key':user.token
+    };
+    var dbformat = new DateFormat('yyyy-MM-dd');
+    //if(activity.accesslevel <= 10) params['startdate'] = '>= '+dbformat.format(DateTime.now()).toString()+':SQL';
+    var url = Uri.https(baseUrl, 'api/activitydate/',
+        params);
+
+    return _getJson(url).then((json) => json['data']).then((data) {
+      if(data==null) return [];
+      print(data);
+      return data
+          .map<ActivityDate>((data) => ActivityDate.fromJson(data))
+          .toList();
+    });
+
+  }
+
+  /*
+  * Load list of users for selected activity
+   */
+  Future<List<User>> loadActivityUsers(int activityId, User user) async {
+    String baseUrl = await Settings().getServer();
+    final Map<String, dynamic> params = {
+      'method' : 'json',
+      ''
+      'action' : 'activityuserlist',
+      'activityid' : activityId.toString(),
+      'api-key': user.token,
+      'api_key':user.token
+    };
+
+    var url = Uri.https(baseUrl, 'api/dispatcher/activity/',
+        params);
+
+    return _getJson(url).then((json) => json['data']).then((data) {
+      if(data==null) return [];
+      print(data);
+      return data
+          .map<User>((data) => User.fromJson(data))
+          .toList();
+    });
+
+  }
+
+  /*
+  * Load visit information for given activity + activitydate
+   */
+  Future<dynamic> loadActivityVisits(int activityId, ActivityDate date,user) async {
+    String baseUrl = await Settings().getServer();
+    final Map<String, dynamic> params = {
+      'method' : 'json',
+      'action' : 'activitydatevisits',
+      'activityid' : activityId.toString(),
+      'activitydateid' : date.id.toString(),
+      'api-key': user.token,
+      'api_key':user.token
+    };
+
+    var url = Uri.https(baseUrl, 'api/dispatcher/activity/',
+        params);
+
+    return _getJson(url).then((json) => json['visits'] ).then((data) {
+       print(data);
+       Map <dynamic,String> returnData = Map<dynamic,String>.from(data);
+       return returnData;
+
+    });
+
+  }
+
+  /*
   * Load detailed activity information for the activity view
    */
   Future<dynamic> getActivityDetails(int activityId, User user) async {
@@ -305,12 +410,14 @@ class ApiClient {
   /*
   * Register current user for attending to activity
    */
-  Future<void> registerForActivity(activityId,User user) async{
+  Future<Map<String,dynamic>> registerForActivity(activityId,User user,{visitstatus:'registered'}) async{
 
-    return updateActivityRegistration(activityId:activityId,user:user);
+    return updateActivityRegistration(activityId:activityId,user:user,visitStatus: visitstatus);
   }
-  Future<dynamic> updateActivityRegistration({int? activityId, String visitStatus='registered',required User user}) async
+  Future<Map<String,dynamic>> updateActivityRegistration({int? activityId, String visitStatus:'registered',User? visitor,required User user,ActivityDate? visitDate}) async
   {
+
+    print('Updating activityvisit for activity #'+activityId.toString()+': '+visitStatus);
     Map map;
 /* todo - positioning
     if(_currentPosition == null){
@@ -326,8 +433,10 @@ class ApiClient {
 */
     Map<String, String> params = {
       'action': 'recordvisit',
+      'method' : 'json',
       'activityid': activityId!.toString(),
-      'userid': user.id.toString(),
+      'activitydate' : visitDate!.id.toString(),
+      'userid': visitor!=null ? visitor.id.toString() : user.id.toString(),
       'visitstatus': visitStatus,
       'api-key': user.token!,
       'api_key': user.token!
@@ -335,12 +444,13 @@ class ApiClient {
       //  'longitude':  _longitude.toString()
 
     };
-
-    var url = Uri.https(AppUrl.baseURL, '/api/dispatcher/activity/', params);
-    var response = _getJson(url) as Map<String, dynamic>;
+    String baseUrl = await Settings().getServer();
+    var url = Uri.https(baseUrl, '/api/dispatcher/activity/', params);
+    var response = await _getJson(url) ;
 
     if (response['message'].isNotEmpty)
       Notify(response['message']);
+    return response;
   }
 
 }

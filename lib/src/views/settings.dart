@@ -84,6 +84,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: AppLocalizations.of(context)!.settingsAccount,
           tiles: [
             SettingsTile(
+                title: AppLocalizations.of(context)!.contactInformation,
+                leading: Icon(Icons.phone),
+                onPressed: (context) {
+                  Navigator.pushReplacementNamed(context, '/validateContact');
+                },
+            ),
+            SettingsTile(
                 title: AppLocalizations.of(context)!.phoneNumber,
                 leading: Icon(Icons.phone)),
             SettingsTile(

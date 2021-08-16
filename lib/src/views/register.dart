@@ -57,7 +57,7 @@ class _RegisterState extends State<Register> {
                   UserPreferences().saveUser(authUser);
 
                   auth.setLoggedInStatus(Status.LoggedIn);
-
+                  auth.setContactMethodId(response['contactmethodid']);
                   Provider.of<UserProvider>(context, listen: false).setUser(
                       authUser);
                   setState(() {
@@ -239,7 +239,12 @@ class _RegisterState extends State<Register> {
                 TextButton(
                     onPressed: () {
                       // continue to validate contact information
-                      Navigator.pushReplacementNamed(context, '/dashboard');
+                      switch(selectedContactMethod) {
+                        case ContactMethod.Email:
+                          break;
+                        default:
+                      }
+                      Navigator.pushReplacementNamed(context, '/validateContact');
                     },
                     child: Text(AppLocalizations.of(context)!.btnValidateContact,style: TextStyle(fontWeight: FontWeight.w300))),
                 SizedBox(height: 15.0),

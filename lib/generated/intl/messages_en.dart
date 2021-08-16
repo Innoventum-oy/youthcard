@@ -84,6 +84,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("More information"),
         "myActivities": MessageLookupByLibrary.simpleMessage("My activities"),
         "myCard": MessageLookupByLibrary.simpleMessage("My Card"),
+        "notVerified": MessageLookupByLibrary.simpleMessage("Not verified"),
+        "participants": MessageLookupByLibrary.simpleMessage("Participants"),
         "password": MessageLookupByLibrary.simpleMessage("Password"),
         "passwordChanged":
             MessageLookupByLibrary.simpleMessage("Password changed"),
@@ -131,6 +133,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Unnamed activity"),
         "validateContactTitle": MessageLookupByLibrary.simpleMessage(
             "Validate contact information"),
+        "verified": MessageLookupByLibrary.simpleMessage("Verified"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Youth Card"),
         "youthcardLoginTitle":

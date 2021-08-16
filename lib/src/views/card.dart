@@ -137,7 +137,7 @@ class _MyCardState extends State<MyCard> {
               user),
           Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             _drawLabel(context, username),
-            Text(user.email),
+            Text(user.email ?? '-'),
           ])
         ],
       ),
@@ -170,6 +170,7 @@ class _MyCardState extends State<MyCard> {
     switch (_benefitsLoadingState) {
       case LoadingState.DONE:
         //data loaded
+        if(benefits==null) return Container();
         return Expanded(
           child: Padding(
             padding: EdgeInsets.only(left: 20, right: 20),

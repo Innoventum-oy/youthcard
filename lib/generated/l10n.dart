@@ -520,6 +520,16 @@ class S {
     );
   }
 
+  /// `Participants`
+  String get participants {
+    return Intl.message(
+      'Participants',
+      name: 'participants',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Password`
   String get password {
     return Intl.message(
@@ -865,6 +875,26 @@ class S {
     return Intl.message(
       'Validate contact information',
       name: 'validateContactTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verified`
+  String get verified {
+    return Intl.message(
+      'Verified',
+      name: 'verified',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not verified`
+  String get notVerified {
+    return Intl.message(
+      'Not verified',
+      name: 'notVerified',
       desc: '',
       args: [],
     );

@@ -70,9 +70,9 @@ class MetaSection extends StatelessWidget {
 
     print('_getSectionOrContainer called with title '+title+', content '+content);
    // print('value is:'+data[content].toString());
-    data.forEach((key, value) {print('$key = $value');});
-    print('--DATA--');
-    data['data'].forEach((key, value) {print('$key = $value');});
+    //data.forEach((key, value) {print('$key = $value');});
+    //print('--DATA--');
+    //data['data'].forEach((key, value) {print('$key = $value');});
     return data['data'][content] == null
         ? Container()
         : _getMetaInfoSection(
@@ -92,7 +92,7 @@ class MetaSection extends StatelessWidget {
   Widget _getMetaInfoSection(String title, String content,
       {bool isLink: false}) {
     if (content == null) return Container();
-    print('getMetaInfoSection called for '+title);
+  //  print('getMetaInfoSection called for '+title);
     var contentSection = Expanded(
       flex: 4,
       child: GestureDetector(

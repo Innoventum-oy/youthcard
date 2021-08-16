@@ -13,6 +13,9 @@ void Notify(String text) {
   final snackBar = SnackBar(
     content: Text(text),
   );
+  // Find the ScaffoldMessenger in the widget tree
+  // and use it to show a SnackBar.
+
 }
 Widget getInitials(user) {
   String initials = '';

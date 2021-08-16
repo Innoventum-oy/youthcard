@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/objects/userbenefit.dart';
 import 'package:youth_card/src/objects/activityclass.dart';
+import 'package:youth_card/src/objects/activitydate.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/image.dart';
 import 'package:youth_card/src/util/api_client.dart';
@@ -91,7 +92,28 @@ class ActivityProvider extends ObjectProvider {
 
   }
 
-// returns json-decoded response
+  @override
+  Future<dynamic> getActivityDates(Activity activity, user) async{
+    print('Activityprovider getActivityDates called');
+
+    final remoteactivitydatedata =  await _apiClient.loadActivitydates(activity,user);
+
+    return remoteactivitydatedata;
+  }
+
+  @override
+  Future<dynamic> getActivityUsers(int activityId,user) async{
+    final remoteactivityuserdata =  await _apiClient.loadActivityUsers(activityId,user);
+
+    return remoteactivityuserdata;
+  }
+  @override
+  Future<dynamic> getActivityDateVisits(int activityId,ActivityDate date,user) async{
+    final remoteactivityvisitdata =  await _apiClient.loadActivityVisits(activityId,date,user);
+
+    return remoteactivityvisitdata;
+  }
+  // returns json-decoded response
   @override
   Future<dynamic> getDetails(int activityId, user) async {
     final activitydata = await FileStorage.read("activity_" + activityId.toString() + "_user_"+user.id.toString(),expiration: 30);

@@ -48,6 +48,8 @@
   "moreInformation": "More information",
   "myActivities": "My activities",
   "myCard": "My Card",
+
+  "participants" : "Participants",
   "password": "Password",
   "passwordChanged": "Password changed",
   "passwordIsRequired": "Password is required",
@@ -83,6 +85,8 @@
   "unnamed":"Unnamed",
   "unknownUser": "unknown user",
   "validateContactTitle": "Validate contact information",
+  "verified" : "Verified",
+  "notVerified" : "Not verified",
   "contactInformationValidated": "Contact information validated",
   "youthcardLoginTitle": "Youth Card Login",
   "youthcardDashboard": "Youth Card",

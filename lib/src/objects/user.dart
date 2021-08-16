@@ -20,7 +20,10 @@ class User {
 
       //print("Access to object {$responseData['objectid']}: " + responseData['accesslevel'].toString());
       responseData.forEach((key, value) { print('$key = $value');});
-  print('setting acces token: '+(responseData['access_token']!=null ? responseData['access_token'] : responseData['token']));
+  //print('setting acces token: '+(responseData['access_token']!=null ? responseData['access_token'] : responseData['token']));
+      String usertoken = '';
+      if(responseData['access_token']!=null) usertoken = responseData['access_token'];
+      else if(responseData['token']!=null) usertoken = responseData['token'];
     return User(
         id: int.parse(responseData['id'].toString()),
         firstname: responseData['firstname'],
@@ -28,7 +31,7 @@ class User {
         email: responseData['email'],
         phone: responseData['phone'],
         type: responseData['type'],
-        token: responseData['access_token']!=null ? responseData['access_token'] : responseData['token'],
+        token: usertoken,
         renewalToken: responseData['renewal_token'],
         qrcode: responseData['qrcode'],
         image: responseData['image'],

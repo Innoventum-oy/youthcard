@@ -83,6 +83,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "moreInformation": MessageLookupByLibrary.simpleMessage("lisätiedot"),
         "myActivities": MessageLookupByLibrary.simpleMessage("Omat tapahtumat"),
         "myCard": MessageLookupByLibrary.simpleMessage("Oma kortti"),
+        "notVerified": MessageLookupByLibrary.simpleMessage("Ei vahvistettu"),
+        "participants": MessageLookupByLibrary.simpleMessage("Osallistujat"),
         "password": MessageLookupByLibrary.simpleMessage("Salasana"),
         "passwordChanged":
             MessageLookupByLibrary.simpleMessage("Salasana vaihdettu"),
@@ -131,6 +133,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Tuntematon käyttäjä"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Nimetön tapahtuma"),
+        "verified": MessageLookupByLibrary.simpleMessage("Vahvistettu"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Nuorisokortti"),
         "youthcardLoginTitle": MessageLookupByLibrary.simpleMessage(

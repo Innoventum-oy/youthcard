@@ -85,7 +85,7 @@ class AuthProvider with ChangeNotifier {
 
     _loggedInStatus = Status.Authenticating;
     notifyListeners();
-
+    print('calling login url '+Uri.https(baseUrl,AppUrl.login).toString());
     Response response = await post(Uri.https(baseUrl,AppUrl.login),
       body: json.encode(loginData),
       headers: {'Content-Type': 'application/json'},
@@ -107,6 +107,7 @@ class AuthProvider with ChangeNotifier {
     } else {
       if(response.body!="")
       print(response.body);
+      else print('response body was empty, statuscode:'+response.statusCode.toString());
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();
       result = {
