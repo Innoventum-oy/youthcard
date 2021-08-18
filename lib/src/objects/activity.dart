@@ -64,22 +64,16 @@ class Activity {
     }*/
     Map<String, dynamic> coverpicture;
     if (responseData['coverpicture'].runtimeType == String) {
-      print('setting coverpicture from String to map');
+
       coverpicture = {'objectid': responseData['coverpicture']};
     } else if (responseData['coverpicture'].runtimeType == int)
       coverpicture = {'objectid': responseData['coverpicture'].toString()};
     else if (responseData['coverpicture'] != null) {
-      /* print('setting coverpicture to ' +
-          responseData['coverpicture'].runtimeType.toString() +
-          ': ' +
-          (responseData['coverpicture']??''));*/
+
       coverpicture = responseData['coverpicture'];
     } else
       coverpicture = Map<String, dynamic>();
-    /* print('coverpicture: ' +
-        coverpicture.runtimeType.toString() +
-        ' : ' +
-        coverpicture.toString());*/
+
 
     return Activity(
         id: responseData['objectid'] != null
@@ -111,6 +105,7 @@ class Activity {
         accesslevel: responseData['accesslevel'] is int
             ? responseData['accesslevel']
             : int.parse(responseData['accesslevel'] ?? '0'));
+
   }
 
   Map toJson() => {
@@ -128,6 +123,7 @@ class Activity {
         'qrcode': qrcode,
         'coverpicture': coverpicture,
         'coverpictureurl': coverpictureurl,
-        'accesslevel': accesslevel
+        'accesslevel': accesslevel,
+        'registration' : registration
       };
 }

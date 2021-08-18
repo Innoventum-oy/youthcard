@@ -1,5 +1,6 @@
 {
   "cs": [
+    "activity",
     "clearCache",
     "loadingBenefits",
     "participants",
@@ -11,6 +12,7 @@
   ],
 
   "de": [
+    "activity",
     "clearCache",
     "loadingBenefits",
     "participants",
@@ -29,6 +31,7 @@
   ],
 
   "hr": [
+    "activity",
     "clearCache",
     "loadingBenefits",
     "participants",
@@ -40,6 +43,7 @@
   ],
 
   "pt": [
+    "activity",
     "clearCache",
     "loadingBenefits",
     "participants",

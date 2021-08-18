@@ -3,6 +3,7 @@
   "about" : "Tietoja",
   "accountCreated" : "Tili luotu",
   "activities":"Tapahtumat",
+  "activity": "Tapahtuma",
   "activityCalendar": "Tapahtumakalenteri",
   "address" : "Osoite",
   "authenticating" : "Kirjautuminen käynnissä",

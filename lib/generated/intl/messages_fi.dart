@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "about": MessageLookupByLibrary.simpleMessage("Tietoja"),
         "accountCreated": MessageLookupByLibrary.simpleMessage("Tili luotu"),
         "activities": MessageLookupByLibrary.simpleMessage("Tapahtumat"),
+        "activity": MessageLookupByLibrary.simpleMessage("Tapahtuma"),
         "activityCalendar":
             MessageLookupByLibrary.simpleMessage("Tapahtumakalenteri"),
         "address": MessageLookupByLibrary.simpleMessage("Osoite"),

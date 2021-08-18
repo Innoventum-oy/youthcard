@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "accountCreated":
             MessageLookupByLibrary.simpleMessage("Account created"),
         "activities": MessageLookupByLibrary.simpleMessage("Activities"),
+        "activity": MessageLookupByLibrary.simpleMessage("Activity"),
         "activityCalendar":
             MessageLookupByLibrary.simpleMessage("Activity calendar"),
         "address": MessageLookupByLibrary.simpleMessage("Address"),

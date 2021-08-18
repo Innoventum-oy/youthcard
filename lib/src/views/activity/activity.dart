@@ -36,7 +36,7 @@ class _ActivityViewState extends State<ActivityView> {
   bool _visible = false;
   bool _activityDatesLoaded = false;
   User? user;
-  dynamic _activityDetails;
+  dynamic _activityDetails; // this is json data, not converted to activity object!
 
   int calculateDifference(DateTime date) {
     DateTime now = DateTime.now();
@@ -63,7 +63,7 @@ class _ActivityViewState extends State<ActivityView> {
       User user = Provider.of<UserProvider>(context, listen: false).user;
       print('running addPostFrameCallback (initstate');
       _loadDetails(user);
-      _loadActivityDates(user);
+      if (widget._activity.accesslevel >= 20)  _loadActivityDates(user);
     });
 
    // Timer(Duration(milliseconds: 100), () => setState(() => _visible = true));
@@ -72,8 +72,22 @@ class _ActivityViewState extends State<ActivityView> {
   @override
   Widget build(BuildContext context) {
     print('rebuilding activity view');
-
+    final user = Provider.of<UserProvider>(context, listen: false).user;
     return Scaffold(
+        appBar: AppBar(
+            title: Text(widget._activity.name?? AppLocalizations.of(context)!.activity),
+            elevation: 0.1,
+            actions: [
+          IconButton(
+          icon: Icon(Icons.refresh),
+          onPressed: () {
+            print('Refreshing view');
+            setState(() {
+              _loadDetails(user,reload:true);
+            });
+          }),
+        ],
+        ),
         backgroundColor: primary,
         body: CustomScrollView(
           slivers: <Widget>[
@@ -84,10 +98,12 @@ class _ActivityViewState extends State<ActivityView> {
   }
 
   List<Widget> buttons(Activity activity) {
+    print('building buttons');
     final user = Provider.of<UserProvider>(context, listen: false).user;
     List<Widget> buttons = [];
 
-    if (activity.registration) {
+    if (activity.registration || activity.registration=='true') {
+      print('registration is enabled for activity');
       buttons.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.signUp),
         onPressed: () {
@@ -95,8 +111,9 @@ class _ActivityViewState extends State<ActivityView> {
           _apiClient.registerForActivity(activity.id, user);
         },
       ));
+
       buttons.add(const SizedBox(width: 8));
-    }
+    }else print('registration not enabled for activity :'+activity.registration.toString());
     if (activity.accesslevel >= 20) {
       buttons.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.qrScanner),
@@ -192,13 +209,13 @@ class _ActivityViewState extends State<ActivityView> {
     );
   }
 
-  void _loadDetails(user) async {
+  void _loadDetails(user,{bool reload:false}) async {
     print('called _loadDetails for activity ' +
         widget._activity.id.toString() +
         ', awaiting provider for details!');
     try {
       dynamic details =
-          await widget.provider.getDetails(widget._activity.id!, user);
+          await widget.provider.getDetails(widget._activity.id!, user,reload:reload);
       //print(details.toString());
       // print(details.runtimeType);
       setState(() => _activityDetails = details.first);

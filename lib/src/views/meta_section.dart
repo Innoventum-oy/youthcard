@@ -68,7 +68,7 @@ class MetaSection extends StatelessWidget {
       {dynamic formatterFunction, bool isLink: false}) {
 
 
-    print('_getSectionOrContainer called with title '+title+', content '+content);
+    //print('_getSectionOrContainer called with title '+title+', content '+content);
    // print('value is:'+data[content].toString());
     //data.forEach((key, value) {print('$key = $value');});
     //print('--DATA--');

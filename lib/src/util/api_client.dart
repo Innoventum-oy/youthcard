@@ -65,12 +65,12 @@ class ApiClient {
   * _getJson handles request and returns the json decoded data from server back to caller function
   */
   Future<dynamic> _getJson(Uri uri) async {
-  print('calling '+uri.toString());
+ //print('calling '+uri.toString());
     var response = await http.get(uri);
-    print(response.statusCode);
+   // print(response.statusCode);
     if(response.statusCode==200) {
       if(response.body!=null && response.body.isNotEmpty) {
-        print(response.body);
+        //print(response.body);
         Map<String, dynamic> body = json.decode(response.body);
        /* print('GETJSON DATA RECEIVED:');
         body.forEach((key, value) {
@@ -340,7 +340,7 @@ class ApiClient {
     var url = Uri.https(baseUrl, 'api/activity/$activityId', { 'api-key': user.token,'api_key':user.token});
 
     return _getJson(url).then((json) => json['data']).then((data) {
-       // print(data);
+        //print(data);
         return data;
       });
 
@@ -435,7 +435,7 @@ class ApiClient {
       'action': 'recordvisit',
       'method' : 'json',
       'activityid': activityId!.toString(),
-      'activitydate' : visitDate!.id.toString(),
+      'activitydate' : visitDate?.id !=null ? visitDate!.id.toString() : 'false',
       'userid': visitor!=null ? visitor.id.toString() : user.id.toString(),
       'visitstatus': visitStatus,
       'api-key': user.token!,

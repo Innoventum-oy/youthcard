@@ -69,7 +69,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
       'startfrom': DateFormat('yyyy-MM-dd').format(kFirstDay ?? now),
       'api-key': user.token,
       'api_key': user.token,
-      'fields': 'id, nexteventdate,  name, description'
+      'fields': 'id, nexteventdate,  name, description,registration'
 
       //  'fields': ['id','startdate','enddate','']
      // 'sort': 'nexteventdate',
@@ -106,7 +106,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
       });
     } catch (e, stack) {
       _isLoading = false;
-      //print('loadItems returned error $e\n Stack trace:\n $stack');
+      print('loadItems returned error $e\n Stack trace:\n $stack');
       errormessage = e.toString();
       if (_loadingState == LoadingState.LOADING) {
         setState(() => _loadingState = LoadingState.ERROR);
@@ -159,7 +159,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
 
   List<Activity> _getEventsForDay(DateTime day) {
 
-    if(eventsHashMap[day]!=null)print('events for $day: '+ eventsHashMap[day]!.length.toString());
+   // if(eventsHashMap[day]!=null)print('events for $day: '+ eventsHashMap[day]!.length.toString());
     return eventsHashMap[day] ?? [];
   }
 

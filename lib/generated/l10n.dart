@@ -80,6 +80,16 @@ class S {
     );
   }
 
+  /// `Activity`
+  String get activity {
+    return Intl.message(
+      'Activity',
+      name: 'activity',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Activity calendar`
   String get activityCalendar {
     return Intl.message(

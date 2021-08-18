@@ -45,7 +45,7 @@ class UserBenefitProvider extends ObjectProvider {
 
 // returns json-decoded response
   @override
-  Future<dynamic> getDetails(int benefitId, user) {
+  Future<dynamic> getDetails(int benefitId, user,{reload:false}) {
     return _apiClient.getUserBenefitDetails(benefitId, user);
   }
 }
@@ -84,10 +84,11 @@ class ActivityProvider extends ObjectProvider {
           }
       return activities;
       }
-    else print('activitydata was false');
+    else print('activitydata was false, loading remote results');
 
     final remoteactivitydata =  await _apiClient.loadActivities(params);
     FileStorage.write(remoteactivitydata,filename);
+    print(remoteactivitydata);
     return remoteactivitydata;
 
   }
@@ -115,16 +116,22 @@ class ActivityProvider extends ObjectProvider {
   }
   // returns json-decoded response
   @override
-  Future<dynamic> getDetails(int activityId, user) async {
-    final activitydata = await FileStorage.read("activity_" + activityId.toString() + "_user_"+user.id.toString(),expiration: 30);
-    if (activitydata != false)
-      {
-          //@todo refresh
-          print('Loaded activity details from local storage for activity ${activityId.toString()}');
-          return activitydata;
-        }
-
+  Future<dynamic> getDetails(int activityId, user,{reload:false}) async {
+    print('getting activity details, reload is set to '+reload.toString());
+   if(!reload) {
+     final activitydata = await FileStorage.read(
+         "activity_" + activityId.toString() + "_user_" + user.id.toString(),
+         expiration: 30);
+     if (activitydata != false) {
+       //@todo refresh
+       print(
+           'Loaded activity details from local storage for activity ${activityId
+               .toString()}');
+       return activitydata;
+     }
+   }
     final remoteactivitydata = await _apiClient.getActivityDetails(activityId, user);
+   print('writing received activitydata to local storage for #'+activityId.toString());
     FileStorage.write(remoteactivitydata,"activity_" + activityId.toString() + "_user_"+user.id.toString());
     return remoteactivitydata;
 
