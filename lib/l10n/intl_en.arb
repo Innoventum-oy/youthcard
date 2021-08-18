@@ -50,6 +50,7 @@
   "myActivities": "My activities",
   "myCard": "My Card",
 
+  "noUsersFound" : "No users found",
   "participants" : "Participants",
   "password": "Password",
   "passwordChanged": "Password changed",

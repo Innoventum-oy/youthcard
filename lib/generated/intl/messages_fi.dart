@@ -84,6 +84,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "moreInformation": MessageLookupByLibrary.simpleMessage("lisätiedot"),
         "myActivities": MessageLookupByLibrary.simpleMessage("Omat tapahtumat"),
         "myCard": MessageLookupByLibrary.simpleMessage("Oma kortti"),
+        "noUsersFound":
+            MessageLookupByLibrary.simpleMessage("Ei ilmoittautuneita"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Ei vahvistettu"),
         "participants": MessageLookupByLibrary.simpleMessage("Osallistujat"),
         "password": MessageLookupByLibrary.simpleMessage("Salasana"),

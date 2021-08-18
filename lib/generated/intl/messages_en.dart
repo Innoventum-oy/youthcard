@@ -85,6 +85,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("More information"),
         "myActivities": MessageLookupByLibrary.simpleMessage("My activities"),
         "myCard": MessageLookupByLibrary.simpleMessage("My Card"),
+        "noUsersFound": MessageLookupByLibrary.simpleMessage("No users found"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Not verified"),
         "participants": MessageLookupByLibrary.simpleMessage("Participants"),
         "password": MessageLookupByLibrary.simpleMessage("Password"),

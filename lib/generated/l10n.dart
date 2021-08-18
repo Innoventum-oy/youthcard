@@ -530,6 +530,16 @@ class S {
     );
   }
 
+  /// `No users found`
+  String get noUsersFound {
+    return Intl.message(
+      'No users found',
+      name: 'noUsersFound',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Participants`
   String get participants {
     return Intl.message(

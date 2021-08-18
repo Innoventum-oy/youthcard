@@ -65,7 +65,7 @@ class ApiClient {
   * _getJson handles request and returns the json decoded data from server back to caller function
   */
   Future<dynamic> _getJson(Uri uri) async {
- //print('calling '+uri.toString());
+ print('calling '+uri.toString());
     var response = await http.get(uri);
    // print(response.statusCode);
     if(response.statusCode==200) {

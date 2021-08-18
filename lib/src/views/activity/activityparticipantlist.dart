@@ -110,7 +110,16 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
   {
     final loggedInUser = Provider.of<UserProvider>(context, listen: false).user;
     if(users.isEmpty)
-      return Text('No users found');
+      return Align(
+          alignment: Alignment.center,
+          child:Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children:[
+              Icon(Icons.info),
+              Text(AppLocalizations.of(context)!.noUsersFound,textAlign:TextAlign.center,)
+          ]),
+      );
     return ListView.builder(
         itemBuilder: (context,index){
           User user = users[index];
