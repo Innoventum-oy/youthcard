@@ -223,12 +223,11 @@ class _RegisterState extends State<Register> {
             ),
           ),
         );
-        break;
 
       case Status.Registering:
         // display spinner
       return loading;
-        break;
+
 
       case Status.Registered:
         print('Status.Registered switch handler');
@@ -261,7 +260,7 @@ class _RegisterState extends State<Register> {
 
       default:
         return Container();
-        break;
+
     }
   }
 

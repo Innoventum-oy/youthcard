@@ -26,7 +26,7 @@ class ActivityListItem extends StatelessWidget{
     User user = Provider.of<UserProvider>(context).user;
     String dateinfo = activityItem.nexteventdate==null ? '':(calculateDifference(activityItem.nexteventdate!)!=0 ? DateFormat('kk:mm dd.MM.yyyy').format(activityItem.nexteventdate!) : 'Today '+DateFormat('kk:mm ').format(activityItem.nexteventdate!));
     List<Widget> buttons=[];
-    buttons.add(TextButton(
+    buttons.add(ElevatedButton(
       child: Text(AppLocalizations.of(context)!.readMore),
       onPressed: () {
         /* open activity view */
@@ -35,7 +35,7 @@ class ActivityListItem extends StatelessWidget{
     ));
     buttons.add(const SizedBox(width: 8));
     if(activityItem.registration) {
-      buttons.add(TextButton(
+      buttons.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.signUp),
         onPressed: () {
           print('signing up for activity {$activityItem.name}');
@@ -46,7 +46,7 @@ class ActivityListItem extends StatelessWidget{
     }
   //  print(activityItem.name!+' access:'+ activityItem.accesslevel.toString());
     if(activityItem.accesslevel >= 20) {
-      buttons.add(TextButton(
+      buttons.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.qrScanner),
         onPressed: () {
           Navigator.push(
@@ -67,7 +67,10 @@ class ActivityListItem extends StatelessWidget{
              ListTile(
               leading: Icon(Icons.event),
               title: Text((activityItem.name != null ? activityItem.name: AppLocalizations.of(context)!.unnamedActivity)!),
-              subtitle: Text(dateinfo +(activityItem.description==null ? '' : '\n'+activityItem.description!)),
+              subtitle: Text(
+                  dateinfo +(activityItem.description==null ? '' : '\n'+activityItem.description!),
+              overflow: TextOverflow.ellipsis,
+              maxLines:5),
                isThreeLine: true,
             ),
             Row(

@@ -500,6 +500,16 @@ class S {
     );
   }
 
+  /// `Sijainnit`
+  String get locations {
+    return Intl.message(
+      'Sijainnit',
+      name: 'locations',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `More information`
   String get moreInformation {
     return Intl.message(

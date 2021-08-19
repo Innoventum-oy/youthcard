@@ -78,6 +78,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "loading": MessageLookupByLibrary.simpleMessage("Loading"),
         "loadingBenefits":
             MessageLookupByLibrary.simpleMessage("Loading benefits"),
+        "locations": MessageLookupByLibrary.simpleMessage("Sijainnit"),
         "login": MessageLookupByLibrary.simpleMessage("Login"),
         "loginFailed": MessageLookupByLibrary.simpleMessage("Login failed"),
         "logout": MessageLookupByLibrary.simpleMessage("Logout"),

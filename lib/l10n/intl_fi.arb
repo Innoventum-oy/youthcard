@@ -46,6 +46,7 @@
   "language" : "Kieli",
   "lastName" : "Sukunimi",
   "loading" : "Ladataan",
+  "locations" : "Sijainnit",
   "login" : "Kirjautuminen",
   "loginFailed" : "Kirjautuminen epäonnistui",
   "logout" : "Kirjaudu ulos",

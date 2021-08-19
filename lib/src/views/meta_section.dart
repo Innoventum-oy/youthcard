@@ -10,7 +10,7 @@ class MetaSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
- // print(data);
+  if(this.data==false) return Column();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[

@@ -48,13 +48,11 @@ class _ActivityListState extends State<ActivityList>  {
     DateTime now = DateTime.now();
     final Map<String, String> params = {
       'activitystatus': 'active',
-      'activitytype': 'activity',
       'limit' : limit.toString(),
       'offset' : offset.toString(),
-      'startfrom' : DateFormat('yyyy-MM-dd').format(now),
       'api-key':user.token,
       'api_key':user.token,
-      'sort' : 'nexteventdate',
+
     };
     print("activitylist type:"+widget.viewType);
 
@@ -62,10 +60,19 @@ class _ActivityListState extends State<ActivityList>  {
     {
       case 'locations':
         params['activitytype'] = 'location';
+        params['sort'] = 'name';
         break;
       case 'own':
+        params['activitytype'] = 'activity';
         params['accesslevel']='modify';
-     //   params['limit']='NULL';
+        params['startfrom'] = DateFormat('yyyy-MM-dd').format(now);
+        //   params['limit']='NULL';
+      break;
+      default:
+        params['activitytype'] = 'activity';
+        params['startfrom'] = DateFormat('yyyy-MM-dd').format(now);
+        params['sort'] ='nexteventdate';
+
     }
     print('Loading activitylist page $_pageNumber');
     try {
@@ -112,7 +119,9 @@ class _ActivityListState extends State<ActivityList>  {
   print('viewtype: '+widget.viewType);
   User user = Provider.of<UserProvider>(context,listen: false).user;
     return new Scaffold(
-      appBar: new AppBar(title: new Text(AppLocalizations.of(context)!.activities)),
+      appBar: new AppBar(title: new Text(
+          widget.viewType=='locations' ? AppLocalizations.of(context)!.locations : AppLocalizations.of(context)!.activities)
+    ),
       body: _getContentSection(user)
     );
   }

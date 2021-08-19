@@ -77,6 +77,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "language": MessageLookupByLibrary.simpleMessage("Kieli"),
         "lastName": MessageLookupByLibrary.simpleMessage("Sukunimi"),
         "loading": MessageLookupByLibrary.simpleMessage("Ladataan"),
+        "locations": MessageLookupByLibrary.simpleMessage("Sijainnit"),
         "login": MessageLookupByLibrary.simpleMessage("Kirjautuminen"),
         "loginFailed":
             MessageLookupByLibrary.simpleMessage("Kirjautuminen epäonnistui"),

@@ -45,6 +45,7 @@
   "login": "Login",
   "loginFailed": "Login failed",
   "logout": "Logout",
+  "locations" : "Sijainnit",
 
   "moreInformation": "More information",
   "myActivities": "My activities",

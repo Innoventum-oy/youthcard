@@ -26,11 +26,11 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
-  LoadingState _loadingState = LoadingState.LOADING;
-  List<Activity> myActivities = [];
+  Map<String,LoadingState> _loadingStates = {};
+  Map<String,List<Activity>> myActivities = {};
   bool _isLoading = false;
   String? errormessage;
-
+  List activityTypes = ['activity','location'];
   @override
   void initState() {
     print('Initializing dashboard state');
@@ -38,45 +38,50 @@ class _DashBoardState extends State<DashBoard> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       User user = Provider.of<UserProvider>(context, listen: false).user;
       //Check if user has activities available that they can edit / log visits for
-      _loadMyActivities(user);
+     for(var a in activityTypes) {
+        _loadMyActivities(user,a);
+      }
     });
   }
 
   /*
   Check if user has activities with MODIFY or greater access, for displaying 'my activities' link
    */
-  _loadMyActivities(user) async {
+  _loadMyActivities(user,type) async {
     _isLoading = true;
     int offset = 0;
     int limit = 1;
     DateTime now = DateTime.now();
     Map<String, String> params = {
       'activitystatus': 'active',
-      'activitytype': 'activity',
+      'activitytype': type,
       'accesslevel': 'modify',
       'limit': limit.toString(),
       'offset': offset.toString(),
-      'startfrom': DateFormat('yyyy-MM-dd').format(now),
       'api-key': user.token ?? '',
       'api_key': user.token ?? '',
       'sort': 'nexteventdate',
     };
+    if(type=='activity') params['startfrom'] = DateFormat('yyyy-MM-dd').format(now);
     try {
-      print('checking for user own activities');
+      print('checking for user own activities of type '+type);
       var nextActivities = await widget.provider.loadItems(params);
       setState(() {
-        _loadingState = LoadingState.DONE;
-        myActivities.addAll(nextActivities);
-        print(myActivities.length.toString() +
-            ' own activities currently loaded!');
+        print(nextActivities.length.toString()+' items loaded for '+type);
+        _loadingStates[type] = LoadingState.DONE;
+         List<Activity> loadedActivities= [];
+         loadedActivities.addAll(nextActivities);
+         myActivities[type] = loadedActivities;
+       //myActivities[type].addAll(nextActivities);
+
         _isLoading = false;
       });
     } catch (e, stack) {
       _isLoading = false;
       print('loadItems returned error $e\n Stack trace:\n $stack');
       errormessage = e.toString();
-      if (_loadingState == LoadingState.LOADING) {
-        setState(() => _loadingState = LoadingState.ERROR);
+      if (_loadingStates[type] == LoadingState.LOADING) {
+        setState(() => _loadingStates[type] = LoadingState.ERROR);
       }
     }
   }
@@ -110,8 +115,14 @@ class _DashBoardState extends State<DashBoard> {
                 onPressed: () {
                   print('Refreshing view');
                   setState(() {
-                    _loadingState = LoadingState.LOADING;
+
+                    _loadingStates.forEach((key, value) {
+                      _loadingStates[key] = LoadingState.LOADING;
+                    });
                     _isLoading = false;
+                    for(var a in activityTypes) {
+                      _loadMyActivities(user,a);
+                    }
                   });
                 }),
             InkWell(
@@ -326,10 +337,9 @@ class _DashBoardState extends State<DashBoard> {
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: myActivitiesListLink(user, provider, imageprovider),
-              ),
+              myActivitiesListLink(user, provider, imageprovider),
+              myLocationsListLink(user, provider, imageprovider),
+
             ],
           ),
         ),
@@ -337,12 +347,73 @@ class _DashBoardState extends State<DashBoard> {
     }
   }
 
+  Widget myLocationsListLink(user, userprovider, imageprovider) {
+
+    switch (_loadingStates['location']) {
+      case LoadingState.DONE:
+      //data loaded
+      bool hascontent = myActivities['location']!=null ? myActivities['location']!.isNotEmpty : false;
+        if (hascontent) {
+
+          return Padding(
+            padding: EdgeInsets.all(20),
+            child: ClipOval(
+              child: Material(
+                color: Theme
+                    .of(context)
+                    .primaryColor, // button color
+                child: InkWell(
+                  splashColor: Colors.green, // splash color
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ActivityList(
+                                  userprovider, imageprovider,
+                                  viewType: 'locations')),
+                    );
+                  }, // button pressed
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(Icons.house_outlined, size: 40, color: Colors.white),
+                      // icon
+                      Text(AppLocalizations.of(context)!.locations,
+                          style: TextStyle(color: Colors.white)),
+                      // text
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+        else {
+          print('not printing locations button');
+          return Container();
+        }
+
+      case LoadingState.LOADING:
+      //data loading in progress
+        if (!_isLoading) _loadMyActivities(user,'location');
+        return ElevatedButton(
+            onPressed: () {}, child: CircularProgressIndicator());
+
+      default:
+        return Container();
+    } //switch
+  }
+
   Widget myActivitiesListLink(user, userprovider, imageprovider) {
-    switch (_loadingState) {
+    switch (_loadingStates['activity']) {
       case LoadingState.DONE:
         //data loaded
-        if (myActivities.length > 0)
-          return ClipOval(
+        if (myActivities['activity']?.isNotEmpty?? false) {
+          print('displaying my activities button');
+          return Padding(
+              padding: EdgeInsets.all(20),
+              child:ClipOval(
             child: Material(
               color: Theme.of(context).primaryColor, // button color
               child: InkWell(
@@ -368,27 +439,15 @@ class _DashBoardState extends State<DashBoard> {
                 ),
               ),
             ),
+              ),
           );
-    /*ElevatedButton.icon(
-              icon: Icon(Icons.list_alt_outlined),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ActivityList(
-                          userprovider, imageprovider,
-                          viewtype: 'own')),
-                );
-              },
-              label: Text(AppLocalizations.of(context)!.myActivities),
-              style: ElevatedButton.styleFrom(shape: CircleBorder()));
-              */
-        else
+        } else {
           return Container();
+        }
 
       case LoadingState.LOADING:
         //data loading in progress
-        if (!_isLoading) _loadMyActivities(user);
+        if (!_isLoading) _loadMyActivities(user,'activity');
         return ElevatedButton(
             onPressed: () {}, child: CircularProgressIndicator());
 

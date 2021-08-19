@@ -157,7 +157,7 @@ class _ActivityViewState extends State<ActivityView> {
   }
 
   Widget _buildMetaSection(Activity activity) {
-    print('hello this is Metasection');
+
     return AnimatedOpacity(
       opacity: _visible ? 1.0 : 0.0,
       duration: Duration(milliseconds: 500),
@@ -218,7 +218,8 @@ class _ActivityViewState extends State<ActivityView> {
           await widget.provider.getDetails(widget._activity.id!, user,reload:reload);
       //print(details.toString());
       // print(details.runtimeType);
-      setState(() => _activityDetails = details.first);
+
+      setState(() =>_activityDetails =details!=null ? details.first:false);
     } catch (e, stack) {
       print('loadDetails returned error $e\n Stack trace:\n $stack');
       //Notify(e.toString());
