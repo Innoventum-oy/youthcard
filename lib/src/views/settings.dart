@@ -53,6 +53,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget buildSettingsList() {
+    final user = Provider.of<UserProvider>(context, listen: false).user;
+
     return SettingsList(
       sections: [
         SettingsSection(
@@ -80,7 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
-        SettingsSection(
+       if(user.token!=null) SettingsSection(
           title: AppLocalizations.of(context)!.settingsAccount,
           tiles: [
             SettingsTile(

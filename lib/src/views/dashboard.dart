@@ -38,7 +38,8 @@ class _DashBoardState extends State<DashBoard> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       User user = Provider.of<UserProvider>(context, listen: false).user;
       //Check if user has activities available that they can edit / log visits for
-     for(var a in activityTypes) {
+      if(user.token!=null)
+        for(var a in activityTypes) {
         _loadMyActivities(user,a);
       }
     });
@@ -62,7 +63,8 @@ class _DashBoardState extends State<DashBoard> {
       'api_key': user.token ?? '',
       'sort': 'nexteventdate',
     };
-    if(type=='activity') params['startfrom'] = DateFormat('yyyy-MM-dd').format(now);
+    if(type=='activity')
+      params['startfrom'] = DateFormat('yyyy-MM-dd').format(now);
     try {
       print('checking for user own activities of type '+type);
       var nextActivities = await widget.provider.loadItems(params);
@@ -120,12 +122,13 @@ class _DashBoardState extends State<DashBoard> {
                       _loadingStates[key] = LoadingState.LOADING;
                     });
                     _isLoading = false;
-                    for(var a in activityTypes) {
+                    if(user.token!=null)
+                      for(var a in activityTypes) {
                       _loadMyActivities(user,a);
                     }
                   });
                 }),
-            InkWell(
+            if(user.token!=null) InkWell(
                 child: CircleAvatar(
                   radius: 20,
                   backgroundImage: user.image != null && user.image!.isNotEmpty
@@ -155,7 +158,7 @@ class _DashBoardState extends State<DashBoard> {
             mainAxisSpacing: 10,
             padding: EdgeInsets.only(top: 10,left:20,right:20),
             children: [
-              Padding(
+              if(user.token!=null) Padding(
                 padding: EdgeInsets.all(10),
                 child: MaterialButton(
                   //padding: EdgeInsets.all(8.0),
@@ -195,7 +198,7 @@ class _DashBoardState extends State<DashBoard> {
                   },
                 ),
               ),
-              Padding(
+              if(user.token!=null)  Padding(
                 padding: EdgeInsets.all(20),
                 child: ClipOval(
                   child: Material(
@@ -325,11 +328,12 @@ class _DashBoardState extends State<DashBoard> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Icon(
-                            Icons.logout,
+                            (user.token==null)? Icons.login : Icons.logout,
                             size: 40,
                             color: Colors.white,
                           ), // icon
-                          Text(AppLocalizations.of(context)!.logout,
+                          (user.token==null)? Text(AppLocalizations.of(context)!.login,
+                              style: TextStyle(color: Colors.white)) : Text(AppLocalizations.of(context)!.logout,
                               style: TextStyle(color: Colors.white)), // text
                         ],
                       ),
@@ -396,7 +400,8 @@ class _DashBoardState extends State<DashBoard> {
 
       case LoadingState.LOADING:
       //data loading in progress
-        if (!_isLoading) _loadMyActivities(user,'location');
+        if (!_isLoading &&  user.token!=null)
+          _loadMyActivities(user,'location');
         return ElevatedButton(
             onPressed: () {}, child: CircularProgressIndicator());
 
@@ -447,7 +452,8 @@ class _DashBoardState extends State<DashBoard> {
 
       case LoadingState.LOADING:
         //data loading in progress
-        if (!_isLoading) _loadMyActivities(user,'activity');
+        if (!_isLoading && user.token !=null )
+          _loadMyActivities(user,'activity');
         return ElevatedButton(
             onPressed: () {}, child: CircularProgressIndicator());
 

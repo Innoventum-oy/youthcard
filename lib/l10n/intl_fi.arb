@@ -8,6 +8,7 @@
   "address" : "Osoite",
   "authenticating" : "Kirjautuminen käynnissä",
   "btnContinue" : "Jatka",
+  "btnContinueWithoutLogin": "Jatka kirjautumatta",
   "btnLogin" : "Kirjaudu",
   "btnReturn" : "Takaisin",
   "btnSend" : "Lähetä",

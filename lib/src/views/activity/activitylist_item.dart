@@ -34,7 +34,7 @@ class ActivityListItem extends StatelessWidget{
       },
     ));
     buttons.add(const SizedBox(width: 8));
-    if(activityItem.registration) {
+    if(activityItem.registration && user.token!=null) {
       buttons.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.signUp),
         onPressed: () {

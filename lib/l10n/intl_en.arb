@@ -8,6 +8,7 @@
   "address": "Address",
   "authenticating": "Authenticating ... Please wait",
   "btnContinue": "Continue",
+  "btnContinueWithoutLogin": "Skip login",
   "btnLogin": "Login",
   "btnReturn": "Return",
   "btnSend": "Send",

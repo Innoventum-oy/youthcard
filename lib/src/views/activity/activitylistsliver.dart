@@ -63,8 +63,9 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
       'limit': limit.toString(),
       'offset': offset.toString(),
       'startfrom': DateFormat('yyyy-MM-dd').format(now),
-      'api-key': user.token,
-      'api_key': user.token,
+      if(user.token !=null) 'api-key': user.token,
+      if(user.token !=null) 'api_key': user.token,
+
       'sort': 'nexteventdate',
     };
 

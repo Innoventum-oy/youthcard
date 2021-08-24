@@ -121,7 +121,10 @@ class _LoginState extends State<Login> {
         ),
       ],
     );
+    var bypassLogin = (){
+      Navigator.pushReplacementNamed(context, '/dashboard');
 
+    };
     var doLogin = () {
       final form = formKey.currentState;
 
@@ -176,6 +179,11 @@ class _LoginState extends State<Login> {
                       ? loading
                       : longButtons(
                           AppLocalizations.of(context)!.btnLogin, doLogin),
+                  SizedBox(height: 10.0),
+                  auth.loggedInStatus == Status.Authenticating
+                      ? loading
+                      : longButtons(
+                      AppLocalizations.of(context)!.btnContinueWithoutLogin, bypassLogin),
                   SizedBox(height: 5.0),
                   forgotLabel,
                   SizedBox(height: 5.0),

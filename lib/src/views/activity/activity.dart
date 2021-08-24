@@ -102,7 +102,7 @@ class _ActivityViewState extends State<ActivityView> {
     final user = Provider.of<UserProvider>(context, listen: false).user;
     List<Widget> buttons = [];
 
-    if (activity.registration || activity.registration=='true') {
+    if ((activity.registration || activity.registration=='true') && (user.token!=null )){
       print('registration is enabled for activity');
       buttons.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.signUp),
