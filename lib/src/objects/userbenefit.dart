@@ -25,7 +25,7 @@ class UserBenefit {
     //Map<String, dynamic> responseData = response['data'];
 
 
-    if (int.parse(responseData['accesslevel']) > 10) {
+    if (( responseData['accesslevel'] is int ? responseData['accesslevel'] : int.parse(responseData['accesslevel'])) > 10) {
       responseData.forEach((key, value) {
         print('$key = $value');
       });
