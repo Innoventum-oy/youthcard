@@ -100,7 +100,7 @@ class ApiClient {
       'method' : 'json',
       'action': 'getcontactmethods',
       'userid': user.id.toString(),
-      'api-key':user.token,
+      'api_key':user.token,
       'api_key':user.token,
     };
 
@@ -210,6 +210,9 @@ class ApiClient {
     //debug: print params
     params.forEach((key, value) {print('$key = $value');});
     String baseUrl = await Settings().getServer();
+    String? apikey = await Settings().getValue("anonymousapikey") ;
+    if(!params.containsKey("api_key") && apikey!=null)
+      params["api_key"] = apikey;
     var url = Uri.https(baseUrl, 'api/activityclass/',
         params);
     return _getJson(url).then((json) => json['data']).then((data) {
@@ -226,7 +229,8 @@ class ApiClient {
    */
   Future<dynamic> getActivityClassDetails(int activityClassId, User user) async {
     String baseUrl = await Settings().getServer();
-    var url = Uri.https(baseUrl, 'api/activityclass/$activityClassId', { 'api-key': user.token,'api_key':user.token});
+    String? apikey = (user.token==null) ? await Settings().getValue("anonymousapikey") : user.token;
+    var url = Uri.https(baseUrl, 'api/activityclass/$activityClassId', { 'api_key': apikey});
 
     return _getJson(url).then((json) => json['data']).then((data) {
       // print(data);
@@ -240,10 +244,17 @@ class ApiClient {
    */
   Future<List<Activity>> loadActivities(Map<String,dynamic> params) async {
     //debug: print params
- //   params.forEach((key, value) {print('$key = $value');});
+ //
     String baseUrl = await Settings().getServer();
+
+    if(!params.containsKey("api_key")) {
+      params["api_key"] = await Settings().getValue("anonymousapikey");
+
+     }
+    else print("kreegah");
     var url = Uri.https(baseUrl, 'api/activity/',
         params);
+    params.forEach((key, value) {print('$key = $value');});
     return _getJson(url).then((json) => json['data']).then((data) {
       if(data==null) return [];
       return data
@@ -258,11 +269,12 @@ class ApiClient {
    */
   Future<List<ActivityDate>> loadActivitydates(Activity activity, User user) async {
     String baseUrl = await Settings().getServer();
+    String? apikey = (user.token==null) ? await Settings().getValue("anonymousapikey") : user.token;
     final Map<String, dynamic> params = {
       'method' : 'json',
       'activityid' : activity.id.toString(),
-      'api-key': user.token,
-      'api_key':user.token
+      if(apikey!=null) 'api_key': apikey
+
     };
     var dbformat = new DateFormat('yyyy-MM-dd');
     //if(activity.accesslevel <= 10) params['startdate'] = '>= '+dbformat.format(DateTime.now()).toString()+':SQL';
@@ -284,13 +296,14 @@ class ApiClient {
    */
   Future<List<User>> loadActivityUsers(int activityId, User user) async {
     String baseUrl = await Settings().getServer();
+    String? apikey = (user.token==null) ? await Settings().getValue("anonymousapikey") : user.token;
     final Map<String, dynamic> params = {
       'method' : 'json',
       ''
       'action' : 'activityuserlist',
       'activityid' : activityId.toString(),
-      'api-key': user.token,
-      'api_key':user.token
+      'api_key': apikey
+
     };
 
     var url = Uri.https(baseUrl, 'api/dispatcher/activity/',
@@ -311,13 +324,14 @@ class ApiClient {
    */
   Future<dynamic> loadActivityVisits(int activityId, ActivityDate date,user) async {
     String baseUrl = await Settings().getServer();
+    String? apikey = (user.token==null) ? await Settings().getValue("anonymousapikey") : user.token;
     final Map<String, dynamic> params = {
       'method' : 'json',
       'action' : 'activitydatevisits',
       'activityid' : activityId.toString(),
       'activitydateid' : date.id.toString(),
-      'api-key': user.token,
-      'api_key':user.token
+      'api_key': apikey
+
     };
 
     var url = Uri.https(baseUrl, 'api/dispatcher/activity/',
@@ -337,7 +351,8 @@ class ApiClient {
    */
   Future<dynamic> getActivityDetails(int activityId, User user) async {
     String baseUrl = await Settings().getServer();
-    var url = Uri.https(baseUrl, 'api/activity/$activityId', { 'api-key': user.token,'api_key':user.token});
+    String? apikey = (user.token==null) ? await Settings().getValue("anonymousapikey") : user.token;
+    var url = Uri.https(baseUrl, 'api/activity/$activityId', { 'api_key': apikey});
 
     return _getJson(url).then((json) => json['data']).then((data) {
         //print(data);
@@ -370,7 +385,7 @@ class ApiClient {
    */
   Future<dynamic> getUserBenefitDetails(int benefitId, User user) async {
     String baseUrl = await Settings().getServer();
-    var url = Uri.https(baseUrl, 'api/userbenefit/$benefitId', { 'api-key': user.token,'api_key':user.token});
+    var url = Uri.https(baseUrl, 'api/userbenefit/$benefitId', { 'api_key': user.token});
 
     return _getJson(url).then((json) => json['data']).then((data) {
       // print(data);
@@ -402,7 +417,7 @@ class ApiClient {
    */
   Future<dynamic> getImageDetails(int imageId, User user) async {
     String baseUrl = await Settings().getServer();
-    var url = Uri.https(baseUrl, 'api/image/$imageId', { 'api-key': user.token,'api_key':user.token});
+    var url = Uri.https(baseUrl, 'api/image/$imageId', { 'api_key': user.token});
 
     return _getJson(url);
   }
@@ -438,8 +453,8 @@ class ApiClient {
       'activitydate' : visitDate?.id !=null ? visitDate!.id.toString() : 'false',
       'userid': visitor!=null ? visitor.id.toString() : user.id.toString(),
       'visitstatus': visitStatus,
-      'api-key': user.token!,
       'api_key': user.token!
+
       //'latitude': _latitude.toString(),
       //  'longitude':  _longitude.toString()
 

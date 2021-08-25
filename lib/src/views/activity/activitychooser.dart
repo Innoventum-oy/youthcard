@@ -52,8 +52,8 @@ class _ActivityChooserListState extends State<ActivityChooserList>  {
       'limit' : limit.toString(),
       'offset' : offset.toString(),
       'startfrom' : DateFormat('yyyy-MM-dd').format(now),
-      'api-key':user.token,
       'api_key':user.token,
+
       'sort' : 'nexteventdate',
     };
     print('Loading page $_pageNumber');

@@ -55,8 +55,8 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
       'loadmethod' :'loadActivityClassesWithActivities',
       'limit': limit.toString(),
       'offset': offset.toString(),
-      if(user.token!=null ) 'api-key': user.token,
       if(user.token!=null ) 'api_key': user.token,
+
       'sort': 'name',
     };
     print("categorised activitylist viewtype: " + widget.viewType);

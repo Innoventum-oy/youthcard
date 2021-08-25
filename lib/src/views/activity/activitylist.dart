@@ -46,12 +46,13 @@ class _ActivityListState extends State<ActivityList>  {
     _isLoading = true;
     int offset = limit * _pageNumber;
     DateTime now = DateTime.now();
+
     final Map<String, String> params = {
       'activitystatus': 'active',
       'limit' : limit.toString(),
       'offset' : offset.toString(),
-      'api-key':user.token,
       'api_key':user.token,
+
 
     };
     print("activitylist type:"+widget.viewType);

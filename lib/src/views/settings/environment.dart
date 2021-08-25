@@ -61,7 +61,10 @@ class _EnvironmentScreenState extends State<EnvironmentScreen> {
         onPressed: (BuildContext context) {
           Settings().setValue('server', serverUrl);
           Settings().setValue('servername', serverTitle);
-
+          if(AppUrl.anonymousApikeys.containsKey(serverTitle))
+            Settings().setValue('anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
+          else
+            Settings().setValue('anonymousapikey', null);
 
           Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
           //pushReplacementNamed(context, '/login');

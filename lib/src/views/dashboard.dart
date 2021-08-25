@@ -59,8 +59,8 @@ class _DashBoardState extends State<DashBoard> {
       'accesslevel': 'modify',
       'limit': limit.toString(),
       'offset': offset.toString(),
-      'api-key': user.token ?? '',
       'api_key': user.token ?? '',
+
       'sort': 'nexteventdate',
     };
     if(type=='activity')
