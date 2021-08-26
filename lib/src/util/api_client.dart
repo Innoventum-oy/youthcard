@@ -251,7 +251,6 @@ class ApiClient {
       params["api_key"] = await Settings().getValue("anonymousapikey");
 
      }
-    else print("kreegah");
     var url = Uri.https(baseUrl, 'api/activity/',
         params);
     params.forEach((key, value) {print('$key = $value');});
