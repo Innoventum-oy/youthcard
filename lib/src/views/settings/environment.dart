@@ -61,8 +61,11 @@ class _EnvironmentScreenState extends State<EnvironmentScreen> {
         onPressed: (BuildContext context) {
           Settings().setValue('server', serverUrl);
           Settings().setValue('servername', serverTitle);
-          if(AppUrl.anonymousApikeys.containsKey(serverTitle))
-            Settings().setValue('anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
+          if(AppUrl.anonymousApikeys.containsKey(serverTitle)) {
+            Settings().setValue(
+                'anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
+              print("Anonymous api key for " + serverTitle + " set to " +AppUrl.anonymousApikeys[serverTitle]!);
+            }
           else
             Settings().setValue('anonymousapikey', null);
 

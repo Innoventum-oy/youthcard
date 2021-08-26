@@ -84,12 +84,16 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
         data.addAll(nextActivities);
 
         for (var item in data) {
+
           if(item.nexteventdate!=null) {
-            if (_events[item.nexteventdate] == null) {
-              _events[item.nexteventdate??now] = [];
+            var date = DateTime.utc(item.nexteventdate!.year, item.nexteventdate!.month, item.nexteventdate!.day);
+            if (_events[date] == null) {
+              _events[date] = [];
+              //print("Initializing "+date.toString()+" as array");
             }
-            _events[item.nexteventdate]!.add(item);
-         //   print('populating date ' + item.nexteventdate.toString());
+
+            _events[date]!.add(item);
+           // print('populating date ' + item.nexteventdate.toString());
           }
         };
 
@@ -99,6 +103,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
           hashCode: getHashCode,
         )
           ..addAll(_events);
+        //print("events in hashmap " + eventsHashMap.length.toString());
         _onDaySelected(_focusedDay, _focusedDay);
         _getEventsForDay(_selectedDay ?? now);
         _isLoading = false;
@@ -122,7 +127,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
     //print('_OnDaySelected was called');
     if (!isSameDay(_selectedDay, selectedDay)) {
       setState(() {
-        //print('is not same day: '+selectedDay.toString());
+        print('is not same day: '+selectedDay.toString());
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
         _rangeStart = null; // Important to clean those
@@ -158,7 +163,6 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
   }
 
   List<Activity> _getEventsForDay(DateTime day) {
-
    // if(eventsHashMap[day]!=null)print('events for $day: '+ eventsHashMap[day]!.length.toString());
     return eventsHashMap[day] ?? [];
   }

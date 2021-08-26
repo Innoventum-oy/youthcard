@@ -8,9 +8,8 @@ class AppUrl {
     'Development' : 'nuortenjoensuu.webweb.fi'
   };
  static const Map<String,String> anonymousApikeys = {
-
-   'Nuortenjoensuu':'\$2y\$10\$tHcmqlYZ3ihRGQ5YEMY9AeK6QhU2c4t.Tj4E/owCQfvRn0KvmIGDq',
-   'Development':'\$2y\$10\$PEXtBKieZfKREBW/ofsXu.dSofZ19rZSZgi87gjDT.MXheQrx7qm2'
+   'Nuortenjoensuu':'\$2y\$10\$PEXtBKieZfKREBW/ofsXu.dSofZ19rZSZgi87gjDT.MXheQrx7qm2',
+   'Development':'\$2y\$10\$tHcmqlYZ3ihRGQ5YEMY9AeK6QhU2c4t.Tj4E/owCQfvRn0KvmIGDq'
  };
   static const String liveBaseURL = "nuortenjoensuu.fi";
   static const String localBaseURL = "http://10.0.2.2:4000/api/";
