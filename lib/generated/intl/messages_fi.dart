@@ -31,6 +31,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "authenticating":
             MessageLookupByLibrary.simpleMessage("Kirjautuminen käynnissä"),
         "btnContinue": MessageLookupByLibrary.simpleMessage("Jatka"),
+        "btnContinueWithoutLogin":
+            MessageLookupByLibrary.simpleMessage("Jatka kirjautumatta"),
         "btnLogin": MessageLookupByLibrary.simpleMessage("Kirjaudu"),
         "btnReturn": MessageLookupByLibrary.simpleMessage("Takaisin"),
         "btnSend": MessageLookupByLibrary.simpleMessage("Lähetä"),
@@ -57,6 +59,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Vahvistusavain"),
         "contactInformation":
             MessageLookupByLibrary.simpleMessage("Yhteystiedot"),
+        "contactInformationValidated":
+            MessageLookupByLibrary.simpleMessage("Yhteystieto vahvistettu"),
         "createAccount":
             MessageLookupByLibrary.simpleMessage("Luo käyttäjätili"),
         "discover": MessageLookupByLibrary.simpleMessage("Tapahtumat"),
@@ -77,6 +81,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "language": MessageLookupByLibrary.simpleMessage("Kieli"),
         "lastName": MessageLookupByLibrary.simpleMessage("Sukunimi"),
         "loading": MessageLookupByLibrary.simpleMessage("Ladataan"),
+        "loadingBenefits":
+            MessageLookupByLibrary.simpleMessage("Ladataan etuja"),
         "locations": MessageLookupByLibrary.simpleMessage("Sijainnit"),
         "login": MessageLookupByLibrary.simpleMessage("Kirjautuminen"),
         "loginFailed":
@@ -135,8 +141,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "today": MessageLookupByLibrary.simpleMessage("Tänään"),
         "unknownUser":
             MessageLookupByLibrary.simpleMessage("Tuntematon käyttäjä"),
+        "unnamed": MessageLookupByLibrary.simpleMessage("nimetön"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Nimetön tapahtuma"),
+        "validateContactTitle":
+            MessageLookupByLibrary.simpleMessage("Vahvista yhteystieto"),
         "verified": MessageLookupByLibrary.simpleMessage("Vahvistettu"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Nuorisokortti"),

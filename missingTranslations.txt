@@ -15,6 +15,7 @@
 
   "de": [
     "activity",
+    "btnContinueWithoutLogin",
     "clearCache",
     "loadingBenefits",
     "locations",
@@ -24,18 +25,12 @@
     "validateContactTitle",
     "verified",
     "notVerified",
-    "contactInformationValidated"
-  ],
-
-  "fi": [
-    "loadingBenefits",
-    "unnamed",
-    "validateContactTitle",
     "contactInformationValidated"
   ],
 
   "hr": [
     "activity",
+    "btnContinueWithoutLogin",
     "clearCache",
     "loadingBenefits",
     "locations",
@@ -48,8 +43,13 @@
     "contactInformationValidated"
   ],
 
+  "pl": [
+    "btnContinueWithoutLogin"
+  ],
+
   "pt": [
     "activity",
+    "btnContinueWithoutLogin",
     "clearCache",
     "loadingBenefits",
     "locations",

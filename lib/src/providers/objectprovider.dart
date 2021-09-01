@@ -82,6 +82,7 @@ class ActivityProvider extends ObjectProvider {
         activities.add(a);
 
           }
+      //print('received '+activities.length.toString()+' activities from server');
       return activities;
       }
     else print('activitydata was false, loading remote results');

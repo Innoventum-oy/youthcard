@@ -32,6 +32,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "authenticating": MessageLookupByLibrary.simpleMessage(
             "Authenticating ... Please wait"),
         "btnContinue": MessageLookupByLibrary.simpleMessage("Continue"),
+        "btnContinueWithoutLogin":
+            MessageLookupByLibrary.simpleMessage("Skip login"),
         "btnLogin": MessageLookupByLibrary.simpleMessage("Login"),
         "btnReturn": MessageLookupByLibrary.simpleMessage("Return"),
         "btnSend": MessageLookupByLibrary.simpleMessage("Send"),

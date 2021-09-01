@@ -80,15 +80,17 @@ class YouthCard extends StatelessWidget {
                     }
                     else print("Snapshot has no data. User remains empty.");
 
-                    if (snapshot.hasError)
-                      return Text('Error: ${snapshot.error}');
+                    if (snapshot.hasError) {
+                      print('snapshot has error');
+                      return Login(user:userdata); //Text('Error: ${snapshot.error}');
+                    }
                     else if (userdata.token != null) {
                       print('setting userdata to userprovider');
                       Provider.of<UserProvider>(context, listen: false).setUserSilent(userdata);
                       return DashBoard();
                     } else
                       {
-                      print('user token: '+userdata.token.toString());
+                      print('user token was null');
                        return Login(user:userdata);
                       }
                 }

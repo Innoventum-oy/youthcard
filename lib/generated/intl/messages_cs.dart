@@ -30,6 +30,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "authenticating":
             MessageLookupByLibrary.simpleMessage("Ověření ... vyčkejte prosím"),
         "btnContinue": MessageLookupByLibrary.simpleMessage("Pokračovat"),
+        "btnContinueWithoutLogin":
+            MessageLookupByLibrary.simpleMessage("Skip login"),
         "btnLogin": MessageLookupByLibrary.simpleMessage("Přihlášení"),
         "btnReturn": MessageLookupByLibrary.simpleMessage("Zpět"),
         "btnSend": MessageLookupByLibrary.simpleMessage("Poslat"),

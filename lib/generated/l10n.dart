@@ -130,6 +130,16 @@ class S {
     );
   }
 
+  /// `Skip login`
+  String get btnContinueWithoutLogin {
+    return Intl.message(
+      'Skip login',
+      name: 'btnContinueWithoutLogin',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Login`
   String get btnLogin {
     return Intl.message(
@@ -981,6 +991,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
       Locale.fromSubtags(languageCode: 'de'),
       Locale.fromSubtags(languageCode: 'fi'),
       Locale.fromSubtags(languageCode: 'hr'),
+      Locale.fromSubtags(languageCode: 'pl'),
       Locale.fromSubtags(languageCode: 'pt'),
     ];
   }

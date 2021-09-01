@@ -14,11 +14,12 @@ import 'package:youth_card/src/objects/userbenefit.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
+import 'package:package_info/package_info.dart';
 
 class ApiClient {
 
   static final _client = ApiClient._internal();
-  final _http = HttpClient();
+  //final _http = HttpClient();
   ApiClient._internal();
 
 
@@ -31,10 +32,22 @@ class ApiClient {
   */
   Future<dynamic> _postJson(Uri uri, Map<String, dynamic> data) async
   {
+    Map softwareInfo = {};
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      softwareInfo['appName'] = packageInfo.appName;
+      softwareInfo['packageName'] = packageInfo.packageName;
+      softwareInfo['version'] = packageInfo.version;
+      softwareInfo['buildNumber'] = packageInfo.buildNumber;
+    });
+    Map<String,String> headers= {
+      'Content-Type': 'application/json',
+      'User-Agent': softwareInfo['appName']+' / '+softwareInfo['version']+' '+softwareInfo['buildNumber']
+    };
+
     print('calling (post) '+uri.toString());
     var response = await http.post(uri,
       body: json.encode(data),
-      headers: {'Content-Type': 'application/json'},
+      headers: headers,
     );
     if (response.statusCode == 200) {
       if(response.body.isNotEmpty) {
@@ -65,8 +78,26 @@ class ApiClient {
   * _getJson handles request and returns the json decoded data from server back to caller function
   */
   Future<dynamic> _getJson(Uri uri) async {
- print('calling '+uri.toString());
-    var response = await http.get(uri);
+  print('calling '+uri.toString());
+  Map softwareInfo = {
+    'appName': '',
+    'packageName':'',
+    'version':'',
+    'buildNumber' :'',
+
+  };
+  PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+    softwareInfo['appName'] = packageInfo.appName;
+    softwareInfo['packageName'] = packageInfo.packageName;
+    softwareInfo['version'] = packageInfo.version;
+    softwareInfo['buildNumber'] = packageInfo.buildNumber;
+  });
+  String userAgent = softwareInfo['appName']+' / '+softwareInfo['version']+' '+softwareInfo['buildNumber'];
+  Map<String,String> headers= {
+    'User-Agent': userAgent
+  };
+
+    var response = await http.get(uri,headers:headers);
    // print(response.statusCode);
     if(response.statusCode==200) {
       if(response.body!=null && response.body.isNotEmpty) {
@@ -82,7 +113,7 @@ class ApiClient {
         return (body);
       }
       else {
-        print('response body was empty.');
+        print('response body was empty for uri .'+uri.toString());
         return false;
       }
     }
@@ -203,19 +234,64 @@ class ApiClient {
 
   }
 
-  /*
-  * Load list of activities for the activitylist view
-   */
-  Future<List<ActivityClass>> loadActivityClasses(Map<String,dynamic> params) async {
-    //debug: print params
-    params.forEach((key, value) {print('$key = $value');});
+  Future<dynamic> dispatcherRequest(String targetModule,Map<String,dynamic> params) async {
+    params['method'] ='json';
     String baseUrl = await Settings().getServer();
     String? apikey = await Settings().getValue("anonymousapikey") ;
     if(!params.containsKey("api_key") && apikey!=null)
       params["api_key"] = apikey;
-    var url = Uri.https(baseUrl, 'api/activityclass/',
-        params);
+
+    var url = Uri.https(baseUrl, 'api/dispatcher/$targetModule/', params);
+
+    return _getJson(url).then((data)  {
+      //  print(data);
+      return data;
+    });
+
+  }
+
+  Future<dynamic> getDetails(String objectType,int objectId,User loggedInUser,{fields:null}) async{
+    String baseUrl = await Settings().getServer();
+    String? apikey = loggedInUser.token!=null ? loggedInUser.token : await Settings().getValue("anonymousapikey") ;
+    print('calling getDetails with apikey '+( apikey?? ' not set'));
+    var url = Uri.https(baseUrl, 'api/$objectType/$objectId', { 'api_key':apikey});
+
     return _getJson(url).then((json) => json['data']).then((data) {
+
+      return data.first;
+    });
+  }
+
+  Future<dynamic> getDataList(String datatype,Map<String,dynamic> params) async {
+    String baseUrl = await Settings().getServer();
+    String? apikey = await Settings().getValue("anonymousapikey") ;
+    if(!params.containsKey("api_key") && apikey!=null) {
+      print('using anonymous apikey for getDatalist');
+      params["api_key"] = apikey;
+    }
+    else print('using user datakey '+params['api_key'].toString());
+
+    params['method'] = 'json';
+    //debug: print params
+    params.forEach((key, value) {print('$key = $value');});
+
+    var url = Uri.https(baseUrl, 'api/$datatype/', params);
+
+    return _getJson(url).then((json) {
+      if(json==false) return [];
+      print(json);
+      return(json['data']?? []);
+
+    });
+
+  }
+
+  /*
+  * Load list of activities for the activitylist view
+   */
+  Future<List<ActivityClass>> loadActivityClasses(Map<String,dynamic> params) async {
+
+    return getDataList('activityclass',params).then((data) {
       if(data==null) return [];
       return data
           .map<ActivityClass>((data) => ActivityClass.fromJson(data))
@@ -227,10 +303,13 @@ class ApiClient {
   /*
   * Load detailed activity information for the activity view
    */
-  Future<dynamic> getActivityClassDetails(int activityClassId, User user) async {
+  Future<dynamic> getActivityClassDetails(int id, User user) async {
+
+    return this.getDetails('activityclass',id,user);
     String baseUrl = await Settings().getServer();
     String? apikey = (user.token==null) ? await Settings().getValue("anonymousapikey") : user.token;
-    var url = Uri.https(baseUrl, 'api/activityclass/$activityClassId', { 'api_key': apikey});
+
+    var url = Uri.https(baseUrl, 'api/activityclass/$id', { 'api_key': apikey});
 
     return _getJson(url).then((json) => json['data']).then((data) {
       // print(data);
@@ -243,18 +322,8 @@ class ApiClient {
   * Load list of activities for the activitylist view
    */
   Future<List<Activity>> loadActivities(Map<String,dynamic> params) async {
-    //debug: print params
- //
-    String baseUrl = await Settings().getServer();
 
-    if(!params.containsKey("api_key")) {
-      params["api_key"] = await Settings().getValue("anonymousapikey");
-
-     }
-    var url = Uri.https(baseUrl, 'api/activity/',
-        params);
-    params.forEach((key, value) {print('$key = $value');});
-    return _getJson(url).then((json) => json['data']).then((data) {
+    return getDataList('activity',params).then((data) {
       if(data==null) return [];
       return data
         .map<Activity>((data) => Activity.fromJson(data))
@@ -267,20 +336,14 @@ class ApiClient {
   * Load list of activitydates for selected activity
    */
   Future<List<ActivityDate>> loadActivitydates(Activity activity, User user) async {
-    String baseUrl = await Settings().getServer();
-    String? apikey = (user.token==null) ? await Settings().getValue("anonymousapikey") : user.token;
+
     final Map<String, dynamic> params = {
       'method' : 'json',
       'activityid' : activity.id.toString(),
-      if(apikey!=null) 'api_key': apikey
-
+      'api_key' : user.token!=null ? user.token : await Settings().getValue("anonymousapikey")
     };
-    var dbformat = new DateFormat('yyyy-MM-dd');
-    //if(activity.accesslevel <= 10) params['startdate'] = '>= '+dbformat.format(DateTime.now()).toString()+':SQL';
-    var url = Uri.https(baseUrl, 'api/activitydate/',
-        params);
 
-    return _getJson(url).then((json) => json['data']).then((data) {
+    return getDataList('activitydate',params).then((data) {
       if(data==null) return [];
       print(data);
       return data
@@ -294,21 +357,14 @@ class ApiClient {
   * Load list of users for selected activity
    */
   Future<List<User>> loadActivityUsers(int activityId, User user) async {
-    String baseUrl = await Settings().getServer();
+
     String? apikey = (user.token==null) ? await Settings().getValue("anonymousapikey") : user.token;
     final Map<String, dynamic> params = {
-      'method' : 'json',
-      ''
       'action' : 'activityuserlist',
       'activityid' : activityId.toString(),
       'api_key': apikey
-
     };
-
-    var url = Uri.https(baseUrl, 'api/dispatcher/activity/',
-        params);
-
-    return _getJson(url).then((json) => json['data']).then((data) {
+    return this.dispatcherRequest('activity',params).then((data) {
       if(data==null) return [];
       print(data);
       return data
@@ -322,7 +378,7 @@ class ApiClient {
   * Load visit information for given activity + activitydate
    */
   Future<dynamic> loadActivityVisits(int activityId, ActivityDate date,user) async {
-    String baseUrl = await Settings().getServer();
+
     String? apikey = (user.token==null) ? await Settings().getValue("anonymousapikey") : user.token;
     final Map<String, dynamic> params = {
       'method' : 'json',
@@ -332,11 +388,7 @@ class ApiClient {
       'api_key': apikey
 
     };
-
-    var url = Uri.https(baseUrl, 'api/dispatcher/activity/',
-        params);
-
-    return _getJson(url).then((json) => json['visits'] ).then((data) {
+    return this.dispatcherRequest('activity',params).then((data) {
        print(data);
        Map <dynamic,String> returnData = Map<dynamic,String>.from(data);
        return returnData;
@@ -349,14 +401,7 @@ class ApiClient {
   * Load detailed activity information for the activity view
    */
   Future<dynamic> getActivityDetails(int activityId, User user) async {
-    String baseUrl = await Settings().getServer();
-    String? apikey = (user.token==null) ? await Settings().getValue("anonymousapikey") : user.token;
-    var url = Uri.https(baseUrl, 'api/activity/$activityId', { 'api_key': apikey});
-
-    return _getJson(url).then((json) => json['data']).then((data) {
-        //print(data);
-        return data;
-      });
+    return this.getDetails('activity',activityId,user);
 
   }
 
@@ -365,6 +410,16 @@ class ApiClient {
    */
   Future<List<UserBenefit>> loadUserBenefits(Map<String,dynamic> params) async {
     //debug: print params
+
+    return this.dispatcherRequest('activity',params).then((data) {
+      data = data['data'];
+      if(data==null) return [];
+      print(data);
+      return data
+          .map<UserBenefit>((data) => UserBenefit.fromJson(data))
+          .toList();
+    });
+
     params.forEach((key, value) {print('$key = $value');});
     String baseUrl = await Settings().getServer();
     var url = Uri.https(baseUrl, '/api/dispatcher/activity/',
@@ -383,30 +438,19 @@ class ApiClient {
   * Load detailed userbenefit information
    */
   Future<dynamic> getUserBenefitDetails(int benefitId, User user) async {
-    String baseUrl = await Settings().getServer();
-    var url = Uri.https(baseUrl, 'api/userbenefit/$benefitId', { 'api_key': user.token});
-
-    return _getJson(url).then((json) => json['data']).then((data) {
-      // print(data);
-      return data;
-    });
-
+    return this.getDetails('userbenefit',benefitId,user);
   }
 
   /*
   * Load list of images with given parameters
    */
   Future<List<ImageObject>> loadImages(Map<String,dynamic> params) async {
-    //debug: print params
-    params.forEach((key, value) {print('$key = $value');});
-    String baseUrl = await Settings().getServer();
-    var url = Uri.https(baseUrl, 'api/activity/',
-        params);
-    return _getJson(url).then((json) => json['data']).then((data) {
+    return getDataList('image',params).then((data) {
       if(data==null) return [];
       return data
-          .map<ImageObject>((data) => ImageObject.fromJson(data))
+          .map<Activity>((data) => ImageObject.fromJson(data))
           .toList();
+
     });
 
   }
@@ -415,10 +459,7 @@ class ApiClient {
   * Get image details based on image id
    */
   Future<dynamic> getImageDetails(int imageId, User user) async {
-    String baseUrl = await Settings().getServer();
-    var url = Uri.https(baseUrl, 'api/image/$imageId', { 'api_key': user.token});
-
-    return _getJson(url);
+    return this.getDetails('image',imageId,user);
   }
 
   /*
