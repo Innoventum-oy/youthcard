@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:youth_card/src/objects/contactmethod.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/util/api_client.dart';
@@ -9,6 +10,8 @@ class UserProvider with ChangeNotifier {
   ApiClient _apiClient = ApiClient();
 
   User get user => _user;
+  List<ContactMethod> contacts = [];
+  List<ContactMethod> get contactMethods => contacts;
 
   void setUser(User user) {
     _user = user;
@@ -62,5 +65,27 @@ class UserProvider with ChangeNotifier {
       print(
           'refreshing user information returned error $e\n Stack trace:\n $stack');
     }
+  }
+  Future<void> getContactMethods() async {
+    print('getContactMethods called for user provider');
+    if(this.user.id==null) return;
+
+    final Map<String, dynamic> params = {
+      'method' : 'json',
+      'action': 'getcontactmethods',
+      'userid': this.user.id!.toString(),
+
+      'api_key':this.user.token,
+    };
+    this.contacts =(await _apiClient.dispatcherRequest('registration',params).then((data) {
+
+      // return _getJson(url).then((json) => json['data']).then((data) {
+      if(data==null) return [];
+      print(data);
+      if(data['data']==null) return [];
+      return data['data']
+          .map<ContactMethod>((data) => ContactMethod.fromJson(data))
+          .toList();
+    }));
   }
 }

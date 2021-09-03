@@ -10,6 +10,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:youth_card/src/util/local_storage.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
+import 'package:youth_card/src/views/webpagetextcontent.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -89,15 +90,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: AppLocalizations.of(context)!.contactInformation,
                 leading: Icon(Icons.phone),
                 onPressed: (context) {
-                  Navigator.pushReplacementNamed(context, '/validateContact');
+                  Navigator.pushReplacementNamed(context, '/contactmethods');
                 },
             ),
-            SettingsTile(
-                title: AppLocalizations.of(context)!.phoneNumber,
-                leading: Icon(Icons.phone)),
-            SettingsTile(
+
+           /* SettingsTile(
                 title: AppLocalizations.of(context)!.email,
-                leading: Icon(Icons.email)),
+                leading: Icon(Icons.email)),*/
             SettingsTile(
                 title: AppLocalizations.of(context)!.logout,
                 leading: Icon(Icons.logout),
@@ -150,10 +149,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           tiles: [
             SettingsTile(
                 title: AppLocalizations.of(context)!.termsOfService,
-                leading: Icon(Icons.description)),
-            SettingsTile(
+                leading: Icon(Icons.description),
+    onPressed: (context) {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => ContentPageView('privacy-policy'),
+      ));
+    }
+            ),
+           /* SettingsTile(
                 title: AppLocalizations.of(context)!.about,
-                leading: Icon(Icons.collections_bookmark)),
+                leading: Icon(Icons.collections_bookmark)),*/
             SettingsTile(
             title: AppLocalizations.of(context)!.clearCache,
             leading: Icon(Icons.clear), onPressed: (BuildContext context) {

@@ -310,6 +310,16 @@ class S {
     );
   }
 
+  /// `Contact methods`
+  String get contactMethods {
+    return Intl.message(
+      'Contact methods',
+      name: 'contactMethods',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Create account`
   String get createAccount {
     return Intl.message(
@@ -560,6 +570,16 @@ class S {
     );
   }
 
+  /// `Page`
+  String get pageContent {
+    return Intl.message(
+      'Page',
+      name: 'pageContent',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Participants`
   String get participants {
     return Intl.message(
@@ -595,6 +615,16 @@ class S {
     return Intl.message(
       'Password is required',
       name: 'passwordIsRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Passwords don't match`
+  String get passwordsDontMatch {
+    return Intl.message(
+      'Passwords don\'t match',
+      name: 'passwordsDontMatch',
       desc: '',
       args: [],
     );
@@ -675,6 +705,36 @@ class S {
     return Intl.message(
       'Registering account, please wait',
       name: 'pleaseWaitRegistering',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please provide a valid email address`
+  String get pleaseProvideValidEmail {
+    return Intl.message(
+      'Please provide a valid email address',
+      name: 'pleaseProvideValidEmail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter phone number`
+  String get pleaseEnterPhonenumber {
+    return Intl.message(
+      'Please enter phone number',
+      name: 'pleaseEnterPhonenumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please provide a valid phone number`
+  String get pleaseProvideValidPhonenumber {
+    return Intl.message(
+      'Please provide a valid phone number',
+      name: 'pleaseProvideValidPhonenumber',
       desc: '',
       args: [],
     );
@@ -925,6 +985,16 @@ class S {
     return Intl.message(
       'Verified',
       name: 'verified',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verify`
+  String get verify {
+    return Intl.message(
+      'Verify',
+      name: 'verify',
       desc: '',
       args: [],
     );

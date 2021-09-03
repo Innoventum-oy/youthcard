@@ -4,7 +4,7 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
-import 'package:youth_card/src/util/validators.dart';
+
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -84,6 +84,32 @@ class _RegisterState extends State<Register> {
 
     };
 
+    String? validatePhone(String? value)
+    {
+
+      String? _msg;
+      if(value!.isEmpty) return AppLocalizations.of(context)!.pleaseEnterPhonenumber;
+
+      //test for phone number pattern
+      String pattern = r'(^(?:[+0])?[0-9]{10,12}$)';
+      RegExp regExp = new RegExp(pattern);
+      if (regExp.hasMatch(value)) {
+        _msg = AppLocalizations.of(context)!.pleaseProvideValidPhonenumber;
+      }
+
+      return _msg;
+    }
+    String? validateEmail(String? value) {
+      String? _msg;
+      RegExp regex = new RegExp(
+          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+      if (value!.isEmpty) {
+        _msg = AppLocalizations.of(context)!.pleaseProvideValidEmail;
+      } else if (!regex.hasMatch(value)) {
+        _msg = AppLocalizations.of(context)!.pleaseProvideValidEmail;
+      }
+      return _msg;
+    }
     final firstnameField = TextFormField(
       autofocus: false,
      // validator: validateEmail,
@@ -104,7 +130,7 @@ class _RegisterState extends State<Register> {
     );
     final phoneField = TextFormField(
       autofocus: false,
-     // validator: validateEmail,
+      validator: validatePhone,
       onSaved: (value) => _phone = value,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.phone, Icons.phone_iphone),
     );
@@ -118,7 +144,14 @@ class _RegisterState extends State<Register> {
 
     final confirmPasswordField = TextFormField(
       autofocus: false,
-      validator: (value) => value!.isEmpty ?AppLocalizations.of(context)!.passwordIsRequired : null,
+      validator: (value) { if(value != _password) {
+        print(value.toString()+' != '+_password.toString());
+        return AppLocalizations.of(context)!.passwordsDontMatch;
+      }
+      if(value!.isEmpty)  return AppLocalizations.of(context)!.passwordIsRequired;
+      return null;
+
+      },
       onSaved: (value) => _confirmPassword = value,
       obscureText: true,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.confirmPassword, Icons.lock),
@@ -210,6 +243,7 @@ class _RegisterState extends State<Register> {
     );
 
     switch(auth.registeredStatus){
+
       case Status.NotRegistered:
        return Container(
           padding: EdgeInsets.all(40.0),
@@ -231,32 +265,26 @@ class _RegisterState extends State<Register> {
 
       case Status.Registered:
         print('Status.Registered switch handler');
-        //TODO display success message + option to continue to dashboard or to confirm contact method
+
         return  Column(
-              children: <Widget>[
-                SizedBox(height: 15.0),
-                TextButton(
-                    onPressed: () {
-                      // continue to validate contact information
-                      switch(selectedContactMethod) {
-                        case ContactMethod.Email:
-                          break;
-                        default:
-                      }
-                      Navigator.pushReplacementNamed(context, '/validateContact');
-                    },
-                    child: Text(AppLocalizations.of(context)!.btnValidateContact,style: TextStyle(fontWeight: FontWeight.w300))),
-                SizedBox(height: 15.0),
-                TextButton(
-                    onPressed: () {
-                      // continue to dashboard
-                      Navigator.pushReplacementNamed(context, '/dashboard');
-                    },
-                    child: Text(AppLocalizations.of(context)!.btnValidateContactLater,style: TextStyle(fontWeight: FontWeight.w300)))
-              ],
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            SizedBox(height: 15.0),
+            ElevatedButton(
+                onPressed: () {
+                  // Navigate to validatecontact
+                  Navigator.pushReplacementNamed(context, '/validatecontact');
+                },
+                child: Text(AppLocalizations.of(context)!.btnValidateContact,style: TextStyle(fontWeight: FontWeight.w300))),
+            SizedBox(height: 15.0),
+            ElevatedButton(
+                onPressed: () {
+                  // Navigate to dashboard
+                  Navigator.pushReplacementNamed(context, '/dashboard');
+                },
+                child: Text(AppLocalizations.of(context)!.btnValidateContactLater,style: TextStyle(fontWeight: FontWeight.w300)))
+          ],
         );
-
-
 
       default:
         return Container();

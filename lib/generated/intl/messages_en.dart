@@ -59,6 +59,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Contact information"),
         "contactInformationValidated": MessageLookupByLibrary.simpleMessage(
             "Contact information validated"),
+        "contactMethods":
+            MessageLookupByLibrary.simpleMessage("Contact methods"),
         "createAccount": MessageLookupByLibrary.simpleMessage("Create account"),
         "discover": MessageLookupByLibrary.simpleMessage("Discover"),
         "email": MessageLookupByLibrary.simpleMessage("Email"),
@@ -90,12 +92,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "myCard": MessageLookupByLibrary.simpleMessage("My Card"),
         "noUsersFound": MessageLookupByLibrary.simpleMessage("No users found"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Not verified"),
+        "pageContent": MessageLookupByLibrary.simpleMessage("Page"),
         "participants": MessageLookupByLibrary.simpleMessage("Participants"),
         "password": MessageLookupByLibrary.simpleMessage("Password"),
         "passwordChanged":
             MessageLookupByLibrary.simpleMessage("Password changed"),
         "passwordIsRequired":
             MessageLookupByLibrary.simpleMessage("Password is required"),
+        "passwordsDontMatch":
+            MessageLookupByLibrary.simpleMessage("Passwords don\'t match"),
         "pause": MessageLookupByLibrary.simpleMessage("Pause"),
         "phone": MessageLookupByLibrary.simpleMessage("Phone"),
         "phoneNumber": MessageLookupByLibrary.simpleMessage("Phone number"),
@@ -106,6 +111,12 @@ class MessageLookup extends MessageLookupByLibrary {
             "Please enter confirmation key"),
         "pleaseEnterPassword":
             MessageLookupByLibrary.simpleMessage("Please enter password"),
+        "pleaseEnterPhonenumber":
+            MessageLookupByLibrary.simpleMessage("Please enter phone number"),
+        "pleaseProvideValidEmail": MessageLookupByLibrary.simpleMessage(
+            "Please provide a valid email address"),
+        "pleaseProvideValidPhonenumber": MessageLookupByLibrary.simpleMessage(
+            "Please provide a valid phone number"),
         "pleaseWaitRegistering": MessageLookupByLibrary.simpleMessage(
             "Registering account, please wait"),
         "postcode": MessageLookupByLibrary.simpleMessage("Postcode"),
@@ -139,6 +150,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "validateContactTitle": MessageLookupByLibrary.simpleMessage(
             "Validate contact information"),
         "verified": MessageLookupByLibrary.simpleMessage("Verified"),
+        "verify": MessageLookupByLibrary.simpleMessage("Verify"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Youth Card"),
         "youthcardLoginTitle":

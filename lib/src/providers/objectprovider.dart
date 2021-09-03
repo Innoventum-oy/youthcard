@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:youth_card/src/objects/webpage.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/objects/userbenefit.dart';
 import 'package:youth_card/src/objects/activityclass.dart';
@@ -30,6 +31,22 @@ class ImageProvider extends ObjectProvider {
   @override
   Future<dynamic> getDetails(int imageId, user) {
     return _apiClient.getImageDetails(imageId, user);
+  }
+}
+class WebPageProvider extends ObjectProvider {
+  WebPageProvider();
+
+  ApiClient _apiClient = ApiClient();
+
+  @override
+  Future<List<WebPage>> loadItems(params) async {
+    return _apiClient.loadPages(params);
+  }
+
+// returns json-decoded response
+  @override
+  Future<dynamic> getDetails(int pageId, user,{reload:false}) {
+    return _apiClient.getPageDetails(pageId, user);
   }
 }
 

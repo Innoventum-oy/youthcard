@@ -61,6 +61,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Yhteystiedot"),
         "contactInformationValidated":
             MessageLookupByLibrary.simpleMessage("Yhteystieto vahvistettu"),
+        "contactMethods": MessageLookupByLibrary.simpleMessage("Yhteystiedot"),
         "createAccount":
             MessageLookupByLibrary.simpleMessage("Luo käyttäjätili"),
         "discover": MessageLookupByLibrary.simpleMessage("Tapahtumat"),
@@ -94,12 +95,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "noUsersFound":
             MessageLookupByLibrary.simpleMessage("Ei ilmoittautuneita"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Ei vahvistettu"),
+        "pageContent": MessageLookupByLibrary.simpleMessage("Sivusisältö"),
         "participants": MessageLookupByLibrary.simpleMessage("Osallistujat"),
         "password": MessageLookupByLibrary.simpleMessage("Salasana"),
         "passwordChanged":
             MessageLookupByLibrary.simpleMessage("Salasana vaihdettu"),
         "passwordIsRequired":
             MessageLookupByLibrary.simpleMessage("Salasana on pakollinen"),
+        "passwordsDontMatch":
+            MessageLookupByLibrary.simpleMessage("Salasanat eivät täsmää"),
         "pause": MessageLookupByLibrary.simpleMessage("Tauota"),
         "phone": MessageLookupByLibrary.simpleMessage("Puhelin"),
         "phoneNumber": MessageLookupByLibrary.simpleMessage("Puhelinnumero"),
@@ -111,6 +115,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Anna vahvistuskoodi"),
         "pleaseEnterPassword":
             MessageLookupByLibrary.simpleMessage("Anna salasana"),
+        "pleaseEnterPhonenumber":
+            MessageLookupByLibrary.simpleMessage("Anna puhelinnumero"),
+        "pleaseProvideValidEmail": MessageLookupByLibrary.simpleMessage(
+            "Anna kelvollinen sähköpostiosoite"),
+        "pleaseProvideValidPhonenumber":
+            MessageLookupByLibrary.simpleMessage("Tarkista puhelinnumero"),
         "pleaseWaitRegistering": MessageLookupByLibrary.simpleMessage(
             "Käyttäjätiliä rekisteröidään"),
         "postcode": MessageLookupByLibrary.simpleMessage("Postinumero"),
@@ -147,6 +157,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "validateContactTitle":
             MessageLookupByLibrary.simpleMessage("Vahvista yhteystieto"),
         "verified": MessageLookupByLibrary.simpleMessage("Vahvistettu"),
+        "verify": MessageLookupByLibrary.simpleMessage("Vahvista"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Nuorisokortti"),
         "youthcardLoginTitle": MessageLookupByLibrary.simpleMessage(

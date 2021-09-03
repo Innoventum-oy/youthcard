@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:youth_card/src/objects/webpage.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/objects/activityclass.dart';
 import 'package:youth_card/src/objects/activity.dart';
@@ -279,7 +280,7 @@ class ApiClient {
 
     return _getJson(url).then((json) {
       if(json==false) return [];
-      print(json);
+    //  print(json);
       return(json['data']?? []);
 
     });
@@ -506,6 +507,24 @@ class ApiClient {
     if (response['message'].isNotEmpty)
       Notify(response['message']);
     return response;
+  }
+  /*
+  * Load list of pages
+   */
+  Future<List<WebPage>> loadPages(Map<String,dynamic> params) async {
+
+    return getDataList('page',params).then((data) {
+
+      if(data==null) return [];
+
+      return data
+          .map<WebPage>((data) => WebPage.fromJson(data))
+          .toList();
+    });
+
+  }
+  Future<dynamic> getPageDetails(int id, User user) async {
+    return this.getDetails('page',id,user);
   }
 
 }

@@ -4,14 +4,14 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:youth_card/src/util/utils.dart';
-import 'package:youth_card/src/util/validators.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
 
 class ValidateContact extends StatefulWidget {
+  ContactMethod? contactmethod;
+  ValidateContact({this.contactmethod});
   @override
   _ValidateContactState createState() => _ValidateContactState();
 }
@@ -19,45 +19,89 @@ class ValidateContact extends StatefulWidget {
 class _ValidateContactState extends State<ValidateContact> {
   final formKey = new GlobalKey<FormState>();
 
-  LoadingState _contactsloadingState = LoadingState.LOADING;
-  List<ContactMethod> data =[];
-  bool _isLoading = false;
+  List<ContactMethod> contactItems = [];
+  ContactMethod? selectedMethod;
+
   String?  _confirmkey, _contact;
   String? errormessage;
   ApiClient _apiClient = ApiClient();
 
-  _loadContacts(user) async {
-    _isLoading = true;
+  @override
+  void initState(){
 
-    print('Loading user contacts');
-    try {
+    print('initState called for validatecontact');
+    print(widget.contactmethod.toString());
 
-      var contacts =
-      await  _apiClient.getContactMethods(user);
-      setState(() {
-        _contactsloadingState = LoadingState.DONE;
-        if(contacts.isNotEmpty) {
-          data.addAll(contacts);
-          print(data.length.toString() + ' contacts loaded');
-          _isLoading = false;
-        }
-        else
-        {
-          print('no contact methods were found for user '+user.id.toString());
-        }
-      });
-    } catch (e,stack) {
-      _isLoading = false;
-      print('_loadContacts returned error $e\n Stack trace:\n $stack');
-      errormessage = e.toString();
-      if (_contactsloadingState == LoadingState.LOADING) {
-        setState(() => _contactsloadingState = LoadingState.ERROR);
-      }
+    if(widget.contactmethod!=null) {
+      String address =widget.contactmethod!.address ??'null';
+      print('Widget called with contactmethod '+address);
+    }
+    // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+
+
+    // });
+
+
+  }
+  @protected
+  @mustCallSuper
+  void didChangeDependencies() {
+    Provider.of<UserProvider>(context, listen: false).getContactMethods();
+    if(widget.contactmethod!=null) contactItems.add(widget.contactmethod!);
+    else contactItems = Provider.of<UserProvider>(context).contacts;
+  }
+  @override
+  Widget build(BuildContext context) {
+    AuthProvider auth = Provider.of<AuthProvider>(context);
+    User user = Provider.of<UserProvider>(context).user;
+
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.validateContactTitle),
+          elevation: 0.1,
+        ),
+        body: Container(
+          padding: EdgeInsets.all(40.0),
+          child: Column(
+              children:
+              [Form(
+                  key: formKey,
+                  child: contactValidationFormBody(auth,user)
+              ),
+                bottomNavigation(auth),
+              ]
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget contactValidationFormBody(auth,user)
+  {
+
+    print('verification status:'+auth.verificationStatus.toString());
+
+    switch(auth.verificationStatus)
+    {
+      case VerificationStatus.UserNotFound:
+      case VerificationStatus.CodeNotRequested:
+        return getConfirmationKeyForm(auth,user);
+
+      case VerificationStatus.CodeReceived:
+        return enterConfirmationKeyForm(auth);
+
+      case VerificationStatus.Verified:
+        return successForm();
+      default:
+        return Container();
     }
   }
 
   Widget getConfirmationKeyForm(auth,user) {
+
     final _contactController = TextEditingController();
+
     var getVerificationCode = () {
       final form = formKey.currentState;
 
@@ -97,7 +141,7 @@ class _ValidateContactState extends State<ValidateContact> {
       ],
     );
 
-  /*  final contactField = TextFormField(
+    /*  final contactField = TextFormField(
       controller: _contactController,
       autofocus: false,
       validator: validateContact,
@@ -107,65 +151,52 @@ class _ValidateContactState extends State<ValidateContact> {
     );
 */
     Widget ContactFieldItem(contactmethod) {
-    return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTile(
-            leading: Icon(Icons.event),
-            title: Text(contactmethod.address),
-            subtitle: Text(contactmethod.isVerified ? AppLocalizations.of(context)!.verified : AppLocalizations.of(context)!.notVerified),
-          ),
+      return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Radio<ContactMethod>(
+                onChanged:(ContactMethod? value){
+                  setState(()
+                  {
+                    selectedMethod = value;
+                    _contact = value!.address;
+                  });
+                },
+                value:contactmethod,
+                groupValue: selectedMethod ,
+              ),
+              title: Text(contactmethod.address),
+              subtitle: Text(contactmethod.verified ? AppLocalizations.of(context)!.verified : AppLocalizations.of(context)!.notVerified),
+            ),
 
-        ]
-    );
+          ]
+      );
     }
     Widget contactField(user) {
       // User user = Provider.of<UserProvider>(context).user;
+      if(contactItems.isNotEmpty)
+        return ListView.builder(
+            itemCount: contactItems.length,
+            itemBuilder: (BuildContext context, int index) {
 
-      switch (_contactsloadingState) {
-        case LoadingState.DONE:
-
-        //data loaded
-          return ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (BuildContext context, int index) {
-                if (!_isLoading) {
-
-                  _loadContacts(user);
-                }
-
-                return ContactFieldItem(data[index]);
-              });
-        case LoadingState.ERROR:
-        //data loading returned error state
-          return Align(alignment:Alignment.center,
-            child:ListTile(
-              leading: Icon(Icons.error),
-              title: Text('Sorry, there was an error loading the data: $errormessage'),
-            ),
-          );
-
-        case LoadingState.LOADING:
-        //data loading in progress
-          return Align(alignment:Alignment.center,
-            child:Center(
-              child:ListTile(
-                leading:CircularProgressIndicator(),
-                title: Text(AppLocalizations.of(context)!.loading,textAlign: TextAlign.center),
-              ),
-            ),
-          );
-        default:
-          return Container();
-      }
+              return ContactFieldItem(contactItems[index]);
+            });
+      else return Placeholder();
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
       children: [
         SizedBox(height: 15.0),
         label(AppLocalizations.of(context)!.emailOrPhoneNumber),
         SizedBox(height: 5.0),
-        contactField(user),
+        Container(
+          height:200,
+          child:contactField(user),
+        ),
+
+
         SizedBox(height: 20.0),
         auth.verificationStatus == VerificationStatus.Validating
             ? loading
@@ -257,19 +288,19 @@ class _ValidateContactState extends State<ValidateContact> {
 
   }
   Widget bottomNavigation(auth) {
+    List<Widget> elements = [];
+    if(auth.loggedInStatus != Status.LoggedIn )
+      elements.add(TextButton(
+        child: Text(AppLocalizations.of(context)!.login,
+            style: TextStyle(fontWeight: FontWeight.w300)),
+        onPressed: () {
+          Navigator.pushReplacementNamed(context, '/login');
+        },
+      ));
+    elements.add(returnButton(auth));
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        TextButton(
-          child: Text(AppLocalizations.of(context)!.login,
-              style: TextStyle(fontWeight: FontWeight.w300)),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/login');
-          },
-        ),
-
-        returnButton(auth),
-      ],
+      children: elements,
     );
   }
   Widget returnButton(auth)
@@ -282,7 +313,7 @@ class _ValidateContactState extends State<ValidateContact> {
                 style: TextStyle(fontWeight: FontWeight.w300)),
             onPressed: () async {
               setState(() {
-                auth.setVerificationStatus(VerificationStatus.CodeReceived);
+                auth.setVerificationStatus(VerificationStatus.CodeNotRequested);
               });
             });
         break;
@@ -299,64 +330,6 @@ class _ValidateContactState extends State<ValidateContact> {
     }//switch
   }
 
-  @override
-  void initState(){
-    print('initState called for validatecontact');
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-
-      User user = Provider.of<UserProvider>(context,listen: false).user;
-
-      _loadContacts(user);
-    });
 
 
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    AuthProvider auth = Provider.of<AuthProvider>(context);
-    User user = Provider.of<UserProvider>(context,listen: false).user;
-
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.validateContactTitle),
-          elevation: 0.1,
-        ),
-        body: Container(
-          padding: EdgeInsets.all(40.0),
-          child: Column(
-              children:
-              [Form(
-                  key: formKey,
-                  child: contactValidationFormBody(auth,user)
-              ),
-                bottomNavigation(auth),
-              ]
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget contactValidationFormBody(auth,user)
-  {
-
-    print('verification status:'+auth.verificationStatus.toString());
-
-    switch(auth.verificationStatus)
-    {
-      case VerificationStatus.UserNotFound:
-      case VerificationStatus.CodeNotRequested:
-        return getConfirmationKeyForm(auth,user);
-
-      case VerificationStatus.CodeReceived:
-        return enterConfirmationKeyForm(auth);
-
-      case VerificationStatus.Verified:
-        return successForm();
-      default:
-        return Container();
-    }
-  }
 }

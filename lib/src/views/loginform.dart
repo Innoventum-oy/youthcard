@@ -181,7 +181,7 @@ class _LoginState extends State<Login> {
                           AppLocalizations.of(context)!.btnLogin, doLogin),
                   SizedBox(height: 10.0),
                   auth.loggedInStatus == Status.Authenticating
-                      ? loading
+                      ? Container()
                       : longButtons(
                       AppLocalizations.of(context)!.btnContinueWithoutLogin, bypassLogin),
                   SizedBox(height: 5.0),
