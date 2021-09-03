@@ -256,7 +256,13 @@ class _LoginState extends State<Login> {
         onPressed: (BuildContext context) {
           Settings().setValue('server', serverUrl);
           Settings().setValue('servername', serverTitle);
-
+          if(AppUrl.anonymousApikeys.containsKey(serverTitle)) {
+            Settings().setValue(
+                'anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
+            print("Anonymous api key for " + serverTitle + " set to " +AppUrl.anonymousApikeys[serverTitle]!);
+          }
+          else
+            Settings().setValue('anonymousapikey', null);
           UserPreferences().removeUser();
           Provider.of<UserProvider>(context, listen: false).clearUser();
           Navigator.pushReplacementNamed(context, '/login');
