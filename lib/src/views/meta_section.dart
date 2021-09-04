@@ -56,14 +56,14 @@ class MetaSection extends StatelessWidget {
       ],
     );
   }
-
+/*
   Widget _getCollectionSectionOrContainer(
       String title, String listKey, String mapKey) {
     return data[listKey] == null
         ? Container()
         : _getMetaInfoSection(title, concatListToString(data[listKey], mapKey));
   }
-
+*/
   Widget _getSectionOrContainer(String title, String content,
       {dynamic formatterFunction, bool isLink: false}) {
 
@@ -89,10 +89,9 @@ class MetaSection extends StatelessWidget {
       style: {"*" : Style(color:Colors.white)}
     );
   }
-  Widget _getMetaInfoSection(String title, String content,
-      {bool isLink: false}) {
-    if (content == null) return Container();
-  //  print('getMetaInfoSection called for '+title);
+  Widget _getMetaInfoSection(String title, String content, {bool isLink: false})
+  {
+
     var contentSection = Expanded(
       flex: 4,
       child: GestureDetector(

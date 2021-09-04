@@ -7,10 +7,7 @@ import 'package:youth_card/src/util/styles.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/views/activity/activitylistsliver.dart';
-
-
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 class CategorisedActivityList extends StatefulWidget {
 
@@ -37,7 +34,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
   int _pageNumber = 0;
   String? errormessage;
 
-  Notify(String text) {
+  notify(String text) {
     final snackBar = SnackBar(
       content: Text(text),
     );
@@ -50,7 +47,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
   _loadNextPage(user) async {
     _isLoading = true;
     int offset = limit * _pageNumber;
-    DateTime now = DateTime.now();
+
     final Map<String, String> params = {
       'loadmethod' :'loadActivityClassesWithActivities',
       'limit': limit.toString(),
@@ -95,6 +92,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
           .user;
       _loadNextPage(user);
     });
+    super.initState();
   }
 
   @protected
@@ -109,9 +107,6 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
     User user = Provider
         .of<UserProvider>(context, listen: false)
         .user;
-
-    objectmodel.ActivityClassProvider activityClassProvider = objectmodel
-        .ActivityClassProvider();
     return new Scaffold(
       backgroundColor: primary,
       appBar: new AppBar(

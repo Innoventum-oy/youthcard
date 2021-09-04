@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:youth_card/src/providers/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/views/card.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
@@ -15,7 +14,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/views/settings.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:intl/intl.dart';
-import 'package:youth_card/src/views/loginform.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 
 class DashBoard extends StatefulWidget {
@@ -43,6 +41,7 @@ class _DashBoardState extends State<DashBoard> {
         _loadMyActivities(user,a);
       }
     });
+    super.initState();
   }
 
   /*
@@ -93,7 +92,7 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
     //for debugging, track builds in print
     print('building dasboard state');
-    AuthProvider auth = Provider.of<AuthProvider>(context);
+    //AuthProvider auth = Provider.of<AuthProvider>(context);
     User user = Provider.of<UserProvider>(context).user;
 /*
     if (user.token == null) {
@@ -134,7 +133,7 @@ class _DashBoardState extends State<DashBoard> {
                   backgroundImage: user.image != null && user.image!.isNotEmpty
                       ? CachedNetworkImageProvider(user.image!)
                       : null,
-                  child: user != null ? getInitials(user) : Container(),
+                  child: getInitials(user),
                 ),
                 onTap: () {
                   Navigator.push(

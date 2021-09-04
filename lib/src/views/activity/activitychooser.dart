@@ -32,7 +32,7 @@ class _ActivityChooserListState extends State<ActivityChooserList>  {
   int _pageNumber = 0;
   String? errormessage;
 
-  Notify(String text) {
+  notify(String text) {
     final snackBar = SnackBar(
       content: Text(text),
     );
@@ -87,7 +87,7 @@ class _ActivityChooserListState extends State<ActivityChooserList>  {
       _loadNextPage(user);
     });
 
-
+  super.initState();
   }
 
   @override

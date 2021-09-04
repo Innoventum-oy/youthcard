@@ -35,7 +35,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
   int _pageNumber = 0;
   String? errormessage;
 
-  Notify(String text) {
+  notify(String text) {
     final snackBar = SnackBar(
       content: Text(text),
     );
@@ -74,7 +74,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
       var nextActivities = await widget.activityProvider.loadItems(params);
       setState(() {
         _loadingState = LoadingState.DONE;
-        if (!nextActivities.isEmpty) {
+        if (nextActivities.isNotEmpty) {
           data.addAll(nextActivities);
           print(data.length.toString() + ' activities currently loaded!');
           if (nextActivities.length < limit) {
@@ -101,6 +101,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
 
       _loadNextPage(user, widget.activityClass);
     });
+    super.initState();
   }
 
   @override

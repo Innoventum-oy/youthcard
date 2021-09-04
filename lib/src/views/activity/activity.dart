@@ -6,8 +6,6 @@ import 'package:youth_card/src/objects/activitydate.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:youth_card/src/util/navigator.dart';
-import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/util/styles.dart';
@@ -33,8 +31,8 @@ class _ActivityViewState extends State<ActivityView> {
 
   int iteration = 1;
   int buildtime = 1;
-  bool _visible = false;
-  bool _activityDatesLoaded = false;
+  //bool _visible = false;
+
   User? user;
   dynamic _activityDetails; // this is json data, not converted to activity object!
 
@@ -45,7 +43,7 @@ class _ActivityViewState extends State<ActivityView> {
         .inDays;
   }
 
-  Notify(String text) {
+  notify(String text) {
     final snackBar = SnackBar(
       content: Text(text),
     );
@@ -102,7 +100,7 @@ class _ActivityViewState extends State<ActivityView> {
     final user = Provider.of<UserProvider>(context, listen: false).user;
     List<Widget> buttons = [];
 
-    if ((activity.registration || activity.registration=='true') && (user.token!=null )){
+    if ((activity.registration ) && (user.token!=null )){
       print('registration is enabled for activity');
       buttons.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.signUp),
@@ -155,7 +153,7 @@ class _ActivityViewState extends State<ActivityView> {
       ),
     );
   }
-
+/*
   Widget _buildMetaSection(Activity activity) {
 
     return AnimatedOpacity(
@@ -208,7 +206,7 @@ class _ActivityViewState extends State<ActivityView> {
       ),
     );
   }
-
+*/
   void _loadDetails(user,{bool reload:false}) async {
     print('called _loadDetails for activity ' +
         widget._activity.id.toString() +
@@ -233,7 +231,7 @@ class _ActivityViewState extends State<ActivityView> {
           await widget.provider.getActivityDates(widget._activity, user);
 
       setState(() {
-        _activityDatesLoaded = true;
+
         if (activityDateData.isNotEmpty) {
           activityDates.addAll(activityDateData);
           print(activityDates.length.toString() + ' activity dates loaded');
@@ -247,7 +245,7 @@ class _ActivityViewState extends State<ActivityView> {
       e.toString();
     }
   }
-  Widget ActivityDateRow(date,activity)
+  Widget activityDateRow(date,activity)
   {
     String dateinfo = date.startdate == null
         ? ''
@@ -364,7 +362,7 @@ class _ActivityViewState extends State<ActivityView> {
                 ActivityDate date = activityDates[index];
 
 
-                return ActivityDateRow(date,activity);
+                return activityDateRow(date,activity);
               }),
           //),
         ),

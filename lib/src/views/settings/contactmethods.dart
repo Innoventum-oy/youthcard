@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
-import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/views/validatecontact.dart';
@@ -22,12 +21,12 @@ class _ContactMethodsViewState extends State<ContactMethodsView> {
   void initState(){
     print('initing ContactMethods view state');
     Provider.of<UserProvider>(context, listen: false).getContactMethods();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     print('rebuilding ContactMethods view');
-    User user = Provider.of<UserProvider>(context,listen:true).user;
 
     List<ContactMethod> myContacts = Provider.of<UserProvider>(context,listen:true).contacts;
 

@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
 import 'package:youth_card/src/objects/user.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/util/api_client.dart';
 class UserProvider with ChangeNotifier {
   UserProvider();
@@ -32,7 +31,7 @@ class UserProvider with ChangeNotifier {
     return _apiClient.getDetails('iuser', userId, user);
   }
 
-  Future<void> refreshUser({String? fields: null}) async {
+  Future<void> refreshUser({String? fields}) async {
     print('refreshing user information from server');
     try {
       User u = this.user;

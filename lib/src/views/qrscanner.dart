@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -25,10 +24,10 @@ const frontCamera = 'frontCamera';
 const backCamera = 'rearCamera';
 
 class QRScanner extends StatefulWidget {
-  Activity? activity;
+  final Activity? activity;
 
   QRScanner({
-    Activity? this.activity,
+    this.activity,
     Key? key,
   }) : super(key: key);
 
@@ -41,7 +40,7 @@ class _QRScannerState extends State<QRScanner> {
   Future<Position>? _currentPosition;
   String? _latitude;
   String? _longitude;
-  String? _currentAddress;
+  //String? _currentAddress;
   Barcode? result;
   var flashState = flashOn;
   var cameraState = frontCamera;
@@ -51,11 +50,11 @@ class _QRScannerState extends State<QRScanner> {
 
   Future<Position> _getCurrentLocation() async {
     print('retrieving current location');
-    var Location = await Geolocator.getCurrentPosition();
-    _latitude = Location.latitude.toString();
-    _longitude = Location.longitude.toString();
+    var location = await Geolocator.getCurrentPosition();
+    _latitude = location.latitude.toString();
+    _longitude = location.longitude.toString();
     print('location retrieved');
-    return Location;
+    return location;
   }
 
 
@@ -73,7 +72,7 @@ class _QRScannerState extends State<QRScanner> {
     }
   }
 
-  Notify(String text) {
+  notify(String text) {
     final snackBar = SnackBar(
       content: Text(text),
     );
@@ -88,17 +87,12 @@ class _QRScannerState extends State<QRScanner> {
     User user = Provider.of<UserProvider>(context, listen: false).user;
 
     if (_currentPosition == null) {
-      Notify(
+      notify(
           'Current position unknown, returning false from sendData. How to get the position first instead?');
       return "Error";
     }
 
-    if (user == null) {
-      Notify(
-          'user is not set for sendData, returning false. Why is user not set?');
-      print(user);
-      return "error";
-    }
+
     if (sentcode != scannedcode.code) {
       sentcode = scannedcode.code;
       print('setting sentcode to ' + scannedcode.code);
@@ -138,7 +132,7 @@ class _QRScannerState extends State<QRScanner> {
         print('received data ' + response.body);
         map = json.decode(response.body);
         if (map['message'] != null) {
-          Notify(map['message']);
+          notify(map['message']);
           EventLog().saveMessage(map['message']);
         }
       } else
@@ -176,7 +170,7 @@ class _QRScannerState extends State<QRScanner> {
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<UserProvider>(context).user;
+   // User user = Provider.of<UserProvider>(context).user;
     String titleText = AppLocalizations.of(context)!.qrScanner;
     if (widget.activity != null) {
       titleText += '\n' + widget.activity!.name!;
@@ -242,8 +236,8 @@ class _QRScannerState extends State<QRScanner> {
                           onPressed: () {
                             if (controller != null) {
                               controller!.toggleFlash().catchError((error) {
-                                print(error.toString());
-                                Notify(error.toString());
+                                //print(error.toString());
+                                notify(error.toString());
                               });
 
                               if (_isFlashOn(flashState)) {
@@ -271,7 +265,7 @@ class _QRScannerState extends State<QRScanner> {
                             if (controller != null) {
                               controller!.flipCamera().catchError((error) {
                                 print(error.toString());
-                                Notify(error.toString());
+                                notify(error.toString());
                               });
                               if (_isBackCamera(cameraState)) {
                                 setState(() {
@@ -298,7 +292,7 @@ class _QRScannerState extends State<QRScanner> {
                           onPressed: () {
                             controller?.pauseCamera().catchError((error) {
                               print(error.toString());
-                              Notify(error.toString());
+                              notify(error.toString());
                             });
                           },
                           label: Text(AppLocalizations.of(context)!.pause,
@@ -312,7 +306,7 @@ class _QRScannerState extends State<QRScanner> {
                           onPressed: () {
                             controller?.resumeCamera().catchError((error) {
                               print(error.toString());
-                              Notify(error.toString());
+                              notify(error.toString());
                             });
                           },
                           label: Text(AppLocalizations.of(context)!.resume,
@@ -364,7 +358,7 @@ class _QRScannerState extends State<QRScanner> {
       if (sentcode == null || sentcode != scanData.code)
         setState(() {
           result = scanData;
-          Notify(AppLocalizations.of(context)!.codeScanned);
+          notify(AppLocalizations.of(context)!.codeScanned);
           sendData(result);
         });
     });

@@ -11,10 +11,10 @@ class WebPage{
     Map<String, dynamic> map = response['data'] ?? response;
     map.forEach((key, value) { print('$key = $value');});
     return WebPage(
-      id: int.parse(map['id'] )as int,
-      pagetitle: map['pagetitle'] ?? '' as String,
-      commonname: map['commonname']  ??''as String,
-      textcontents: map['textcontents'] ??'' as List,
+      id: int.parse(map['id'] ),
+      pagetitle: map['pagetitle'] ?? '' ,
+      commonname: map['commonname']  ??'',
+      textcontents: map['textcontents'] ??'' ,
     );
   }
 

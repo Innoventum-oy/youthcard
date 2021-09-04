@@ -138,8 +138,8 @@ class AuthProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       if(response.body.isNotEmpty) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        print(responseData);
-        User authUser = User.fromJson(responseData);
+       // print(responseData);
+       // User authUser = User.fromJson(responseData);
       }
 
       UserPreferences().removeUser();

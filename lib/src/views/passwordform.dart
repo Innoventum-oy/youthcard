@@ -1,9 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/util/api_client.dart';
-import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/validators.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +15,7 @@ class ResetPassword extends StatefulWidget {
 class _ResetPasswordState extends State<ResetPassword> {
   final formKey = new GlobalKey<FormState>();
 
-  String? _contact, _confirmkey, _contactfieldid,_password;
+  String? _contact, _confirmkey,_password;
 
   ApiClient _apiClient = ApiClient();
   Widget getConfirmationKeyForm(auth) {
@@ -270,7 +268,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                   auth.setVerificationStatus(VerificationStatus.CodeReceived);
                 });
               });
-        break;
+
       default:
        return TextButton(
         child: Text(AppLocalizations.of(context)!.previous,

@@ -7,15 +7,14 @@ import 'package:youth_card/src/util/api_client.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
 
 class ActivityListItem extends StatelessWidget{
-  ActivityListItem(this.activityItem);
-  ApiClient _apiClient = ApiClient();
+
+  final ApiClient _apiClient = ApiClient();
   final Activity activityItem;
 
-
+  ActivityListItem(this.activityItem);
 
   int calculateDifference(DateTime date) {
     DateTime now = DateTime.now();

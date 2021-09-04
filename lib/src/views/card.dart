@@ -21,14 +21,12 @@ class MyCard extends StatefulWidget {
 class _MyCardState extends State<MyCard> {
   List<UserBenefit> benefits = [];
   LoadingState _benefitsLoadingState = LoadingState.LOADING;
-  bool _isLoading = false;
+  //bool _isLoading = false;
   String? errormessage;
 
   _loadBenefits(user) async {
     print('loadbenefits called');
-    _isLoading = true;
-    int offset = 0;
-    DateTime now = DateTime.now();
+
     final Map<String, String> params = {
       'action': 'loaduserbenefits',
       'userid': user.id.toString(),
@@ -44,10 +42,10 @@ class _MyCardState extends State<MyCard> {
 
         benefits.addAll(result);
         print(result.length.toString() + ' benefits currently loaded!');
-        _isLoading = false;
+        //_isLoading = false;
       });
     } catch (e, stack) {
-      _isLoading = false;
+      //_isLoading = false;
       print('loadItems returned error $e\n Stack trace:\n $stack');
       errormessage = e.toString();
       if (_benefitsLoadingState == LoadingState.LOADING) {
@@ -63,6 +61,7 @@ class _MyCardState extends State<MyCard> {
 
       _loadBenefits(user);
     });
+    super.initState();
   }
 
   @override
@@ -161,7 +160,7 @@ class _MyCardState extends State<MyCard> {
         backgroundImage: imageProvider,
         backgroundColor: Colors.white10,
         radius: 48.0,
-        child: user != null ? getInitials(user) : Container(),
+        child: getInitials(user),
       ),
     );
   }
@@ -170,7 +169,7 @@ class _MyCardState extends State<MyCard> {
     switch (_benefitsLoadingState) {
       case LoadingState.DONE:
         //data loaded
-        if(benefits==null) return Container();
+
         return Expanded(
           child: Padding(
             padding: EdgeInsets.only(left: 20, right: 20),

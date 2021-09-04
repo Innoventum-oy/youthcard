@@ -1,20 +1,15 @@
 import 'dart:collection';
-
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
-import 'package:http/http.dart' as http;
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:youth_card/src/views/activity/activitylist_item.dart';
-
 
 
 class ActivityCalendar extends StatefulWidget {
@@ -38,16 +33,15 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
   Map<DateTime, List<Activity>> eventsHashMap = <DateTime, List<Activity>>{};
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
-  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
-      .toggledOff; // Can be toggled on/off by longpressing a date
+  //RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff; // Can be toggled on/off by longpressing a date
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   DateTime? kFirstDay;
   DateTime? kLastDay;
-  DateTime? _rangeStart;
-  DateTime? _rangeEnd;
+  //DateTime? _rangeStart;
+  //DateTime? _rangeEnd;
   LoadingState _loadingState = LoadingState.LOADING;
-  bool _isLoading = false;
+  //bool _isLoading = false;
 
   int iteration = 1;
   int buildtime = 1;
@@ -57,7 +51,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
   String? errormessage;
 
   _loadCalendarEvents(user) async {
-    _isLoading = true;
+    //_isLoading = true;
     int offset = limit * _pageNumber;
     DateTime now = DateTime.now();
 
@@ -89,13 +83,12 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
             var date = DateTime.utc(item.nexteventdate!.year, item.nexteventdate!.month, item.nexteventdate!.day);
             if (_events[date] == null) {
               _events[date] = [];
-              //print("Initializing "+date.toString()+" as array");
-            }
 
+            }
             _events[date]!.add(item);
-           // print('populating date ' + item.nexteventdate.toString());
+
           }
-        };
+        }
 
         //print('Adding all '+ _events.length.toString() +' events to eventsHashMap');
         eventsHashMap =
@@ -106,11 +99,11 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
         //print("events in hashmap " + eventsHashMap.length.toString());
         _onDaySelected(_focusedDay, _focusedDay);
         _getEventsForDay(_selectedDay ?? now);
-        _isLoading = false;
+        //_isLoading = false;
         _pageNumber++;
       });
     } catch (e, stack) {
-      _isLoading = false;
+      //_isLoading = false;
       print('loadItems returned error $e\n Stack trace:\n $stack');
       errormessage = e.toString();
       if (_loadingState == LoadingState.LOADING) {
@@ -127,12 +120,12 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
     //print('_OnDaySelected was called');
     if (!isSameDay(_selectedDay, selectedDay)) {
       setState(() {
-        print('is not same day: '+selectedDay.toString());
+        //print('is not same day: '+selectedDay.toString());
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
-        _rangeStart = null; // Important to clean those
-        _rangeEnd = null;
-        _rangeSelectionMode = RangeSelectionMode.toggledOff;
+        //_rangeStart = null; // Important to clean those
+        //_rangeEnd = null;
+      //  _rangeSelectionMode = RangeSelectionMode.toggledOff;
         _selectedEvents.value = _getEventsForDay(selectedDay);
         //print(_selectedEvents);
       });
@@ -154,6 +147,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
       _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay?? DateTime.now()));
 
     });
+    super.initState();
   }
 
   @override

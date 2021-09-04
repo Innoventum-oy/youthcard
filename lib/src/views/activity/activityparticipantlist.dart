@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/activitydate.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:youth_card/src/util/navigator.dart';
-import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
-import 'package:youth_card/src/util/styles.dart';
+
 
 class ActivityParticipantList extends StatefulWidget {
   final ActivityDate _activityDate;
@@ -31,7 +28,7 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
   bool visitListLoaded = false;
   List<User> users = [];
   Map<dynamic,String> activityVisitData ={};
-  Notify(String text) {
+  notify(String text) {
     final snackBar = SnackBar(
       content: Text(text),
     );
@@ -101,12 +98,12 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
         appBar: new AppBar(
           title: new Text(AppLocalizations.of(context)!.participants+ ' '+(widget._activityDate.startdate !=null ? titleDateFormat.format(widget._activityDate.startdate ?? DateTime.now()).toString() : ''))
         ),
-        body: userListLoaded ? UserList() : Center(child:CircularProgressIndicator(),
+        body: userListLoaded ? userList() : Center(child:CircularProgressIndicator(),
         ),
     );
 
   }
-  Widget UserList()
+  Widget userList()
   {
     final loggedInUser = Provider.of<UserProvider>(context, listen: false).user;
     if(users.isEmpty)
@@ -130,8 +127,8 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
         secondary: Icon(Icons.supervised_user_circle_sharp),
         onChanged: (bool value) async {
 
-            Notify(value.toString());
-            Map<String,dynamic> result = await _apiClient.updateActivityRegistration(activityId:widget._activity.id!,visitStatus:value ? 'visited':'cancelled',visitor: user,user:loggedInUser,visitDate:widget._activityDate) as Map<String,dynamic>;
+            notify(value.toString());
+            Map<String,dynamic> result = await _apiClient.updateActivityRegistration(activityId:widget._activity.id!,visitStatus:value ? 'visited':'cancelled',visitor: user,user:loggedInUser,visitDate:widget._activityDate) ;
             setState(() {
             if(result['visitstatus']!=null) {
               print('updatevisit returned visitstatus '+result['visitstatus'].toString()+' for user '+result['userid']);

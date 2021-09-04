@@ -4,14 +4,12 @@ import 'package:youth_card/src/views/dashboard.dart';
 import 'package:youth_card/src/views/loginform.dart';
 import 'package:youth_card/src/views/register.dart';
 import 'package:youth_card/src/views/passwordform.dart';
-import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/views/settings/contactmethods.dart';
 import 'package:youth_card/src/views/validatecontact.dart';
 import 'package:youth_card/src/views/welcome.dart';
 import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
-import 'package:youth_card/src/util/styles.dart';
 import 'package:provider/provider.dart';
 
 import 'src/objects/user.dart';
@@ -25,11 +23,6 @@ class YouthCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('build called for youthcard class');
-
-    Future<User>? getUserData(){
-      print('returning UserPreferences().getUser()');
-      return UserPreferences().getUser();
-    };
 
     return MultiProvider(
       providers: [
@@ -52,14 +45,16 @@ class YouthCard extends StatelessWidget {
             // Notice that the counter didn't reset back to zero; the application
             // is not restarted.
             primarySwatch: Colors.deepOrange,
-            accentColor: Colors.teal,
+            colorScheme: Theme.of(context).colorScheme.copyWith(secondary: Colors.teal,),
+
+            //accentColor: Colors.teal,
             // This makes the visual density adapt to the platform that you run
             // the app on. For desktop platforms, the controls will be smaller and
             // closer together (more dense) than on mobile platforms.
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           home: FutureBuilder(
-              future: getUserData(),
+              future: UserPreferences().getUser(),
               builder: (context, snapshot) {
                 print('main.dart, snapshot connectionstate:' +
                     snapshot.connectionState.toString());
@@ -76,7 +71,7 @@ class YouthCard extends StatelessWidget {
                       userdata = snapshot.data as User;
                       if(snapshot.data == null) print("Snapshot.data was null");
                       else print("snapshot data was not null");
-                      String currentToken = userdata.token ?? 'empty';
+
 
                     }
                     else print("Snapshot has no data. User remains empty.");

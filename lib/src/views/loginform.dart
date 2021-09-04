@@ -9,14 +9,11 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:package_info/package_info.dart';
-
-//import 'package:youth_card/src/views/settings/environment.dart';
 import 'package:youth_card/src/util/app_url.dart';
-import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 class Login extends StatefulWidget {
-  dynamic? user;
+  final dynamic user;
 
   Login({this.user});
 

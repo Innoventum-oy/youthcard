@@ -8,15 +8,6 @@ final dollarFormat = NumberFormat("#,##0.00", "en_US");
 final sourceFormat = DateFormat('yyyy-MM-dd');
 final dateFormat = DateFormat.yMMMMd("en_US");
 
-
-void Notify(String text) {
-  final snackBar = SnackBar(
-    content: Text(text),
-  );
-  // Find the ScaffoldMessenger in the widget tree
-  // and use it to show a SnackBar.
-
-}
 Widget getInitials(user) {
   String initials = '';
   if (user.firstname!= null && user.firstname.isNotEmpty) initials += user.firstname[0];
@@ -37,7 +28,7 @@ String formatNumberToDollars(int amount) => '\$${dollarFormat.format(amount)}';
 String formatDate(String date) {
   try {
     return dateFormat.format(sourceFormat.parse(date));
-  } catch (Exception) {
+  } catch (exception) {
     return "";
   }
 }

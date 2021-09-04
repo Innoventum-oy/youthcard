@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/webpageprovider.dart';
 import 'package:provider/provider.dart';
@@ -25,12 +24,12 @@ class ContentPageView extends StatefulWidget {
 class _ContentPageViewState extends State<ContentPageView> {
 
   LoadingState _pageLoadingState = LoadingState.LOADING;
-  bool _isLoading = false;
+ // bool _isLoading = false;
   String? errormessage;
   List<WebPage> pages = [];
   _loadPages(String commonname,user) async {
 
-    _isLoading = true;
+    //_isLoading = true;
 
     print(Localizations.localeOf(context).toString());
     print('user token:'+user.token.toString());
@@ -50,10 +49,10 @@ class _ContentPageViewState extends State<ContentPageView> {
 
         pages.addAll(result);
         print(result.length.toString() + ' pages currently loaded!');
-        _isLoading = false;
+        //_isLoading = false;
       });
     } catch (e, stack) {
-      _isLoading = false;
+     // _isLoading = false;
       print('loadItems returned error $e\n Stack trace:\n $stack');
       errormessage = e.toString();
       if (_pageLoadingState == LoadingState.LOADING) {
@@ -69,6 +68,7 @@ class _ContentPageViewState extends State<ContentPageView> {
 
       _loadPages(widget.commonname,user);
     });
+    super.initState();
   }
 
   @override
@@ -94,7 +94,7 @@ class _ContentPageViewState extends State<ContentPageView> {
         return ListView.builder(
                 itemCount: pages.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return _PageContentSection(pages[index]);
+                  return _pageContentSection(pages[index]);
                 });
 
       case LoadingState.ERROR:
@@ -125,7 +125,7 @@ class _ContentPageViewState extends State<ContentPageView> {
     }
   }
 
-  Widget _PageContentSection(page) {
+  Widget _pageContentSection(page) {
     List<Widget> textContents = [];
     for(var i in page.textcontents)
       textContents.add(Html(data:i.toString()));

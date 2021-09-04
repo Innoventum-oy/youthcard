@@ -96,7 +96,6 @@ class ActivityProvider extends ObjectProvider {
 
   }
 
-  @override
   Future<dynamic> getActivityDates(Activity activity, user) async{
     print('Activityprovider getActivityDates called');
 
@@ -105,13 +104,13 @@ class ActivityProvider extends ObjectProvider {
     return remoteactivitydatedata;
   }
 
-  @override
+
   Future<dynamic> getActivityUsers(int activityId,user) async{
     final remoteactivityuserdata =  await _apiClient.loadActivityUsers(activityId,user);
 
     return remoteactivityuserdata;
   }
-  @override
+
   Future<dynamic> getActivityDateVisits(int activityId,ActivityDate date,user) async{
     final remoteactivityvisitdata =  await _apiClient.loadActivityVisits(activityId,date,user);
 

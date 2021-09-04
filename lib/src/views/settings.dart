@@ -1,9 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:youth_card/src/util/app_url.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:youth_card/src/views/settings/languageselect.dart';
 import 'package:youth_card/src/views/settings/environment.dart';
 import 'package:package_info/package_info.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

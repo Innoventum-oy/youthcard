@@ -4,7 +4,7 @@ import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/util/local_storage.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class EventLog{
   Future<bool> saveMessage(String message) async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();

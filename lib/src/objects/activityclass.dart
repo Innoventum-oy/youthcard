@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 class ActivityClass {
   int? id;
   String? name;

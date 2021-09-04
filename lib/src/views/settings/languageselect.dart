@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
 
@@ -21,7 +20,7 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
   @override
   Widget build(BuildContext context){
 
-    List<SettingsTile> tiles;
+   // List<SettingsTile> tiles;
 
     return Scaffold(
       appBar: AppBar(title: Text('Languages')),

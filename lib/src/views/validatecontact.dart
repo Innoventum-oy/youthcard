@@ -10,7 +10,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
 
 class ValidateContact extends StatefulWidget {
-  ContactMethod? contactmethod;
+  final ContactMethod? contactmethod;
   ValidateContact({this.contactmethod});
   @override
   _ValidateContactState createState() => _ValidateContactState();
@@ -40,7 +40,7 @@ class _ValidateContactState extends State<ValidateContact> {
 
 
     // });
-
+  super.initState();
 
   }
   @protected
@@ -54,6 +54,7 @@ class _ValidateContactState extends State<ValidateContact> {
           .contacts;
       contactsLoaded = true;
     }
+    super.didChangeDependencies();
   }
   @override
   Widget build(BuildContext context) {
@@ -105,8 +106,6 @@ class _ValidateContactState extends State<ValidateContact> {
 
   Widget getConfirmationKeyForm(auth,user) {
 
-    final _contactController = TextEditingController();
-
     var getVerificationCode = () {
       final form = formKey.currentState;
 
@@ -155,7 +154,10 @@ class _ValidateContactState extends State<ValidateContact> {
           AppLocalizations.of(context)!.email, Icons.email),
     );
 */
-    Widget ContactFieldItem(contactmethod) {
+
+
+
+    Widget contactFieldItem(contactmethod) {
       return Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -185,7 +187,7 @@ class _ValidateContactState extends State<ValidateContact> {
             itemCount: contactItems.length,
             itemBuilder: (BuildContext context, int index) {
 
-              return ContactFieldItem(contactItems[index]);
+              return contactFieldItem(contactItems[index]);
             });
       else return Placeholder();
     }
@@ -321,7 +323,7 @@ class _ValidateContactState extends State<ValidateContact> {
                 auth.setVerificationStatus(VerificationStatus.CodeNotRequested);
               });
             });
-        break;
+
       case VerificationStatus.Validating:
         case VerificationStatus.UserNotFound:
         case VerificationStatus.CodeReceived:
