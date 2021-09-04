@@ -219,7 +219,7 @@ class _ActivityViewState extends State<ActivityView> {
       //print(details.toString());
       // print(details.runtimeType);
 
-      setState(() =>_activityDetails =details!=null ? details.first:false);
+      setState(() =>_activityDetails =details!=null ? details : false);
     } catch (e, stack) {
       print('loadDetails returned error $e\n Stack trace:\n $stack');
       //Notify(e.toString());

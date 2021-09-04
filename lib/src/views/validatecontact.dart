@@ -18,7 +18,7 @@ class ValidateContact extends StatefulWidget {
 
 class _ValidateContactState extends State<ValidateContact> {
   final formKey = new GlobalKey<FormState>();
-
+  bool contactsLoaded = false;
   List<ContactMethod> contactItems = [];
   ContactMethod? selectedMethod;
 
@@ -48,7 +48,12 @@ class _ValidateContactState extends State<ValidateContact> {
   void didChangeDependencies() {
     Provider.of<UserProvider>(context, listen: false).getContactMethods();
     if(widget.contactmethod!=null) contactItems.add(widget.contactmethod!);
-    else contactItems = Provider.of<UserProvider>(context).contacts;
+    else if(!contactsLoaded) {
+      contactItems = Provider
+          .of<UserProvider>(context)
+          .contacts;
+      contactsLoaded = true;
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -317,7 +322,9 @@ class _ValidateContactState extends State<ValidateContact> {
               });
             });
         break;
-      default:
+      case VerificationStatus.Validating:
+        case VerificationStatus.UserNotFound:
+        case VerificationStatus.CodeReceived:
         return TextButton(
             child: Text(AppLocalizations.of(context)!.previous,
                 style: TextStyle(fontWeight: FontWeight.w300)),
@@ -326,6 +333,8 @@ class _ValidateContactState extends State<ValidateContact> {
                 auth.setVerificationStatus(VerificationStatus.CodeNotRequested);
               });
             });
+      default:
+        return Container();
 
     }//switch
   }

@@ -33,6 +33,7 @@ class ApiClient {
   */
   Future<dynamic> _postJson(Uri uri, Map<String, dynamic> data) async
   {
+    //Create software version header
     Map softwareInfo = {};
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       softwareInfo['appName'] = packageInfo.appName;
@@ -79,7 +80,10 @@ class ApiClient {
   * _getJson handles request and returns the json decoded data from server back to caller function
   */
   Future<dynamic> _getJson(Uri uri) async {
-  print('calling '+uri.toString());
+    //debug
+    print('calling '+uri.toString());
+
+  //Create software version header
   Map softwareInfo = {
     'appName': '',
     'packageName':'',

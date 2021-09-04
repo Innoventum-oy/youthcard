@@ -20,14 +20,16 @@ class _ContactMethodsViewState extends State<ContactMethodsView> {
 
   @override
   void initState(){
+    print('initing ContactMethods view state');
     Provider.of<UserProvider>(context, listen: false).getContactMethods();
   }
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<UserProvider>(context).user;
+    print('rebuilding ContactMethods view');
+    User user = Provider.of<UserProvider>(context,listen:true).user;
 
-    List<ContactMethod> myContacts = Provider.of<UserProvider>(context).contacts;
+    List<ContactMethod> myContacts = Provider.of<UserProvider>(context,listen:true).contacts;
 
     if(myContacts.isNotEmpty)
     {

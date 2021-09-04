@@ -79,7 +79,7 @@ class UserProvider with ChangeNotifier {
     };
     this.contacts =(await _apiClient.dispatcherRequest('registration',params).then((data) {
 
-      // return _getJson(url).then((json) => json['data']).then((data) {
+      notifyListeners();
       if(data==null) return [];
       print(data);
       if(data['data']==null) return [];

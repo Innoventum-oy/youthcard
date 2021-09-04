@@ -119,7 +119,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
             itemCount: data.length,
             itemBuilder: (BuildContext context, int index) {
               if (!_isLoading && index > (data.length * 0.7)) {
-                print('calling loadnextpage, user token is ' + user.token);
+
                 _loadNextPage(user, widget.activityClass);
               }
 

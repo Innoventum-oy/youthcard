@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:youth_card/src/objects/user.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/providers/webpageprovider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
@@ -15,8 +15,7 @@ import 'package:flutter_html/flutter_html.dart';
 
 class ContentPageView extends StatefulWidget {
   final String commonname;
-  final objectmodel.WebPageProvider pageProvider =
-  objectmodel.WebPageProvider();
+  final WebPageProvider pageProvider = WebPageProvider();
 
   ContentPageView(this.commonname);
   @override
@@ -34,11 +33,13 @@ class _ContentPageViewState extends State<ContentPageView> {
     _isLoading = true;
 
     print(Localizations.localeOf(context).toString());
+    print('user token:'+user.token.toString());
     final Map<String, String> params = {
-      'fields' :'id,commonname,pagetitle,textcontents',
-      'languge' : Localizations.localeOf(context).toString(),
+
+      'language' : Localizations.localeOf(context).toString(),
       'commonname': commonname,
-      if(user.token !=null) 'api_key': user.token,
+      'fields' :'id,commonname,pagetitle,textcontents',
+       if(user.token!=null) 'api_key': user.token,
 
     };
 
