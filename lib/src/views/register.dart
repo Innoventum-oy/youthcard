@@ -83,7 +83,14 @@ class _RegisterState extends State<Register> {
       }
 
     };
+    String? validateName(String? value) {
+      String? _msg;
 
+      if (value!.isEmpty) {
+        _msg = AppLocalizations.of(context)!.pleaseProvideYourName;
+      }
+      return _msg;
+    }
     String? validatePhone(String? value)
     {
 
@@ -91,9 +98,10 @@ class _RegisterState extends State<Register> {
       if(value!.isEmpty) return AppLocalizations.of(context)!.pleaseEnterPhonenumber;
 
       //test for phone number pattern
-      String pattern = r'(^(?:[+0])?[0-9]{10,12}$)';
+      String pattern = r'(^(?:[+0])?[0-9]{8,12}$)';
       RegExp regExp = new RegExp(pattern);
-      if (regExp.hasMatch(value)) {
+      if (!regExp.hasMatch(value)) {
+
         _msg = AppLocalizations.of(context)!.pleaseProvideValidPhonenumber;
       }
 
@@ -112,13 +120,13 @@ class _RegisterState extends State<Register> {
     }
     final firstnameField = TextFormField(
       autofocus: false,
-     // validator: validateEmail,
+      validator: validateName,
       onSaved: (value) => _firstname = value,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.firstName,Icons.person ),
     );
     final lastnameField = TextFormField(
       autofocus: false,
-      // validator: validateEmail,
+       validator: validateName,
       onSaved: (value) => _lastname = value,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.lastName,Icons.person ),
     );
@@ -131,14 +139,14 @@ class _RegisterState extends State<Register> {
     final phoneField = TextFormField(
       autofocus: false,
       validator: validatePhone,
-      onSaved: (value) => _phone = value,
+      onChanged: (value) => _phone = value,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.phone, Icons.phone_iphone),
     );
     final passwordField = TextFormField(
       autofocus: false,
       obscureText: true,
       validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.pleaseEnterPassword : null,
-      onSaved: (value) => _password = value,
+      onChanged: (value) => _password = value,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.confirmPassword, Icons.lock),
     );
 

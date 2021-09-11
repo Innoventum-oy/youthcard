@@ -107,11 +107,24 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
     User user = Provider
         .of<UserProvider>(context, listen: false)
         .user;
+
+    bool isTester = false;
+    if(user.data!=null) {
+      print(user.data.toString());
+      if (user.data!['istester'] != null) {
+        if (user.data!['istester'] == 'true') isTester = true;
+      }
+    }
+
     return new Scaffold(
       backgroundColor: primary,
       appBar: new AppBar(
           title: new Text(AppLocalizations.of(context)!.activities),
           actions: [
+            if(isTester) IconButton(
+                icon: Icon(Icons.bug_report),
+                onPressed:(){feedbackAction(context,user); }
+            ),
       IconButton(
       icon: Icon(Icons.refresh),
         onPressed: () {

@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.1.0+18
+version: 1.1.2+20
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -27,12 +27,12 @@ dependencies:
   flutter_localizations:
       sdk: flutter
   intl: ^0.17.0
-  provider: ^5.0.0
+  provider: ^6.0.0
 
   http: ^0.13.1
   #scoped_model: "^1.1.0"
   shared_preferences: ^2.0.5
-  flushbar: ^1.10.4
+  #flushbar: ^1.10.4
   #local database:
   sqflite: ^2.0.0+3
   path_provider: ^2.0.1
@@ -42,7 +42,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
   #for qr code scanner
-  qr_code_scanner: ^0.4.0
+  qr_code_scanner: ^0.5.2
   #cached images
   cached_network_image: ^3.0.0
   #for getting user location
@@ -53,6 +53,7 @@ dependencies:
   settings_ui: ^1.0.0
   package_info: ^2.0.0
   glob: ^2.0.1
+  feedback: ^2.0.0
 
 dev_dependencies:
   flutter_native_splash: ^1.1.8+4

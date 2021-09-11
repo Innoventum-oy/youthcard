@@ -117,11 +117,28 @@ class _ActivityListState extends State<ActivityList>  {
 
   @override
   Widget build(BuildContext context){
+
   print('viewtype: '+widget.viewType);
+
   User user = Provider.of<UserProvider>(context,listen: false).user;
-    return new Scaffold(
-      appBar: new AppBar(title: new Text(
-          widget.viewType=='locations' ? AppLocalizations.of(context)!.locations : AppLocalizations.of(context)!.activities)
+  bool isTester = false;
+  if(user.data!=null) {
+    print(user.data.toString());
+    if (user.data!['istester'] != null) {
+      if (user.data!['istester'] == 'true') isTester = true;
+    }
+  }
+
+  return new Scaffold(
+      appBar: new AppBar(
+          title: new Text(
+            widget.viewType=='locations' ? AppLocalizations.of(context)!.locations : AppLocalizations.of(context)!.activities),
+          actions: [
+          if(isTester) IconButton(
+      icon: Icon(Icons.bug_report),
+    onPressed:(){feedbackAction(context,user); }
+    ),
+    ]
     ),
       body: _getContentSection(user)
     );

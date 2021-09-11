@@ -72,6 +72,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "errorsInForm": MessageLookupByLibrary.simpleMessage(
             "Lomakkeen sisällössä on virheitä"),
         "eventLog": MessageLookupByLibrary.simpleMessage("Tapahtumaloki"),
+        "feedback": MessageLookupByLibrary.simpleMessage("Palaute"),
+        "feedbackSent":
+            MessageLookupByLibrary.simpleMessage("Palaute lähetetty"),
         "firstName": MessageLookupByLibrary.simpleMessage("Etunimi"),
         "flashOff": MessageLookupByLibrary.simpleMessage("Valo pois"),
         "flashOn": MessageLookupByLibrary.simpleMessage("Valo päälle"),
@@ -95,6 +98,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noUsersFound":
             MessageLookupByLibrary.simpleMessage("Ei ilmoittautuneita"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Ei vahvistettu"),
+        "ok": MessageLookupByLibrary.simpleMessage("Ok"),
         "pageContent": MessageLookupByLibrary.simpleMessage("Sivusisältö"),
         "participants": MessageLookupByLibrary.simpleMessage("Osallistujat"),
         "password": MessageLookupByLibrary.simpleMessage("Salasana"),
@@ -121,6 +125,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Anna kelvollinen sähköpostiosoite"),
         "pleaseProvideValidPhonenumber":
             MessageLookupByLibrary.simpleMessage("Tarkista puhelinnumero"),
+        "pleaseProvideYourName":
+            MessageLookupByLibrary.simpleMessage("Anna nimesi"),
         "pleaseWaitRegistering": MessageLookupByLibrary.simpleMessage(
             "Käyttäjätiliä rekisteröidään"),
         "postcode": MessageLookupByLibrary.simpleMessage("Postinumero"),
@@ -148,6 +154,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingsMisc": MessageLookupByLibrary.simpleMessage("Sekalaisia"),
         "signUp": MessageLookupByLibrary.simpleMessage("Ilmoittaudu"),
         "termsOfService": MessageLookupByLibrary.simpleMessage("Käyttöehdot"),
+        "thankyouForFeedback":
+            MessageLookupByLibrary.simpleMessage("Kiitos palautteestasi!"),
         "today": MessageLookupByLibrary.simpleMessage("Tänään"),
         "unknownUser":
             MessageLookupByLibrary.simpleMessage("Tuntematon käyttäjä"),

@@ -1,7 +1,14 @@
+import 'package:feedback/feedback.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info/package_info.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
-
+import 'package:youth_card/src/objects/user.dart';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
+import 'package:youth_card/src/util/api_client.dart';
 enum LoadingState { DONE, LOADING, WAITING, ERROR }
 
 final dollarFormat = NumberFormat("#,##0.00", "en_US");
@@ -45,4 +52,69 @@ launchUrl(String url) async {
     await launch(url);
   }
 }
+Future<File> writeImageToStorage(Uint8List feedbackScreenshot) async {
+  final Directory output = await getTemporaryDirectory();
+  final String screenshotFilePath = '${output.path}/feedback.png';
+  final File screenshotFile = File(screenshotFilePath);
+  await screenshotFile.writeAsBytes(feedbackScreenshot);
+  //return screenshotFilePath;
+  return screenshotFile;
+}
+Future<void> feedbackAction(BuildContext context, User user) async {
+
+  String appName = '';
+
+  String version = '';
+
+
+   await PackageInfo.fromPlatform().then((PackageInfo packageInfo){
+      appName = packageInfo.appName;
+      version = packageInfo.version;
+
+    });
+
+  final ApiClient _apiClient = ApiClient();
+  BetterFeedback.of(context).show((UserFeedback feedback) async{
+          Map<String,dynamic> params={
+            'method' :'json',
+            'modulename' :'feedback',
+            'moduletype' :'pages',
+            'action' :'saveobject',
+            'api_key': user.token
+          };
+          final screenshotFile =
+          await writeImageToStorage(feedback.screenshot);
+          Map<String,dynamic> data = {
+            'objecttype' :'feedback',
+            'objectid' :'create',
+            'data_email' : user.email,
+            'data_phone' :user.phone,
+            'data_sender' : user.lastname!+' '+user.firstname!,
+            'data_subject':appName+' '+version+' '+AppLocalizations.of(context)!.feedback,
+            'data_content': feedback.text,
+            'file_file': screenshotFile
+          };
+          _apiClient.sendFeedback(params,data)!.then((var response) async {
+            switch (response['status']) {
+              case 'success':
+                showDialog<String>(
+                    context: context,
+                    builder:(BuildContext context) =>AlertDialog(
+                      title: Text(AppLocalizations.of(context)!.feedbackSent),
+                      content: Text(AppLocalizations.of(context)!.thankyouForFeedback),
+
+                      actions:<Widget>[
+                        ElevatedButton(
+                          child: Text(AppLocalizations.of(context)!.ok),
+                          onPressed:() => Navigator.pop(context, 'Ok'),
+                        )
+                      ],
+                    )
+                );
+            }
+          });
+        });
+      }
+
+
 

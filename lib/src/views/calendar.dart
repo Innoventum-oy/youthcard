@@ -168,9 +168,23 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
         .of<UserProvider>(context)
         .user;
 
-
+    bool isTester = false;
+    if(user.data!=null) {
+      print(user.data.toString());
+      if (user.data!['istester'] != null) {
+        if (user.data!['istester'] == 'true') isTester = true;
+      }
+    }
     return new Scaffold(
-        appBar: new AppBar(title: new Text(AppLocalizations.of(context)!.activityCalendar)),
+        appBar: new AppBar(
+            title: new Text(AppLocalizations.of(context)!.activityCalendar),
+            actions: [
+            if(isTester) IconButton(
+        icon: Icon(Icons.bug_report),
+    onPressed:(){feedbackAction(context,user); }
+    ),
+            ]
+        ),
         body: _getCalendarSection(user)
     );
   }

@@ -70,6 +70,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "errorsInForm":
             MessageLookupByLibrary.simpleMessage("Errors in form contents"),
         "eventLog": MessageLookupByLibrary.simpleMessage("Event Log"),
+        "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
+        "feedbackSent": MessageLookupByLibrary.simpleMessage("Feedback sent"),
         "firstName": MessageLookupByLibrary.simpleMessage("First name"),
         "flashOff": MessageLookupByLibrary.simpleMessage("Flash Off"),
         "flashOn": MessageLookupByLibrary.simpleMessage("Flash On"),
@@ -92,6 +94,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "myCard": MessageLookupByLibrary.simpleMessage("My Card"),
         "noUsersFound": MessageLookupByLibrary.simpleMessage("No users found"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Not verified"),
+        "ok": MessageLookupByLibrary.simpleMessage("Ok"),
         "pageContent": MessageLookupByLibrary.simpleMessage("Page"),
         "participants": MessageLookupByLibrary.simpleMessage("Participants"),
         "password": MessageLookupByLibrary.simpleMessage("Password"),
@@ -117,6 +120,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Please provide a valid email address"),
         "pleaseProvideValidPhonenumber": MessageLookupByLibrary.simpleMessage(
             "Please provide a valid phone number"),
+        "pleaseProvideYourName":
+            MessageLookupByLibrary.simpleMessage("Please provide your name"),
         "pleaseWaitRegistering": MessageLookupByLibrary.simpleMessage(
             "Registering account, please wait"),
         "postcode": MessageLookupByLibrary.simpleMessage("Postcode"),
@@ -142,6 +147,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "signUp": MessageLookupByLibrary.simpleMessage("Sign up"),
         "termsOfService":
             MessageLookupByLibrary.simpleMessage("Terms of Service"),
+        "thankyouForFeedback":
+            MessageLookupByLibrary.simpleMessage("Thank you for your input!"),
         "today": MessageLookupByLibrary.simpleMessage("Today"),
         "unknownUser": MessageLookupByLibrary.simpleMessage("unknown user"),
         "unnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),

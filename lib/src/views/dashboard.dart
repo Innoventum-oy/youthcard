@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:youth_card/src/objects/user.dart';
@@ -29,6 +30,9 @@ class _DashBoardState extends State<DashBoard> {
   bool _isLoading = false;
   String? errormessage;
   List activityTypes = ['activity','location'];
+
+
+
   @override
   void initState() {
     print('Initializing dashboard state');
@@ -91,26 +95,30 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     //for debugging, track builds in print
-    print('building dasboard state');
+    //print('building dasboard state');
     //AuthProvider auth = Provider.of<AuthProvider>(context);
     User user = Provider.of<UserProvider>(context).user;
-/*
-    if (user.token == null) {
-      print('user token not found, pushing named route /login');
-      return Login();
-    } else */{
-      print('Current token: ' +
-          user.token.toString() +
-          ', id: ' +
-          user.id.toString());
+
       objectmodel.ActivityProvider provider = objectmodel.ActivityProvider();
       objectmodel.ImageProvider imageprovider = objectmodel.ImageProvider();
+
+      bool isTester = false;
+      if(user.data!=null) {
+        print(user.data.toString());
+        if (user.data!['istester'] != null) {
+          if (user.data!['istester'] == 'true') isTester = true;
+        }
+      }
 
       return Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.youthcardDashboard),
           elevation: 0.1,
           actions: [
+            if(isTester) IconButton(
+              icon: Icon(Icons.bug_report),
+              onPressed:(){feedbackAction(context,user); }
+              ),
             IconButton(
                 icon: Icon(Icons.refresh),
                 onPressed: () {
@@ -347,7 +355,7 @@ class _DashBoardState extends State<DashBoard> {
           ),
         ),
       );
-    }
+
   }
 
   Widget myLocationsListLink(user, userprovider, imageprovider) {

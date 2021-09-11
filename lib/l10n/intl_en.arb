@@ -34,6 +34,9 @@
   "environment": "Environment",
   "eventLog": "Event Log",
   "errorsInForm": "Errors in form contents",
+  "feedback" : "Feedback",
+  "feedbackSent" : "Feedback sent",
+  "thankyouForFeedback" : "Thank you for your input!",
   "firstName": "First name",
   "flashOn": "Flash On",
   "flashOff": "Flash Off",
@@ -54,6 +57,7 @@
   "myCard": "My Card",
 
   "noUsersFound" : "No users found",
+  "ok" : "Ok",
   "pageContent" : "Page",
   "participants" : "Participants",
   "password": "Password",
@@ -69,6 +73,7 @@
   "pleaseEnterConfirmationKey": "Please enter confirmation key",
   "pleaseWaitRegistering": "Registering account, please wait",
   "pleaseProvideValidEmail" : "Please provide a valid email address",
+  "pleaseProvideYourName" : "Please provide your name",
   "pleaseEnterPhonenumber" :"Please enter phone number",
   "pleaseProvideValidPhonenumber" : "Please provide a valid phone number",
 

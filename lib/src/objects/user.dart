@@ -12,11 +12,13 @@ class User {
   String? qrcode;
   int? awardedScore;
   int? availableScore;
+  Map<String,dynamic>? data;
   Map<String,dynamic>? currentStation;
   Map<String, dynamic>? benefits;
 
   factory User.fromJson(Map<String, dynamic> responseData) {
     //print("Current station for user: "+responseData['currentstation']['objectid'].toString());
+
     return User(
       id: responseData['id'] is int ? responseData['id'] : int.parse(responseData['id']),
       firstname: responseData['firstname'],
@@ -31,6 +33,7 @@ class User {
       awardedScore: responseData['awardedscore'],
       availableScore: responseData['availablescore']!=null ?  (responseData['availablescore']  is int ? responseData['availablescore'] : int.parse(responseData['availablescore'])) : 0,
       currentStation: responseData['currentstation'] is String ? {'objectid':responseData['currentstation']} : responseData['currentstation'],
+      data: responseData
     );
 
   }
@@ -58,6 +61,7 @@ class User {
     'availablescore' : availableScore,
     'renewalToken': renewalToken,
     'currentStation': currentStation,
+    'data' : data,
   };
 
 //<editor-fold desc="Data Methods">
@@ -73,6 +77,7 @@ class User {
     this.renewalToken,
     this.image,
     this.qrcode,
+    this.data,
     this.awardedScore,
     this.availableScore,
     this.currentStation,
@@ -146,6 +151,7 @@ class User {
     int? awardedScore,
     int? availableScore,
     Map<String, dynamic>? currentStation,
+    Map<String,dynamic>? attributes,
   }) {
     return User(
       id: id ?? this.id,
@@ -161,6 +167,7 @@ class User {
       awardedScore:  awardedScore ?? this.awardedScore,
       availableScore: availableScore ?? this.availableScore,
       currentStation: currentStation ?? this.currentStation,
+     data: data ?? this.data,
     );
   }
 
@@ -179,6 +186,7 @@ class User {
       'awardedScore': this.awardedScore,
       'availableScore': this.availableScore,
       'currentStation': this.currentStation,
+      'attributes' : this.data,
     };
   }
 
@@ -197,6 +205,7 @@ class User {
       awardedScore: map['awardedScore'] as int,
       availableScore: map['availableScore'] as int,
       currentStation: map['currentStation'] as Map<String, dynamic>,
+      data: map['data'] as Map<String,dynamic>,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:youth_card/src/objects/webpage.dart';
 import 'package:youth_card/src/util/app_url.dart';
@@ -29,8 +30,14 @@ class ApiClient {
   */
   Future<dynamic> _postJson(Uri uri, Map<String, dynamic> data) async
   {
-    //Create software version header
-    Map softwareInfo = {};
+
+    Map softwareInfo = {
+      'appName': '',
+      'packageName':'',
+      'version':'',
+      'buildNumber' :'',
+
+    };
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       softwareInfo['appName'] = packageInfo.appName;
       softwareInfo['packageName'] = packageInfo.packageName;
@@ -41,18 +48,38 @@ class ApiClient {
       'Content-Type': 'application/json',
       'User-Agent': softwareInfo['appName']+' / '+softwareInfo['version']+' '+softwareInfo['buildNumber']
     };
+    var request = new http.MultipartRequest("POST", uri);
+    headers.forEach((k,v){ request.headers[k]=v;});
 
+    print('POSTing dat as MultipartRequest:');
+    data.forEach((key, value) async {
+      if (value is File) {
+        print('adding file '+key);
+        request.files.add(await http.MultipartFile.fromPath(key, value.path));
+      }
+      else {
+        print('adding $key = $value');
+        request.fields[key] = value;
+      }
+    });
     print('calling (post) '+uri.toString());
-    var response = await http.post(uri,
-      body: json.encode(data),
-      headers: headers,
-    );
+    http.Response response = await http.Response.fromStream(await request.send());
+
+
     if (response.statusCode == 200) {
       if(response.body.isNotEmpty) {
-        Map<String, dynamic> responseData = json.decode(response.body);
-       //debug
-       // print(responseData);
-        return responseData;
+        print('RESPONSE');
+        //print(response.body);
+        try {
+          Map<String, dynamic> responseData = json.decode(response.body);
+          //debug
+          //print(responseData);
+          return responseData;
+        }
+        catch(e) {
+          print(e.toString());
+        }
+
       }
       else{
         print('response body was empty');
@@ -61,10 +88,11 @@ class ApiClient {
 
     }
     else{
-    //  print(response.statusCode);
+      print(response.statusCode);
       if(response.body.isNotEmpty) {
         Map<String, dynamic> responseData = json.decode(response.body);
         //debug
+        print(response.body);
         return(responseData);
       }
       return false;
@@ -277,7 +305,7 @@ class ApiClient {
     params.forEach((key, value) {print('$key = $value');});
 
     var url = Uri.https(baseUrl, 'api/$datatype/', params);
-
+    print(url.toString());
     return _getJson(url).then((json) {
       if(json==false) return [];
     //  print(json);
@@ -495,4 +523,14 @@ class ApiClient {
     return this.getDetails('page',id,user);
   }
 
+  Future<Map<String, dynamic>>? sendFeedback(Map<String,dynamic> params, Map<String,dynamic> data) async {
+    String baseUrl = await Settings().getServer();
+    params['get_page']='common';
+    var url = Uri.https(baseUrl,'api/dispatcher/common/',params);
+
+    return _postJson(url,data).then((json){
+      print(json);
+      return json!=null ? json : false;
+    });
+  }
 }

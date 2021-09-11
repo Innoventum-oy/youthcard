@@ -56,6 +56,7 @@ class UserProvider with ChangeNotifier {
         image: userData['image'],
         awardedScore: userData['awardedscore'],
         availableScore: userData['availablescore'],
+        attributes: userData['attributes']
         //   currentStation: userData['currentstation'] is String ? {'objectid':userData['currentstation']} : userData['currentstation'],
 
       );

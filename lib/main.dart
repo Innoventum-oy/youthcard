@@ -11,11 +11,15 @@ import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:provider/provider.dart';
-
+import 'package:feedback/feedback.dart';
 import 'src/objects/user.dart';
 
 void main() {
-  runApp(YouthCard());
+  runApp(
+      BetterFeedback(
+          child:YouthCard(),
+      )
+  );
 }
 
 class YouthCard extends StatelessWidget {
@@ -45,7 +49,7 @@ class YouthCard extends StatelessWidget {
             // Notice that the counter didn't reset back to zero; the application
             // is not restarted.
             primarySwatch: Colors.deepOrange,
-            colorScheme: Theme.of(context).colorScheme.copyWith(secondary: Colors.teal,),
+            colorScheme: Theme.of(context).colorScheme.copyWith(primary: Colors.deepOrange,secondary: Colors.teal,),
 
             //accentColor: Colors.teal,
             // This makes the visual density adapt to the platform that you run

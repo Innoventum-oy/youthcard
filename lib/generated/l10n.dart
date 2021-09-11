@@ -390,6 +390,36 @@ class S {
     );
   }
 
+  /// `Feedback`
+  String get feedback {
+    return Intl.message(
+      'Feedback',
+      name: 'feedback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Feedback sent`
+  String get feedbackSent {
+    return Intl.message(
+      'Feedback sent',
+      name: 'feedbackSent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Thank you for your input!`
+  String get thankyouForFeedback {
+    return Intl.message(
+      'Thank you for your input!',
+      name: 'thankyouForFeedback',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `First name`
   String get firstName {
     return Intl.message(
@@ -570,6 +600,16 @@ class S {
     );
   }
 
+  /// `Ok`
+  String get ok {
+    return Intl.message(
+      'Ok',
+      name: 'ok',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Page`
   String get pageContent {
     return Intl.message(
@@ -715,6 +755,16 @@ class S {
     return Intl.message(
       'Please provide a valid email address',
       name: 'pleaseProvideValidEmail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please provide your name`
+  String get pleaseProvideYourName {
+    return Intl.message(
+      'Please provide your name',
+      name: 'pleaseProvideYourName',
       desc: '',
       args: [],
     );

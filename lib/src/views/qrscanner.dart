@@ -14,6 +14,7 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/views/eventlog.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 //void main() => runApp(MaterialApp(home: QRScanner()));
@@ -84,7 +85,7 @@ class _QRScannerState extends State<QRScanner> {
 
   Future<String> sendData(scannedcode) async {
     Map map;
-    User user = Provider.of<UserProvider>(context, listen: false).user;
+    User user = Provider.of<UserProvider>(context).user;
 
     if (_currentPosition == null) {
       notify(
@@ -170,19 +171,31 @@ class _QRScannerState extends State<QRScanner> {
 
   @override
   Widget build(BuildContext context) {
-   // User user = Provider.of<UserProvider>(context).user;
+
+    User user = Provider.of<UserProvider>(context).user;
     String titleText = AppLocalizations.of(context)!.qrScanner;
     if (widget.activity != null) {
       titleText += '\n' + widget.activity!.name!;
       print('Current activity: {$widget.activity!.name}');
     } else
       print('no activity passed');
+    bool isTester = false;
+    if(user.data!=null) {
+      print(user.data.toString());
+      if (user.data!['istester'] != null) {
+        if (user.data!['istester'] == 'true') isTester = true;
+      }
+    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(titleText),
         elevation: 0.1,
         actions: [
+          if(isTester) IconButton(
+              icon: Icon(Icons.bug_report),
+              onPressed:(){feedbackAction(context,user); }
+          ),
           IconButton(
               icon: Icon(Icons.book),
               onPressed: () {

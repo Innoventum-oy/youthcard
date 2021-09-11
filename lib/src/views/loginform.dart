@@ -98,6 +98,7 @@ class _LoginState extends State<Login> {
           child: Text(AppLocalizations.of(context)!.createAccount,
               style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
+            auth.setRegisteredStatus(Status.NotRegistered);
             Navigator.pushNamed(context, '/register');
           },
         ),

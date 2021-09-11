@@ -9,6 +9,7 @@ import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/util/styles.dart';
+import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/views/utilviews.dart';
 import 'package:youth_card/src/views/meta_section.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
@@ -71,11 +72,22 @@ class _ActivityViewState extends State<ActivityView> {
   Widget build(BuildContext context) {
     print('rebuilding activity view');
     final user = Provider.of<UserProvider>(context, listen: false).user;
+    bool isTester = false;
+    if(user.data!=null) {
+      print(user.data.toString());
+      if (user.data!['istester'] != null) {
+        if (user.data!['istester'] == 'true') isTester = true;
+      }
+    }
     return Scaffold(
         appBar: AppBar(
             title: Text(widget._activity.name?? AppLocalizations.of(context)!.activity),
             elevation: 0.1,
             actions: [
+              if(isTester) IconButton(
+                  icon: Icon(Icons.bug_report),
+                  onPressed:(){feedbackAction(context,user); }
+              ),
           IconButton(
           icon: Icon(Icons.refresh),
           onPressed: () {

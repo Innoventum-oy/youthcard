@@ -141,7 +141,7 @@ class AuthProvider with ChangeNotifier {
        // print(responseData);
        // User authUser = User.fromJson(responseData);
       }
-
+      this.setRegisteredStatus( Status.NotRegistered );
       UserPreferences().removeUser();
 
       _loggedInStatus = Status.NotLoggedIn;
