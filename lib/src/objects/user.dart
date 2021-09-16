@@ -26,7 +26,7 @@ class User {
       email: responseData['email'],
       phone: responseData['phone'],
       type: responseData['type'],
-      token: responseData['access_token'],
+      token: responseData['access_token']??responseData['token'],
       renewalToken: responseData['renewal_token'],
       qrcode: responseData['qrcode'],
       image: responseData['image'],

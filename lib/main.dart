@@ -63,35 +63,38 @@ class YouthCard extends StatelessWidget {
                 print('main.dart, snapshot connectionstate:' +
                     snapshot.connectionState.toString());
                 switch (snapshot.connectionState) {
+
                   case ConnectionState.none:
                   case ConnectionState.waiting:
                     print('returning welcome splash screen');
                     return Welcome(); //return CircularProgressIndicator();
 
                   default:
-                    User userdata = User();
-                    if(snapshot.hasData) {
 
-                      userdata = snapshot.data as User;
-                      if(snapshot.data == null) print("Snapshot.data was null");
+                    // User userdata =  UserPreferences().getUser(); //User();
+                    if(snapshot.hasData)
+                    {
+                      User userdata = snapshot.data as User;
+                      if(snapshot.data == null)
+                        print("Snapshot.data was null");
                       else print("snapshot data was not null");
-
-
+                      if (userdata.token != null)
+                      {
+                        print('setting userdata to userprovider');
+                        Provider.of<UserProvider>(context, listen: false).setUserSilent(userdata);
+                        return DashBoard();
+                      }
                     }
                     else print("Snapshot has no data. User remains empty.");
 
                     if (snapshot.hasError) {
                       print('snapshot has error');
-                      return Login(user:userdata); //Text('Error: ${snapshot.error}');
+                      return Login(user:User()); //Text('Error: ${snapshot.error}');
                     }
-                    else if (userdata.token != null) {
-                      print('setting userdata to userprovider');
-                      Provider.of<UserProvider>(context, listen: false).setUserSilent(userdata);
-                      return DashBoard();
-                    } else
+                    else
                       {
-                      print('user token was null');
-                       return Login(user:userdata);
+                      print('user token was null, direct to login');
+                       return Login(user:User());
                       }
                 }
               }),

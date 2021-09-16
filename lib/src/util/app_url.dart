@@ -4,7 +4,7 @@ class AppUrl {
     'Lousada' : 'lousada.youthcard.pt',
     'Dresden' : 'dresden-youthcard.de',
     'Czech Republic' : 'youthcard.cz',
-    'Medjimurje' : 'medimurje.youthcard.eu',
+   // 'Medjimurje' : 'medimurje.youthcard.eu',
     'Development' : 'nuortenjoensuu.webweb.fi'
   };
  static const Map<String,String> anonymousApikeys = {
