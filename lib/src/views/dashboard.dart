@@ -2,8 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:youth_card/src/objects/user.dart';
+import 'package:youth_card/src/objects/webpage.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:youth_card/src/providers/webpageprovider.dart';
 import 'package:youth_card/src/views/card.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
 import 'package:youth_card/src/views/calendar.dart';
@@ -16,9 +18,11 @@ import 'package:youth_card/src/views/settings.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
+import 'package:youth_card/src/views/webpagetextcontent.dart';
 
 class DashBoard extends StatefulWidget {
-  final objectmodel.ActivityProvider provider = objectmodel.ActivityProvider();
+  final String viewTitle = 'dashboard';
+  final objectmodel.ActivityListProvider provider = objectmodel.ActivityListProvider();
 
   @override
   _DashBoardState createState() => _DashBoardState();
@@ -30,7 +34,7 @@ class _DashBoardState extends State<DashBoard> {
   bool _isLoading = false;
   String? errormessage;
   List activityTypes = ['activity','location'];
-
+  WebPage page = new WebPage();
 
 
   @override
@@ -44,6 +48,11 @@ class _DashBoardState extends State<DashBoard> {
         for(var a in activityTypes) {
         _loadMyActivities(user,a);
       }
+      //See if info page exists for the view
+      Provider.of<WebPageProvider>(context,listen:false).loadItem({'language' : Localizations.localeOf(context).toString(),
+        'commonname': widget.viewTitle,
+        'fields' :'id,commonname,pagetitle,textcontents',
+        if(user.token!=null) 'api_key': user.token,});
     });
     super.initState();
   }
@@ -93,28 +102,37 @@ class _DashBoardState extends State<DashBoard> {
 
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     //for debugging, track builds in print
     //print('building dasboard state');
     //AuthProvider auth = Provider.of<AuthProvider>(context);
     User user = Provider.of<UserProvider>(context).user;
+    this.page = Provider.of<WebPageProvider>(context).page;
+    objectmodel.ActivityListProvider provider = objectmodel.ActivityListProvider();
+    objectmodel.ImageProvider imageprovider = objectmodel.ImageProvider();
 
-      objectmodel.ActivityProvider provider = objectmodel.ActivityProvider();
-      objectmodel.ImageProvider imageprovider = objectmodel.ImageProvider();
 
-      bool isTester = false;
-      if(user.data!=null) {
-        print(user.data.toString());
-        if (user.data!['istester'] != null) {
-          if (user.data!['istester'] == 'true') isTester = true;
-        }
+    bool hasInfoPage = this.page.id != null ? true : false;
+    bool isTester = false;
+    if(user.data!=null) {
+      if (user.data!['istester'] != null) {
+        if (user.data!['istester'] == 'true') isTester = true;
       }
+    }
 
+  print('Related info page id: '+this.page.id.toString());
       return Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.youthcardDashboard),
           elevation: 0.1,
           actions: [
+            if(hasInfoPage)IconButton(
+                icon: Icon(Icons.info_outline_rounded),
+                onPressed:(){
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => ContentPageView(widget.viewTitle,providedPage:this.page),
+                  ));}
+            ),
             if(isTester) IconButton(
               icon: Icon(Icons.bug_report),
               onPressed:(){feedbackAction(context,user); }
@@ -133,6 +151,7 @@ class _DashBoardState extends State<DashBoard> {
                       for(var a in activityTypes) {
                       _loadMyActivities(user,a);
                     }
+                    Provider.of<WebPageProvider>(context,listen:false).refresh(user);
                   });
                 }),
             if(user.token!=null) InkWell(

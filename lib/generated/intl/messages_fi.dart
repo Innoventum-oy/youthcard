@@ -30,6 +30,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "address": MessageLookupByLibrary.simpleMessage("Osoite"),
         "authenticating":
             MessageLookupByLibrary.simpleMessage("Kirjautuminen käynnissä"),
+        "benefits": MessageLookupByLibrary.simpleMessage("Edut"),
         "btnContinue": MessageLookupByLibrary.simpleMessage("Jatka"),
         "btnContinueWithoutLogin":
             MessageLookupByLibrary.simpleMessage("Jatka kirjautumatta"),
@@ -69,6 +70,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "emailOrPhoneNumber": MessageLookupByLibrary.simpleMessage(
             "Puhelinnumero tai sähköpostiosoite"),
         "environment": MessageLookupByLibrary.simpleMessage("Kohdepalvelin"),
+        "error": MessageLookupByLibrary.simpleMessage("Virhe"),
         "errorsInForm": MessageLookupByLibrary.simpleMessage(
             "Lomakkeen sisällössä on virheitä"),
         "eventLog": MessageLookupByLibrary.simpleMessage("Tapahtumaloki"),
@@ -87,7 +89,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "loading": MessageLookupByLibrary.simpleMessage("Ladataan"),
         "loadingBenefits":
             MessageLookupByLibrary.simpleMessage("Ladataan etuja"),
+        "locationRetrieved":
+            MessageLookupByLibrary.simpleMessage("Koordinaatit haettu"),
         "locations": MessageLookupByLibrary.simpleMessage("Sijainnit"),
+        "logIsEmpty":
+            MessageLookupByLibrary.simpleMessage("Tapahtumaloki on tyhjä"),
         "login": MessageLookupByLibrary.simpleMessage("Kirjautuminen"),
         "loginFailed":
             MessageLookupByLibrary.simpleMessage("Kirjautuminen epäonnistui"),
@@ -95,6 +101,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "moreInformation": MessageLookupByLibrary.simpleMessage("lisätiedot"),
         "myActivities": MessageLookupByLibrary.simpleMessage("Omat tapahtumat"),
         "myCard": MessageLookupByLibrary.simpleMessage("Oma kortti"),
+        "noActiveBenefits":
+            MessageLookupByLibrary.simpleMessage("Ei etuja käytössä"),
         "noUsersFound":
             MessageLookupByLibrary.simpleMessage("Ei ilmoittautuneita"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Ei vahvistettu"),
@@ -153,6 +161,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingsCommon": MessageLookupByLibrary.simpleMessage("Yleiset"),
         "settingsMisc": MessageLookupByLibrary.simpleMessage("Sekalaisia"),
         "signUp": MessageLookupByLibrary.simpleMessage("Ilmoittaudu"),
+        "statusError": MessageLookupByLibrary.simpleMessage("Virhe"),
         "termsOfService": MessageLookupByLibrary.simpleMessage("Käyttöehdot"),
         "thankyouForFeedback":
             MessageLookupByLibrary.simpleMessage("Kiitos palautteestasi!"),
@@ -162,10 +171,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "unnamed": MessageLookupByLibrary.simpleMessage("nimetön"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Nimetön tapahtuma"),
+        "userNotFound":
+            MessageLookupByLibrary.simpleMessage("Käyttäjätietoja ei löytynyt"),
         "validateContactTitle":
             MessageLookupByLibrary.simpleMessage("Vahvista yhteystieto"),
         "verified": MessageLookupByLibrary.simpleMessage("Vahvistettu"),
         "verify": MessageLookupByLibrary.simpleMessage("Vahvista"),
+        "visitRecorded": MessageLookupByLibrary.simpleMessage("Käynti lisätty"),
+        "visits": MessageLookupByLibrary.simpleMessage("Käynnit"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Nuorisokortti"),
         "youthcardLoginTitle": MessageLookupByLibrary.simpleMessage(

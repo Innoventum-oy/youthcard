@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
+import 'package:youth_card/src/providers/objectprovider.dart';
+import 'package:youth_card/src/providers/webpageprovider.dart';
 import 'package:youth_card/src/views/dashboard.dart';
 import 'package:youth_card/src/views/loginform.dart';
 import 'package:youth_card/src/views/register.dart';
@@ -32,6 +34,8 @@ class YouthCard extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => WebPageProvider()),
+        ChangeNotifierProvider(create: (_) => ActivityListProvider()),
       ],
       child: MaterialApp(
           title: 'Youth Card',

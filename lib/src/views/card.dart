@@ -11,8 +11,13 @@ import 'package:youth_card/src/util/utils.dart';
 */
 
 class MyCard extends StatefulWidget {
+  final User? user;
+  final String viewTitle = 'usercard';
+  //TODO: remove this provider and just read the benefits from user object, provided by loaduser (which also loads the benefits for user)
   final objectmodel.UserBenefitProvider userBenefitProvider =
       objectmodel.UserBenefitProvider();
+
+  MyCard({this.user});
 
   @override
   _MyCardState createState() => _MyCardState();
@@ -38,7 +43,7 @@ class _MyCardState extends State<MyCard> {
       var result = await widget.userBenefitProvider.loadItems(params);
       setState(() {
         _benefitsLoadingState = LoadingState.DONE;
-        print(result);
+
 
         benefits.addAll(result);
         print(result.length.toString() + ' benefits currently loaded!');
@@ -57,16 +62,20 @@ class _MyCardState extends State<MyCard> {
   @override
   void initState() {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      User user = Provider.of<UserProvider>(context, listen: false).user;
+      User user =widget.user ?? Provider.of<UserProvider>(context, listen: false).user;
 
-      _loadBenefits(user);
+      if(widget.user==null)_loadBenefits(user);
+      else {
+        _benefitsLoadingState = LoadingState.DONE;
+        benefits = widget.user!.userbenefits;
+      }
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<UserProvider>(context).user;
+    User user = widget.user ?? Provider.of<UserProvider>(context).user;
     bool isTester = false;
     if(user.data!=null) {
       print(user.data.toString());

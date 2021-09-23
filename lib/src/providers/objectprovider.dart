@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
+import 'package:youth_card/src/objects/activityvisit.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/objects/userbenefit.dart';
 import 'package:youth_card/src/objects/activityclass.dart';
@@ -10,8 +13,19 @@ import 'package:youth_card/src/util/local_storage.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
-abstract class ObjectProvider {
-  User? user;
+import 'package:youth_card/src/util/shared_preference.dart';
+
+abstract class ObjectProvider with ChangeNotifier {
+  User _user = new User();
+  ApiClient _apiClient = ApiClient();
+  bool setUser(User user) {
+    print('user set for objectprovider to '+user.lastname.toString()+' '+user.firstname.toString());
+    _user = user;
+ // do it silent:  notifyListeners();
+    return true;
+  }
+
+  User get user => _user;
 
   Future<List<dynamic>> loadItems(params);
 
@@ -21,7 +35,7 @@ abstract class ObjectProvider {
 class ImageProvider extends ObjectProvider {
   ImageProvider();
 
-  ApiClient _apiClient = ApiClient();
+  //ApiClient _apiClient = ApiClient();
 
   @override
   Future<List<ImageObject>> loadItems(params) async {
@@ -38,7 +52,7 @@ class ImageProvider extends ObjectProvider {
 class UserBenefitProvider extends ObjectProvider {
   UserBenefitProvider();
 
-  ApiClient _apiClient = ApiClient();
+  //ApiClient _apiClient = ApiClient();
 
   @override
   Future<List<UserBenefit>> loadItems(params) async {
@@ -52,20 +66,78 @@ class UserBenefitProvider extends ObjectProvider {
   }
 }
 
-class ActivityProvider extends ObjectProvider {
-  ActivityProvider();
+class ActivityVisitListProvider extends ObjectProvider {
 
-  ApiClient _apiClient = ApiClient();
+  ActivityVisitListProvider();
+
+  List<ActivityVisit>? _data;
+  List<ActivityVisit>? get list => _data;
 
   @override
-  Future<List<Activity>> loadItems(params) async {
+  Future<List<ActivityVisit>> loadItems(params) async {
+    return _apiClient.loadActivityVisits(params);
+  }
+
+// returns json-decoded response
+  @override
+  Future<dynamic> getDetails(int id, user,{reload:false}) {
+    return _apiClient.getActivityVisitDetails(id, user);
+  }
+
+  Future<List<ActivityVisit>?> loadActivityVisits(Activity activity) async
+  {
+    this._data?.clear();
+    print('loadVisits called for '+(activity.name ?? '')+' user:'+(this.user.fullname));
+
+    DateTime now = DateTime.now();
+    final Map<String, String> params = {
+      'fields' :'id,startdate,enddate,userid,activityid,user,visitstatus,comment,interested,registered,cancelled',
+      'activityid': activity.id.toString(),
+      'api_key': this.user.token ?? await Settings().getValue("anonymousapikey"),
+      'sort' : 'startdate DESC',
+     // 'startdate': "gte:"+DateFormat('yyyy-MM-dd').format(now)
+    };
+    this._data = await _apiClient.loadActivityVisits(params);
+    print(this._data!.length.toString()+' activityvisits loaded');
+    notifyListeners();
+    return this._data ;
+  }
+
+}
+
+class ActivityListProvider extends ObjectProvider {
+  ActivityListProvider();
+
+
+  List<Activity>? _data;
+
+  List<Activity>? get list => _data;
+
+
+
+  Future<void> loadMyItems() async
+  {
+    print('loadMyItems called for '+this.user.fullname);
+
+    DateTime now = DateTime.now();
+    final Map<String, String> params = {
+      'activitystatus': 'active',
+      'api_key': this.user.token ?? await Settings().getValue("anonymousapikey"),
+      'startdate': DateFormat('yyyy-MM-dd').format(now)
+    };
+     this._data = await this.loadItems(params,refresh:true);
+  }
+
+
+  @override
+  Future<List<Activity>> loadItems(params,{refresh:false}) async {
     print('Activityprovider loadItems called');
     String filename = md5.convert(utf8.encode(params.toString())).toString();
    // FileStorage.delete(filename);
     var activitydata = await FileStorage.read(filename,expiration: 30);
    /* (activitydata as Activity).map<Activity>((data) => Activity.fromJson(data))
         .toList();*/
-    if (activitydata != false && activitydata.length>0)
+    if (activitydata != false && activitydata.length>0 && !refresh)
     {
      // print(activitydata);
       //@todo refresh
@@ -85,13 +157,14 @@ class ActivityProvider extends ObjectProvider {
 
           }
       //print('received '+activities.length.toString()+' activities from server');
+      this._data = activities;
       return activities;
       }
-    else print('activitydata was false, loading remote results');
+    else print('activitydata was false (or refresh was requested), loading remote results');
 
     final remoteactivitydata =  await _apiClient.loadActivities(params);
     FileStorage.write(remoteactivitydata,filename);
-    print(remoteactivitydata);
+    notifyListeners();
     return remoteactivitydata;
 
   }
@@ -112,10 +185,11 @@ class ActivityProvider extends ObjectProvider {
   }
 
   Future<dynamic> getActivityDateVisits(int activityId,ActivityDate date,user) async{
-    final remoteactivityvisitdata =  await _apiClient.loadActivityVisits(activityId,date,user);
+    final remoteactivityvisitdata =  await _apiClient.loadActivityDateVisits(activityId,date,user);
 
     return remoteactivityvisitdata;
   }
+
   // returns json-decoded response
   @override
   Future<dynamic> getDetails(int activityId, user,{reload:false}) async {

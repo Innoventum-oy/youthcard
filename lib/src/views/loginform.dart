@@ -13,6 +13,7 @@ import 'package:youth_card/src/util/app_url.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 class Login extends StatefulWidget {
+  final String viewTitle = 'login';
   final dynamic user;
 
   Login({this.user});
@@ -157,7 +158,8 @@ class _LoginState extends State<Login> {
           title: Text(AppLocalizations.of(context)!.youthcardLoginTitle),
           elevation: 0.1,
         ),
-        body: Container(
+        body: SingleChildScrollView(
+          child:Container(
           padding: EdgeInsets.all(30.0),
           child: Form(
             key: formKey,
@@ -238,6 +240,7 @@ class _LoginState extends State<Login> {
               ),
             ),
           ),
+        ),
         ),
     );
   }

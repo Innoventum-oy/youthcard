@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:youth_card/src/util/navigator.dart';
 
 class ActivityListSliver extends StatefulWidget {
-  final objectmodel.ActivityProvider activityProvider;
+  final objectmodel.ActivityListProvider activityProvider;
   final objectmodel.ImageProvider imageProvider;
   final ActivityClass activityClass;
 

@@ -13,8 +13,8 @@ import 'package:youth_card/src/views/activity/activitylist_item.dart';
 
 
 class ActivityCalendar extends StatefulWidget {
-
-  final objectmodel.ActivityProvider provider;
+  final String viewTitle = 'activitycalendar';
+  final objectmodel.ActivityListProvider provider;
   final objectmodel.ImageProvider imageprovider;
 
   ActivityCalendar(this.provider,this.imageprovider);

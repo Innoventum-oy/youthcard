@@ -10,16 +10,17 @@ import 'package:youth_card/src/views/activity/activitylist_item.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-class ActivityChooserList extends StatefulWidget {
-  final objectmodel.ActivityProvider provider;
-  final objectmodel.ImageProvider imageprovider;
-
-  ActivityChooserList(this.provider,this.imageprovider);
+class ActivityList extends StatefulWidget {
+  final String viewTitle = 'activitylist';
+  final objectmodel.ActivityListProvider activityProvider;
+  final objectmodel.ImageProvider imageProvider;
+  final String viewType;
+  ActivityList(this.activityProvider,this.imageProvider,{this.viewType='all'});
   @override
-  _ActivityChooserListState createState() => _ActivityChooserListState();
+  _ActivityListState createState() => _ActivityListState();
 }
 
-class _ActivityChooserListState extends State<ActivityChooserList>  {
+class _ActivityListState extends State<ActivityList>  {
 
   Map<String,dynamic>? map;
   List<Activity> data =[];
@@ -46,27 +47,51 @@ class _ActivityChooserListState extends State<ActivityChooserList>  {
     _isLoading = true;
     int offset = limit * _pageNumber;
     DateTime now = DateTime.now();
-    Map<String, String> params = {
+
+    final Map<String, String> params = {
       'activitystatus': 'active',
-      'activitytype': 'activity',
       'limit' : limit.toString(),
       'offset' : offset.toString(),
-      'startfrom' : DateFormat('yyyy-MM-dd').format(now),
       'api_key':user.token,
 
-      'sort' : 'nexteventdate',
     };
-    print('Loading page $_pageNumber');
+    print("activitylist type:"+widget.viewType);
+
+    switch(widget.viewType)
+    {
+      case 'locations':
+        params['activitytype'] = 'location';
+        params['sort'] = 'name';
+        break;
+      case 'own':
+        params['activitytype'] = 'activity';
+        params['accesslevel']='modify';
+        params['startfrom'] = DateFormat('yyyy-MM-dd').format(now);
+        //   params['limit']='NULL';
+        break;
+      default:
+        params['activitytype'] = 'activity';
+        params['startfrom'] = DateFormat('yyyy-MM-dd').format(now);
+        params['sort'] ='nexteventdate';
+
+    }
+    print('Loading activitylist page $_pageNumber');
     try {
 
       var nextActivities =
-      await widget.provider.loadItems(params);
+      await widget.activityProvider.loadItems(params);
       setState(() {
         _loadingState = LoadingState.DONE;
-        data.addAll(nextActivities);
-        print(data.length.toString()+' activities currently loaded!');
-        _isLoading = false;
-        _pageNumber++;
+        if(nextActivities.isNotEmpty) {
+          data.addAll(nextActivities);
+          print(data.length.toString() + ' activities currently loaded!');
+          _isLoading = false;
+          _pageNumber++;
+        }
+        else
+        {
+          print('no more activities were found');
+        }
       });
     } catch (e,stack) {
       _isLoading = false;
@@ -86,16 +111,35 @@ class _ActivityChooserListState extends State<ActivityChooserList>  {
 
       _loadNextPage(user);
     });
+    super.initState();
 
-  super.initState();
   }
 
   @override
   Widget build(BuildContext context){
 
+    print('viewtype: '+widget.viewType);
+
     User user = Provider.of<UserProvider>(context,listen: false).user;
+    bool isTester = false;
+    if(user.data!=null) {
+      print(user.data.toString());
+      if (user.data!['istester'] != null) {
+        if (user.data!['istester'] == 'true') isTester = true;
+      }
+    }
+
     return new Scaffold(
-        appBar: new AppBar(title: new Text(AppLocalizations.of(context)!.activities)),
+        appBar: new AppBar(
+            title: new Text(
+                widget.viewType=='locations' ? AppLocalizations.of(context)!.locations : AppLocalizations.of(context)!.activities),
+            actions: [
+              if(isTester) IconButton(
+                  icon: Icon(Icons.bug_report),
+                  onPressed:(){feedbackAction(context,user); }
+              ),
+            ]
+        ),
         body: _getContentSection(user)
     );
   }

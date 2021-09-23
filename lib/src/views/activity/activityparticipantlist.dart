@@ -13,7 +13,7 @@ import 'package:youth_card/src/util/api_client.dart';
 class ActivityParticipantList extends StatefulWidget {
   final ActivityDate _activityDate;
   final Activity _activity;
-  final objectmodel.ActivityProvider activityProvider;
+  final objectmodel.ActivityListProvider activityProvider;
 
   ActivityParticipantList(this._activityDate,this._activity, this.activityProvider);
 

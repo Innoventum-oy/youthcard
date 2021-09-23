@@ -7,6 +7,7 @@ import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/utils.dart';
 import'package:youth_card/src/objects/webpage.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:youth_card/src/util/utils.dart';
 /*
 * Privacy policy - display page. Fetches the page contents from server based on commonname + language parameters.
 * Expects to receive array of text blocks to display
@@ -14,9 +15,10 @@ import 'package:flutter_html/flutter_html.dart';
 
 class ContentPageView extends StatefulWidget {
   final String commonname;
+  final WebPage? providedPage;
   final WebPageProvider pageProvider = WebPageProvider();
 
-  ContentPageView(this.commonname);
+  ContentPageView(this.commonname,{this.providedPage});
   @override
   _ContentPageViewState createState() => _ContentPageViewState();
 }
@@ -24,15 +26,11 @@ class ContentPageView extends StatefulWidget {
 class _ContentPageViewState extends State<ContentPageView> {
 
   LoadingState _pageLoadingState = LoadingState.LOADING;
- // bool _isLoading = false;
   String? errormessage;
   List<WebPage> pages = [];
-  _loadPages(String commonname,user) async {
 
-    //_isLoading = true;
+  _loadWebPage(String commonname,user) async {
 
-    print(Localizations.localeOf(context).toString());
-    print('user token:'+user.token.toString());
     final Map<String, String> params = {
 
       'language' : Localizations.localeOf(context).toString(),
@@ -43,12 +41,12 @@ class _ContentPageViewState extends State<ContentPageView> {
     };
 
     try {
-      var result = await widget.pageProvider.loadItems(params);
+      pages = await loadPages(context,commonname,user);
       setState(() {
         _pageLoadingState = LoadingState.DONE;
 
-        pages.addAll(result);
-        print(result.length.toString() + ' pages currently loaded!');
+        //pages.addAll(result);
+       // print(result.length.toString() + ' pages currently loaded!');
         //_isLoading = false;
       });
     } catch (e, stack) {
@@ -60,13 +58,18 @@ class _ContentPageViewState extends State<ContentPageView> {
       }
     }
   }
-
+  _setWebPage(){
+    pages.add(widget.providedPage!);
+    setState(() =>
+    _pageLoadingState = LoadingState.DONE);
+  }
   @override
   void initState() {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       User user = Provider.of<UserProvider>(context, listen: false).user;
 
-      _loadPages(widget.commonname,user);
+      if(widget.providedPage!=null) _setWebPage();
+      else _loadWebPage(widget.commonname,user);
     });
     super.initState();
   }

@@ -192,8 +192,8 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
   }
 
   Widget activityClassView(activityClass) {
-    objectmodel.ActivityProvider activityProvider = objectmodel
-        .ActivityProvider();
+    objectmodel.ActivityListProvider activityProvider = objectmodel
+        .ActivityListProvider();
     print('creating activity list for class '+activityClass.name);
     return
       Container(

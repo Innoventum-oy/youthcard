@@ -11,7 +11,8 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class ActivityList extends StatefulWidget {
-  final objectmodel.ActivityProvider activityProvider;
+  final String viewTitle = 'activitylist';
+  final objectmodel.ActivityListProvider activityProvider;
   final objectmodel.ImageProvider imageProvider;
   final String viewType;
   ActivityList(this.activityProvider,this.imageProvider,{this.viewType='all'});
@@ -52,7 +53,6 @@ class _ActivityListState extends State<ActivityList>  {
       'limit' : limit.toString(),
       'offset' : offset.toString(),
       'api_key':user.token,
-
 
     };
     print("activitylist type:"+widget.viewType);

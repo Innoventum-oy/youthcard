@@ -78,7 +78,7 @@ class Settings{
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString(arg).toString() ;
-    print('Settings.getvalue('+arg+') : '+token);
+    //print('Settings.getvalue('+arg+') : '+token);
     return token;
   }
   Future<bool> setValue(String arg,dynamic val) async {

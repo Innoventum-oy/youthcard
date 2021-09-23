@@ -1,4 +1,6 @@
 
+import 'package:youth_card/src/objects/userbenefit.dart';
+
 class User {
   int? id;
   String? firstname;
@@ -10,15 +12,13 @@ class User {
   String? renewalToken;
   String? image;
   String? qrcode;
-  int? awardedScore;
-  int? availableScore;
   Map<String,dynamic>? data;
-  Map<String,dynamic>? currentStation;
+  List<UserBenefit> userbenefits = [];
   Map<String, dynamic>? benefits;
 
   factory User.fromJson(Map<String, dynamic> responseData) {
     //print("Current station for user: "+responseData['currentstation']['objectid'].toString());
-
+  // responseData.forEach((key, value) { print('$key = $value');});
     return User(
       id: responseData['id'] is int ? responseData['id'] : int.parse(responseData['id']),
       firstname: responseData['firstname'],
@@ -30,23 +30,12 @@ class User {
       renewalToken: responseData['renewal_token'],
       qrcode: responseData['qrcode'],
       image: responseData['image'],
-      awardedScore: responseData['awardedscore'],
-      availableScore: responseData['availablescore']!=null ?  (responseData['availablescore']  is int ? responseData['availablescore'] : int.parse(responseData['availablescore'])) : 0,
-      currentStation: responseData['currentstation'] is String ? {'objectid':responseData['currentstation']} : responseData['currentstation'],
       data: responseData
     );
 
   }
-  int? getCurrentStation()
-  {
-    if(this.currentStation != null)
-      if (this.currentStation!.isNotEmpty) {
-        // print('returning station '+this.currentStation!["objectid"]);
-        return int.parse(this.currentStation!["objectid"]);
-      } else {
-        return null;
-      }
-  }
+  String get fullname => (this.firstname ?? '')+' '+(this.lastname??'');
+
   Map<String, dynamic> toJson() => {
     'id': id.toString(),
     'firstname': firstname,
@@ -57,10 +46,9 @@ class User {
     'token': token,
     'image': image,
     'qrcode': qrcode,
-    'awardedscore' : awardedScore,
-    'availablescore' : availableScore,
+
     'renewalToken': renewalToken,
-    'currentStation': currentStation,
+
     'data' : data,
   };
 
@@ -78,9 +66,8 @@ class User {
     this.image,
     this.qrcode,
     this.data,
-    this.awardedScore,
-    this.availableScore,
-    this.currentStation,
+
+
   });
 
   @override
@@ -97,10 +84,9 @@ class User {
               token == other.token &&
               renewalToken == other.renewalToken &&
               image == other.image &&
-              qrcode == other.qrcode &&
-              awardedScore == other.awardedScore &&
-              availableScore == other.availableScore &&
-              currentStation == other.currentStation);
+              qrcode == other.qrcode
+
+            );
 
   @override
   int get hashCode =>
@@ -113,10 +99,8 @@ class User {
       token.hashCode ^
       renewalToken.hashCode ^
       image.hashCode ^
-      qrcode.hashCode ^
-      awardedScore.hashCode ^
-      availableScore.hashCode ^
-      currentStation.hashCode;
+      qrcode.hashCode;
+
 
   @override
   String toString() {
@@ -131,9 +115,8 @@ class User {
         ' renewalToken: $renewalToken,' +
         ' image: $image,' +
         ' qrcode: $qrcode,' +
-        ' awardedScore: $awardedScore,' +
-        ' availableScore: $availableScore,' +
-        ' currentStation: $currentStation,' +
+
+
         '}';
   }
 
@@ -164,9 +147,7 @@ class User {
       renewalToken: renewalToken ?? this.renewalToken,
       image: image ?? this.image,
       qrcode: qrcode ?? this.qrcode,
-      awardedScore:  awardedScore ?? this.awardedScore,
-      availableScore: availableScore ?? this.availableScore,
-      currentStation: currentStation ?? this.currentStation,
+
      data: data ?? this.data,
     );
   }
@@ -183,9 +164,7 @@ class User {
       'renewalToken': this.renewalToken,
       'image': this.image,
       'qrcode': this.qrcode,
-      'awardedScore': this.awardedScore,
-      'availableScore': this.availableScore,
-      'currentStation': this.currentStation,
+
       'attributes' : this.data,
     };
   }
@@ -202,9 +181,7 @@ class User {
       renewalToken: map['renewalToken'] as String,
       image: map['image'] as String,
       qrcode: map['qrcode'] as String,
-      awardedScore: map['awardedScore'] as int,
-      availableScore: map['availableScore'] as int,
-      currentStation: map['currentStation'] as Map<String, dynamic>,
+
       data: map['data'] as Map<String,dynamic>,
     );
   }

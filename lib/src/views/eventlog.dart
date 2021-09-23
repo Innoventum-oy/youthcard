@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class EventLogView extends StatefulWidget {
-
+  final String viewTitle = 'eventlog';
   @override
   _EventLogViewState createState() => _EventLogViewState();
 }
@@ -29,7 +29,9 @@ class _EventLogViewState extends State<EventLogView> {
                 );
               });
             }
-            else return Container();
+            else return ListTile(
+              title: Text(AppLocalizations.of(context)!.logIsEmpty),
+            );
           }
       ),
     );

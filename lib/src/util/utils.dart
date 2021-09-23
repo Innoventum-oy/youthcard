@@ -2,12 +2,15 @@ import 'package:feedback/feedback.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
+import 'package:youth_card/src/objects/webpage.dart';
+import 'package:youth_card/src/providers/webpageprovider.dart';
 import 'package:youth_card/src/util/api_client.dart';
 enum LoadingState { DONE, LOADING, WAITING, ERROR }
 
@@ -116,5 +119,30 @@ Future<void> feedbackAction(BuildContext context, User user) async {
         });
       }
 
+Future<List<WebPage>> loadPages(BuildContext context, String commonname,user) async {
+
+  List<WebPage> pages = [];
+
+  final Map<String, String> params = {
+
+    'language' : Localizations.localeOf(context).toString(),
+    'commonname': commonname,
+    'fields' :'id,commonname,pagetitle,textcontents',
+    if(user.token!=null) 'api_key': user.token,
+
+  };
+
+  try {
+    var result = await Provider.of<WebPageProvider>(context).loadItems(params);
+
+      pages.addAll(result);
+
+  } catch (e, stack) {
+
+    String errormessage = e.toString();
+
+    }
+    return pages;
+}
 
 

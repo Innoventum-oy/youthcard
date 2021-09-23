@@ -31,6 +31,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "address": MessageLookupByLibrary.simpleMessage("Address"),
         "authenticating": MessageLookupByLibrary.simpleMessage(
             "Authenticating ... Please wait"),
+        "benefits": MessageLookupByLibrary.simpleMessage("Benefits"),
         "btnContinue": MessageLookupByLibrary.simpleMessage("Continue"),
         "btnContinueWithoutLogin":
             MessageLookupByLibrary.simpleMessage("Skip login"),
@@ -67,6 +68,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "emailOrPhoneNumber":
             MessageLookupByLibrary.simpleMessage("Email or Phone number"),
         "environment": MessageLookupByLibrary.simpleMessage("Environment"),
+        "error": MessageLookupByLibrary.simpleMessage("Error"),
         "errorsInForm":
             MessageLookupByLibrary.simpleMessage("Errors in form contents"),
         "eventLog": MessageLookupByLibrary.simpleMessage("Event Log"),
@@ -84,7 +86,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "loading": MessageLookupByLibrary.simpleMessage("Loading"),
         "loadingBenefits":
             MessageLookupByLibrary.simpleMessage("Loading benefits"),
+        "locationRetrieved":
+            MessageLookupByLibrary.simpleMessage("Location retrieved"),
         "locations": MessageLookupByLibrary.simpleMessage("Sijainnit"),
+        "logIsEmpty":
+            MessageLookupByLibrary.simpleMessage("Event log is empty"),
         "login": MessageLookupByLibrary.simpleMessage("Login"),
         "loginFailed": MessageLookupByLibrary.simpleMessage("Login failed"),
         "logout": MessageLookupByLibrary.simpleMessage("Logout"),
@@ -92,6 +98,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("More information"),
         "myActivities": MessageLookupByLibrary.simpleMessage("My activities"),
         "myCard": MessageLookupByLibrary.simpleMessage("My Card"),
+        "noActiveBenefits":
+            MessageLookupByLibrary.simpleMessage("No active benefits"),
         "noUsersFound": MessageLookupByLibrary.simpleMessage("No users found"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Not verified"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
@@ -145,6 +153,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingsCommon": MessageLookupByLibrary.simpleMessage("Common"),
         "settingsMisc": MessageLookupByLibrary.simpleMessage("Misc"),
         "signUp": MessageLookupByLibrary.simpleMessage("Sign up"),
+        "statusError": MessageLookupByLibrary.simpleMessage("Error"),
         "termsOfService":
             MessageLookupByLibrary.simpleMessage("Terms of Service"),
         "thankyouForFeedback":
@@ -154,10 +163,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "unnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Unnamed activity"),
+        "userNotFound": MessageLookupByLibrary.simpleMessage("User not found"),
         "validateContactTitle": MessageLookupByLibrary.simpleMessage(
             "Validate contact information"),
         "verified": MessageLookupByLibrary.simpleMessage("Verified"),
         "verify": MessageLookupByLibrary.simpleMessage("Verify"),
+        "visitRecorded": MessageLookupByLibrary.simpleMessage("Visit recorded"),
+        "visits": MessageLookupByLibrary.simpleMessage("Visits"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Youth Card"),
         "youthcardLoginTitle":

@@ -10,13 +10,14 @@ import 'package:provider/provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/util/styles.dart';
 import 'package:youth_card/src/util/utils.dart';
+import 'package:youth_card/src/views/activity/activityvisitlist.dart';
 import 'package:youth_card/src/views/utilviews.dart';
 import 'package:youth_card/src/views/meta_section.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
 import 'package:youth_card/src/views/activity/activityparticipantlist.dart';
 class ActivityView extends StatefulWidget {
   final Activity _activity;
-  final objectmodel.ActivityProvider provider;
+  final objectmodel.ActivityListProvider provider;
   final objectmodel.ImageProvider imageprovider;
 
   ActivityView(this._activity, this.provider, this.imageprovider);
@@ -108,12 +109,12 @@ class _ActivityViewState extends State<ActivityView> {
   }
 
   List<Widget> buttons(Activity activity) {
-    print('building buttons');
+   // print('building buttons');
     final user = Provider.of<UserProvider>(context, listen: false).user;
     List<Widget> buttons = [];
 
     if ((activity.registration ) && (user.token!=null )){
-      print('registration is enabled for activity');
+
       buttons.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.signUp),
         onPressed: () {
@@ -122,7 +123,7 @@ class _ActivityViewState extends State<ActivityView> {
         },
       ));
 
-      buttons.add(const SizedBox(width: 8));
+
     }else print('registration not enabled for activity :'+activity.registration.toString());
     if (activity.accesslevel >= 20) {
       buttons.add(ElevatedButton(
@@ -134,7 +135,16 @@ class _ActivityViewState extends State<ActivityView> {
                   builder: (context) => QRScanner(activity: activity)));
         },
       ));
-      buttons.add(const SizedBox(width: 8));
+
+      buttons.add(ElevatedButton(
+        child: Text(AppLocalizations.of(context)!.eventLog),
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ActivityVisitList(activity)));
+        },
+      ));
     }
     return buttons;
   }
@@ -165,60 +175,7 @@ class _ActivityViewState extends State<ActivityView> {
       ),
     );
   }
-/*
-  Widget _buildMetaSection(Activity activity) {
 
-    return AnimatedOpacity(
-      opacity: _visible ? 1.0 : 0.0,
-      duration: Duration(milliseconds: 500),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                TextBubble(
-                  activity.startdate.toString(),
-                  backgroundColor: Color(0xffF47663),
-                ),
-                /*  Container(
-                  width: 8.0,
-                ),
-                TextBubble(activity.voteAverage.toString(),
-                    backgroundColor: Color(0xffF47663)),
-
-               */
-              ],
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(activity.name!,
-                  style: TextStyle(color: Color(0xFFEEEEEE), fontSize: 20.0)),
-            ),
-            /*
-            Row(
-
-              children: getGenresForIds(mediaItem.genreIds)
-                  .sublist(0, min(5, mediaItem.genreIds.length))
-                  .map((genre) => Row(
-                children: <Widget>[
-                  TextBubble(genre),
-                  Container(
-                    width: 8.0,
-                  )
-                ],
-              ))
-                  .toList(),
-            )
-          */
-          ],
-        ),
-      ),
-    );
-  }
-*/
   void _loadDetails(user,{bool reload:false}) async {
     print('called _loadDetails for activity ' +
         widget._activity.id.toString() +
@@ -342,6 +299,7 @@ class _ActivityViewState extends State<ActivityView> {
                 height: 8.0,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: buttons(activity),
               )
             ],

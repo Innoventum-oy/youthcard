@@ -120,6 +120,16 @@ class S {
     );
   }
 
+  /// `Benefits`
+  String get benefits {
+    return Intl.message(
+      'Benefits',
+      name: 'benefits',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Continue`
   String get btnContinue {
     return Intl.message(
@@ -380,6 +390,16 @@ class S {
     );
   }
 
+  /// `Error`
+  String get error {
+    return Intl.message(
+      'Error',
+      name: 'error',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Errors in form contents`
   String get errorsInForm {
     return Intl.message(
@@ -520,6 +540,16 @@ class S {
     );
   }
 
+  /// `Location retrieved`
+  String get locationRetrieved {
+    return Intl.message(
+      'Location retrieved',
+      name: 'locationRetrieved',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Login`
   String get login {
     return Intl.message(
@@ -535,6 +565,16 @@ class S {
     return Intl.message(
       'Login failed',
       name: 'loginFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event log is empty`
+  String get logIsEmpty {
+    return Intl.message(
+      'Event log is empty',
+      name: 'logIsEmpty',
       desc: '',
       args: [],
     );
@@ -595,6 +635,26 @@ class S {
     return Intl.message(
       'No users found',
       name: 'noUsersFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No active benefits`
+  String get noActiveBenefits {
+    return Intl.message(
+      'No active benefits',
+      name: 'noActiveBenefits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error`
+  String get statusError {
+    return Intl.message(
+      'Error',
+      name: 'statusError',
       desc: '',
       args: [],
     );
@@ -1020,6 +1080,16 @@ class S {
     );
   }
 
+  /// `User not found`
+  String get userNotFound {
+    return Intl.message(
+      'User not found',
+      name: 'userNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Validate contact information`
   String get validateContactTitle {
     return Intl.message(
@@ -1045,6 +1115,26 @@ class S {
     return Intl.message(
       'Verify',
       name: 'verify',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Visit recorded`
+  String get visitRecorded {
+    return Intl.message(
+      'Visit recorded',
+      name: 'visitRecorded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Visits`
+  String get visits {
+    return Intl.message(
+      'Visits',
+      name: 'visits',
       desc: '',
       args: [],
     );
