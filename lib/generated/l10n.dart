@@ -230,6 +230,16 @@ class S {
     );
   }
 
+  /// `No camera available`
+  String get cameraNotAvailable {
+    return Intl.message(
+      'No camera available',
+      name: 'cameraNotAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Calendar`
   String get calendar {
     return Intl.message(
@@ -325,6 +335,16 @@ class S {
     return Intl.message(
       'Contact methods',
       name: 'contactMethods',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Content not found`
+  String get contentNotFound {
+    return Intl.message(
+      'Content not found',
+      name: 'contentNotFound',
       desc: '',
       args: [],
     );
@@ -630,11 +650,31 @@ class S {
     );
   }
 
+  /// `No visits today`
+  String get noVisitsToday {
+    return Intl.message(
+      'No visits today',
+      name: 'noVisitsToday',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `No users found`
   String get noUsersFound {
     return Intl.message(
       'No users found',
       name: 'noUsersFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No thank you`
+  String get noThankYou {
+    return Intl.message(
+      'No thank you',
+      name: 'noThankYou',
       desc: '',
       args: [],
     );
@@ -775,6 +815,16 @@ class S {
     return Intl.message(
       'Please complete the form properly',
       name: 'pleaseCompleteFormProperly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enable camera for scanning QR codes`
+  String get pleaseEnableCamera {
+    return Intl.message(
+      'Please enable camera for scanning QR codes',
+      name: 'pleaseEnableCamera',
       desc: '',
       args: [],
     );

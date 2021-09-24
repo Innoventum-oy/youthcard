@@ -47,6 +47,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "btnValidateContactLater":
             MessageLookupByLibrary.simpleMessage("Later"),
         "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
+        "cameraNotAvailable":
+            MessageLookupByLibrary.simpleMessage("No camera available"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "city": MessageLookupByLibrary.simpleMessage("City"),
         "clearCache": MessageLookupByLibrary.simpleMessage("Clear cache"),
@@ -62,6 +64,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Contact information validated"),
         "contactMethods":
             MessageLookupByLibrary.simpleMessage("Contact methods"),
+        "contentNotFound":
+            MessageLookupByLibrary.simpleMessage("Content not found"),
         "createAccount": MessageLookupByLibrary.simpleMessage("Create account"),
         "discover": MessageLookupByLibrary.simpleMessage("Discover"),
         "email": MessageLookupByLibrary.simpleMessage("Email"),
@@ -100,7 +104,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "myCard": MessageLookupByLibrary.simpleMessage("My Card"),
         "noActiveBenefits":
             MessageLookupByLibrary.simpleMessage("No active benefits"),
+        "noThankYou": MessageLookupByLibrary.simpleMessage("No thank you"),
         "noUsersFound": MessageLookupByLibrary.simpleMessage("No users found"),
+        "noVisitsToday":
+            MessageLookupByLibrary.simpleMessage("No visits today"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Not verified"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
         "pageContent": MessageLookupByLibrary.simpleMessage("Page"),
@@ -118,6 +125,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "phoneOrEmail": MessageLookupByLibrary.simpleMessage("Phone or Email"),
         "pleaseCompleteFormProperly": MessageLookupByLibrary.simpleMessage(
             "Please complete the form properly"),
+        "pleaseEnableCamera": MessageLookupByLibrary.simpleMessage(
+            "Please enable camera for scanning QR codes"),
         "pleaseEnterConfirmationKey": MessageLookupByLibrary.simpleMessage(
             "Please enter confirmation key"),
         "pleaseEnterPassword":

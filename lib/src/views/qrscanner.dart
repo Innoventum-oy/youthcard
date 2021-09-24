@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'dart:async';
 //import 'dart:convert';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -16,7 +15,7 @@ import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/views/activity/activityvisitlist.dart';
-import 'package:youth_card/src/views/eventlog.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 //queuing mechanism
 import 'package:queue/queue.dart';
@@ -41,7 +40,7 @@ class QRScanner extends StatefulWidget {
 }
 
 class _QRScannerState extends State<QRScanner> {
-
+  bool canShowQRScanner = false;
   String? sentcode;
   List<String> codeQueue=[];
   final queue = Queue(delay: const Duration(milliseconds: 100));
@@ -252,10 +251,48 @@ class _QRScannerState extends State<QRScanner> {
       alp.setUser(user);
       alp.loadMyItems();
     }
+    getCameraPermission();
     super.initState();
   }
 
+  void getCameraPermission() async {
 
+    var status = await Permission.camera.status;
+    print('Camera status: '+status.toString()); // prints PermissionStatus.granted
+    if (!status.isGranted) {
+      print('creating permission request');
+      final result = await Permission.camera.request();
+      print('request result:' +result.toString());
+      if (result.isGranted) {
+        setState(() {
+          canShowQRScanner = true;
+        });
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: Text('Camera Permission'),
+              content: Text(
+                  AppLocalizations.of(context)!.pleaseEnableCamera),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: Text(AppLocalizations.of(context)!.noThankYou),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                ElevatedButton(
+                  child: Text(AppLocalizations.of(context)!.settings),
+                  onPressed: () => openAppSettings(),
+                ),
+              ],
+            ));
+
+      }
+    } else {
+      setState(() {
+        canShowQRScanner = true;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     print('build called for QRscanner');
@@ -309,6 +346,8 @@ class _QRScannerState extends State<QRScanner> {
         }).toList(),
       );
     }
+
+print('returning scaffold');
         return Scaffold(
           appBar: AppBar(
             centerTitle: true,
@@ -334,9 +373,13 @@ class _QRScannerState extends State<QRScanner> {
             children: <Widget>[
               if(widget.activity==null && myActivities.isNotEmpty) activitySelect,//Text('You have 0 activities '+(this.user.firstname ?? 'anonymous dude')),
               // QR Scanner section
-              Expanded(flex: 4, child: _buildQrView(context)),
+              Expanded(flex: 4, child:canShowQRScanner ? _buildQrView(context) : ListTile(
+                  leading: Icon(Icons.error),
+                  title: Text(AppLocalizations.of(context)!
+                  .cameraNotAvailable),),
+              ),
               //lower section
-              Expanded(
+              if(canShowQRScanner)Expanded(
                 flex: 2,
                 child: FittedBox(
                   fit: BoxFit.contain,
@@ -353,7 +396,7 @@ class _QRScannerState extends State<QRScanner> {
                                 Icon(Icons.check_circle_outlined),
                                 Text(AppLocalizations.of(context)!
                                     .locationRetrieved)
-                              ]);Text(data.data.toString());
+                              ]);
                             } else {
                               return Row(children: [
                                 CircularProgressIndicator(),
@@ -519,6 +562,7 @@ class _QRScannerState extends State<QRScanner> {
 
   @override
   void dispose() {
+    if(controller!=null)
     controller!.dispose();
     super.dispose();
   }

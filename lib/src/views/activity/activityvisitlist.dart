@@ -7,7 +7,6 @@ import 'package:youth_card/src/objects/activityvisit.dart';
 import 'package:youth_card/src/objects/webpage.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/providers/webpageprovider.dart';
-import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/objects/user.dart';
@@ -30,14 +29,16 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
   User user = new User();
   WebPage page = new WebPage();
   List<ActivityVisit> visits=[];
-  List<User> users = [];
+  Map<int,User> _users = {};
+
   @override
   void initState() {
     print('initState '+widget.viewTitle);
     this.user = Provider.of<UserProvider>(context,listen:false).user;
     widget.visitListProvider.setUser(this.user);
 
-    //See if info page exists for the view
+
+
     updateUsers();
     super.initState();
   }
@@ -54,6 +55,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
   @override
   void didChangeDependencies() {
     print('didChangeDepenencies '+widget.viewTitle);
+    //See if info page exists for the view
     Provider.of<WebPageProvider>(context,listen:false).loadItem({'language' : Localizations.localeOf(context).toString(),
       'commonname': widget.viewTitle,
       'fields' :'id,commonname,pagetitle,textcontents',
@@ -97,19 +99,23 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
               icon: Icon(Icons.refresh),
               onPressed: () {
                 print('Refreshing view');
-                setState(() {
-                  //TODO refresh visit list. Also to implement timer to scan for updates!
+                updateUsers();
 
-                });
 
-                Provider.of<WebPageProvider>(context,listen:false).refresh(user);
               })
         ],
       ),
-      body:  ListView.builder(
+      body: visits.isNotEmpty ? ListView.builder(
           itemCount: visits.length,
           itemBuilder: (BuildContext context, int index) {
             ActivityVisit visit = visits[index];
+
+            if(this._users.isNotEmpty && this._users.containsKey(visit.userid) )
+            {
+              print('USER already on list!');
+              User user = this._users[visit.userid]!;
+              return userListTile(visit,user);
+           }
             print('loading data for user '+visit.userid!.toString() );
             Future<User> userdata = visit.userprovider!.loadUser(visit.userid ?? 0, this.user);
 
@@ -118,8 +124,9 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
                 future: userdata,
                 builder: (context, AsyncSnapshot snapshot){
 
-                  var titleDateFormat = new DateFormat('dd.MM hh:mm');
+
                   if(snapshot.data==null){
+                    var titleDateFormat = new DateFormat('dd.MM hh:mm');
                     return ListTile(
                       leading: Icon(Icons.error),
                       title: Text(titleDateFormat.format(visit.startdate?? DateTime.now()).toString()+': '+AppLocalizations.of(context)!.userNotFound),
@@ -128,41 +135,13 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
                   if(snapshot.data.id!=null ){
 
                     User user = snapshot.data;
+                    this._users.putIfAbsent(user.id!,()=>user);
+                   // if(!users.containsKey(user.id)) users[user.id!] = user;
 
-                    return ListTile(
-                      leading: InkWell(
-                          child: CircleAvatar(
-                            radius: 20,
-                            backgroundImage: user.data!['userimageurl'] != null && user.data!['userimageurl']!.isNotEmpty
-                                ? CachedNetworkImageProvider(user.data!['userimageurl']!)
-                                : null,
-                            child: getInitials(user),
-                          ),
-                          onTap: () {
-                             Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => MyCard(user:user)),
-                            );
-
-                          }),
-                      title: Text(titleDateFormat.format(visit.startdate?? DateTime.now()).toString()+': '+user.fullname),
-                      subtitle: user.userbenefits.isNotEmpty ? Container(
-                          height: 30,
-                          //padding: EdgeInsets.only(left: 10, right: 10),
-                          child: GridView.builder(
-                              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 120,
-                              ),
-                              itemCount: user.userbenefits.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return _userBenefitListItem(user.userbenefits[index]);
-                              }),
-                        )
-                      : Text(AppLocalizations.of(context)!.noActiveBenefits),
-                    );
+                    return userListTile(visit,user);
                   }
                   else {
-
+                    var titleDateFormat = new DateFormat('dd.MM hh:mm');
                     return ListTile(
                       leading: CircularProgressIndicator(),
                       title: Text(titleDateFormat.format(visit.startdate?? DateTime.now()).toString()+': '+AppLocalizations.of(context)!.loading),
@@ -171,9 +150,47 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
                 }
             );
           }
+      ) :  ListTile(
+          leading: Icon(Icons.info_outline),title:Text(AppLocalizations.of(context)!.noVisitsToday)
       ),
     );
 
+  }
+
+  Widget userListTile(ActivityVisit visit, User user)
+  {
+    var titleDateFormat = new DateFormat('dd.MM hh:mm');
+   return ListTile(
+      leading: InkWell(
+          child: CircleAvatar(
+            radius: 20,
+            backgroundImage: user.data!['userimageurl'] != null && user.data!['userimageurl']!.isNotEmpty
+                ? CachedNetworkImageProvider(user.data!['userimageurl']!)
+                : null,
+            child: getInitials(user),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MyCard(user:user)),
+            );
+
+          }),
+      title: Text(titleDateFormat.format(visit.startdate?? DateTime.now()).toString()+': '+user.fullname),
+      subtitle: user.userbenefits.isNotEmpty ? Container(
+        height: 30,
+        //padding: EdgeInsets.only(left: 10, right: 10),
+        child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 120,
+            ),
+            itemCount: user.userbenefits.length,
+            itemBuilder: (BuildContext context, int index) {
+              return _userBenefitListItem(user.userbenefits[index]);
+            }),
+      )
+          : Text(AppLocalizations.of(context)!.noActiveBenefits),
+    );
   }
 
   Widget _userBenefitListItem(benefit) {

@@ -1,5 +1,4 @@
 import 'package:intl/intl.dart';
-import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 
 enum VisitStatus{

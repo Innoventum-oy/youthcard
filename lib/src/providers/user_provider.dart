@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
 import 'package:youth_card/src/objects/user.dart';
-import 'package:youth_card/src/objects/userbenefit.dart';
 import 'package:youth_card/src/providers/objectprovider.dart';
 import 'package:youth_card/src/util/api_client.dart';
 
@@ -100,7 +99,7 @@ class UserProvider with ChangeNotifier {
       var result = await userBenefitProvider.loadItems(params);
 
       this._user.userbenefits.addAll(result);
-      print(result.length.toString() + ' benefits currently loaded for user '+this.user.fullname+'!');
+     // print(result.length.toString() + ' benefits currently loaded for user '+this.user.fullname+'!');
     }
     catch (e, stack) {
       print('loadItems returned error $e\n Stack trace:\n $stack');

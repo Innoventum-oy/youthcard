@@ -289,7 +289,7 @@ class ApiClient {
 
     return _getJson(url).then((json) => json['data']).then((data) {
 
-      return data.first;
+      return data!=null ? data.first : null;
     });
   }
 

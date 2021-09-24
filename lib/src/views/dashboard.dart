@@ -111,8 +111,9 @@ class _DashBoardState extends State<DashBoard> {
     objectmodel.ActivityListProvider provider = objectmodel.ActivityListProvider();
     objectmodel.ImageProvider imageprovider = objectmodel.ImageProvider();
 
+    print(this.page.runtimeType.toString()+': '+this.page.id.toString());
 
-    bool hasInfoPage = this.page.id != null ? true : false;
+    bool hasInfoPage = this.page.id != null && this.page.runtimeType.toString()=='WebPage' ? true : false;
     bool isTester = false;
     if(user.data!=null) {
       if (user.data!['istester'] != null) {

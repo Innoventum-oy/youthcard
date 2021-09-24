@@ -46,7 +46,7 @@ class _MyCardState extends State<MyCard> {
 
 
         benefits.addAll(result);
-        print(result.length.toString() + ' benefits currently loaded!');
+       // print(result.length.toString() + ' benefits currently loaded!');
         //_isLoading = false;
       });
     } catch (e, stack) {
@@ -64,10 +64,18 @@ class _MyCardState extends State<MyCard> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       User user =widget.user ?? Provider.of<UserProvider>(context, listen: false).user;
 
-      if(widget.user==null)_loadBenefits(user);
+      if(widget.user==null) {
+
+       //   print('no user provided for widget, loading benefits using userprovider from context');
+          _loadBenefits(user);
+
+      }
       else {
+        setState(() {
+       // print('user object provided for widget, setting benefits to done and using userbenefits from object');
         _benefitsLoadingState = LoadingState.DONE;
         benefits = widget.user!.userbenefits;
+        });
       }
     });
     super.initState();
@@ -78,7 +86,7 @@ class _MyCardState extends State<MyCard> {
     User user = widget.user ?? Provider.of<UserProvider>(context).user;
     bool isTester = false;
     if(user.data!=null) {
-      print(user.data.toString());
+
       if (user.data!['istester'] != null) {
         if (user.data!['istester'] == 'true') isTester = true;
       }
@@ -145,15 +153,16 @@ class _MyCardState extends State<MyCard> {
     nameparts.add(user.lastname ?? 'Doe');
 
     String username = nameparts.join(' ');
+    var avatarImage;
+    if(user.data!['userimageurl'] != null && user.data!['userimageurl']!.isNotEmpty) avatarImage = NetworkImage(user.data!['userimageurl']);
+    else if(user.image != null && user.image!.isNotEmpty) avatarImage = NetworkImage(user.image);
+    else avatarImage =Image.asset('images/profile.png').image ;
     return Padding(
       padding: EdgeInsets.only(left: 20, right: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          _drawAvatar(
-              user.image != null && user.image!.isNotEmpty
-                  ? NetworkImage(user.image)
-                  : Image.asset('images/profile.png').image,
+          _drawAvatar(avatarImage,
               user),
           Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             _drawLabel(context, username),
@@ -187,6 +196,7 @@ class _MyCardState extends State<MyCard> {
   }
 
   Widget _getBenefitsSection(user) {
+    print('_getBenefitsSection gets called');
     switch (_benefitsLoadingState) {
       case LoadingState.DONE:
         //data loaded

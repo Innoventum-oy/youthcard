@@ -95,7 +95,7 @@ class ActivityVisitListProvider extends ObjectProvider {
       'activityid': activity.id.toString(),
       'api_key': this.user.token ?? await Settings().getValue("anonymousapikey"),
       'sort' : 'startdate DESC',
-     // 'startdate': "gte:"+DateFormat('yyyy-MM-dd').format(now)
+      'startdate': "gte:"+DateFormat('yyyy-MM-dd').format(now)
     };
     this._data = await _apiClient.loadActivityVisits(params);
     print(this._data!.length.toString()+' activityvisits loaded');
@@ -123,7 +123,7 @@ class ActivityListProvider extends ObjectProvider {
     final Map<String, String> params = {
       'activitystatus': 'active',
       'api_key': this.user.token ?? await Settings().getValue("anonymousapikey"),
-      'startdate': DateFormat('yyyy-MM-dd').format(now)
+      'gte:startdate': DateFormat('yyyy-MM-dd').format(now)
     };
      this._data = await this.loadItems(params,refresh:true);
   }

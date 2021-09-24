@@ -48,6 +48,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "btnValidateContactLater":
             MessageLookupByLibrary.simpleMessage("Myöhemmin"),
         "calendar": MessageLookupByLibrary.simpleMessage("Kalenteri"),
+        "cameraNotAvailable":
+            MessageLookupByLibrary.simpleMessage("Kamera ei ole käytettävissä"),
         "cancel": MessageLookupByLibrary.simpleMessage("Peruuta"),
         "city": MessageLookupByLibrary.simpleMessage("Kaupunki"),
         "clearCache":
@@ -63,6 +65,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "contactInformationValidated":
             MessageLookupByLibrary.simpleMessage("Yhteystieto vahvistettu"),
         "contactMethods": MessageLookupByLibrary.simpleMessage("Yhteystiedot"),
+        "contentNotFound":
+            MessageLookupByLibrary.simpleMessage("Sisältöä ei löytynyt"),
         "createAccount":
             MessageLookupByLibrary.simpleMessage("Luo käyttäjätili"),
         "discover": MessageLookupByLibrary.simpleMessage("Tapahtumat"),
@@ -103,8 +107,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "myCard": MessageLookupByLibrary.simpleMessage("Oma kortti"),
         "noActiveBenefits":
             MessageLookupByLibrary.simpleMessage("Ei etuja käytössä"),
+        "noThankYou": MessageLookupByLibrary.simpleMessage("Ei kiitos"),
         "noUsersFound":
             MessageLookupByLibrary.simpleMessage("Ei ilmoittautuneita"),
+        "noVisitsToday":
+            MessageLookupByLibrary.simpleMessage("Ei käyntejä tänään"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Ei vahvistettu"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
         "pageContent": MessageLookupByLibrary.simpleMessage("Sivusisältö"),
@@ -123,6 +130,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Puhelin tai sähköpostiosoite"),
         "pleaseCompleteFormProperly": MessageLookupByLibrary.simpleMessage(
             "Täytäthän kaikki vaadittavat kohdat"),
+        "pleaseEnableCamera": MessageLookupByLibrary.simpleMessage(
+            "Salli kameran käyttö jotta voit skannata QR-koodeja"),
         "pleaseEnterConfirmationKey":
             MessageLookupByLibrary.simpleMessage("Anna vahvistuskoodi"),
         "pleaseEnterPassword":
