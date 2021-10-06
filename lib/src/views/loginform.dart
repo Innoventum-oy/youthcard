@@ -41,7 +41,13 @@ class _LoginState extends State<Login> {
         }));
 
     Settings().getServerName().then((val) => setState(() {
+     // print("getting server for loginstate "+val);
           serverName = val;
+          if(AppUrl.anonymousApikeys.containsKey(serverName)) {
+            Settings().setValue(
+                'anonymousapikey', AppUrl.anonymousApikeys[serverName]);
+            //print("Anonymous api key for " + serverName + " set to " +AppUrl.anonymousApikeys[serverName]!);
+          }
         }));
   }
 
@@ -260,7 +266,7 @@ class _LoginState extends State<Login> {
           if(AppUrl.anonymousApikeys.containsKey(serverTitle)) {
             Settings().setValue(
                 'anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
-            print("Anonymous api key for " + serverTitle + " set to " +AppUrl.anonymousApikeys[serverTitle]!);
+            //print("Anonymous api key for " + serverTitle + " set to " +AppUrl.anonymousApikeys[serverTitle]!);
           }
           else
             Settings().setValue('anonymousapikey', null);
