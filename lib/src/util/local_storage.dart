@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:glob/glob.dart';
 import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 class FileStorage {
   static Future<bool> write(dynamic data, String filename) async {
@@ -48,9 +48,9 @@ class FileStorage {
              print("deleted "+ directoryEntry.toString());
 
     }
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+   /* SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.clear();
-
+*/
   }
     static void delete(String filename) async {
       final servername = await Settings().getServerName();

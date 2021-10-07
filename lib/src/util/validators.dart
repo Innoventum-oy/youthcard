@@ -17,7 +17,7 @@ String? validateContact(String? value)
   if(value!.isEmpty) return 'Please enter your phone number or email address';
 
   //test for phone number pattern
-  String pattern = r'(^(?:[+0])?[0-9]{10,12}$)';
+  String pattern = r'(^(?:[+0])?[0-9]{8,15}$)';
   RegExp regExp = new RegExp(pattern);
   if (regExp.hasMatch(value)) {
     return null;
