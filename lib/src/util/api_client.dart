@@ -60,7 +60,7 @@ class ApiClient {
       }
       else {
         print('adding $key = $value');
-        request.fields[key] = value;
+        request.fields[key] = json.encode(value);
       }
     });
     print('calling (post) '+uri.toString());
@@ -297,7 +297,7 @@ class ApiClient {
     String baseUrl = await Settings().getServer();
     String? apikey = await Settings().getValue("anonymousapikey") ;
     if(!params.containsKey("api_key") ) {
-      print('no api_key provided in params: using anonymous apikey for calling getDatalist');
+    //  print('no api_key provided in params: using anonymous apikey '+apikey+' for calling getDatalist');
       params["api_key"] = apikey;
     }
     else print('using user api_key '+params['api_key'].toString());
