@@ -57,13 +57,16 @@ class ActivityVisit {
 
     DateTime formatFromString(String value) {
       DateTime val;
+
       try {
         //try this format
         val = DateFormat('dd.MM.yyyy HH:mm:ss').parse(value);
+
         return val;
       } catch (e) {
         try {
           val = DateFormat('yyyy-MM-dd HH:mm:ss').parse(value);
+
           return val;
         } catch (e) {}
       }

@@ -20,9 +20,7 @@ class ApiClient {
   static final _client = ApiClient._internal();
   //final _http = HttpClient();
   ApiClient._internal();
-
-
-
+  bool isProcessing = false;
 
   factory ApiClient() => _client;
 
@@ -31,7 +29,7 @@ class ApiClient {
   */
   Future<dynamic> _postJson(Uri uri, Map<String, dynamic> data) async
   {
-
+  this.isProcessing = true;
     Map softwareInfo = {
       'appName': '',
       'packageName':'',
@@ -52,7 +50,7 @@ class ApiClient {
     var request = new http.MultipartRequest("POST", uri);
     headers.forEach((k,v){ request.headers[k]=v;});
 
-    print('POSTing dat as MultipartRequest:');
+    print('POSTing data as MultipartRequest:');
     data.forEach((key, value) async {
       if (value is File) {
         print('adding file '+key);
@@ -65,8 +63,7 @@ class ApiClient {
     });
     print('calling (post) '+uri.toString());
     http.Response response = await http.Response.fromStream(await request.send());
-
-
+    this.isProcessing = false;
     if (response.statusCode == 200) {
       if(response.body.isNotEmpty) {
         print('RESPONSE');
@@ -86,7 +83,6 @@ class ApiClient {
         print('response body was empty');
         return false;
       }
-
     }
     else{
       print(response.statusCode);
@@ -98,8 +94,8 @@ class ApiClient {
       }
       return false;
     }
-
   }
+
 
   /*
   * _getJson handles request and returns the json decoded data from server back to caller function
@@ -107,15 +103,15 @@ class ApiClient {
   Future<dynamic> _getJson(Uri uri) async {
     //debug
     print('calling '+uri.toString());
-
+  this.isProcessing = true;
   //Create software version header
   Map softwareInfo = {
     'appName': '',
     'packageName':'',
     'version':'',
     'buildNumber' :'',
-
   };
+
   PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
     softwareInfo['appName'] = packageInfo.appName;
     softwareInfo['packageName'] = packageInfo.packageName;
@@ -130,6 +126,7 @@ class ApiClient {
     var response = await http.get(uri,headers:headers);
     //todo: better handling of statuscodes other than 200 or forwarding them to function calling _getJSON
    // print(response.statusCode);
+    this.isProcessing = false;
     if(response.statusCode==200) {
       if(response.body.isNotEmpty) {
 
@@ -150,6 +147,27 @@ class ApiClient {
       }
     }
     else return false;
+
+  }
+
+  /* Save object data */
+  Future<dynamic> saveObject(params,objectData) async{
+    this.isProcessing = true;
+    String baseUrl = await Settings().getServer();
+    String? apikey = await Settings().getValue("anonymousapikey") ;
+    if(!params.containsKey("api_key") ) {
+      //  print('no api_key provided in params: using anonymous apikey '+apikey+' for calling getDatalist');
+      params["api_key"] = apikey;
+    }
+    else print('using user api_key '+params['api_key'].toString());
+
+    params['method'] = 'json';
+    var url = Uri.https(baseUrl, 'api/dispatcher/common/', params);
+    this.isProcessing = false;
+    return _postJson(url,objectData).then((json) {
+      return json == false ? [] : json;
+
+    });
 
   }
 
@@ -280,14 +298,26 @@ class ApiClient {
     });
 
   }
-
+  /* Getdetails returns only the object data. To get also description, use getObject */
   Future<dynamic> getDetails(String objectType,int objectId,User loggedInUser,{fields}) async{
     String baseUrl = await Settings().getServer();
     String? apikey = loggedInUser.token!=null ? loggedInUser.token : await Settings().getValue("anonymousapikey") ;
   //  print('calling getDetails with apikey '+( apikey?? ' not set'));
     var url = Uri.https(baseUrl, 'api/$objectType/$objectId', { 'api_key':apikey});
-
+    // Returns only
     return _getJson(url).then((json) => json['data']).then((data) {
+
+      return data!=null ? data.first : null;
+    });
+  }
+
+  Future<dynamic> getObject(String objectType,int objectId,User loggedInUser,{fields}) async{
+    String baseUrl = await Settings().getServer();
+    String? apikey = loggedInUser.token!=null ? loggedInUser.token : await Settings().getValue("anonymousapikey") ;
+    //  print('calling getDetails with apikey '+( apikey?? ' not set'));
+    var url = Uri.https(baseUrl, 'api/$objectType/$objectId', { 'api_key':apikey});
+    // Returns only
+    return _getJson(url).then((data){
 
       return data!=null ? data.first : null;
     });
@@ -380,7 +410,7 @@ class ApiClient {
     };
     return this.dispatcherRequest('activity',params).then((data) {
      // print(data);
-      Map <dynamic,String> returnData = Map<dynamic,String>.from(data);
+      Map <dynamic,String> returnData = Map<dynamic,String>.from(data['visits']);
       return returnData;
 
     });
@@ -527,8 +557,7 @@ class ApiClient {
     var url = Uri.https(baseUrl, '/api/dispatcher/activity/', params);
     var response = await _getJson(url) ;
 
-    if (response['message'].isNotEmpty)
-      print(response['message']);
+
     return response;
   }
   /*

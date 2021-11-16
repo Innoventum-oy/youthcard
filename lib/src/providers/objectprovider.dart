@@ -18,10 +18,12 @@ import 'package:youth_card/src/util/shared_preference.dart';
 abstract class ObjectProvider with ChangeNotifier {
   User _user = new User();
   ApiClient _apiClient = ApiClient();
+
   bool setUser(User user) {
-    print('user set for objectprovider to '+user.lastname.toString()+' '+user.firstname.toString());
+    print('user set for objectprovider to ' + user.lastname.toString() + ' ' +
+        user.firstname.toString());
     _user = user;
- // do it silent:  notifyListeners();
+    // do it silent:  notifyListeners();
     return true;
   }
 
@@ -30,6 +32,10 @@ abstract class ObjectProvider with ChangeNotifier {
   Future<List<dynamic>> loadItems(params);
 
   Future<dynamic> getDetails(int itemId, user);
+
+  Future<dynamic> saveObject(Map params, Map objectData) async {
+    return _apiClient.saveObject(params, objectData);
+  }
 }
 
 class ImageProvider extends ObjectProvider {
@@ -84,7 +90,7 @@ class ActivityVisitListProvider extends ObjectProvider {
     return _apiClient.getActivityVisitDetails(id, user);
   }
 
-  Future<List<ActivityVisit>?> loadActivityVisits(Activity activity) async
+  Future<List<ActivityVisit>?> loadActivityVisits(Activity activity,{loadParams}) async
   {
     this._data?.clear();
     print('loadVisits called for '+(activity.name ?? '')+' user:'+(this.user.fullname));
@@ -95,8 +101,9 @@ class ActivityVisitListProvider extends ObjectProvider {
       'activityid': activity.id.toString(),
       'api_key': this.user.token ?? await Settings().getValue("anonymousapikey"),
       'sort' : 'startdate DESC',
-      'startdate': "gte:"+DateFormat('yyyy-MM-dd').format(now)
+      'startdateFrom':  (loadParams['startdate'] ?? DateFormat('yyyy-MM-dd').format(now))
     };
+    if(loadParams['enddate']!=null) params['startdateTo'] =loadParams['enddate'];
     this._data = await _apiClient.loadActivityVisits(params);
     print(this._data!.length.toString()+' activityvisits loaded');
     notifyListeners();

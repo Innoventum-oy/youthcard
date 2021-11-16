@@ -27,6 +27,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "activity": MessageLookupByLibrary.simpleMessage("Tapahtuma"),
         "activityCalendar":
             MessageLookupByLibrary.simpleMessage("Tapahtumakalenteri"),
+        "activityRegistrationFailed": MessageLookupByLibrary.simpleMessage(
+            "Ilmoittautuminen epäonnistui"),
+        "activityRegistrationSaved": MessageLookupByLibrary.simpleMessage(
+            "Ilmoittautuminen vastaanotettu"),
         "address": MessageLookupByLibrary.simpleMessage("Osoite"),
         "authenticating":
             MessageLookupByLibrary.simpleMessage("Kirjautuminen käynnissä"),
@@ -51,6 +55,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "cameraNotAvailable":
             MessageLookupByLibrary.simpleMessage("Kamera ei ole käytettävissä"),
         "cancel": MessageLookupByLibrary.simpleMessage("Peruuta"),
+        "changesSaved":
+            MessageLookupByLibrary.simpleMessage("Muutokset tallennettu"),
+        "chooseFile": MessageLookupByLibrary.simpleMessage("Choose file"),
         "city": MessageLookupByLibrary.simpleMessage("Kaupunki"),
         "clearCache":
             MessageLookupByLibrary.simpleMessage("Tyhjennä välimuisti"),
@@ -88,6 +95,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Unohditko salasanan?"),
         "frontCamera": MessageLookupByLibrary.simpleMessage("Etukamera"),
         "getCode": MessageLookupByLibrary.simpleMessage("Pyydä koodi"),
+        "guardianPhone": MessageLookupByLibrary.simpleMessage("Huoltaja"),
         "language": MessageLookupByLibrary.simpleMessage("Kieli"),
         "lastName": MessageLookupByLibrary.simpleMessage("Sukunimi"),
         "loading": MessageLookupByLibrary.simpleMessage("Ladataan"),
@@ -110,6 +118,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noThankYou": MessageLookupByLibrary.simpleMessage("Ei kiitos"),
         "noUsersFound":
             MessageLookupByLibrary.simpleMessage("Ei ilmoittautuneita"),
+        "noVisitsFound": MessageLookupByLibrary.simpleMessage("Ei käyntejä"),
         "noVisitsToday":
             MessageLookupByLibrary.simpleMessage("Ei käyntejä tänään"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Ei vahvistettu"),
@@ -165,6 +174,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "resume": MessageLookupByLibrary.simpleMessage("jatka"),
         "retrievingCoordinates":
             MessageLookupByLibrary.simpleMessage("Haetaan sijaintia"),
+        "save": MessageLookupByLibrary.simpleMessage("Tallenna"),
+        "savingDataFailed": MessageLookupByLibrary.simpleMessage(
+            "Tietojen tallennus epäonnistui"),
         "settings": MessageLookupByLibrary.simpleMessage("Asetukset"),
         "settingsAccount": MessageLookupByLibrary.simpleMessage("Tili"),
         "settingsCommon": MessageLookupByLibrary.simpleMessage("Yleiset"),

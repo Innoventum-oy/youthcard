@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -30,7 +32,7 @@ class _ActivityViewState extends State<ActivityView> {
   final ApiClient _apiClient = ApiClient();
   Map<String, dynamic>? map;
   List<ActivityDate> activityDates = [];
-
+  Timer? _timer;
   int iteration = 1;
   int buildtime = 1;
   //bool _visible = false;
@@ -71,7 +73,7 @@ class _ActivityViewState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
-    print('rebuilding activity view');
+    print('rebuilding activity view: apiclient activity status is '+_apiClient.isProcessing.toString());
     final user = Provider.of<UserProvider>(context, listen: false).user;
     bool isTester = false;
     if(user.data!=null) {
@@ -113,13 +115,27 @@ class _ActivityViewState extends State<ActivityView> {
     final user = Provider.of<UserProvider>(context, listen: false).user;
     List<Widget> buttons = [];
 
-    if ((activity.registration ) && (user.token!=null )){
+    if(activity.registration
+        && ( activity.maxvisitors==null || (activity.maxvisitors??0) > (activity.registeredvisitorcount??0) )
+        && ( activity.registrationenddate==null || activity.registrationenddate!.isAfter(DateTime.now()))
+        && user.token!=null) {
+
 
       buttons.add(ElevatedButton(
-        child: Text(AppLocalizations.of(context)!.signUp),
+        child: _apiClient.isProcessing ?  SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(
+          value: null,
+          semanticsLabel: AppLocalizations.of(context)!.loading,
+        )) : Text(AppLocalizations.of(context)!.signUp),
         onPressed: () {
-          print('signing up for activity {$activity.name}');
-          _apiClient.registerForActivity(activity.id, user);
+          registerForActivity(activity,user);
+          setState(() {
+            print('signing up for activity {$activity.name}');
+
+          });
+
         },
       ));
 
@@ -175,7 +191,34 @@ class _ActivityViewState extends State<ActivityView> {
       ),
     );
   }
+  void registerForActivity(activity,user) async
+  {
+    print('registerForActivity called');
+    if (!_apiClient.isProcessing) {
+     print ('apiClient is not processing so we try again');
+      Map<String,dynamic> result = await _apiClient.registerForActivity(
+          activity.id, user);
+      setState(() {
+        switch(result['status'])
+        {
+          case 'success':
+            showMessage(context,AppLocalizations.of(context)!.activityRegistrationSaved ,Text(result['message']));
 
+            break;
+          default:
+            var message = Column(children:[
+              Icon(Icons.error_outline),
+              Text(result['message']),
+             if (result['errormessage']!=null) Text(result['errormessage'])
+            ]);
+            showMessage(context, AppLocalizations.of(context)!.activityRegistrationFailed,message);
+
+        }
+       print(result.toString()+', apiclient status: '+_apiClient.isProcessing.toString());
+
+      });
+    }
+  }
   void _loadDetails(user,{bool reload:false}) async {
     print('called _loadDetails for activity ' +
         widget._activity.id.toString() +
@@ -361,5 +404,26 @@ class _ActivityViewState extends State<ActivityView> {
 
       ),
     );
+  }
+
+  void showMessage(BuildContext context, String title, Widget content) {
+    showDialog(context: context, builder: (BuildContext builderContext) {
+      _timer = Timer(Duration(seconds: 5), () {
+        Navigator.of(context).pop();
+      });
+
+      return AlertDialog(
+        //backgroundColor: Colors.red,
+        title: Text(title),
+        content: SingleChildScrollView(
+          child: content,
+        ),
+      );
+    }
+    ).then((val) {
+      if (_timer!.isActive) {
+        _timer!.cancel();
+      }
+    });
   }
 }

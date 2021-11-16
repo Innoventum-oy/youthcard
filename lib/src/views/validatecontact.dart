@@ -46,7 +46,7 @@ class _ValidateContactState extends State<ValidateContact> {
   @protected
   @mustCallSuper
   void didChangeDependencies() {
-    Provider.of<UserProvider>(context, listen: false).getContactMethods();
+    //Provider.of<UserProvider>(context, listen: false).getContactMethods();
     if(widget.contactmethod!=null) contactItems.add(widget.contactmethod!);
     else if(!contactsLoaded) {
       contactItems = Provider

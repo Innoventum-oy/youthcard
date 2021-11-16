@@ -13,12 +13,14 @@ class User {
   String? image;
   String? qrcode;
   Map<String,dynamic>? data;
+  Map<String,dynamic>? description;
   List<UserBenefit> userbenefits = [];
   Map<String, dynamic>? benefits;
 
-  factory User.fromJson(Map<String, dynamic> responseData) {
+  factory User.fromJson(Map<String, dynamic> responseData,{description}) {
     //print("Current station for user: "+responseData['currentstation']['objectid'].toString());
-  // responseData.forEach((key, value) { print('$key = $value');});
+    // responseData.forEach((key, value) { print('$key = $value');});
+    print('User object description: '+description.toString());
     return User(
       id: responseData['id'] is int ? responseData['id'] : int.parse(responseData['id']),
       firstname: responseData['firstname'],
@@ -30,7 +32,8 @@ class User {
       renewalToken: responseData['renewal_token'],
       qrcode: responseData['qrcode'],
       image: responseData['image'],
-      data: responseData
+      data: responseData,
+      description: description ?? null
     );
 
   }
@@ -66,6 +69,7 @@ class User {
     this.image,
     this.qrcode,
     this.data,
+    this.description
 
 
   });

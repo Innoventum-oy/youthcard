@@ -260,6 +260,36 @@ class S {
     );
   }
 
+  /// `Changes saved`
+  String get changesSaved {
+    return Intl.message(
+      'Changes saved',
+      name: 'changesSaved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Guardian phone`
+  String get guardianPhone {
+    return Intl.message(
+      'Guardian phone',
+      name: 'guardianPhone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose file`
+  String get chooseFile {
+    return Intl.message(
+      'Choose file',
+      name: 'chooseFile',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Clear cache`
   String get clearCache {
     return Intl.message(
@@ -660,6 +690,16 @@ class S {
     );
   }
 
+  /// `No visits found`
+  String get noVisitsFound {
+    return Intl.message(
+      'No visits found',
+      name: 'noVisitsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `No users found`
   String get noUsersFound {
     return Intl.message(
@@ -685,6 +725,16 @@ class S {
     return Intl.message(
       'No active benefits',
       name: 'noActiveBenefits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message(
+      'Save',
+      name: 'save',
       desc: '',
       args: [],
     );
@@ -960,6 +1010,26 @@ class S {
     );
   }
 
+  /// `Registration saved`
+  String get activityRegistrationSaved {
+    return Intl.message(
+      'Registration saved',
+      name: 'activityRegistrationSaved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Registering for activity failed`
+  String get activityRegistrationFailed {
+    return Intl.message(
+      'Registering for activity failed',
+      name: 'activityRegistrationFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Registration failed`
   String get registrationFailed {
     return Intl.message(
@@ -1025,6 +1095,16 @@ class S {
     return Intl.message(
       'Scanner ready',
       name: 'readyToScan',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saving data failed`
+  String get savingDataFailed {
+    return Intl.message(
+      'Saving data failed',
+      name: 'savingDataFailed',
       desc: '',
       args: [],
     );
@@ -1125,6 +1205,16 @@ class S {
     return Intl.message(
       'unknown user',
       name: 'unknownUser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User information updated`
+  String get userInformationUpdated {
+    return Intl.message(
+      'User information updated',
+      name: 'userInformationUpdated',
       desc: '',
       args: [],
     );

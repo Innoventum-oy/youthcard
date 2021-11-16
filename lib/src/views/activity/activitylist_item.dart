@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/util/navigator.dart';
@@ -13,7 +15,7 @@ class ActivityListItem extends StatelessWidget{
 
   final ApiClient _apiClient = ApiClient();
   final Activity activityItem;
-
+  Timer? _timer;
   ActivityListItem(this.activityItem);
 
   int calculateDifference(DateTime date) {
@@ -33,7 +35,13 @@ class ActivityListItem extends StatelessWidget{
       },
     ));
     buttons.add(const SizedBox(width: 8));
-    if(activityItem.registration && user.token!=null) {
+    if(activityItem.registration){
+      buttons.add(Text((activityItem.registeredvisitorcount!=null ? activityItem.registeredvisitorcount.toString() : '0')+(activityItem.maxvisitors!=null ? '/'+activityItem.maxvisitors.toString() :'') ));
+    }
+    if(activityItem.registration
+        && ( activityItem.maxvisitors==null || (activityItem.maxvisitors??0) > (activityItem.registeredvisitorcount??0) )
+        && ( activityItem.registrationenddate==null || activityItem.registrationenddate!.isAfter(DateTime.now()))
+        && user.token!=null) {
       buttons.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.signUp),
         onPressed: () {
@@ -82,7 +90,26 @@ class ActivityListItem extends StatelessWidget{
     )
     );
   }
+  void showMessage(BuildContext context, String title, Widget content) {
+    showDialog(context: context, builder: (BuildContext builderContext) {
+      _timer = Timer(Duration(seconds: 5), () {
+        Navigator.of(context).pop();
+      });
 
+      return AlertDialog(
+        //backgroundColor: Colors.red,
+        title: Text(title),
+        content: SingleChildScrollView(
+          child: content,
+        ),
+      );
+    }
+    ).then((val) {
+      if (_timer!.isActive) {
+        _timer!.cancel();
+      }
+    });
+  }
 
 
 }

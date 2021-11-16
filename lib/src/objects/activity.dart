@@ -7,6 +7,7 @@ class Activity {
   DateTime? startdate;
   DateTime? enddate;
   DateTime? nexteventdate;
+  DateTime? registrationenddate;
   String? address;
   String? postcode;
   String? city;
@@ -16,25 +17,32 @@ class Activity {
   String? coverpictureurl;
   String? qrcode;
   int accesslevel;
+  int? maxvisitors;
+  int? registeredvisitorcount;
   bool registration;
 
   Activity(
-      {this.id,
-      this.name,
-      this.description,
-      this.startdate,
-      this.enddate,
-      this.nexteventdate,
-      this.address,
-      this.postcode,
-      this.city,
-      this.latitude,
-      this.longitude,
-      this.coverpicture,
-      this.coverpictureurl,
-      this.qrcode,
-      this.registration = false,
-      this.accesslevel = 0});
+      {
+        this.id,
+        this.name,
+        this.description,
+        this.startdate,
+        this.enddate,
+        this.nexteventdate,
+        this.address,
+        this.postcode,
+        this.city,
+        this.latitude,
+        this.longitude,
+        this.coverpicture,
+        this.coverpictureurl,
+        this.qrcode,
+        this.maxvisitors,
+        this.registeredvisitorcount,
+        this.registrationenddate,
+        this.registration = false,
+        this.accesslevel = 0
+      });
 
   factory Activity.fromJson(Map<String, dynamic> response) {
     DateTime formatFromString(String value) {
@@ -60,8 +68,9 @@ class Activity {
             : responseData['accesslevel']) >
         10) {
       //print("Access to object {$responseData['objectid']}: " + responseData['accesslevel'].toString());
-      //   responseData.forEach((key, value) { print('$key = $value');});
+
     }*/
+    responseData.forEach((key, value) { print('$key = $value');});
     Map<String, dynamic> coverpicture;
     if (responseData['coverpicture'].runtimeType == String) {
 
@@ -76,7 +85,7 @@ class Activity {
 
 
     return Activity(
-        id: responseData['objectid'] != null
+        id  : responseData['objectid'] != null
             ? int.parse(responseData['objectid'])
             :  int.parse(responseData['id']),
         name: responseData['name'],
@@ -90,6 +99,9 @@ class Activity {
         nexteventdate: responseData['nexteventdate'] != null
             ? formatFromString(responseData['nexteventdate'])
             : null,
+        registrationenddate: responseData['registrationenddate'] != null ? formatFromString(responseData['registrationenddate']) : null,
+        maxvisitors : responseData['maxvisitors'] is int ? responseData['maxvisitors'] : int.parse(responseData['maxvisitors']??0),
+        registeredvisitorcount: responseData['registeredvisitorcount'] is int? responseData['registeredvisitorcount'] : int.parse(responseData['registeredvisitorcount']),
         address: responseData['address'],
         postcode: responseData['postcode'],
         city: responseData['city'],
@@ -109,23 +121,27 @@ class Activity {
   }
 
   Map toJson() => {
-        'id': id.toString(),
-        'name': name,
-        'description': description,
-        'startdate': startdate.toString(),
-        'enddate': enddate.toString(),
-        'nexteventdate': nexteventdate.toString(),
-        'address': address,
-        'postcode': postcode,
-        'city': city,
-        'latitude': latitude,
-        'longitude': longitude,
-        'qrcode': qrcode,
-        'coverpicture': coverpicture,
-        'coverpictureurl': coverpictureurl,
-        'accesslevel': accesslevel,
-        'registration' : registration
-      };
+      'id': id.toString(),
+      'name': name,
+      'description': description,
+      'startdate': startdate.toString(),
+      'enddate': enddate.toString(),
+      'nexteventdate': nexteventdate.toString(),
+      'registrationenddate' : registrationenddate.toString(),
+      'address': address,
+      'postcode': postcode,
+      'city': city,
+      'latitude': latitude,
+      'longitude': longitude,
+      'qrcode': qrcode,
+      'coverpicture': coverpicture,
+      'coverpictureurl': coverpictureurl,
+      'accesslevel': accesslevel,
+      'registration' : registration,
+      'maxvisitors' : maxvisitors,
+      'registeredvisitorcount' : registeredvisitorcount
+
+  };
 
   @override
   bool operator ==(Object other) =>

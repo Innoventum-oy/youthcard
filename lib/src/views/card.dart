@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:youth_card/src/objects/contactmethod.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/objects/userbenefit.dart';
+import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/util/utils.dart';
+import 'package:youth_card/src/views/validatecontact.dart';
+import 'package:url_launcher/url_launcher.dart';
 /*
 * User card
 */
@@ -25,9 +29,26 @@ class MyCard extends StatefulWidget {
 
 class _MyCardState extends State<MyCard> {
   List<UserBenefit> benefits = [];
+  List<Widget> contactItems = [];
+  List<ContactMethod> myContacts = [];
   LoadingState _benefitsLoadingState = LoadingState.LOADING;
   //bool _isLoading = false;
   String? errormessage;
+  User user = new User();
+
+  _getUserInfo() async{
+    UserProvider provider = UserProvider();
+   await provider.loadUser(widget.user!.id ?? 0, Provider.of<UserProvider>(context, listen: false).user);
+    setState(() {
+      // print('user object provided for widget, setting benefits to done and using userbenefits from object');
+      _benefitsLoadingState = LoadingState.DONE;
+
+      benefits = widget.user!.userbenefits;
+
+      this.user = provider.user;
+     // this.myContacts = provider.contacts;
+    });
+  }
 
   _loadBenefits(user) async {
     print('loadbenefits called');
@@ -61,21 +82,18 @@ class _MyCardState extends State<MyCard> {
 
   @override
   void initState() {
+    this.user =widget.user ?? Provider.of<UserProvider>(context, listen: false).user;
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      User user =widget.user ?? Provider.of<UserProvider>(context, listen: false).user;
 
       if(widget.user==null) {
 
        //   print('no user provided for widget, loading benefits using userprovider from context');
           _loadBenefits(user);
-
+     // this.myContacts = Provider.of<UserProvider>(context, listen: false).contacts;
       }
       else {
-        setState(() {
-       // print('user object provided for widget, setting benefits to done and using userbenefits from object');
-        _benefitsLoadingState = LoadingState.DONE;
-        benefits = widget.user!.userbenefits;
-        });
+        this.user = widget.user as User;
+       _getUserInfo();
       }
     });
     super.initState();
@@ -83,7 +101,7 @@ class _MyCardState extends State<MyCard> {
 
   @override
   Widget build(BuildContext context) {
-    User user = widget.user ?? Provider.of<UserProvider>(context).user;
+    User user = this.user;
     bool isTester = false;
     if(user.data!=null) {
 
@@ -91,6 +109,117 @@ class _MyCardState extends State<MyCard> {
         if (user.data!['istester'] == 'true') isTester = true;
       }
     }
+
+    if(user.description!=null)
+      {
+        Map<String,dynamic> description = user.description ?? {};
+        description.forEach((key, value){
+          print(key+': '+value+' '+user.data![key]);
+        });
+      }else print('user description is NULL');
+/*
+    if(myContacts.isNotEmpty)
+    {
+      contactItems.clear();
+      for(var i in myContacts)
+      {
+        print(i.toString());
+        contactItems.add(
+            Row(
+
+                children:[Expanded(
+                    flex:1,
+                    child: Icon(i.type=='phone' ? Icons.phone_android :Icons.email)),
+                  Expanded(
+                      flex:4,
+                      child: Text(i.address.toString())),
+                  Expanded(
+                      flex:2,
+                      child:(i.verified! ? Icon(Icons.check_circle_outlined,semanticLabel:AppLocalizations.of(context)!.verified) : TextButton(
+                        onPressed: () {
+                          Provider.of<AuthProvider>(context,listen:false).setVerificationStatus(VerificationStatus.CodeNotRequested);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ValidateContact(contactmethod:i)),
+                          );
+                        },
+                        child:Text(
+                          AppLocalizations.of(context)!.verify ,
+                          style: TextStyle(
+                            // fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ))
+                  )
+                ]
+            )
+        );
+
+      }
+    }
+*/
+    contactItems.clear();
+    contactItems.add(Padding(
+      padding:EdgeInsets.all(10),
+      child:Column(
+
+        children:[
+          if(user.email!=null) TextButton(
+
+            onPressed:(){
+              launch("mailto:"+(user.email??''));
+
+            },
+            child:
+            SingleChildScrollView(
+              child:Container(
+                height: 30,
+                child:Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:
+                  [
+                    Icon(Icons.email),
+                    Flexible(child: Text(user.email ??'-',
+                      overflow: TextOverflow.clip,),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed:(){
+              launch("tel:"+(user.phone??''));
+            },
+            child: Container(
+              height: 25,
+              child: Row(
+                  children:[
+                    Icon(Icons.phone_android),
+                    Text(user.phone??'-')
+                  ]
+              ),
+            ),
+          ),
+          if(user.data!['huoltajan_puhelinnumero']!=null)
+            TextButton(
+              onPressed:(){
+                launch("tel:"+(user.data!['huoltajan_puhelinnumero']??''));
+              },
+              child: Container(
+                height: 25,
+                child: Row(
+                    children:[
+                      Icon(Icons.phone_android),
+                      Text(AppLocalizations.of(context)!.guardianPhone+': '+user.data!['huoltajan_puhelinnumero'])
+                    ]
+                ),
+              ),
+            ),
+        ]),
+    ),
+    );
     return OrientationBuilder(builder: (context, orientation) {
       //  print(orientation);
       // Choose between portraitlayout and landscapelayout based on device orientation
@@ -121,6 +250,7 @@ class _MyCardState extends State<MyCard> {
                 : Container()),
         SizedBox(height: 20),
         Center(child: _loggedInView(context, user)),
+        ...this.contactItems,
         SizedBox(height: 20),
         ElevatedButton(
             onPressed: () {
@@ -154,7 +284,7 @@ class _MyCardState extends State<MyCard> {
 
     String username = nameparts.join(' ');
     var avatarImage;
-    if(user.data!['userimageurl'] != null && user.data!['userimageurl']!.isNotEmpty) avatarImage = NetworkImage(user.data!['userimageurl']);
+    if(user.data!=null && user.data!['userimageurl'] != null && user.data!['userimageurl']!.isNotEmpty) avatarImage = NetworkImage(user.data!['userimageurl']);
     else if(user.image != null && user.image!.isNotEmpty) avatarImage = NetworkImage(user.image);
     else avatarImage =Image.asset('images/profile.png').image ;
     return Padding(

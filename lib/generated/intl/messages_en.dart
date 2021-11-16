@@ -28,6 +28,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "activity": MessageLookupByLibrary.simpleMessage("Activity"),
         "activityCalendar":
             MessageLookupByLibrary.simpleMessage("Activity calendar"),
+        "activityRegistrationFailed": MessageLookupByLibrary.simpleMessage(
+            "Registering for activity failed"),
+        "activityRegistrationSaved":
+            MessageLookupByLibrary.simpleMessage("Registration saved"),
         "address": MessageLookupByLibrary.simpleMessage("Address"),
         "authenticating": MessageLookupByLibrary.simpleMessage(
             "Authenticating ... Please wait"),
@@ -50,6 +54,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "cameraNotAvailable":
             MessageLookupByLibrary.simpleMessage("No camera available"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "changesSaved": MessageLookupByLibrary.simpleMessage("Changes saved"),
+        "chooseFile": MessageLookupByLibrary.simpleMessage("Choose file"),
         "city": MessageLookupByLibrary.simpleMessage("City"),
         "clearCache": MessageLookupByLibrary.simpleMessage("Clear cache"),
         "close": MessageLookupByLibrary.simpleMessage("Close"),
@@ -85,6 +91,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Forgot password?"),
         "frontCamera": MessageLookupByLibrary.simpleMessage("Front Camera"),
         "getCode": MessageLookupByLibrary.simpleMessage("Get code"),
+        "guardianPhone": MessageLookupByLibrary.simpleMessage("Guardian phone"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "lastName": MessageLookupByLibrary.simpleMessage("Last name"),
         "loading": MessageLookupByLibrary.simpleMessage("Loading"),
@@ -106,6 +113,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("No active benefits"),
         "noThankYou": MessageLookupByLibrary.simpleMessage("No thank you"),
         "noUsersFound": MessageLookupByLibrary.simpleMessage("No users found"),
+        "noVisitsFound":
+            MessageLookupByLibrary.simpleMessage("No visits found"),
         "noVisitsToday":
             MessageLookupByLibrary.simpleMessage("No visits today"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Not verified"),
@@ -157,6 +166,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "resume": MessageLookupByLibrary.simpleMessage("Resume"),
         "retrievingCoordinates":
             MessageLookupByLibrary.simpleMessage("Retrieving coordinates"),
+        "save": MessageLookupByLibrary.simpleMessage("Save"),
+        "savingDataFailed":
+            MessageLookupByLibrary.simpleMessage("Saving data failed"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
         "settingsAccount": MessageLookupByLibrary.simpleMessage("Account"),
         "settingsCommon": MessageLookupByLibrary.simpleMessage("Common"),
@@ -172,6 +184,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "unnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Unnamed activity"),
+        "userInformationUpdated":
+            MessageLookupByLibrary.simpleMessage("User information updated"),
         "userNotFound": MessageLookupByLibrary.simpleMessage("User not found"),
         "validateContactTitle": MessageLookupByLibrary.simpleMessage(
             "Validate contact information"),

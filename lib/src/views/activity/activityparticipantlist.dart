@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,8 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
+import 'package:youth_card/src/util/utils.dart';
+import 'package:youth_card/src/views/card.dart';
 
 
 class ActivityParticipantList extends StatefulWidget {
@@ -83,7 +86,7 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
     super.initState();
 
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      User user = Provider.of<UserProvider>(context, listen: false).user;
+      User user = Provider.of<UserProvider>(context, listen: false).user; //current user
       _loadActivityUsers(widget._activityDate,user);
 
     });
@@ -120,11 +123,27 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
     return ListView.builder(
         itemBuilder: (context,index){
           User user = users[index];
+        //  print(user.data!['huoltajan_puhelinnumero']);
       return SwitchListTile(
+      //  isThreeLine: true,
         value: activityVisitData[user.id.toString()]=='visited' ?true:false,
         title: Text(user.firstname!+' '+user.lastname!),
-        subtitle: Text((user.email ?? '')+' '+(user.phone ??'')),
-        secondary: Icon(Icons.supervised_user_circle_sharp),
+       // subtitle:
+        secondary: InkWell(
+            child: CircleAvatar(
+              radius: 20,
+              backgroundImage: user.data!['userimageurl'] != null && user.data!['userimageurl']!.isNotEmpty
+                  ? CachedNetworkImageProvider(user.data!['userimageurl']!)
+                  : null,
+              child: getInitials(user),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyCard(user:user)),
+              );
+
+            }),//Icon(Icons.supervised_user_circle_sharp),
         onChanged: (bool value) async {
 
             notify(value.toString());

@@ -35,16 +35,20 @@ class UserProvider with ChangeNotifier {
     dynamic userdata = await this.getDetails(userId,loadingUser);
     if(userdata!=null) {
       userdata['data']['id'] = userdata['id'];
-
-      this.setUserSilent(User.fromJson(userdata['data']));
+      print('lOADED USER '+userdata['id'].toString());
+      print(userdata);
+      this.setUserSilent(User.fromJson(userdata['data'],description:userdata['description']));
       await this.getUserBenefits(loadingUser);
+      await this.getContactMethods(loadingUser);
       notifyListeners();
       print(this._user);
     }
     else this.clearUser();
     return this._user;
   }
-
+  Future<dynamic> getObject(int userId, user) {
+    return _apiClient.getObject('iuser', userId, user);
+  }
   Future<dynamic> getDetails(int userId, user) {
     return _apiClient.getDetails('iuser', userId, user);
   }
@@ -107,7 +111,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getContactMethods() async {
+  Future<void> getContactMethods([User? loadingUser]) async {
     print('getContactMethods called for user provider');
     if(this.user.id==null) return;
 
@@ -115,7 +119,7 @@ class UserProvider with ChangeNotifier {
       'method' : 'json',
       'action': 'getcontactmethods',
       'userid': this.user.id!.toString(),
-      'api_key':this.user.token,
+      'api_key': loadingUser!=null ? (loadingUser.token ??'') : this.user.token ?? '',
     };
     this.contacts =(await _apiClient.dispatcherRequest('registration',params).then((data) {
 

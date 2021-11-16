@@ -61,6 +61,7 @@ class _ActivityListState extends State<ActivityList>  {
     {
       case 'locations':
         params['activitytype'] = 'location';
+        params['accesslevel']='modify';
         params['sort'] = 'name';
         break;
       case 'own':

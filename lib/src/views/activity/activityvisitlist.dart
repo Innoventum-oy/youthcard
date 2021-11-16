@@ -13,6 +13,7 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/views/card.dart';
 import 'package:youth_card/src/views/webpagetextcontent.dart';
+import 'package:date_range_form_field/date_range_form_field.dart';
 
 class ActivityVisitList extends StatefulWidget {
   final String viewTitle = 'activityvisitlist';
@@ -30,6 +31,10 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
   WebPage page = new WebPage();
   List<ActivityVisit> visits=[];
   Map<int,User> _users = {};
+  DateTimeRange myDateRange = DateTimeRange(
+      start: DateTime.now().subtract(Duration(days:7)),
+      end: DateTime.now()
+  );
 
   @override
   void initState() {
@@ -45,7 +50,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
   void updateUsers() async
   {
     print('updateUsers called!');
-    List<ActivityVisit> visits = ( await widget.visitListProvider.loadActivityVisits(widget._activity)) as List<ActivityVisit>;
+    List<ActivityVisit> visits = ( await widget.visitListProvider.loadActivityVisits(widget._activity,loadParams:{'startdate':DateFormat('yyyy-MM-dd').format(myDateRange.start),'enddate':DateFormat('yyyy-MM-dd').format(myDateRange.end)})) as List<ActivityVisit>;
     setState((){
       print('setState called!');
       this.visits = visits;
@@ -105,14 +110,44 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
               })
         ],
       ),
-      body: visits.isNotEmpty ? ListView.builder(
+      body:Column(
+        children:[
+          //date range picker
+          SafeArea(
+            child: DateRangeField(
+                firstDate: DateTime(2017),
+                enabled: true,
+                initialValue: this.myDateRange,
+                decoration: InputDecoration(
+                  labelText: 'Date Range',
+                  prefixIcon: Icon(Icons.date_range),
+                  hintText: 'Please select a start and end date',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value!.end.isAfter(DateTime.now())) {
+                    return 'Please enter an earlier end date';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    print('daterange changed');
+                    myDateRange = value!;
+                    updateUsers();
+                  });
+                }),
+          ),
+          //results
+    visits.isNotEmpty ? Expanded(child:ListView.builder(
+        shrinkWrap: true,
           itemCount: visits.length,
           itemBuilder: (BuildContext context, int index) {
             ActivityVisit visit = visits[index];
 
             if(this._users.isNotEmpty && this._users.containsKey(visit.userid) )
             {
-              print('USER already on list!');
+             // print('USER already on list!');
               User user = this._users[visit.userid]!;
               return userListTile(visit,user);
            }
@@ -126,10 +161,10 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
 
 
                   if(snapshot.data==null){
-                    var titleDateFormat = new DateFormat('dd.MM hh:mm');
+                    var titleDateFormat = new DateFormat('dd.MM HH:mm');
                     return ListTile(
                       leading: Icon(Icons.error),
-                      title: Text(titleDateFormat.format(visit.startdate?? DateTime.now()).toString()+': '+AppLocalizations.of(context)!.userNotFound),
+                      title: Text(titleDateFormat.format(visit.startdate?? DateTime.now())+': '+AppLocalizations.of(context)!.userNotFound),
                     );
                   }
                   if(snapshot.data.id!=null ){
@@ -141,7 +176,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
                     return userListTile(visit,user);
                   }
                   else {
-                    var titleDateFormat = new DateFormat('dd.MM hh:mm');
+                    var titleDateFormat = new DateFormat('dd.MM HH:mm');
                     return ListTile(
                       leading: CircularProgressIndicator(),
                       title: Text(titleDateFormat.format(visit.startdate?? DateTime.now()).toString()+': '+AppLocalizations.of(context)!.loading),
@@ -150,16 +185,18 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
                 }
             );
           }
-      ) :  ListTile(
-          leading: Icon(Icons.info_outline),title:Text(AppLocalizations.of(context)!.noVisitsToday)
-      ),
+      ),) :  ListTile(
+          leading: Icon(Icons.info_outline),title:Text(AppLocalizations.of(context)!.noVisitsFound+' '+DateFormat('d.M.y').format(myDateRange.start)+(myDateRange.duration.inDays > 0 ? ' - '+DateFormat('d.M.y').format(myDateRange.end) :''))
+      )
+     ] ),
+
     );
 
   }
 
   Widget userListTile(ActivityVisit visit, User user)
   {
-    var titleDateFormat = new DateFormat('dd.MM hh:mm');
+    var titleDateFormat = new DateFormat('dd.MM HH:mm');
    return ListTile(
       leading: InkWell(
           child: CircleAvatar(

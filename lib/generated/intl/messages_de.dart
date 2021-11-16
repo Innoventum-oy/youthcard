@@ -25,11 +25,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "accountCreated":
             MessageLookupByLibrary.simpleMessage("Benutzerkonto angelegt"),
         "activities": MessageLookupByLibrary.simpleMessage("Aktivitäten"),
+        "activity": MessageLookupByLibrary.simpleMessage("Aktivität"),
         "activityCalendar":
             MessageLookupByLibrary.simpleMessage("Aktivitätenkalender"),
         "address": MessageLookupByLibrary.simpleMessage("Adresse"),
         "authenticating": MessageLookupByLibrary.simpleMessage(
             "Authentifizierung ... Bitte warten"),
+        "benefits": MessageLookupByLibrary.simpleMessage("Benefits"),
         "btnContinue": MessageLookupByLibrary.simpleMessage("Weiter"),
         "btnLogin": MessageLookupByLibrary.simpleMessage("Anmeldung"),
         "btnReturn": MessageLookupByLibrary.simpleMessage("Zurück"),
@@ -46,6 +48,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "calendar": MessageLookupByLibrary.simpleMessage("Kalender"),
         "cancel": MessageLookupByLibrary.simpleMessage("Abbrechen"),
         "city": MessageLookupByLibrary.simpleMessage("Stadt"),
+        "clearCache": MessageLookupByLibrary.simpleMessage("Cache leeren"),
         "close": MessageLookupByLibrary.simpleMessage("Schließen"),
         "codeScanned": MessageLookupByLibrary.simpleMessage("Code gescannt"),
         "confirmPassword":
@@ -54,6 +57,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Bestätigungsschlüssel"),
         "contactInformation":
             MessageLookupByLibrary.simpleMessage("Kontaktinformation"),
+        "contactInformationValidated": MessageLookupByLibrary.simpleMessage(
+            "Kontaktinformation bestätigt"),
+        "contactMethods":
+            MessageLookupByLibrary.simpleMessage("Kontaktmethoden"),
         "createAccount":
             MessageLookupByLibrary.simpleMessage("Benutzerkonto erstellen"),
         "discover": MessageLookupByLibrary.simpleMessage("Entdecken"),
@@ -64,6 +71,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "errorsInForm":
             MessageLookupByLibrary.simpleMessage("Fehler im Formularinhalt"),
         "eventLog": MessageLookupByLibrary.simpleMessage("Ereignisprotokoll"),
+        "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
+        "feedbackSent":
+            MessageLookupByLibrary.simpleMessage("Feedback gesendet"),
         "firstName": MessageLookupByLibrary.simpleMessage("Vorname"),
         "flashOff": MessageLookupByLibrary.simpleMessage("Flash Aus"),
         "flashOn": MessageLookupByLibrary.simpleMessage("Flash An"),
@@ -74,6 +84,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "language": MessageLookupByLibrary.simpleMessage("Sprache"),
         "lastName": MessageLookupByLibrary.simpleMessage("Nachname"),
         "loading": MessageLookupByLibrary.simpleMessage("Laden"),
+        "loadingBenefits":
+            MessageLookupByLibrary.simpleMessage("Benefits werden geladen"),
+        "locations": MessageLookupByLibrary.simpleMessage("Orte"),
         "login": MessageLookupByLibrary.simpleMessage("Anmeldung"),
         "loginFailed":
             MessageLookupByLibrary.simpleMessage("Anmeldung fehlgeschlagen"),
@@ -83,11 +96,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "myActivities":
             MessageLookupByLibrary.simpleMessage("Meine Aktivitäten"),
         "myCard": MessageLookupByLibrary.simpleMessage("Meine Card"),
+        "noUsersFound": MessageLookupByLibrary.simpleMessage(
+            "Keine BenutzerInnen gefunden"),
+        "notVerified": MessageLookupByLibrary.simpleMessage("nicht bestätigt"),
+        "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+        "pageContent": MessageLookupByLibrary.simpleMessage("Seiteninhalt"),
+        "participants": MessageLookupByLibrary.simpleMessage("Teilnehmende"),
         "password": MessageLookupByLibrary.simpleMessage("Passwort"),
         "passwordChanged":
             MessageLookupByLibrary.simpleMessage("Passwort geändert"),
         "passwordIsRequired":
             MessageLookupByLibrary.simpleMessage("Passwort erforderlich"),
+        "passwordsDontMatch": MessageLookupByLibrary.simpleMessage(
+            "Passwörter stimmen nicht überein"),
         "pause": MessageLookupByLibrary.simpleMessage("Pause"),
         "phone": MessageLookupByLibrary.simpleMessage("Telefon"),
         "phoneNumber": MessageLookupByLibrary.simpleMessage("Telefonnummer"),
@@ -99,6 +120,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "Bitte Bestätigungsschlüssel eingeben"),
         "pleaseEnterPassword":
             MessageLookupByLibrary.simpleMessage("Bitte Passwort eingeben"),
+        "pleaseEnterPhonenumber": MessageLookupByLibrary.simpleMessage(
+            "Bitte Telefonnummer eingeben"),
+        "pleaseProvideValidEmail": MessageLookupByLibrary.simpleMessage(
+            "Bitte gültige E-Mailadresse angeben"),
+        "pleaseProvideValidPhonenumber": MessageLookupByLibrary.simpleMessage(
+            "Bitte gültige Telefonnummer eingeben"),
+        "pleaseProvideYourName":
+            MessageLookupByLibrary.simpleMessage("Bitte Name eingeben"),
         "pleaseWaitRegistering": MessageLookupByLibrary.simpleMessage(
             "Benutzerkonto wird registriert, bitte warten"),
         "postcode": MessageLookupByLibrary.simpleMessage("Postleitzahl"),
@@ -128,11 +157,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "signUp": MessageLookupByLibrary.simpleMessage("Anmelden"),
         "termsOfService":
             MessageLookupByLibrary.simpleMessage("Nutzungsbedingungen"),
+        "thankyouForFeedback":
+            MessageLookupByLibrary.simpleMessage("Danke für das Feedback"),
         "today": MessageLookupByLibrary.simpleMessage("Heute"),
         "unknownUser":
             MessageLookupByLibrary.simpleMessage("unkbekannter Nutzer"),
+        "unnamed": MessageLookupByLibrary.simpleMessage("unbenannt"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Unbenannte Aktivität"),
+        "validateContactTitle":
+            MessageLookupByLibrary.simpleMessage("Kontakttitel bestätigen"),
+        "verified": MessageLookupByLibrary.simpleMessage("bestätigt"),
+        "verify": MessageLookupByLibrary.simpleMessage("bestätigen"),
+        "visitRecorded": MessageLookupByLibrary.simpleMessage("Besuch erfasst"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Youth Card"),
         "youthcardLoginTitle":

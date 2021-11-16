@@ -83,7 +83,7 @@ class MetaSection extends StatelessWidget {
         isLink: isLink);
   }
   Widget _parseHtml(content){
-    print('returning parsed content for '+content.toString());
+    //print('returning parsed content for '+content.toString());
     return Html(
         data: content,
       style: {"*" : Style(color:Colors.white)}
