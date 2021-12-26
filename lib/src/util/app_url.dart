@@ -17,7 +17,9 @@ class AppUrl {
  static const Map<String,String> anonymousApikeys = {
    'Nuortenjoensuu':'\$2y\$10\$PEXtBKieZfKREBW/ofsXu.dSofZ19rZSZgi87gjDT.MXheQrx7qm2',
    'Development':'\$2y\$10\$tHcmqlYZ3ihRGQ5YEMY9AeK6QhU2c4t.Tj4E/owCQfvRn0KvmIGDq',
-   'Lousada':'\$2y\$10\$2V1D67i59auPdJO3SDZfounahm6zEmy3rO8U5NC3gqDs0OSpW7/3a'
+   'Lousada':'\$2y\$10\$2V1D67i59auPdJO3SDZfounahm6zEmy3rO8U5NC3gqDs0OSpW7/3a',
+   'Dresden': '\$2y\$10\$9K0fvauckPBRPaQc.fHFNO89WiKkX7xKGZAIAAzLmgpAqdN/Ymy/6',
+   'Czech Republic': '\$2y\$10\$BCuPRRLN276mqCGl4MpzFOelx/yjTB/B/9DD6hqmGy.6KQemiOk4O'
  };
   static const String liveBaseURL = "nuortenjoensuu.fi";
   static const String localBaseURL = "http://10.0.2.2:4000/api/";
