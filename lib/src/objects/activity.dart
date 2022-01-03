@@ -100,8 +100,8 @@ class Activity {
             ? formatFromString(responseData['nexteventdate'])
             : null,
         registrationenddate: responseData['registrationenddate'] != null ? formatFromString(responseData['registrationenddate']) : null,
-        maxvisitors : responseData['maxvisitors'] is int ? responseData['maxvisitors'] : int.parse(responseData['maxvisitors']??0),
-        registeredvisitorcount: responseData['registeredvisitorcount'] is int? responseData['registeredvisitorcount'] : int.parse(responseData['registeredvisitorcount']),
+        maxvisitors : responseData['maxvisitors'] is int ? responseData['maxvisitors'] : (responseData['maxvisitors']!=null && responseData['maxvisitors'].length >0 ?int.parse(responseData['maxvisitors']) : null),
+        registeredvisitorcount: responseData['registeredvisitorcount'] is int? responseData['registeredvisitorcount'] : (responseData['registeredvisitorcount']!=null && responseData['registeredvisitorcount'].length>0 ? int.parse(responseData['registeredvisitorcount']):null),
         address: responseData['address'],
         postcode: responseData['postcode'],
         city: responseData['city'],

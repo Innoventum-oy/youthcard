@@ -69,7 +69,7 @@ class Settings{
   Future<String> getServer() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String server = prefs.getString('server') ?? AppUrl.servers.values.first ;
-    print("getServer returning " + server);
+  // print("getServer returning " + server);
     return server ;
   }
   Future<String> getServerName() async {

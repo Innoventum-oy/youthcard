@@ -370,7 +370,6 @@ class _DashBoardState extends State<DashBoard> {
               ),
               myActivitiesListLink(user, provider, imageprovider),
               myLocationsListLink(user, provider, imageprovider),
-
             ],
           ),
         ),

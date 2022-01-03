@@ -47,6 +47,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar:
           AppBar(title: Text(AppLocalizations.of(context)!.youthcardSettings)),
       body: buildSettingsList(),
+        bottomNavigationBar: BottomAppBar(
+            child:
+            Row(
+
+              children:[
+                Image.asset('images/erasmusplus.png',
+                    height:40),
+            Flexible(child:Text(AppLocalizations.of(context)!.erasmusDisclaimer,
+                style:TextStyle(fontSize:10,),
+                  )
+            ),
+
+             ],
+            )
+        )
     );
   }
 
@@ -90,7 +105,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Navigator.pushReplacementNamed(context, '/contactmethods');
                 },
             ),
-
+            SettingsTile(
+              title: AppLocalizations.of(context)!.userInformation,
+              leading: Icon(Icons.account_circle),
+              onPressed: (context) {
+                Navigator.pushReplacementNamed(context, '/userform');
+              },
+            ),
            /* SettingsTile(
                 title: AppLocalizations.of(context)!.email,
                 leading: Icon(Icons.email)),*/
@@ -161,6 +182,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: Icon(Icons.clear), onPressed: (BuildContext context) {
               FileStorage.clear();
             }),
+            SettingsTile(
+                title: AppLocalizations.of(context)!.showWelcomeScreen,
+                leading: Icon(Icons.logout),
+                onPressed: (BuildContext context) {
+                  Navigator.pushNamedAndRemoveUntil(context, '/welcome', (_) => false);
+
+
+                }),
+
       ],
         ),
         CustomSection(

@@ -8,6 +8,7 @@
 // ignore_for_file:prefer_single_quotes,comment_references, directives_ordering
 // ignore_for_file:annotate_overrides,prefer_generic_function_type_aliases
 // ignore_for_file:unused_import, file_names, avoid_escaping_inner_quotes
+// ignore_for_file:unnecessary_string_interpolations, unnecessary_string_escapes
 
 import 'package:intl/intl.dart';
 import 'package:intl/message_lookup_by_library.dart';
@@ -36,9 +37,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "authenticating": MessageLookupByLibrary.simpleMessage(
             "Authenticating ... Please wait"),
         "benefits": MessageLookupByLibrary.simpleMessage("Benefits"),
+        "btnConfirm": MessageLookupByLibrary.simpleMessage("Confirm"),
         "btnContinue": MessageLookupByLibrary.simpleMessage("Continue"),
         "btnContinueWithoutLogin":
             MessageLookupByLibrary.simpleMessage("Skip login"),
+        "btnDashboard": MessageLookupByLibrary.simpleMessage("Open Dashboard"),
+        "btnEdit": MessageLookupByLibrary.simpleMessage("Edit"),
         "btnLogin": MessageLookupByLibrary.simpleMessage("Login"),
         "btnReturn": MessageLookupByLibrary.simpleMessage("Return"),
         "btnSend": MessageLookupByLibrary.simpleMessage("Send"),
@@ -68,22 +72,28 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Contact information"),
         "contactInformationValidated": MessageLookupByLibrary.simpleMessage(
             "Contact information validated"),
+        "contactMethod": MessageLookupByLibrary.simpleMessage("Contact method"),
         "contactMethods":
             MessageLookupByLibrary.simpleMessage("Contact methods"),
         "contentNotFound":
             MessageLookupByLibrary.simpleMessage("Content not found"),
         "createAccount": MessageLookupByLibrary.simpleMessage("Create account"),
+        "dateRange": MessageLookupByLibrary.simpleMessage("Date Range"),
         "discover": MessageLookupByLibrary.simpleMessage("Discover"),
         "email": MessageLookupByLibrary.simpleMessage("Email"),
         "emailOrPhoneNumber":
             MessageLookupByLibrary.simpleMessage("Email or Phone number"),
         "environment": MessageLookupByLibrary.simpleMessage("Environment"),
+        "erasmusDisclaimer": MessageLookupByLibrary.simpleMessage(
+            "This project has been funded with support from the European Commission.\nThis publication reflects the views only of the author, and the Commission cannot be held responsible for any use which may be EN made of the information contained therein."),
         "error": MessageLookupByLibrary.simpleMessage("Error"),
         "errorsInForm":
             MessageLookupByLibrary.simpleMessage("Errors in form contents"),
         "eventLog": MessageLookupByLibrary.simpleMessage("Event Log"),
         "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
         "feedbackSent": MessageLookupByLibrary.simpleMessage("Feedback sent"),
+        "fieldCannotBeEmpty":
+            MessageLookupByLibrary.simpleMessage("This field is obligatory"),
         "firstName": MessageLookupByLibrary.simpleMessage("First name"),
         "flashOff": MessageLookupByLibrary.simpleMessage("Flash Off"),
         "flashOn": MessageLookupByLibrary.simpleMessage("Flash On"),
@@ -111,6 +121,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "myCard": MessageLookupByLibrary.simpleMessage("My Card"),
         "noActiveBenefits":
             MessageLookupByLibrary.simpleMessage("No active benefits"),
+        "noContactMethodsFound":
+            MessageLookupByLibrary.simpleMessage("No contact methods found"),
         "noThankYou": MessageLookupByLibrary.simpleMessage("No thank you"),
         "noUsersFound": MessageLookupByLibrary.simpleMessage("No users found"),
         "noVisitsFound":
@@ -118,7 +130,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "noVisitsToday":
             MessageLookupByLibrary.simpleMessage("No visits today"),
         "notVerified": MessageLookupByLibrary.simpleMessage("Not verified"),
+        "notification": MessageLookupByLibrary.simpleMessage("Notification"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+        "optionFalse": MessageLookupByLibrary.simpleMessage("No"),
+        "optionTrue": MessageLookupByLibrary.simpleMessage("Yes"),
         "pageContent": MessageLookupByLibrary.simpleMessage("Page"),
         "participants": MessageLookupByLibrary.simpleMessage("Participants"),
         "password": MessageLookupByLibrary.simpleMessage("Password"),
@@ -173,6 +188,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingsAccount": MessageLookupByLibrary.simpleMessage("Account"),
         "settingsCommon": MessageLookupByLibrary.simpleMessage("Common"),
         "settingsMisc": MessageLookupByLibrary.simpleMessage("Misc"),
+        "showWelcomeScreen":
+            MessageLookupByLibrary.simpleMessage("Welcome screen"),
         "signUp": MessageLookupByLibrary.simpleMessage("Sign up"),
         "statusError": MessageLookupByLibrary.simpleMessage("Error"),
         "termsOfService":
@@ -184,6 +201,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "unnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),
         "unnamedActivity":
             MessageLookupByLibrary.simpleMessage("Unnamed activity"),
+        "userInformation":
+            MessageLookupByLibrary.simpleMessage("User information"),
         "userInformationUpdated":
             MessageLookupByLibrary.simpleMessage("User information updated"),
         "userNotFound": MessageLookupByLibrary.simpleMessage("User not found"),
@@ -191,7 +210,9 @@ class MessageLookup extends MessageLookupByLibrary {
             "Validate contact information"),
         "verified": MessageLookupByLibrary.simpleMessage("Verified"),
         "verify": MessageLookupByLibrary.simpleMessage("Verify"),
+        "visitAdded": MessageLookupByLibrary.simpleMessage("Visit added"),
         "visitRecorded": MessageLookupByLibrary.simpleMessage("Visit recorded"),
+        "visitRemoved": MessageLookupByLibrary.simpleMessage("Visit removed"),
         "visits": MessageLookupByLibrary.simpleMessage("Visits"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Youth Card"),

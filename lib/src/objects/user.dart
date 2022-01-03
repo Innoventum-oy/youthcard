@@ -16,11 +16,15 @@ class User {
   Map<String,dynamic>? description;
   List<UserBenefit> userbenefits = [];
   Map<String, dynamic>? benefits;
+  int? accesslevel;
 
   factory User.fromJson(Map<String, dynamic> responseData,{description}) {
-    //print("Current station for user: "+responseData['currentstation']['objectid'].toString());
-    // responseData.forEach((key, value) { print('$key = $value');});
-    print('User object description: '+description.toString());
+    print('CREATING USER Object FROM JSON DATA:');
+
+    if(responseData['data']!=null && responseData['data'].length>0) responseData = responseData['data'];
+    int accesslevel = responseData['accesslevel']!=null ? int.parse(responseData['accesslevel']) : 0;
+     responseData.forEach((key, value) { print('$key = $value');});
+    //print('User object description: '+description.toString());
     return User(
       id: responseData['id'] is int ? responseData['id'] : int.parse(responseData['id']),
       firstname: responseData['firstname'],
@@ -33,6 +37,7 @@ class User {
       qrcode: responseData['qrcode'],
       image: responseData['image'],
       data: responseData,
+      accesslevel : accesslevel,
       description: description ?? null
     );
 
@@ -68,6 +73,7 @@ class User {
     this.renewalToken,
     this.image,
     this.qrcode,
+    this.accesslevel,
     this.data,
     this.description
 
@@ -137,6 +143,7 @@ class User {
     String? qrcode,
     int? awardedScore,
     int? availableScore,
+    int ? accesslevel,
     Map<String, dynamic>? currentStation,
     Map<String,dynamic>? attributes,
   }) {

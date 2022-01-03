@@ -82,10 +82,16 @@ class _QRScannerState extends State<QRScanner> {
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      controller!.pauseCamera();
+      if(controller!=null) controller!.pauseCamera().catchError((error) {
+        print(error.toString());
+        notify(error.toString());
+      });
     } else if (Platform.isIOS) {
       if(controller!=null)
-      controller!.resumeCamera();
+      controller!.resumeCamera().catchError((error) {
+        print(error.toString());
+        notify(error.toString());
+      });
     }
   }
 
@@ -354,6 +360,15 @@ print('returning scaffold');
             title: Text(titleText),
             elevation: 0.1,
             actions: [
+              IconButton(
+                  icon: Icon(Icons.refresh),
+                  onPressed: () {
+                    print('Refreshing view');
+                    setState(() {
+
+
+                    });
+                  }),
               if(isTester) IconButton(
                   icon: Icon(Icons.bug_report),
                   onPressed:(){feedbackAction(context,user); }
@@ -379,7 +394,7 @@ print('returning scaffold');
                   .cameraNotAvailable),),
               ),
               //lower section
-              if(canShowQRScanner)Expanded(
+              if(canShowQRScanner && controller!=null )Expanded(
                 flex: 2,
                 child: FittedBox(
                   fit: BoxFit.contain,
@@ -529,14 +544,14 @@ print('returning scaffold');
   }
 
   Widget _buildQrView(BuildContext context) {
-    // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
+    // fit the scanArea depending on the device screen measurements
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
         ? 150.0
         : 300.0;
-    // To ensure the Scanner view is properly sizes after rotation
+    // To ensure the Scanner view is properly sized after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
-    return QRView(
+    return canShowQRScanner ?  QRView(
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
@@ -545,11 +560,32 @@ print('returning scaffold');
           borderLength: 30,
           borderWidth: 10,
           cutOutSize: scanArea),
+    ): Padding(
+      padding:EdgeInsets.all(20),
+      child:
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+      children:[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+        children:[
+        Icon(Icons.error),
+        Text(AppLocalizations.of(context)!.cameraNotAvailable),
+      ]
+          ),
+        ElevatedButton(
+          child: Text(AppLocalizations.of(context)!.btnReturn),
+          onPressed: () => Navigator.of(context).pop(),
+        )
+    ]),
     );
   }
 
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
+    if(controller.hasPermissions)
     controller.scannedDataStream.listen((scanData) {
       if (!codeQueue.contains(scanData.code))
         setState(() {

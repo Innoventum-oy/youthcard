@@ -94,19 +94,19 @@ class _LoginState extends State<Login> {
     final forgotLabel = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        TextButton(
+        ElevatedButton(
           child: Text(AppLocalizations.of(context)!.forgotPassword,
               style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
             Navigator.pushReplacementNamed(context, '/reset-password');
           },
         ),
-        TextButton(
+        ElevatedButton(
           child: Text(AppLocalizations.of(context)!.createAccount,
               style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
             auth.setRegisteredStatus(Status.NotRegistered);
-            Navigator.pushNamed(context, '/register');
+            Navigator.pushReplacementNamed(context, '/register');
           },
         ),
       ],
@@ -157,7 +157,10 @@ class _LoginState extends State<Login> {
         print("form is invalid");
       }
     };
-
+    Widget titleText = AppUrl.serverImages.containsKey(serverName) ? Image.asset(AppUrl.serverImages[serverName] ?? 'images/icon.png',height:100) : Text(serverName,
+        style:TextStyle(
+            fontSize: 24.0
+        ));
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -166,13 +169,14 @@ class _LoginState extends State<Login> {
         ),
         body: SingleChildScrollView(
           child:Container(
-          padding: EdgeInsets.all(30.0),
+          padding: EdgeInsets.all(20.0),
           child: Form(
             key: formKey,
             child:  Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
+                  Center(child:titleText),
+                   SizedBox(height: 5.0),
                   label(AppLocalizations.of(context)!.phoneOrEmail),
                   SizedBox(height: 5.0),
                   contactField,
@@ -241,13 +245,19 @@ class _LoginState extends State<Login> {
                   auth.loggedInStatus == Status.Authenticating
                       ? cancelButton
                       : Container(),
-                  getVersionInfo()
+                  getVersionInfo(),
+
                 ],
               ),
             ),
           ),
         ),
-        ),
+        bottomNavigationBar: BottomAppBar(
+          child:
+            Image.asset('images/erasmusplus.png',
+            height:40)
+        )
+      ),
     );
   }
 
@@ -257,6 +267,7 @@ class _LoginState extends State<Login> {
     servers.forEach((serverTitle, serverUrl) {
       tiles.add(SettingsTile(
         title: serverTitle,
+        titleTextStyle: TextStyle(fontSize:13),
         // subtitle: serverUrl,
         titleMaxLines: 3,
         trailing: trailingWidget(serverTitle),

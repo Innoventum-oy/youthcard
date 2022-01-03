@@ -130,6 +130,16 @@ class S {
     );
   }
 
+  /// `Open Dashboard`
+  String get btnDashboard {
+    return Intl.message(
+      'Open Dashboard',
+      name: 'btnDashboard',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Continue`
   String get btnContinue {
     return Intl.message(
@@ -145,6 +155,16 @@ class S {
     return Intl.message(
       'Skip login',
       name: 'btnContinueWithoutLogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit`
+  String get btnEdit {
+    return Intl.message(
+      'Edit',
+      name: 'btnEdit',
       desc: '',
       args: [],
     );
@@ -330,6 +350,16 @@ class S {
     );
   }
 
+  /// `Confirm`
+  String get btnConfirm {
+    return Intl.message(
+      'Confirm',
+      name: 'btnConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Confirm password`
   String get confirmPassword {
     return Intl.message(
@@ -370,6 +400,16 @@ class S {
     );
   }
 
+  /// `Contact method`
+  String get contactMethod {
+    return Intl.message(
+      'Contact method',
+      name: 'contactMethod',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Content not found`
   String get contentNotFound {
     return Intl.message(
@@ -385,6 +425,16 @@ class S {
     return Intl.message(
       'Create account',
       name: 'createAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date Range`
+  String get dateRange {
+    return Intl.message(
+      'Date Range',
+      name: 'dateRange',
       desc: '',
       args: [],
     );
@@ -435,6 +485,16 @@ class S {
     return Intl.message(
       'Event Log',
       name: 'eventLog',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This project has been funded with support from the European Commission.\nThis publication reflects the views only of the author, and the Commission cannot be held responsible for any use which may be EN made of the information contained therein.`
+  String get erasmusDisclaimer {
+    return Intl.message(
+      'This project has been funded with support from the European Commission.\nThis publication reflects the views only of the author, and the Commission cannot be held responsible for any use which may be EN made of the information contained therein.',
+      name: 'erasmusDisclaimer',
       desc: '',
       args: [],
     );
@@ -495,6 +555,16 @@ class S {
     return Intl.message(
       'First name',
       name: 'firstName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This field is obligatory`
+  String get fieldCannotBeEmpty {
+    return Intl.message(
+      'This field is obligatory',
+      name: 'fieldCannotBeEmpty',
       desc: '',
       args: [],
     );
@@ -730,6 +800,26 @@ class S {
     );
   }
 
+  /// `No contact methods found`
+  String get noContactMethodsFound {
+    return Intl.message(
+      'No contact methods found',
+      name: 'noContactMethodsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notification`
+  String get notification {
+    return Intl.message(
+      'Notification',
+      name: 'notification',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Save`
   String get save {
     return Intl.message(
@@ -755,6 +845,26 @@ class S {
     return Intl.message(
       'Ok',
       name: 'ok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes`
+  String get optionTrue {
+    return Intl.message(
+      'Yes',
+      name: 'optionTrue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No`
+  String get optionFalse {
+    return Intl.message(
+      'No',
+      name: 'optionFalse',
       desc: '',
       args: [],
     );
@@ -1150,6 +1260,16 @@ class S {
     );
   }
 
+  /// `Welcome screen`
+  String get showWelcomeScreen {
+    return Intl.message(
+      'Welcome screen',
+      name: 'showWelcomeScreen',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Sign up`
   String get signUp {
     return Intl.message(
@@ -1205,6 +1325,16 @@ class S {
     return Intl.message(
       'unknown user',
       name: 'unknownUser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User information`
+  String get userInformation {
+    return Intl.message(
+      'User information',
+      name: 'userInformation',
       desc: '',
       args: [],
     );
@@ -1275,6 +1405,26 @@ class S {
     return Intl.message(
       'Visits',
       name: 'visits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Visit added`
+  String get visitAdded {
+    return Intl.message(
+      'Visit added',
+      name: 'visitAdded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Visit removed`
+  String get visitRemoved {
+    return Intl.message(
+      'Visit removed',
+      name: 'visitRemoved',
       desc: '',
       args: [],
     );

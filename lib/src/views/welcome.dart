@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:youth_card/src/util/app_url.dart';
 class Welcome extends StatelessWidget {
 
 
@@ -19,13 +19,31 @@ class Welcome extends StatelessWidget {
         ),
           constraints: BoxConstraints.expand(),
           child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children:<Widget>[
-                        Image.asset('images/colortextlogo.png'),
-                        SizedBox(height: 25.0),
 
-                      ] //children
-                   )//row
+              children:<Widget>[
+                Expanded(
+
+                    flex: 6,
+                    child:
+                    Image.asset('images/colortextlogo.png')
+                ),
+                Flexible(
+                    flex:1,
+                child:ElevatedButton(
+                  onPressed: (){
+                    Navigator.pushReplacementNamed(context, '/');
+
+                  },
+                  child:Text('Continue')
+                )
+                ),
+                Expanded(
+                    flex:1,
+                    child: Image.asset('images/erasmusplus.png')
+                ),
+
+              ] //children
+          )
 
 
               )

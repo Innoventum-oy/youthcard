@@ -26,7 +26,12 @@ class _RegisterState extends State<Register> {
   String? _firstname, _lastname, _email,_phone, _password, _confirmPassword;
 
   ContactMethod selectedContactMethod = ContactMethod.Phone;
-
+  Map<String,TextEditingController> controllers = {
+  'lastname' : new TextEditingController(),
+  'firstname': new TextEditingController(),
+  'email' : new TextEditingController(),
+  'phone' : new TextEditingController()
+  };
 
  List<Widget> formButtons(auth)
   {
@@ -35,14 +40,15 @@ class _RegisterState extends State<Register> {
       if (form!.validate()) {
         form.save();
         _apiClient.register(firstname:_firstname.toString(), lastname: _lastname.toString(),email:_email.toString(),phone: _phone.toString(), password:_password.toString(), passwordConfirmation:_confirmPassword.toString())!.then((responsedata) {
-          var response = responsedata['data'];
+          var response = responsedata['data'] ?? responsedata;
+
           if(response!=null) if( response['status']!=null) {
 
             switch(response['status']) {
               case 'error':
                 Flushbar(
                   title: AppLocalizations.of(context)!.registrationFailed,
-                  message: response['message'] !=null ? response['message'].toString() : response.toString(),
+                  message: response['message'] !=null ? response['message'].toString() : response['error'].toString(),
                   duration: Duration(seconds: 10),
                 ).show(context);
 
@@ -118,26 +124,34 @@ class _RegisterState extends State<Register> {
       }
       return _msg;
     }
+
     final firstnameField = TextFormField(
       autofocus: false,
+      controller : controllers['firstname'],
       validator: validateName,
       onSaved: (value) => _firstname = value,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.firstName,Icons.person ),
     );
+
     final lastnameField = TextFormField(
       autofocus: false,
+       controller: controllers['lastname'],
        validator: validateName,
       onSaved: (value) => _lastname = value,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.lastName,Icons.person ),
     );
+
     final emailField = TextFormField(
       autofocus: false,
+      controller: controllers['email'],
       validator: validateEmail,
       onSaved: (value) => _email = value,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.email, Icons.email),
     );
+
     final phoneField = TextFormField(
       autofocus: false,
+      controller: controllers['phone'],
       validator: validatePhone,
       onChanged: (value) => _phone = value,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.phone, Icons.phone_iphone),
@@ -194,6 +208,9 @@ class _RegisterState extends State<Register> {
     switch(selectedContactMethod) {
       case ContactMethod.Email:
         //add email field + change to phone field button
+      //clear possible phone field value
+      _phone='';
+      controllers['phone']!.clear();
       formfields.add(label(AppLocalizations.of(context)!.email));
       formfields.add(emailField);
       formfields.add(TextButton(
@@ -209,6 +226,10 @@ class _RegisterState extends State<Register> {
 
       default:
         // add phone field + change to email button
+
+        //clear possible email field value
+        _email = '';
+        controllers['email']!.clear();
         formfields.add(label(AppLocalizations.of(context)!.phone));
         formfields.add(phoneField);
         formfields.add(TextButton(
@@ -231,7 +252,7 @@ class _RegisterState extends State<Register> {
       onPressed: () {
       // Navigate back to the first screen by popping the current route
       // off the stack.
-      Navigator.of(context, rootNavigator: true).pop(context);
+        Navigator.pushReplacementNamed(context, '/register');
 
       },
       child: Text(AppLocalizations.of(context)!.btnReturn,style: TextStyle(fontWeight: FontWeight.w300)))
@@ -274,9 +295,17 @@ class _RegisterState extends State<Register> {
       case Status.Registered:
         print('Status.Registered switch handler');
 
-        return  Column(
+        return  Padding(
+          padding:EdgeInsets.all(20),
+            child:Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            Row(
+            children:[
+              Icon(Icons.check),
+              Text(AppLocalizations.of(context)!.accountCreated,
+              style:TextStyle(fontSize:20)),
+            ]),
             SizedBox(height: 15.0),
             ElevatedButton(
                 onPressed: () {
@@ -292,6 +321,7 @@ class _RegisterState extends State<Register> {
                 },
                 child: Text(AppLocalizations.of(context)!.btnValidateContactLater,style: TextStyle(fontWeight: FontWeight.w300)))
           ],
+        ),
         );
 
       default:

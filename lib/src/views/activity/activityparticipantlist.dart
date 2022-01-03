@@ -146,7 +146,7 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
             }),//Icon(Icons.supervised_user_circle_sharp),
         onChanged: (bool value) async {
 
-            notify(value.toString());
+            notify(value ? AppLocalizations.of(context)!.visitAdded : AppLocalizations.of(context)!.visitRemoved);
             Map<String,dynamic> result = await _apiClient.updateActivityRegistration(activityId:widget._activity.id!,visitStatus:value ? 'visited':'cancelled',visitor: user,user:loggedInUser,visitDate:widget._activityDate) ;
             setState(() {
             if(result['visitstatus']!=null) {

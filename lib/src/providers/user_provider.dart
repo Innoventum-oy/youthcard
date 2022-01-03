@@ -32,19 +32,27 @@ class UserProvider with ChangeNotifier {
 
   Future<User> loadUser(int userId, User loadingUser)
   async {
-    dynamic userdata = await this.getDetails(userId,loadingUser);
+    print('loading user details for user id '+userId.toString());
+    dynamic userdata = await this.getObject(userId,loadingUser);
     if(userdata!=null) {
-      userdata['data']['id'] = userdata['id'];
-      print('lOADED USER '+userdata['id'].toString());
-      print(userdata);
-      this.setUserSilent(User.fromJson(userdata['data'],description:userdata['description']));
+
+      this.setUserSilent(User.fromJson(userdata['data'].first,description:userdata['description']));
       await this.getUserBenefits(loadingUser);
       await this.getContactMethods(loadingUser);
       notifyListeners();
-      print(this._user);
+      //print(this._user);
     }
     else this.clearUser();
     return this._user;
+  }
+  Future<dynamic> getFields(int userId, user) {
+    final Map<String, dynamic> params = {
+      'method' : 'json',
+      'action': 'getavailablefields',
+      'userid': userId.toString(),
+      'api_key': user!=null ? (user.token ??'') : this.user.token ?? '',
+    };
+    return _apiClient.dispatcherRequest('registration',params);
   }
   Future<dynamic> getObject(int userId, user) {
     return _apiClient.getObject('iuser', userId, user);

@@ -8,6 +8,8 @@ import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/util/utils.dart';
+import 'package:youth_card/src/util/widgets.dart';
+import 'package:youth_card/src/views/userform.dart';
 import 'package:youth_card/src/views/validatecontact.dart';
 import 'package:url_launcher/url_launcher.dart';
 /*
@@ -114,7 +116,7 @@ class _MyCardState extends State<MyCard> {
       {
         Map<String,dynamic> description = user.description ?? {};
         description.forEach((key, value){
-          print(key+': '+value+' '+user.data![key]);
+          print(key+': '+value+' '+user.data![key].toString());
         });
       }else print('user description is NULL');
 /*
@@ -252,11 +254,29 @@ class _MyCardState extends State<MyCard> {
         Center(child: _loggedInView(context, user)),
         ...this.contactItems,
         SizedBox(height: 20),
+       // Text('Access:'+user.accesslevel.toString()),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children:[
+            if(user!.accesslevel!= null && user.accesslevel >= 20) ElevatedButton(
+          onPressed : (){
+            // notifyDialog('opening userform',context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>   UserForm(targetUser:user!),
+              ),
+            );
+
+          },
+          child: Text(AppLocalizations.of(context)!.btnEdit)
+      ),
         ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
             },
             child: Text(AppLocalizations.of(context)!.btnReturn)),
+        ]),
         _getBenefitsSection(user),
       ],
     );

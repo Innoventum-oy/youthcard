@@ -67,7 +67,7 @@ class ApiClient {
     if (response.statusCode == 200) {
       if(response.body.isNotEmpty) {
         print('RESPONSE');
-        //print(response.body);
+        print(response.body);
         try {
           Map<String, dynamic> responseData = json.decode(response.body);
           //debug
@@ -319,7 +319,7 @@ class ApiClient {
     // Returns only
     return _getJson(url).then((data){
 
-      return data!=null ? data.first : null;
+      return data;
     });
   }
 
@@ -337,7 +337,7 @@ class ApiClient {
    // params.forEach((key, value) {print('$key = $value');});
 
     var url = Uri.https(baseUrl, 'api/$datatype/', params);
-  //  print(url.toString());
+    print(url.toString());
     return _getJson(url).then((json) {
       if(json==false) return [];
     //  print(json);

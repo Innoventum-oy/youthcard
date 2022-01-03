@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 MaterialButton longButtons(String title, Function()? fun,
@@ -31,4 +31,26 @@ InputDecoration buildInputDecoration(String hintText, IconData icon) {
     contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
     border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
   );
+}
+notifyDialog(String text, context)
+{
+  showDialog<String>(
+      context: context,
+      builder:(BuildContext context) =>AlertDialog(
+        title: Text(AppLocalizations.of(context)!.notification),
+        content: SingleChildScrollView(
+            child:Text(text)
+        ),
+        actions:<Widget>[
+          ElevatedButton(
+              child: Text(AppLocalizations.of(context)!.ok),
+              onPressed:(){
+                Navigator.of(context, rootNavigator: true).pop();
+
+              }
+          )
+        ],
+      )
+  );
+
 }

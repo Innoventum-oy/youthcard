@@ -119,7 +119,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
                 enabled: true,
                 initialValue: this.myDateRange,
                 decoration: InputDecoration(
-                  labelText: 'Date Range',
+                  labelText: AppLocalizations.of(context)!.dateRange,
                   prefixIcon: Icon(Icons.date_range),
                   hintText: 'Please select a start and end date',
                   border: OutlineInputBorder(),
@@ -147,7 +147,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
 
             if(this._users.isNotEmpty && this._users.containsKey(visit.userid) )
             {
-             // print('USER already on list!');
+              print('USER already on list!');
               User user = this._users[visit.userid]!;
               return userListTile(visit,user);
            }
@@ -168,7 +168,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
                     );
                   }
                   if(snapshot.data.id!=null ){
-
+                    print(snapshot.data.toString());
                     User user = snapshot.data;
                     this._users.putIfAbsent(user.id!,()=>user);
                    // if(!users.containsKey(user.id)) users[user.id!] = user;
@@ -207,6 +207,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
             child: getInitials(user),
           ),
           onTap: () {
+            if(user.id != null)
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => MyCard(user:user)),

@@ -1,14 +1,21 @@
 class AppUrl {
   static const Map<String,String> servers = {
     'Nuortenjoensuu' : 'nuortenjoensuu.fi',
+    'Nuortenliperi' : 'nuortenliperi.fi',
     'Lousada' : 'lousada.youthcard.pt',
     'Dresden' : 'dresden-youthcard.de',
     'Czech Republic' : 'youthcard.cz',
    // 'Medjimurje' : 'medimurje.youthcard.eu',
     'Development' : 'nuortenjoensuu.webweb.fi'
   };
+  static const Map<String,String> serverImages = {
+    'Nuortenjoensuu' : 'images/nuortenjoensuu.png',
+    'Nuortenliperi' : 'images/nuortenliperi.png',
+    'Lousada' : 'images/lousada.png',
+  };
   static const Map<String,String> serverToLanguageMapping = {
     'fi':'Nuortenjoensuu',
+
     'pt':'Lousada',
     'de':'Dresden',
     'cz':'Czech Republic'
