@@ -46,7 +46,7 @@ class _LoginState extends State<Login> {
 
 
     Settings().getServerName().then((val) => setState(() {
-     // print("getting server for loginstate "+val);
+      print("getting server for loginstate "+val);
           serverName = val;
           if(AppUrl.anonymousApikeys.containsKey(serverName)) {
             Settings().setValue(
@@ -286,18 +286,22 @@ class _LoginState extends State<Login> {
 
        leading: trailingWidget(serverTitle),
         onPressed: (BuildContext context) {
-          Settings().setValue('server', serverUrl);
-          Settings().setValue('servername', serverTitle);
-          if(AppUrl.anonymousApikeys.containsKey(serverTitle)) {
-            Settings().setValue(
-                'anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
-            //print("Anonymous api key for " + serverTitle + " set to " +AppUrl.anonymousApikeys[serverTitle]!);
-          }
-          else
-            Settings().setValue('anonymousapikey', null);
-          UserPreferences().removeUser();
-          Provider.of<UserProvider>(context, listen: false).clearUser();
-       //   Navigator.pushReplacementNamed(context, '/login');
+            print('setting server to '+serverTitle);
+            serverName = serverTitle;
+            Settings().setValue('server', serverUrl);
+            Settings().setValue('servername', serverTitle);
+            if (AppUrl.anonymousApikeys.containsKey(serverTitle)) {
+              Settings().setValue(
+                  'anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
+              //print("Anonymous api key for " + serverTitle + " set to " +AppUrl.anonymousApikeys[serverTitle]!);
+            }
+            else
+              Settings().setValue('anonymousapikey', null);
+            UserPreferences().removeUser();
+            //  Provider.of<UserProvider>(context, listen: false).clearUser();
+            //  Navigator.pushReplacementNamed(context, '/login');
+            Navigator.of(context, rootNavigator: true).pop();
+            setState(() { });
         },
       ));
     });
