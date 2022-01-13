@@ -31,14 +31,19 @@ class _LoginState extends State<Login> {
   String packageName = '';
   String version = '';
   String buildNumber = '';
-
+  bool openServerSelect = false;
   _LoginState() {
+
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) => setState(() {
           appName = packageInfo.appName;
           packageName = packageInfo.packageName;
           version = packageInfo.version;
           buildNumber = packageInfo.buildNumber;
         }));
+    Settings().isServerSelected().then((val) => setState(() {
+      openServerSelect = val;
+    }));
+
 
     Settings().getServerName().then((val) => setState(() {
      // print("getting server for loginstate "+val);
@@ -53,6 +58,11 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    print('current server: '+serverName+', should we show dialog? '+openServerSelect.toString());
+    if(openServerSelect){
+      openServerSelect = false;
+      Future.delayed(Duration.zero, () =>serverSelectDialog(context));
+    }
     //servername = AppLocalizations.of(context)!.loading;
     AuthProvider auth = Provider.of<AuthProvider>(context);
     User? user = widget.user;
@@ -64,6 +74,7 @@ class _LoginState extends State<Login> {
               ? user.email!
               : '';
     }
+
     final contactField = TextFormField(
         autofocus: false,
         validator: validateContact,
@@ -204,41 +215,7 @@ class _LoginState extends State<Login> {
                             serverName,
                         style: TextStyle(fontWeight: FontWeight.w300)),
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => new AlertDialog(
-                            title: new Text(
-                                AppLocalizations.of(context)!.environment),
-                            content: Container(
-                              width: double.maxFinite,
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                    maxHeight:
-                                        MediaQuery.of(context).size.height *
-                                            0.9,
-                                    minHeight:
-                                        MediaQuery.of(context).size.height *
-                                            0.5,
-                                    maxWidth:
-                                        MediaQuery.of(context).size.width * 0.9,
-                                    minWidth:
-                                        MediaQuery.of(context).size.width *
-                                            0.9),
-                                child: SettingsSection(
-                                    tiles: environmentOptions()),
-                              ),
-                            ),
-                            insetPadding: EdgeInsets.symmetric(horizontal: 20),
-                            actions: <Widget>[
-                              TextButton(
-                                child:
-                                    Text(AppLocalizations.of(context)!.close),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ]),
-                      );
+                      serverSelectDialog(context);
                     },
                   ),
                   SizedBox(height: 10.0),
@@ -260,8 +237,45 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+  void serverSelectDialog(BuildContext context){
+    showDialog(
+      context: context,
+      builder: (_) => new AlertDialog(
+          title: new Text(
+              AppLocalizations.of(context)!.environment),
+          content: Container(
+            width: double.maxFinite,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                  maxHeight:
+                  MediaQuery.of(context).size.height *
+                      0.9,
+                  minHeight:
+                  MediaQuery.of(context).size.height *
+                      0.5,
+                  maxWidth:
+                  MediaQuery.of(context).size.width * 0.9,
+                  minWidth:
+                  MediaQuery.of(context).size.width *
+                      0.9),
+              child: SettingsSection(
+                  tiles: environmentOptions(context)),
+            ),
+          ),
+          insetPadding: EdgeInsets.symmetric(horizontal: 20),
+          actions: <Widget>[
+            TextButton(
+              child:
+              Text(AppLocalizations.of(context)!.close),
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+              },
+            ),
+          ]),
+    );
 
-  List<SettingsTile> environmentOptions() {
+  }
+  List<SettingsTile> environmentOptions(BuildContext context) {
     final Map servers = AppUrl.servers;
     List<SettingsTile> tiles = [];
     servers.forEach((serverTitle, serverUrl) {
@@ -283,7 +297,7 @@ class _LoginState extends State<Login> {
             Settings().setValue('anonymousapikey', null);
           UserPreferences().removeUser();
           Provider.of<UserProvider>(context, listen: false).clearUser();
-          Navigator.pushReplacementNamed(context, '/login');
+       //   Navigator.pushReplacementNamed(context, '/login');
         },
       ));
     });

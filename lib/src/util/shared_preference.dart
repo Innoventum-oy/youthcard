@@ -72,6 +72,11 @@ class Settings{
   // print("getServer returning " + server);
     return server ;
   }
+  Future<bool> isServerSelected() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('server')!.isNotEmpty ? true : false;
+
+  }
   Future<String> getServerName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? server = prefs.getString('servername') ?? null;
