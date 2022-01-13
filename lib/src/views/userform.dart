@@ -228,7 +228,7 @@ class _UserFormState extends State<UserForm>{
             *   datetime
             *   int unsigned
             *   truevalue
-            *   radio   - currently unsupported
+            *   radio
             *   number
             *   object  - currently unsupported
             *   tel
@@ -267,6 +267,7 @@ class _UserFormState extends State<UserForm>{
               /**
                * true/false value radio input
                */
+
                 case 'checkbox' :
                   bool isChecked = this.formData.containsKey(name) ? (this.formData[name]!=false)  : false;
                if(definition?['options']!=null) {
@@ -317,16 +318,24 @@ class _UserFormState extends State<UserForm>{
                       selectedOption: this.formData.containsKey(name) ?this.formData[name] : 'true'
                   );
                   break;
-              /* todo: support radio
+
                 case 'radio':
-
-                if(e.data!=null) {
-
-                  input = RadioGroup(element: e,options:e.data as dynamic,selectedOption: this.formData.containsKey(e.id) ? int.parse(this.formData[e.id]) : e.data!.first.id);
+                  if(definition?['options']!=null) {
+                    print('options: ' +
+                        (definition?['options'].length > 0 ? definition['options']
+                            .toString() : ''));
+                    List<dynamic> radioButtons = [];
+                    if (definition?['options'] is String) { }
+                    else
+                    for( String option in definition?['options']) {
+                   //   bool isChecked = this.formData[name] == option;
+                      radioButtons.add({'value':option,'key':option});
+                    }
+                    input = RadioGroup(element: name,options:radioButtons as dynamic,selectedOption: this.formData[name]);
                 }
-                else input = Text('no entry data found in '+e.data.toString());
+
                 break;
-              */
+
 
                 case 'file':
                 // print('handling file');

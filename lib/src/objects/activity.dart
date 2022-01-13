@@ -109,7 +109,7 @@ class Activity {
         longitude: responseData['longitude'],
         qrcode: responseData['qrcode'],
         coverpicture: coverpicture,
-        coverpictureurl: responseData['coverpictureurl'],
+        coverpictureurl: responseData['coverpictureurl'] != false ?  responseData['coverpictureurl'].toString():'',
         registration: responseData['registration'] == 'true' ||
                 responseData['registration'] == true
             ? true

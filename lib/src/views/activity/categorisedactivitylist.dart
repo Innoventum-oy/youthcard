@@ -134,6 +134,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
             _pageNumber = 0;
             _loadingState = LoadingState.LOADING;
             _isLoading = false;
+            _loadNextPage(user);
           });
         }),]
       ),
@@ -147,11 +148,20 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
       //data loaded
       print('data loaded, returning customscrollview for '+data.length.toString()+' categories');
         return data.isEmpty ? Container(
-            child:Text('Could not find any activities')) : CustomScrollView(
+            padding: EdgeInsets.all(20),
+            child:
+            ListTile(
+              leading: Icon(Icons.error,color:Colors.white),
+              title: Text(
+                  AppLocalizations.of(context)!.noActivitiesFound,
+                  style:TextStyle(color:Colors.white)),
+            ),
+            ) :
+        CustomScrollView(
             slivers: <Widget>[
               SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
-              if (!_isLoading && index > (data.length * 0.7) && data.length==limit) {
+              if (!_isLoading && index > (data.length * 0.7) && data.length==limit && _pageNumber>0) {
                 print('calling loadnextpage, user token is ' + user.token);
                 _loadNextPage(user);
               }
@@ -173,7 +183,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
 
       case LoadingState.LOADING:
       //data loading in progress
-      if(!_isLoading) _loadNextPage(user);
+    //  if(!_isLoading) _loadNextPage(user);
         return Align(
           alignment: Alignment.center,
           child: Center(

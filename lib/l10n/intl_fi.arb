@@ -68,6 +68,7 @@
   "moreInformation": "lisätiedot",
   "myActivities": "Omat tapahtumat",
   "myCard": "Oma kortti",
+  "noActivitiesFound" : "Tapahtumia ei löytynyt",
   "noUsersFound": "Ei ilmoittautuneita",
   "noActiveBenefits" : "Ei etuja käytössä",
   "noVisitsToday" : "Ei käyntejä tänään",

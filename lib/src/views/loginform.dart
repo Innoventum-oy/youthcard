@@ -10,7 +10,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:package_info/package_info.dart';
 import 'package:youth_card/src/util/app_url.dart';
-import 'package:settings_ui/settings_ui.dart';
+import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 
 class Login extends StatefulWidget {
   final String viewTitle = 'login';
@@ -267,10 +267,10 @@ class _LoginState extends State<Login> {
     servers.forEach((serverTitle, serverUrl) {
       tiles.add(SettingsTile(
         title: serverTitle,
-        titleTextStyle: TextStyle(fontSize:13),
+        titleTextStyle:TextStyle(fontSize:13),
         // subtitle: serverUrl,
-        titleMaxLines: 3,
-        trailing: trailingWidget(serverTitle),
+
+       leading: trailingWidget(serverTitle),
         onPressed: (BuildContext context) {
           Settings().setValue('server', serverUrl);
           Settings().setValue('servername', serverTitle);

@@ -121,6 +121,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "myCard": MessageLookupByLibrary.simpleMessage("My Card"),
         "noActiveBenefits":
             MessageLookupByLibrary.simpleMessage("No active benefits"),
+        "noActivitiesFound": MessageLookupByLibrary.simpleMessage(
+            "Could not find any activities"),
         "noContactMethodsFound":
             MessageLookupByLibrary.simpleMessage("No contact methods found"),
         "noThankYou": MessageLookupByLibrary.simpleMessage("No thank you"),

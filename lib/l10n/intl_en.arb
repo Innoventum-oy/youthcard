@@ -71,6 +71,7 @@
   "moreInformation": "More information",
   "myActivities": "My activities",
   "myCard": "My Card",
+  "noActivitiesFound" : "Could not find any activities",
   "noVisitsToday" : "No visits today",
   "noVisitsFound" : "No visits found",
   "noUsersFound" : "No users found",

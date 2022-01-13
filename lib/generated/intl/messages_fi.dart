@@ -125,6 +125,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "myCard": MessageLookupByLibrary.simpleMessage("Oma kortti"),
         "noActiveBenefits":
             MessageLookupByLibrary.simpleMessage("Ei etuja käytössä"),
+        "noActivitiesFound":
+            MessageLookupByLibrary.simpleMessage("Tapahtumia ei löytynyt"),
         "noContactMethodsFound":
             MessageLookupByLibrary.simpleMessage("Yhteystietoja ei löytynyt"),
         "noThankYou": MessageLookupByLibrary.simpleMessage("Ei kiitos"),

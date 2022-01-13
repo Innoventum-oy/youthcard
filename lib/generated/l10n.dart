@@ -750,6 +750,16 @@ class S {
     );
   }
 
+  /// `Could not find any activities`
+  String get noActivitiesFound {
+    return Intl.message(
+      'Could not find any activities',
+      name: 'noActivitiesFound',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `No visits today`
   String get noVisitsToday {
     return Intl.message(

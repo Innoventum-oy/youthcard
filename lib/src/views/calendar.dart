@@ -63,7 +63,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
       'startfrom': DateFormat('yyyy-MM-dd').format(kFirstDay ?? now),
       if(user.token !=null) 'api_key': user.token,
 
-      'fields': 'id, nexteventdate,  name, description,registration'
+      'fields': 'id, nexteventdate,  name, description,registration,coverpictureurl,maxvisitors,registeredvisitorcount,latitude,longitude,city,registrationenddate,startdate,enddate,address,postcode'
 
       //  'fields': ['id','startdate','enddate','']
      // 'sort': 'nexteventdate',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:settings_ui/settings_ui.dart';
+import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -54,8 +55,8 @@ class _EnvironmentScreenState extends State<EnvironmentScreen> {
       tiles.add(SettingsTile(
         title: serverTitle,
         // subtitle: serverUrl,
-        titleMaxLines: 3,
-        trailing: trailingWidget(serverTitle),
+
+        leading: trailingWidget(serverTitle),
         onPressed: (BuildContext context) {
           Settings().setValue('server', serverUrl);
           Settings().setValue('servername', serverTitle);

@@ -584,8 +584,9 @@ print('returning scaffold');
   }
 
   void _onQRViewCreated(QRViewController controller) {
+    //print('qrview created');
     this.controller = controller;
-    if(controller.hasPermissions)
+    // if(controller.hasPermissions)
     controller.scannedDataStream.listen((scanData) {
       if (!codeQueue.contains(scanData.code))
         setState(() {
@@ -594,6 +595,7 @@ print('returning scaffold');
           sendData(result);
         });
     });
+
   }
 
   @override

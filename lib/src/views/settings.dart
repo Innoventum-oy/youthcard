@@ -1,5 +1,5 @@
 import 'package:provider/provider.dart';
-import 'package:settings_ui/settings_ui.dart';
+import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/views/settings/environment.dart';
 import 'package:package_info/package_info.dart';
@@ -85,7 +85,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),*/
             SettingsTile(
               title: AppLocalizations.of(context)!.environment,
-              subtitle: servername,
+              //subtitle: Text(servername),
               leading: Icon(Icons.cloud_queue),
               onPressed: (context) {
                 Navigator.of(context).push(MaterialPageRoute(

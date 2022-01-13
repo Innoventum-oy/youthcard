@@ -114,6 +114,16 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
   Widget _getContentSection(user) {
     switch (_loadingState) {
       case LoadingState.DONE:
+        if(data.length==0) return Container(
+          padding: EdgeInsets.all(20),
+          child:
+          ListTile(
+            leading: Icon(Icons.error,color:Colors.white),
+            title: Text(
+                AppLocalizations.of(context)!.noActivitiesFound,
+                style:TextStyle(color:Colors.white)),
+          ),
+        );
         return ListView.builder(
             padding: EdgeInsets.symmetric(vertical: 16.0),
             scrollDirection: Axis.horizontal,
@@ -152,7 +162,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
           ),
         );
       default:
-        return Container();
+        return Container(child:Text('No activities found in this category'));
     }
   }
 
