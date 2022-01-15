@@ -41,7 +41,7 @@ class _LoginState extends State<Login> {
           buildNumber = packageInfo.buildNumber;
         }));
     Settings().isServerSelected().then((val) => setState(() {
-      openServerSelect = val;
+      openServerSelect = !val;
     }));
 
 
@@ -59,7 +59,8 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     print('current server: '+serverName+', should we show dialog? '+openServerSelect.toString());
-    if(openServerSelect){
+    if(openServerSelect==true)
+    {
       openServerSelect = false;
       Future.delayed(Duration.zero, () =>serverSelectDialog(context));
     }
