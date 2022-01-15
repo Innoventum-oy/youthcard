@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:youth_card/src/objects/activityvisit.dart';
 import 'package:youth_card/src/objects/user.dart';
+import 'package:youth_card/src/objects/form.dart' as iCMSForm;
+import 'package:youth_card/src/objects/formcategory.dart';
+import 'package:youth_card/src/objects/formelement.dart';
 import 'package:youth_card/src/objects/userbenefit.dart';
 import 'package:youth_card/src/objects/activityclass.dart';
 import 'package:youth_card/src/objects/activitydate.dart';
@@ -237,5 +240,63 @@ class ActivityClassProvider extends ObjectProvider {
     return _apiClient.getActivityClassDetails(activityClassId,user);
   }
 
+
+}
+class FormProvider extends ObjectProvider {
+  FormProvider();
+  ApiClient _apiClient = ApiClient();
+
+  @override
+  Future<List<iCMSForm.Form>> loadItems(params) async {
+
+    return _apiClient.loadForms(params);
+
+  }
+// returns json-decoded response
+  @override
+  Future<dynamic> getDetails(int formId,user) {
+    return _apiClient.getFormDetails(formId,user);
+  }
+
+
+
+}
+
+class FormCategoryProvider extends ObjectProvider {
+  FormCategoryProvider();
+  ApiClient _apiClient = ApiClient();
+
+  @override
+  Future<List<FormCategory>> loadItems(params) async {
+
+    return _apiClient.loadFormCategories(params);
+
+  }
+// returns json-decoded response
+  @override
+  Future<dynamic> getDetails(int id,user) {
+    return _apiClient.getFormCategoryDetails(id,user);
+  }
+}
+class FormElementProvider extends ObjectProvider {
+  FormElementProvider();
+  ApiClient _apiClient = ApiClient();
+
+  @override
+  Future<List<FormElement>> loadItems(params) async {
+
+    return _apiClient.loadFormElements(params);
+
+  }
+  Future<List<FormElement>> getElements(params) async {
+
+    return _apiClient.getElements(params);
+
+  }
+// returns json-decoded response
+  @override
+  Future<dynamic> getDetails(int id,user) {
+    return _apiClient.getFormElementDetails(id,user);
+  }
 
 }

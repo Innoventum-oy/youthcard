@@ -238,7 +238,9 @@ class _MyCardState extends State<MyCard> {
           ),
           body: orientation == Orientation.portrait
               ? _portraitLayout(user)
-              : _landscapeLayout(user));
+              : _landscapeLayout(user),
+          bottomNavigationBar: bottomNavigation(context,currentIndex:2)
+      );
     });
   }
 

@@ -33,6 +33,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "activityRegistrationSaved": MessageLookupByLibrary.simpleMessage(
             "Ilmoittautuminen vastaanotettu"),
         "address": MessageLookupByLibrary.simpleMessage("Osoite"),
+        "answerSaved":
+            MessageLookupByLibrary.simpleMessage("Vastaus tallennettu"),
         "authenticating":
             MessageLookupByLibrary.simpleMessage("Kirjautuminen käynnissä"),
         "benefits": MessageLookupByLibrary.simpleMessage("Edut"),
@@ -40,7 +42,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "btnContinue": MessageLookupByLibrary.simpleMessage("Jatka"),
         "btnContinueWithoutLogin":
             MessageLookupByLibrary.simpleMessage("Jatka kirjautumatta"),
-        "btnDashboard": MessageLookupByLibrary.simpleMessage("Etusivulle"),
+        "btnDashboard": MessageLookupByLibrary.simpleMessage("Etusivu"),
         "btnEdit": MessageLookupByLibrary.simpleMessage("Muokkaa"),
         "btnLogin": MessageLookupByLibrary.simpleMessage("Kirjaudu"),
         "btnReturn": MessageLookupByLibrary.simpleMessage("Takaisin"),
@@ -61,7 +63,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "cancel": MessageLookupByLibrary.simpleMessage("Peruuta"),
         "changesSaved":
             MessageLookupByLibrary.simpleMessage("Muutokset tallennettu"),
-        "chooseFile": MessageLookupByLibrary.simpleMessage("Choose file"),
+        "choose": MessageLookupByLibrary.simpleMessage("Valitse"),
+        "chooseFile": MessageLookupByLibrary.simpleMessage("Valitse tiedosto"),
         "city": MessageLookupByLibrary.simpleMessage("Kaupunki"),
         "clearCache":
             MessageLookupByLibrary.simpleMessage("Tyhjennä välimuisti"),
@@ -103,8 +106,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "flashOn": MessageLookupByLibrary.simpleMessage("Valo päälle"),
         "forgotPassword":
             MessageLookupByLibrary.simpleMessage("Unohditko salasanan?"),
+        "forms": MessageLookupByLibrary.simpleMessage("Lomakkeet"),
         "frontCamera": MessageLookupByLibrary.simpleMessage("Etukamera"),
         "getCode": MessageLookupByLibrary.simpleMessage("Pyydä koodi"),
+        "great": MessageLookupByLibrary.simpleMessage("Hienoa!"),
         "guardianPhone": MessageLookupByLibrary.simpleMessage("Huoltaja"),
         "language": MessageLookupByLibrary.simpleMessage("Kieli"),
         "lastName": MessageLookupByLibrary.simpleMessage("Sukunimi"),
@@ -129,6 +134,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Tapahtumia ei löytynyt"),
         "noContactMethodsFound":
             MessageLookupByLibrary.simpleMessage("Yhteystietoja ei löytynyt"),
+        "noFormsFound": MessageLookupByLibrary.simpleMessage(
+            "Julkaistuja lomakkeita ei löytynyt"),
         "noThankYou": MessageLookupByLibrary.simpleMessage("Ei kiitos"),
         "noUsersFound":
             MessageLookupByLibrary.simpleMessage("Ei ilmoittautuneita"),
@@ -141,6 +148,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "optionFalse": MessageLookupByLibrary.simpleMessage("Ei"),
         "optionTrue": MessageLookupByLibrary.simpleMessage("Kyllä"),
         "pageContent": MessageLookupByLibrary.simpleMessage("Sivusisältö"),
+        "pageIsEmpty": MessageLookupByLibrary.simpleMessage("Sivu on tyhjä"),
         "participants": MessageLookupByLibrary.simpleMessage("Osallistujat"),
         "password": MessageLookupByLibrary.simpleMessage("Salasana"),
         "passwordChanged":
@@ -192,6 +200,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "retrievingCoordinates":
             MessageLookupByLibrary.simpleMessage("Haetaan sijaintia"),
         "save": MessageLookupByLibrary.simpleMessage("Tallenna"),
+        "saveAnswer": MessageLookupByLibrary.simpleMessage("Tallenna vastaus"),
         "savingDataFailed": MessageLookupByLibrary.simpleMessage(
             "Tietojen tallennus epäonnistui"),
         "settings": MessageLookupByLibrary.simpleMessage("Asetukset"),
@@ -226,6 +235,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "visitRemoved":
             MessageLookupByLibrary.simpleMessage("Käynti peruutettu"),
         "visits": MessageLookupByLibrary.simpleMessage("Käynnit"),
+        "writeAnswerHere":
+            MessageLookupByLibrary.simpleMessage("Kirjoita vastaus tähän"),
         "youthcardDashboard":
             MessageLookupByLibrary.simpleMessage("Nuorisokortti"),
         "youthcardLoginTitle": MessageLookupByLibrary.simpleMessage(

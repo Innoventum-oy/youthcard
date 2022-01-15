@@ -5,6 +5,7 @@ import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
+import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/views/activity/activitylist_item.dart';
 
 import 'package:provider/provider.dart';
@@ -141,7 +142,8 @@ class _ActivityListState extends State<ActivityList>  {
     ),
     ]
     ),
-      body: _getContentSection(user)
+      body: _getContentSection(user),
+      bottomNavigationBar: bottomNavigation(context)
     );
   }
 

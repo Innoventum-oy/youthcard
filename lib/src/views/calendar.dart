@@ -9,6 +9,7 @@ import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/views/activity/activitylist_item.dart';
 
 
@@ -185,7 +186,8 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
     ),
             ]
         ),
-        body: _getCalendarSection(user)
+        body: _getCalendarSection(user),
+      bottomNavigationBar: bottomNavigation(context),
     );
   }
 

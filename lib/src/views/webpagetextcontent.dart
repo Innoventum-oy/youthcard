@@ -143,8 +143,11 @@ class _ContentPageViewState extends State<ContentPageView> {
 
   Widget _pageContentSection(page) {
     List<Widget> textContents = [];
+
+    if(page.textcontents!=null)
     for(var i in page.textcontents)
       textContents.add(Html(data:i.toString()));
+    else textContents.add(Padding(padding:EdgeInsets.all(20),child:Text(AppLocalizations.of(context)!.pageIsEmpty)));
     return Container(
         child:
         Column(
