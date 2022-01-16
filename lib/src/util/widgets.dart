@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/views/activity/activitylist.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
@@ -61,6 +62,7 @@ notifyDialog(String text, context)
 
 Widget bottomNavigation(context,{int currentIndex=0}) {
   objectmodel.ImageProvider imageprovider = objectmodel.ImageProvider();
+  User user = Provider.of<UserProvider>(context).user;
   return BottomNavigationBar(
       currentIndex: currentIndex,
       items: [
@@ -72,7 +74,7 @@ Widget bottomNavigation(context,{int currentIndex=0}) {
           icon: Icon(Icons.search),
           label: AppLocalizations.of(context)!.activities,
         ),
-        BottomNavigationBarItem(
+       if(user.token!=null) BottomNavigationBarItem(
           icon: Icon(Icons.card_membership),
           label: AppLocalizations.of(context)!.myCard,
         ),
