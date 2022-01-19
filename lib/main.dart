@@ -41,6 +41,7 @@ class YouthCard extends StatelessWidget {
       ],
       child: MaterialApp(
           title: 'Youth Card',
+          debugShowCheckedModeBanner: false,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
 

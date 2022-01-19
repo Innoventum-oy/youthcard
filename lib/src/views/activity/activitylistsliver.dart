@@ -60,6 +60,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
       'activityclass': activityclass.id.toString(),
       'activitystatus': 'active',
       'activitytype': 'activity',
+      'grouping':'activity.id',
       'limit': limit.toString(),
       'offset': offset.toString(),
       'startfrom': DateFormat('yyyy-MM-dd').format(now),

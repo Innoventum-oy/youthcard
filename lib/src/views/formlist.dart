@@ -62,6 +62,7 @@ class _FormListState extends State<FormList> {
     print('loadForms called for category '+formCategory.name);
     User user = Provider.of<UserProvider>(context, listen: false).user;
     Map<String,dynamic> params={
+      'status' :'active',
       'api_key': user.token ,
 
     };
