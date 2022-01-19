@@ -52,7 +52,10 @@ class WebPageProvider extends ObjectProvider {
     _page = new WebPage(id: _page.id);
     pages.addAll(await _apiClient.loadPages(params));
     print('webpageprovider loaditem was called for commonname '+params['commonname']+'. pages loaded:'+pages.length.toString());
-    if(pages.isNotEmpty) this._page = pages.first;
+    if(pages.isNotEmpty) {
+      this._page = pages.first;
+
+    }
 
   }
 

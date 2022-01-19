@@ -46,7 +46,7 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   void initState() {
-    print('Initializing dashboard state');
+
 
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       initFunction();
@@ -65,10 +65,12 @@ class _DashBoardState extends State<DashBoard> {
     _loadForms(user);
     //See if info page exists for the view
     _loadWebPage(user);
+
   }
   /* load related page */
   _loadWebPage(user)async {
-    Provider.of<WebPageProvider>(context, listen:false).loadItem({
+    print('calling loaditem for webpage');
+    await Provider.of<WebPageProvider>(context,listen:false).loadItem({
       'language': Localizations.localeOf(context).toString(),
       'commonname': widget.viewTitle,
       'fields': 'id,commonname,pagetitle,textcontents,thumbnailurl',
@@ -76,8 +78,10 @@ class _DashBoardState extends State<DashBoard> {
     });
     setState(() {
 
-    //  this.page = Provider.of<WebPageProvider>(context, listen: false).page;
+      //  this.page = Provider.of<WebPageProvider>(context, listen: false).page;
     });
+
+
   }
   /* Check if any forms are available
    */
@@ -150,14 +154,14 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     //for debugging, track builds in print
-   // print('building dasboard state');
+    print('building dasboard state');
     //AuthProvider auth = Provider.of<AuthProvider>(context);
     User user = Provider.of<UserProvider>(context).user;
     this.page = Provider.of<WebPageProvider>(context).page;
 
     this.imageprovider = objectmodel.ImageProvider();
 
-  //  print(this.page.runtimeType.toString() + ': ' + this.page.id.toString());
+    print(this.page.runtimeType.toString() + ': ' + this.page.id.toString());
 
     bool hasInfoPage =
         this.page.id != null && this.page.runtimeType.toString() == 'WebPage'
@@ -174,11 +178,13 @@ class _DashBoardState extends State<DashBoard> {
 
     ImageProvider backgroundImage = AssetImage("images/splash.png");
 
-    if(page.data!=null)
-    if(page.data!['thumbnailurl']!=null) {
-      backgroundImage = NetworkImage(page.data!['thumbnailurl']);
-
+    if(this.page.data!=null) {
+      if (this.page.data!['thumbnailurl'] != null) {
+        backgroundImage = NetworkImage(this.page.data!['thumbnailurl']);
+      }
+      else ('page does not have thumbnail url');
     }
+    else print('page.data is null');
     List<Widget> dashboardButtons = [];
 
       if (user.token != null) dashboardButtons.add(
@@ -317,7 +323,7 @@ class _DashBoardState extends State<DashBoard> {
         child: GridView.count(
           // Create a grid with 2 columns. If you change the scrollDirection to
           // horizontal, this produces 2 rows.
-          crossAxisCount: 3,
+          crossAxisCount: dashboardButtons.length>6 ?3 :2,
           crossAxisSpacing: 0,
           mainAxisSpacing: 0,
           padding: EdgeInsets.only(top: 20, left: 20, right: 20,bottom:0),
@@ -403,7 +409,9 @@ class _DashBoardState extends State<DashBoard> {
                   size: 40,
                   color: Colors.white,
                 ), // icon
-                Text(text, style: TextStyle(color: Colors.white)) // text
+                Text(text,
+                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,) // text
               ],
             ),
           ),
@@ -413,25 +421,15 @@ class _DashBoardState extends State<DashBoard> {
   }
 
   void formsLink(user) {
-
-    switch (_loadingStates['formcategories']) {
-
-      case LoadingState.LOADING:
-        //data loading in progress
-        if (!_formsLoading && user.token != null) _loadForms(user);
-    } //switch
+      if(_loadingStates['formcategories'] == LoadingState.LOADING)
+        if (!_formsLoading && user.token != null)
+          _loadForms(user);
   }
 
   void myLocationsListLink(user, userprovider, imageprovider) {
-    switch (_loadingStates['location']) {
-
-      case LoadingState.LOADING:
-        //data loading in progress
+    if(_loadingStates['location']==LoadingState.LOADING)
         if (!_isLoading && user.token != null)
           _loadMyActivities(user, 'location');
-
-
-    } //switch
   }
   void openMyActivities(){
     Navigator.push(
@@ -443,14 +441,8 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
   void myActivitiesListLink(user, userprovider, imageprovider) {
-    switch (_loadingStates['activity']) {
-
-
-      case LoadingState.LOADING:
-        //data loading in progress
+    if(_loadingStates['activity'] ==LoadingState.LOADING)
         if (!_isLoading && user.token != null)
           _loadMyActivities(user, 'activity');
-
-    } //switch
   }
 }
