@@ -68,7 +68,7 @@ class _DashBoardState extends State<DashBoard> {
   }
   /* load related page */
   _loadWebPage(user)async {
-    Provider.of<WebPageProvider>(context).loadItem({
+    Provider.of<WebPageProvider>(context, listen:false).loadItem({
       'language': Localizations.localeOf(context).toString(),
       'commonname': widget.viewTitle,
       'fields': 'id,commonname,pagetitle,textcontents,thumbnailurl',

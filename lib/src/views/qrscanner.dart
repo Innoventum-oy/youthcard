@@ -154,7 +154,7 @@ class _QRScannerState extends State<QRScanner> {
     });
     print('Sending scanned code ' + scannedcode.code );
 
-    print('Using latitude ' + _latitude! + ', longitude ' + _longitude!);
+    print('Using latitude ' + (_latitude?? '') + ', longitude ' + (_longitude??''));
 
     //dispatcherrequest returns received JSON data or false
     dynamic response = await _apiClient.dispatcherRequest('activity', params);

@@ -133,7 +133,8 @@ class ActivityListProvider extends ObjectProvider {
     final Map<String, String> params = {
       'activitystatus': 'active',
       'api_key': this.user.token ?? await Settings().getValue("anonymousapikey"),
-      'gte:startdate': DateFormat('yyyy-MM-dd').format(now)
+      'gte:startdate': DateFormat('yyyy-MM-dd').format(now),
+      'grouping':'activity.id'
     };
      this._data = await this.loadItems(params,refresh:true);
   }

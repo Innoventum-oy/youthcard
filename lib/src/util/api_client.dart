@@ -164,7 +164,7 @@ class ApiClient {
     this.isProcessing = true;
     String baseUrl = await Settings().getServer();
     String? apikey = await Settings().getValue("anonymousapikey");
-    if (!params.containsKey("api_key")) {
+    if (!params.containsKey("api_key") || params["api_key"] == null) {
       //  print('no api_key provided in params: using anonymous apikey '+apikey+' for calling getDatalist');
       params["api_key"] = apikey;
     }
@@ -341,7 +341,7 @@ class ApiClient {
       Map<String, dynamic> params) async {
     String baseUrl = await Settings().getServer();
     String? apikey = await Settings().getValue("anonymousapikey");
-    if (!params.containsKey("api_key")) {
+    if (!params.containsKey("api_key") || params["api_key"]== null) {
       //  print('no api_key provided in params: using anonymous apikey '+apikey+' for calling getDatalist');
       params["api_key"] = apikey;
     }
