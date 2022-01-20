@@ -65,17 +65,21 @@ class _ActivityListState extends State<ActivityList>  {
         params['activitytype'] = 'location';
         params['accesslevel']='modify';
         params['sort'] = 'name';
+        params['grouping']='activity.id';
         break;
       case 'own':
         params['activitytype'] = 'activity';
         params['accesslevel']='modify';
         params['startfrom'] = DateFormat('yyyy-MM-dd').format(now);
+        params['grouping']='activity.id';
         //   params['limit']='NULL';
       break;
       default:
         params['activitytype'] = 'activity';
         params['startfrom'] = DateFormat('yyyy-MM-dd').format(now);
         params['sort'] ='nexteventdate';
+        params['grouping']='activity.id';
+
 
     }
     print('Loading activitylist page $_pageNumber');

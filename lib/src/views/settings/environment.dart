@@ -65,8 +65,10 @@ class _EnvironmentScreenState extends State<EnvironmentScreen> {
                 'anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
               print("Anonymous api key for " + serverTitle + " set to " +AppUrl.anonymousApikeys[serverTitle]!);
             }
-          else
+          else {
+            print("Anonymous api key for "+serverTitle + " not found");
             Settings().setValue('anonymousapikey', null);
+          }
 
           Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
           //pushReplacementNamed(context, '/login');
