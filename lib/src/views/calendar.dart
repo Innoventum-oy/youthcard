@@ -57,6 +57,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
     DateTime now = DateTime.now();
 
     Map<String, String> params = {
+      'view':'calendar',
       'activitystatus': 'active',
       'activitytype': 'activity',
       'limit': limit.toString(),

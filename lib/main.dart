@@ -25,7 +25,10 @@ void main() {
       )
   );
 }
-
+class NavigationService {
+  static GlobalKey<NavigatorState> navigatorKey =
+  GlobalKey<NavigatorState>();
+}
 class YouthCard extends StatelessWidget {
   // This widget is the root of Youth Card application.
   @override
@@ -41,6 +44,7 @@ class YouthCard extends StatelessWidget {
       ],
       child: MaterialApp(
           title: 'Youth Card',
+          navigatorKey: NavigationService.navigatorKey,
           debugShowCheckedModeBanner: false,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

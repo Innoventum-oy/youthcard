@@ -19,6 +19,9 @@ import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
 
+import '../../main.dart';
+import 'formlist.dart';
+
 class DisplayForm extends StatefulWidget {
   final objectModel.FormElementProvider formElementProvider =
       objectModel.FormElementProvider();
@@ -238,21 +241,25 @@ class _DisplayFormState extends State<DisplayForm> {
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
                           title:
-                              Text(AppLocalizations.of(context)!.answerSaved),
+                              Text(AppLocalizations.of(NavigationService.navigatorKey.currentContext ?? context)!.answerSaved),
                           content: SingleChildScrollView(
                               child: Text(
                             response['message'] != null
                                 ? response['message'].toString()
-                                : AppLocalizations.of(context)!.answerSaved,
+                                : AppLocalizations.of(NavigationService.navigatorKey.currentContext ?? context)!.answerSaved,
                           )),
                           actions: <Widget>[
                             ElevatedButton(
                                 child:
-                                    Text(AppLocalizations.of(context)!.great),
+                                    Text(AppLocalizations.of(NavigationService.navigatorKey.currentContext ?? context)!.great),
                                 onPressed: () {
                                   setState(() {
                                     //TODO: forward to list of available forms
-                                    //  goToLibraryItem(context, widget.book,replace:true);
+                                    Navigator.of(context, rootNavigator: true).pop();
+                                    Navigator.pushReplacement(
+                                      NavigationService.navigatorKey.currentContext ?? context,
+                                      MaterialPageRoute(builder: ( context) => FormList()),
+                                    );
                                   });
                                 })
                           ],

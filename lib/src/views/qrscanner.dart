@@ -154,7 +154,7 @@ class _QRScannerState extends State<QRScanner> {
     });
     print('Sending scanned code ' + scannedcode.code );
 
-    print('Using latitude ' + _latitude! + ', longitude ' + _longitude!);
+  //  print('Using latitude ' + _latitude! + ', longitude ' + _longitude!);
 
     //dispatcherrequest returns received JSON data or false
     dynamic response = await _apiClient.dispatcherRequest('activity', params);
@@ -329,6 +329,8 @@ class _QRScannerState extends State<QRScanner> {
 
       activitySelect = DropdownButton<Activity>(
         value: selectedActivity,
+        isExpanded: true,
+
         icon: const Icon(Icons.arrow_downward),
         iconSize: 24,
         elevation: 16,
@@ -348,12 +350,14 @@ class _QRScannerState extends State<QRScanner> {
           return DropdownMenuItem<Activity>(
             value: activity,
             child: Text(activity.name ?? 'No name ' + activity.id.toString()),
+
+
           );
         }).toList(),
       );
     }
 
-print('returning scaffold');
+//print('returning scaffold');
         return Scaffold(
           appBar: AppBar(
             centerTitle: true,

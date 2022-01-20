@@ -386,7 +386,7 @@ class _DashBoardState extends State<DashBoard> {
   }
   void openForms()
   {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => FormList()),
     );

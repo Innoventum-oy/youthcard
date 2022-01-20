@@ -50,6 +50,7 @@ class _ActivityListState extends State<ActivityList>  {
     DateTime now = DateTime.now();
 
     final Map<String, String> params = {
+      'view':'activitylist',
       'activitystatus': 'active',
       'limit' : limit.toString(),
       'offset' : offset.toString(),

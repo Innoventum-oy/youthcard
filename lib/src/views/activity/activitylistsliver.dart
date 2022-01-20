@@ -57,6 +57,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
     int offset = limit * _pageNumber;
     DateTime now = DateTime.now();
     final Map<String, String> params = {
+      'view':'activitylistsliver',
       'activityclass': activityclass.id.toString(),
       'activitystatus': 'active',
       'activitytype': 'activity',

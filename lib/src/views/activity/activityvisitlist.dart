@@ -33,7 +33,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
   Map<int,User> _users = {};
   DateTimeRange myDateRange = DateTimeRange(
       start: DateTime.now().subtract(Duration(days:7)),
-      end: DateTime.now()
+      end: DateTime.now().add(Duration(days:1))
   );
 
   @override
@@ -41,7 +41,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
     print('initState '+widget.viewTitle);
     this.user = Provider.of<UserProvider>(context,listen:false).user;
     widget.visitListProvider.setUser(this.user);
-
+    _loadWebPage(this.user);
 
 
     updateUsers();
@@ -49,7 +49,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
   }
   void updateUsers() async
   {
-    print('updateUsers called!');
+    print('updateUsers called!'+myDateRange.start.toString());
     List<ActivityVisit> visits = ( await widget.visitListProvider.loadActivityVisits(widget._activity,loadParams:{'startdate':DateFormat('yyyy-MM-dd').format(myDateRange.start),'enddate':DateFormat('yyyy-MM-dd').format(myDateRange.end)})) as List<ActivityVisit>;
     setState((){
       print('setState called!');
@@ -57,15 +57,19 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
 
     });
   }
-  @override
-  void didChangeDependencies() {
-    print('didChangeDepenencies '+widget.viewTitle);
-    //See if info page exists for the view
-    Provider.of<WebPageProvider>(context,listen:false).loadItem({'language' : Localizations.localeOf(context).toString(),
+
+  /* load related page */
+  _loadWebPage(user)async {
+    print('calling loaditem for webpage');
+    await Provider.of<WebPageProvider>(context, listen: false).loadItem({
+      'language': Localizations.localeOf(context).toString(),
       'commonname': widget.viewTitle,
-      'fields' :'id,commonname,pagetitle,textcontents',
-      if(user.token!=null) 'api_key': user.token,});
-    super.didChangeDependencies();
+      'fields': 'id,commonname,pagetitle,textcontents,thumbnailurl',
+      if (user.token != null) 'api_key': user.token,
+    });
+    setState(() {
+      //  this.page = Provider.of<WebPageProvider>(context, listen: false).page;
+    });
   }
   @override
   Widget build(BuildContext context) {
