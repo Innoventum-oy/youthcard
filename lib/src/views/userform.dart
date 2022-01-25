@@ -240,11 +240,11 @@ class _UserFormState extends State<UserForm>{
 
 
             if(userdata.containsKey(name)) {
-              print('user has own property '+name+' with value '+userdata[name].toString());
+            //  print('user has own property '+name+' with value '+userdata[name].toString());
               this.formData[name] = userdata[name];
             }
             else if( user.data!.containsKey(name)) {
-              print('user data includes '+name+' with value '+user.data![name].toString());
+              //print('user data includes '+name+' with value '+user.data![name].toString());
               this.formData[name] = user.data![name];
             }
             else print('no data found for '+name);

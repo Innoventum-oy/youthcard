@@ -34,23 +34,57 @@ class _MyCardState extends State<MyCard> {
   List<Widget> contactItems = [];
   List<ContactMethod> myContacts = [];
   LoadingState _benefitsLoadingState = LoadingState.LOADING;
-  //bool _isLoading = false;
+  bool fieldsLoaded = false;
+  bool userLoaded = false;
+  int? objectId;
+  Map<String,dynamic> fields = {};
+
   String? errormessage;
   User user = new User();
 
-  _getUserInfo() async{
+  /// Returns available fields information from server
+  _getFields() async{
+
     UserProvider provider = UserProvider();
-   await provider.loadUser(widget.user!.id ?? 0, Provider.of<UserProvider>(context, listen: false).user);
+    //target user:
+    int targetId = widget.user?.id ?? (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
+    //  print('_getUserInfo called, retrieving user information from userprovider for user '+targetId.toString());
+    dynamic fielddata = await provider.getFields(targetId, Provider.of<UserProvider>(context, listen: false).user);
     setState(() {
-      // print('user object provided for widget, setting benefits to done and using userbenefits from object');
+    print('user fields loaded');
+      if(fielddata!=null) {
+        this.fields = fielddata;
+      }
+
+      fieldsLoaded = true;
+
+    });
+  }
+
+  /*
+  Returns user information from server
+   */
+  _getUserInfo() async{
+
+    UserProvider provider = UserProvider();
+    //target user:
+    int targetId = widget.user?.id ?? (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
+    //  print('_getUserInfo called, retrieving user information from userprovider for user '+targetId.toString());
+    dynamic userdata = await provider.getObject(targetId, Provider.of<UserProvider>(context, listen: false).user);
+    setState(() {
+      if(userdata!=null) {
+        this.user = User.fromJson(userdata['data'].first['data'],description:userdata['description']);
+      }
+      print('user info loaded');
+      userLoaded = true;
       _benefitsLoadingState = LoadingState.DONE;
 
       benefits = widget.user!.userbenefits;
 
-      this.user = provider.user;
-     // this.myContacts = provider.contacts;
     });
   }
+
+
 
   _loadBenefits(user) async {
     print('loadbenefits called');
@@ -88,17 +122,29 @@ class _MyCardState extends State<MyCard> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
 
       if(widget.user==null) {
-
-       //   print('no user provided for widget, loading benefits using userprovider from context');
-          _loadBenefits(user);
-     // this.myContacts = Provider.of<UserProvider>(context, listen: false).contacts;
+        userLoaded = true;
+        _loadBenefits(user);
       }
       else {
         this.user = widget.user as User;
        _getUserInfo();
       }
+      _getFields();
     });
     super.initState();
+  }
+
+  Widget loader(context){
+    return Align(
+      alignment: Alignment.center,
+      child: Center(
+        child: ListTile(
+          leading: CircularProgressIndicator(),
+          title: Text(AppLocalizations.of(context)!.loading,
+              textAlign: TextAlign.center),
+        ),
+      ),
+    );
   }
 
   @override
@@ -119,48 +165,7 @@ class _MyCardState extends State<MyCard> {
           print(key+': '+value+' '+user.data![key].toString());
         });
       }else print('user description is NULL');
-/*
-    if(myContacts.isNotEmpty)
-    {
-      contactItems.clear();
-      for(var i in myContacts)
-      {
-        print(i.toString());
-        contactItems.add(
-            Row(
 
-                children:[Expanded(
-                    flex:1,
-                    child: Icon(i.type=='phone' ? Icons.phone_android :Icons.email)),
-                  Expanded(
-                      flex:4,
-                      child: Text(i.address.toString())),
-                  Expanded(
-                      flex:2,
-                      child:(i.verified! ? Icon(Icons.check_circle_outlined,semanticLabel:AppLocalizations.of(context)!.verified) : TextButton(
-                        onPressed: () {
-                          Provider.of<AuthProvider>(context,listen:false).setVerificationStatus(VerificationStatus.CodeNotRequested);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ValidateContact(contactmethod:i)),
-                          );
-                        },
-                        child:Text(
-                          AppLocalizations.of(context)!.verify ,
-                          style: TextStyle(
-                            // fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ))
-                  )
-                ]
-            )
-        );
-
-      }
-    }
-*/
     contactItems.clear();
     contactItems.add(Padding(
       padding:EdgeInsets.all(10),
@@ -219,6 +224,7 @@ class _MyCardState extends State<MyCard> {
                 ),
               ),
             ),
+          if(user.accesslevel!= null && user.accesslevel! >= 20) ..._userInfoFields(user),
         ]),
     ),
     );
@@ -245,7 +251,8 @@ class _MyCardState extends State<MyCard> {
   }
 
   Widget _portraitLayout(user) {
-    return Column(
+    return ListView(
+        shrinkWrap: true,
       children: [
         SizedBox(height: 20),
         Center(
@@ -259,8 +266,9 @@ class _MyCardState extends State<MyCard> {
        // Text('Access:'+user.accesslevel.toString()),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
           children:[
-            if(user!.accesslevel!= null && user.accesslevel >= 20) ElevatedButton(
+            if((user!.accesslevel!= null && user.accesslevel >= 20) ||(widget.user==null && Provider.of<UserProvider>(context, listen: false).user.id!=null)) ElevatedButton(
           onPressed : (){
             // notifyDialog('opening userform',context);
             Navigator.push(
@@ -280,6 +288,7 @@ class _MyCardState extends State<MyCard> {
             child: Text(AppLocalizations.of(context)!.btnReturn)),
         ]),
         _getBenefitsSection(user),
+      //  ..._userInfoFields(user)
       ],
     );
   }
@@ -316,22 +325,25 @@ class _MyCardState extends State<MyCard> {
         children: <Widget>[
           _drawAvatar(avatarImage,
               user),
-          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+
             _drawLabel(context, username),
-            Text(user.email ?? '-'),
-          ])
+
+
         ],
       ),
     );
   }
 
-  Padding _drawLabel(BuildContext context, String label) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(
+  Widget _drawLabel(BuildContext context, String label) {
+    return Flexible(
+        child:
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+         child: Text(
         label,
-        style: Theme.of(context).textTheme.headline5,
+        style: Theme.of(context).textTheme.headline6,
       ),
+    ),
     );
   }
 
@@ -346,15 +358,71 @@ class _MyCardState extends State<MyCard> {
       ),
     );
   }
+  List<Widget> _userInfoFields(user)
+  {
+    List<Widget> widgets = [];
+    if(!(userLoaded && fieldsLoaded )) widgets.add(loader(context));
+    else if(this.fields.length>0 )
+    {
+      Map<String,dynamic> userdata = this.user.toMap();
+      Map<String,dynamic> p = {};
+      Map<String,dynamic> fields = this.fields; // targetUser.description ?? {};
+      int elementNumber = 1;
+      //print('USERDATA');
+      //print(userdata.toString());
+      user.data!.forEach((key,value) {
+        print(key.toString()+':'+value.toString());
+      });
 
+      fields['fields'].forEach((name, definition) {
+        dynamic value;
+        if(userdata.containsKey(name)) {
+          //  print('user has own property '+name+' with value '+userdata[name].toString());
+          value = userdata[name];
+        }
+        else if( user.data!.containsKey(name)) {
+          //print('user data includes '+name+' with value '+user.data![name].toString());
+          value = user.data![name];
+        }
+        if(value==null) value = '-';
+       // if(value != null) {
+
+          widgets.add(
+              Padding( padding:EdgeInsets.only(left: 20, right: 20),
+                  child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:[
+                 Expanded(
+                   flex: 2,
+                   child:Text(definition['displayname'] ?? name,
+               //  overflow:TextOverflow.ellipsis,
+                 style:TextStyle(fontWeight: FontWeight.bold)),),
+
+                 Expanded(
+                   flex: 3,
+                   child: Text(value,
+                    overflow: TextOverflow.clip,),
+                  ),
+                ],
+                  ),
+              )
+          );
+        // }
+
+      });
+
+    }
+    return widgets;
+  }
   Widget _getBenefitsSection(user) {
     print('_getBenefitsSection gets called');
     switch (_benefitsLoadingState) {
       case LoadingState.DONE:
         //data loaded
 
-        return Expanded(
-          child: Padding(
+        return Container(
+           height:50,
+          child:Padding(
             padding: EdgeInsets.only(left: 20, right: 20),
             child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -364,7 +432,8 @@ class _MyCardState extends State<MyCard> {
                 itemBuilder: (BuildContext context, int index) {
                   return _userBenefitListItem(benefits[index]);
                 }),
-          ),
+
+        ),
         );
       case LoadingState.ERROR:
         //data loading returned error state

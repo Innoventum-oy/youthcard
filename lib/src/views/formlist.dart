@@ -63,6 +63,7 @@ class _FormListState extends State<FormList> {
     User user = Provider.of<UserProvider>(context, listen: false).user;
     Map<String,dynamic> params={
       'status' :'active',
+      'accesslevel' : 'read',
       'api_key': user.token ,
 
     };

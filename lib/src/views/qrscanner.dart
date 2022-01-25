@@ -100,7 +100,7 @@ class _QRScannerState extends State<QRScanner> {
   void showMessage(BuildContext context, String title, Widget content) {
     showDialog(context: context, builder: (BuildContext builderContext) {
       _timer = Timer(Duration(seconds: 5), () {
-        Navigator.of(context).pop();
+        Navigator.of(context, rootNavigator: true).maybePop();
       });
 
       return AlertDialog(
@@ -145,7 +145,7 @@ class _QRScannerState extends State<QRScanner> {
       'longitude': _longitude.toString(),
       'api_key' : user.token.toString()
     };
-    print('CURRENT ACTIVITY: '+selectedActivity.id.toString());
+   // print('CURRENT ACTIVITY: '+selectedActivity.id.toString());
     if (selectedActivity.id != null)
       params['activityid'] = selectedActivity.id.toString();
     //for debugging: print params
@@ -344,7 +344,7 @@ class _QRScannerState extends State<QRScanner> {
         },
         items: myActivities
             .map<DropdownMenuItem<Activity>>((Activity activity) {
-          print('adding item ' + activity.id.toString() + ' to dropdown menu');
+          //print('adding item ' + activity.id.toString() + ' to dropdown menu');
           return DropdownMenuItem<Activity>(
             value: activity,
             child: Text(activity.name ?? 'No name ' + activity.id.toString()),
@@ -353,7 +353,7 @@ class _QRScannerState extends State<QRScanner> {
       );
     }
 
-print('returning scaffold');
+//print('returning scaffold');
         return Scaffold(
           appBar: AppBar(
             centerTitle: true,
@@ -405,8 +405,7 @@ print('returning scaffold');
                           future: _currentPosition,
                           builder: (context, data) {
                             if (data.hasData) {
-                              print('location retrieved for futurebuilder: ' +
-                                  data.data.toString());
+
                               return Row(children:[
                                 Icon(Icons.check_circle_outlined),
                                 Text(AppLocalizations.of(context)!
