@@ -164,7 +164,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
               SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
               if (!_isLoading && index > (data.length * 0.7) && data.length==limit && _pageNumber>0) {
-                print('calling loadnextpage, user token is ' + user.token);
+
                 _loadNextPage(user);
               }
              if(data.isNotEmpty) return activityClassView(data[index]);

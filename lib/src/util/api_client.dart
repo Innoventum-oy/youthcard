@@ -139,7 +139,16 @@ class ApiClient {
     this.isProcessing = false;
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
-        Map<String, dynamic> body = json.decode(response.body);
+        try {
+          Map<String, dynamic> body = json.decode(response.body);
+          return body;
+        } on FormatException catch (e) {
+
+          print('The provided string is not valid JSON');
+          print(response.body.toString());
+          return null;
+        }
+
 
         /* print('GETJSON DATA RECEIVED:');
         body.forEach((key, value) {
@@ -148,7 +157,7 @@ class ApiClient {
         print('END GETJSON');
         */
 
-        return (body);
+
       }
       else {
         print('response body was empty for uri .' + uri.toString());

@@ -81,7 +81,6 @@ class _DashBoardState extends State<DashBoard> {
       //  this.page = Provider.of<WebPageProvider>(context, listen: false).page;
     });
 
-
   }
   /* Check if any forms are available
    */

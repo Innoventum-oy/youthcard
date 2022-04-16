@@ -730,10 +730,10 @@ class S {
     );
   }
 
-  /// `Sijainnit`
+  /// `Locations`
   String get locations {
     return Intl.message(
-      'Sijainnit',
+      'Locations',
       name: 'locations',
       desc: '',
       args: [],

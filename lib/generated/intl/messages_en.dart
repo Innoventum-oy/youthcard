@@ -113,7 +113,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Loading benefits"),
         "locationRetrieved":
             MessageLookupByLibrary.simpleMessage("Location retrieved"),
-        "locations": MessageLookupByLibrary.simpleMessage("Sijainnit"),
+        "locations": MessageLookupByLibrary.simpleMessage("Locations"),
         "logIsEmpty":
             MessageLookupByLibrary.simpleMessage("Event log is empty"),
         "login": MessageLookupByLibrary.simpleMessage("Login"),

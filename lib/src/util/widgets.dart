@@ -37,14 +37,31 @@ InputDecoration buildInputDecoration(String hintText, IconData icon) {
     border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
   );
 }
-notifyDialog(String text, context)
+handleNotifications(dynamic notifications,context)
+{
+  if (notifications != null)
+  {
+    List<Widget> inforows=[];
+    for( String notification in notifications){
+
+      inforows.add(Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(notification)))
+      ;
+    }
+    notifyDialog(AppLocalizations.of(context)!.notification,Column(children:inforows),context);
+    //display notifications in alert dialog
+
+  }
+}
+notifyDialog(String? titleText,Widget text, context)
 {
   showDialog<String>(
       context: context,
       builder:(BuildContext context) =>AlertDialog(
-        title: Text(AppLocalizations.of(context)!.notification),
+        title: Text(titleText!=null ? titleText : AppLocalizations.of(context)!.notification),
         content: SingleChildScrollView(
-            child:Text(text)
+            child:text
         ),
         actions:<Widget>[
           ElevatedButton(

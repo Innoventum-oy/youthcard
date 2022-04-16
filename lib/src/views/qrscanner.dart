@@ -182,7 +182,8 @@ class _QRScannerState extends State<QRScanner> {
            ...texts,
 
           ]);
-          showMessage(context,AppLocalizations.of(context)!.visitRecorded,content);
+          String messageTitle = response['status'] == 'success' ? AppLocalizations.of(context)!.visitRecorded : AppLocalizations.of(context)!.error;
+          showMessage(context,messageTitle,content);
           String statusType = response['status'];
           switch(response['status']){
             case 'success':

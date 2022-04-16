@@ -54,9 +54,6 @@ class WebPageProvider extends ObjectProvider {
     print('webpageprovider loaditem was called for commonname '+params['commonname']+'. pages loaded:'+pages.length.toString());
     if(pages.isNotEmpty) {
       this._page = pages.first;
-
     }
-
   }
-
 }

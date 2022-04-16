@@ -39,11 +39,16 @@ class _RegisterState extends State<Register> {
       final form = formKey.currentState;
       if (form!.validate()) {
         form.save();
-        _apiClient.register(firstname:_firstname.toString(), lastname: _lastname.toString(),email:_email.toString(),phone: _phone.toString(), password:_password.toString(), passwordConfirmation:_confirmPassword.toString())!.then((responsedata) {
+        _apiClient.register(
+            firstname:_firstname.toString(),
+            lastname: _lastname.toString(),
+            email:_email.toString(),
+            phone: _phone.toString(),
+            password:_password.toString(),
+            passwordConfirmation:_confirmPassword.toString()
+        )!.then((responsedata) {
           var response = responsedata['data'] ?? responsedata;
-
           if(response!=null) if( response['status']!=null) {
-
             switch(response['status']) {
               case 'error':
                 Flushbar(
@@ -51,7 +56,6 @@ class _RegisterState extends State<Register> {
                   message: response['message'] !=null ? response['message'].toString() : response['error'].toString(),
                   duration: Duration(seconds: 10),
                 ).show(context);
-
                 break;
 
               case 'success':
@@ -172,7 +176,6 @@ class _RegisterState extends State<Register> {
       }
       if(value!.isEmpty)  return AppLocalizations.of(context)!.passwordIsRequired;
       return null;
-
       },
       onSaved: (value) => _confirmPassword = value,
       obscureText: true,

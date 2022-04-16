@@ -76,7 +76,7 @@
   "loading": "Loading",
   "loadingBenefits" : "Loading benefits",
   "locationRetrieved" : "Location retrieved",
-  "locations" : "Sijainnit",
+  "locations" : "Locations",
   "login": "Login",
   "loginFailed": "Login failed",
   "logIsEmpty" : "Event log is empty",

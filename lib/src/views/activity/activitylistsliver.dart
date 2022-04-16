@@ -71,15 +71,16 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
       'sort': 'nexteventdate',
     };
 
-    print('Loading activities (activitylistsliver) $activityclass.name page $_pageNumber');
+    print('Loading activities (activitylistsliver) page $_pageNumber for '+activityclass.name);
     try {
       var nextActivities = await widget.activityProvider.loadItems(params);
       setState(() {
         _loadingState = LoadingState.DONE;
         if (nextActivities.isNotEmpty) {
           data.addAll(nextActivities);
-          print(data.length.toString() + ' activities currently loaded!');
-          if (nextActivities.length < limit) {
+          print(data.length.toString() + ' activities currently loaded for '+activityclass.name);
+          if (nextActivities.length >= limit) {
+            print('advancing pagenumber');
             _isLoading = false;
             _pageNumber++;
           }
@@ -131,8 +132,9 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
             scrollDirection: Axis.horizontal,
             itemCount: data.length,
             itemBuilder: (BuildContext context, int index) {
+              print('building item '+index.toString());
               if (!_isLoading && index > (data.length * 0.7)) {
-
+            print('loading page '+index.toString());
                 _loadNextPage(user, widget.activityClass);
               }
 

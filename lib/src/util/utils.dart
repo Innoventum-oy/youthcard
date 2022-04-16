@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/user.dart';
+import 'package:youth_card/src/util/widgets.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
@@ -115,6 +116,8 @@ Future<void> feedbackAction(BuildContext context, User user) async {
                     )
                 );
             }
+            if(response['error']!=null)
+              handleNotifications([response['error']], context);
           });
         });
       }
