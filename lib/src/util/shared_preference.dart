@@ -69,7 +69,7 @@ class Settings{
   Future<String> getServer() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String server = prefs.getString('server') ?? AppUrl.servers.values.first ;
-  // print("getServer returning " + server);
+   print("getServer returning " + server);
     return server ;
   }
   Future<bool> isServerSelected() async {
@@ -106,7 +106,7 @@ class Settings{
     return token;
   }
   Future<bool> setValue(String arg,dynamic val) async {
-   // print('storing '+arg+':'+val);
+    print('storing '+arg+':'+val);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(arg,val);
     return true;

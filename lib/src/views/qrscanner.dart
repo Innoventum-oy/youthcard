@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -63,14 +64,46 @@ class _QRScannerState extends State<QRScanner> {
 
   /* Returns user location in Position object for storing GPS coordinates where code was scanned */
   Future<Position> _getCurrentLocation() async {
-
+    bool serviceEnabled;
+    LocationPermission permission;
     print('retrieving current location');
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
 
-    var location = await Geolocator.getCurrentPosition();
-    _latitude = location.latitude.toString();
-    _longitude = location.longitude.toString();
-    print('location retrieved');
-    return location;
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    try {
+      var location = await Geolocator.getCurrentPosition();
+      _latitude = location.latitude.toString();
+      _longitude = location.longitude.toString();
+      print('location retrieved');
+      return location;
+    }
+    catch(e)
+    {
+      return Future.error('Error occurred in getting current position');
+    }
+
   }
 
   // User user;
@@ -81,15 +114,13 @@ class _QRScannerState extends State<QRScanner> {
   @override
   void reassemble() {
     super.reassemble();
-    if (Platform.isAndroid) {
-      if(controller!=null) controller!.pauseCamera().catchError((error) {
-        print(error.toString());
-        notify(error.toString());
-      });
-    } else if (Platform.isIOS) {
-      if(controller!=null)
+    if(controller!=null){
+      if (Platform.isAndroid) {
+        controller!.resumeCamera().catchError((error) {
+          notify(error.toString());
+          });
+      }
       controller!.resumeCamera().catchError((error) {
-        print(error.toString());
         notify(error.toString());
       });
     }
@@ -544,6 +575,7 @@ class _QRScannerState extends State<QRScanner> {
   }
 
   Widget _buildQrView(BuildContext context) {
+    print('buildqrview called');
     // fit the scanArea depending on the device screen measurements
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
@@ -560,7 +592,8 @@ class _QRScannerState extends State<QRScanner> {
           borderLength: 30,
           borderWidth: 10,
           cutOutSize: scanArea),
-    ): Padding(
+      onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
+    ) : Padding(
       padding:EdgeInsets.all(20),
       child:
         Column(
@@ -582,8 +615,16 @@ class _QRScannerState extends State<QRScanner> {
     ]),
     );
   }
-
+  void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
+    log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
+    if (!p) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('no Permission')),
+      );
+    }
+  }
   void _onQRViewCreated(QRViewController controller) {
+
     //print('qrview created');
     this.controller = controller;
     // if(controller.hasPermissions)

@@ -73,9 +73,10 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
+  Future<Map<String, dynamic>> login(String email, String password,{String? server}) async {
     var result;
-    String baseUrl = await Settings().getServer();
+    print('passed server '+(server ??'none'));
+    String baseUrl = server ?? await Settings().getServer();
     final Map<String, dynamic> loginData = {
       'user': {
         'email': email,

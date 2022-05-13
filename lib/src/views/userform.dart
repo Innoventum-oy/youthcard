@@ -257,7 +257,11 @@ class _UserFormState extends State<UserForm>{
                 print('not displaying the element '+name);
                   break;
 
+                case 'textline':
                 case 'text':
+                p['maxlines'] = 1;
+                continue printdefaultinput;
+
                 case 'textarea':
                 //define parameters
                   p['maxlines'] = 10;

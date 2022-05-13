@@ -124,13 +124,17 @@ class ActivityListProvider extends ObjectProvider {
   List<Activity>? get list => _data;
 
 
+/*
+ * Load items for which user has ACL >= MODIFY
 
+ */
   Future<void> loadMyItems() async
   {
     print('loadMyItems called for '+this.user.fullname);
 
     DateTime now = DateTime.now();
     final Map<String, String> params = {
+      'accesslevel':'modify',
       'activitystatus': 'active',
       'api_key': this.user.token ?? await Settings().getValue("anonymousapikey"),
       'gte:startdate': DateFormat('yyyy-MM-dd').format(now),

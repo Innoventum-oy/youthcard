@@ -35,9 +35,7 @@ class ActivityListItem extends StatelessWidget{
       },
     ));
     buttons.add(const SizedBox(width: 8));
-    if(activityItem.registration){
-      buttons.add(Text((activityItem.registeredvisitorcount!=null ? activityItem.registeredvisitorcount.toString() : '0')+(activityItem.maxvisitors!=null ? '/'+activityItem.maxvisitors.toString() :'') ));
-    }
+
     if(activityItem.registration
         && ( activityItem.maxvisitors==null || (activityItem.maxvisitors??0) > (activityItem.registeredvisitorcount??0) )
         && ( activityItem.registrationenddate==null || activityItem.registrationenddate!.isAfter(DateTime.now()))
@@ -63,6 +61,11 @@ class ActivityListItem extends StatelessWidget{
       ));
       buttons.add(const SizedBox(width: 8));
       }
+    String subtitle= dateinfo ;
+    if(activityItem.registration){
+      subtitle+=' ['+(activityItem.registeredvisitorcount!=null ? activityItem.registeredvisitorcount.toString() : '0')+(activityItem.maxvisitors!=null ? '/'+activityItem.maxvisitors.toString() :'') +']';
+    }
+    if(activityItem.description!=null)subtitle+= '\n'+activityItem.description!;
     return Center(
       child:
       Card(
@@ -74,10 +77,9 @@ class ActivityListItem extends StatelessWidget{
              ListTile(
               leading: Icon(Icons.event),
               title: Text((activityItem.name != null ? activityItem.name: AppLocalizations.of(context)!.unnamedActivity)!),
-              subtitle: Text(
-                  dateinfo +(activityItem.description==null ? '' : '\n'+activityItem.description!),
-              overflow: TextOverflow.ellipsis,
-              maxLines:5),
+              subtitle: Text(subtitle,
+               overflow: TextOverflow.ellipsis,
+                maxLines:5),
                isThreeLine: true,
             ),
             Row(

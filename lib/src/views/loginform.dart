@@ -27,6 +27,7 @@ class _LoginState extends State<Login> {
 
   String? _contact, _password;
   String serverName = '';
+  String serverUrl = '';
   String appName = '';
   String packageName = '';
   String version = '';
@@ -44,7 +45,9 @@ class _LoginState extends State<Login> {
       openServerSelect = !val;
     }));
 
-
+    Settings().getServer().then((val) =>  setState(() {
+      serverUrl = val;
+    }));
     Settings().getServerName().then((val) => setState(() {
       print("getting server for loginstate "+val);
           serverName = val;
@@ -58,7 +61,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    print('current server: '+serverName+', should we show dialog? '+openServerSelect.toString());
+    print('current server: '+serverName+' / '+serverUrl+', should we show dialog? '+openServerSelect.toString());
     if(openServerSelect==true)
     {
       openServerSelect = false;
@@ -149,7 +152,7 @@ class _LoginState extends State<Login> {
         form.save();
 
         final Future<Map<String, dynamic>> successfulMessage =
-            auth.login(_contact!, _password!);
+            auth.login(_contact!, _password!,server: serverUrl);
 
         successfulMessage.then((response) {
           if (response['status']) {
@@ -187,7 +190,10 @@ class _LoginState extends State<Login> {
             child:  Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(child:titleText),
+                  Center(child:GestureDetector(child: titleText, onTap: () {
+          serverSelectDialog(context);
+          },)
+                  ),
                    SizedBox(height: 5.0),
                   label(AppLocalizations.of(context)!.phoneOrEmail),
                   SizedBox(height: 5.0),
@@ -265,7 +271,7 @@ class _LoginState extends State<Login> {
           ),
           insetPadding: EdgeInsets.symmetric(horizontal: 20),
           actions: <Widget>[
-            TextButton(
+            ElevatedButton(
               child:
               Text(AppLocalizations.of(context)!.close),
               onPressed: () {
@@ -279,7 +285,7 @@ class _LoginState extends State<Login> {
   List<SettingsTile> environmentOptions(BuildContext context) {
     final Map servers = AppUrl.servers;
     List<SettingsTile> tiles = [];
-    servers.forEach((serverTitle, serverUrl) {
+    servers.forEach((serverTitle, itemUrl) {
       tiles.add(SettingsTile(
         title: serverTitle,
         titleTextStyle:TextStyle(fontSize:13),
@@ -289,12 +295,14 @@ class _LoginState extends State<Login> {
         onPressed: (BuildContext context) {
             print('setting server to '+serverTitle);
             serverName = serverTitle;
+            serverUrl = itemUrl;
+            print('setting serverUrl to '+serverUrl);
             Settings().setValue('server', serverUrl);
             Settings().setValue('servername', serverTitle);
             if (AppUrl.anonymousApikeys.containsKey(serverTitle)) {
               Settings().setValue(
                   'anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
-              //print("Anonymous api key for " + serverTitle + " set to " +AppUrl.anonymousApikeys[serverTitle]!);
+              print("Anonymous api key for " + serverTitle + " set to " +AppUrl.anonymousApikeys[serverTitle]!);
             }
             else
               Settings().setValue('anonymousapikey', null);
@@ -302,7 +310,9 @@ class _LoginState extends State<Login> {
             //  Provider.of<UserProvider>(context, listen: false).clearUser();
             //  Navigator.pushReplacementNamed(context, '/login');
             Navigator.of(context, rootNavigator: true).pop();
-            setState(() { });
+            setState(() {
+              print('updating state');
+            });
         },
       ));
     });

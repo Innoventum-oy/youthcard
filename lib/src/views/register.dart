@@ -251,11 +251,11 @@ class _RegisterState extends State<Register> {
     formfields.add( auth.registeredStatus == Status.Authenticating
     ? loading
         : longButtons(AppLocalizations.of(context)!.createAccount, doRegister));
-    formfields.add(TextButton(
+    formfields.add(ElevatedButton(
       onPressed: () {
       // Navigate back to the first screen by popping the current route
       // off the stack.
-        Navigator.pushReplacementNamed(context, '/register');
+        Navigator.pushReplacementNamed(context, '/login');
 
       },
       child: Text(AppLocalizations.of(context)!.btnReturn,style: TextStyle(fontWeight: FontWeight.w300)))
