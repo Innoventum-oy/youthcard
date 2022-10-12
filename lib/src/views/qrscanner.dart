@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:developer';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 //import 'dart:convert';
@@ -198,7 +197,7 @@ class _QRScannerState extends State<QRScanner> {
       else{
         //todo: add message types to eventlog
         //Wait for 5 seconds before removing the code
-        Timer t = Timer(Duration(seconds: 5), () => codeQueue.remove(scannedcode.code));
+         Timer(Duration(seconds: 5), () => codeQueue.remove(scannedcode.code));
 
 
         if (response['message'] != null) {

@@ -115,7 +115,7 @@ class UserProvider with ChangeNotifier {
     }
     catch (e, stack) {
       print('loadItems returned error $e\n Stack trace:\n $stack');
-      String errormessage = e.toString();
+
     }
   }
 

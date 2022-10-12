@@ -48,7 +48,7 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
 
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initFunction();
     });
     super.initState();
@@ -88,8 +88,7 @@ class _DashBoardState extends State<DashBoard> {
 
     _formsLoading = true;
     _loadingStates['formcategories'] = LoadingState.LOADING;
-    int offset = 0;
-    int limit = 1;
+
 
     Map<String, dynamic> params = {
       'displayinapp': 'true',
@@ -181,7 +180,7 @@ class _DashBoardState extends State<DashBoard> {
       if (this.page.data!['thumbnailurl'] != null) {
         backgroundImage = NetworkImage(this.page.data!['thumbnailurl']);
       }
-      else ('page does not have thumbnail url');
+
     }
     else print('page.data is null');
     List<Widget> dashboardButtons = [];

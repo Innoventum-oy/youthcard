@@ -85,7 +85,7 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       User user = Provider.of<UserProvider>(context, listen: false).user; //current user
       _loadActivityUsers(widget._activityDate,user);
 

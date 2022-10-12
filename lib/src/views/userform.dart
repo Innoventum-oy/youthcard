@@ -1,18 +1,18 @@
 import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:youth_card/src/objects/user.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectModel;
+//import 'package:youth_card/src/providers/objectprovider.dart' as objectModel;
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:youth_card/src/util/navigator.dart';
+//import 'package:youth_card/src/util/navigator.dart';
 
 class UserForm extends StatefulWidget {
   final User? targetUser;
@@ -78,7 +78,7 @@ class _UserFormState extends State<UserForm>{
     print('initing UserForm view state');
     // this.loadFormCategories();
     //this.user = Provider.of<UserProvider>(context, listen: false).user;
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _getUserInfo();
       _getFields();
     });
@@ -196,12 +196,12 @@ class _UserFormState extends State<UserForm>{
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(targetUser.fullname,
-            style: Theme.of(context).textTheme.headline5),
+            style: Theme.of(context).textTheme.headlineSmall),
       ),
 
     ];
 
-    Widget? input = null;
+    Widget? input ;
 
     //if(targetUser.description!=null)
     if(this.fields.length>0)
@@ -266,7 +266,7 @@ class _UserFormState extends State<UserForm>{
                 //define parameters
                   p['maxlines'] = 10;
                   continue printdefaultinput;
-                  break;
+
 
               /**
                * true/false value radio input
@@ -397,7 +397,7 @@ class _UserFormState extends State<UserForm>{
                               style: Theme
                                   .of(context)
                                   .textTheme
-                                  .headline5),
+                                  .headlineSmall),
                         )
                     )
                 );

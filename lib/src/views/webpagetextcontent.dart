@@ -66,7 +66,7 @@ class _ContentPageViewState extends State<ContentPageView> {
   }
   @override
   void initState() {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       User user = Provider.of<UserProvider>(context, listen: false).user;
 
       if(widget.providedPage!=null) {

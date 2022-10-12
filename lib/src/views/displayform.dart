@@ -1,11 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:another_flushbar/flushbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 //import 'package:intl/intl.dart';
 //import 'package:youth_card/generated/l10n.dart';
 import 'package:youth_card/src/objects/formelement.dart';
@@ -100,7 +97,7 @@ class _DisplayFormState extends State<DisplayForm> {
                     ', type: ' + data['answer'].runtimeType.toString());
                 try {
                   answer = json.decode(data['answer']);
-                } on FormatException catch (e) {
+                } on FormatException {
                   answer = data['answer'];
                 }
                 if (data['answertype'] == 'checkbox') {
@@ -122,7 +119,7 @@ class _DisplayFormState extends State<DisplayForm> {
   void initState() {
     //print('initing FillForm view state');
     // this.loadFormCategories();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.form.loadingStatus = iCMSForm.LoadingStatus.Idle;
       if (!elementsLoaded) this.loadElements(widget.form);
     });
@@ -167,11 +164,11 @@ class _DisplayFormState extends State<DisplayForm> {
         Map<String, dynamic> requestData = {};
         this.formData.forEach((key, value) {
           if (value != null) hasData = true;
-          if (value.runtimeType == 'bool' && value != false) {
+          if (value.runtimeType.toString() == 'bool' && value != false) {
             hasData = true;
           //  print('value is boolean ' + value.toString());
           }
-          if (value.runtimeType == 'String' && value.isNotEmpty && value!='null') {
+          if (value.runtimeType.toString() == 'String' && value.isNotEmpty && value!='null') {
             hasData = true;
          //   print('value is String: ' + value);
           }
@@ -297,7 +294,7 @@ class _DisplayFormState extends State<DisplayForm> {
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(form.title ?? '',
-            style: Theme.of(context).textTheme.headline4),
+            style: Theme.of(context).textTheme.headlineMedium),
       ),
       Padding(
         padding: const EdgeInsets.all(8.0),
@@ -424,7 +421,7 @@ class _DisplayFormState extends State<DisplayForm> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(e.title.toString(),
-                      style: Theme.of(context).textTheme.headline5),
+                      style: Theme.of(context).textTheme.headlineSmall),
                 )));
             inputs.add(Padding(
               padding: const EdgeInsets.all(8.0),

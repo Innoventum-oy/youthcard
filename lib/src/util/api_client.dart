@@ -142,7 +142,7 @@ class ApiClient {
         try {
           Map<String, dynamic> body = json.decode(response.body);
           return body;
-        } on FormatException catch (e) {
+        } on FormatException {
 
           print('The provided string is not valid JSON');
           print(response.body.toString());

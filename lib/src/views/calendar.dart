@@ -139,7 +139,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
 
   @override
   void initState() {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       User user = Provider
           .of<UserProvider>(context, listen: false)
           .user;

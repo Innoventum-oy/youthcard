@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:youth_card/src/util/app_url.dart';
+
 class Welcome extends StatelessWidget {
 
 

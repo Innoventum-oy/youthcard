@@ -49,7 +49,7 @@ class _FormListState extends State<FormList> {
   void initState(){
     print('initing FormList view state');
     this.loadFormCategories();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       print("WidgetsBinding");
       if(!categoriesLoaded)
         this.loadFormCategories();

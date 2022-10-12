@@ -11,15 +11,16 @@ import 'package:youth_card/src/objects/contactmethod.dart';
 
 class ValidateContact extends StatefulWidget {
   final ContactMethod? contactmethod;
-  bool contactsLoaded = false;
+
   ValidateContact({this.contactmethod});
   @override
   _ValidateContactState createState() => _ValidateContactState();
 }
 
 class _ValidateContactState extends State<ValidateContact> {
+  bool contactsLoaded = false;
   final formKey = new GlobalKey<FormState>();
-
+  ContactMethod contactmethod = new ContactMethod();
   List<ContactMethod> contactItems = [];
   ContactMethod? selectedMethod;
 
@@ -31,15 +32,15 @@ class _ValidateContactState extends State<ValidateContact> {
   void initState(){
 
     print('initState called for validatecontact');
-    print(widget.contactmethod.toString());
 
-    if(widget.contactmethod!=null) {
-      String address =widget.contactmethod!.address ??'null';
+
+
+      String address = this.contactmethod.address ??'null';
       print('setting _contact to '+address.toString());
       _contact = address;
-      selectedMethod = widget.contactmethod;
+      selectedMethod = this.contactmethod;
       print('Widget called with contactmethod '+address);
-    }
+
     // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
 
 
@@ -51,14 +52,14 @@ class _ValidateContactState extends State<ValidateContact> {
   @mustCallSuper
   void didChangeDependencies() {
     //Provider.of<UserProvider>(context, listen: false).getContactMethods();
-    if(widget.contactmethod!=null) contactItems.add(widget.contactmethod!);
-    else if(!widget.contactsLoaded) {
+    if(widget.contactmethod!=null) contactItems.add(widget.contactmethod as ContactMethod);
+    else if(!this.contactsLoaded) {
       print('Loading contactmethods from userprovider');
       Provider
           .of<UserProvider>(context)
           . getContactMethods();
 
-      widget.contactsLoaded = true;
+      this.contactsLoaded = true;
     }
     super.didChangeDependencies();
   }
@@ -208,7 +209,7 @@ class _ValidateContactState extends State<ValidateContact> {
 
 
         );
-        return Placeholder();
+
       }
     }
     return Column(
@@ -216,7 +217,7 @@ class _ValidateContactState extends State<ValidateContact> {
       mainAxisSize: MainAxisSize.max,
       children: [
         SizedBox(height: 15.0),
-        Text(AppLocalizations.of(context)!.contactMethod, style: Theme.of(context).textTheme.headline5,),
+        Text(AppLocalizations.of(context)!.contactMethod, style: Theme.of(context).textTheme.headlineSmall,),
         SizedBox(height: 5.0),
          widget.contactmethod!=null ? Text(_contact ?? '') : Container(
            height:200,

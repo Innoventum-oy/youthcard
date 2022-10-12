@@ -2,11 +2,13 @@ class AppUrl {
   static const Map<String,String> servers = {
     'Nuortenjoensuu' : 'nuortenjoensuu.fi',
     'Nuortenliperi' : 'nuortenliperi.fi',
+    'Kontiolahti' : 'https://kontiolahti.harrastuskalenteri.fi/',
     'Lousada' : 'lousada.youthcard.pt',
     'Dresden' : 'dresden-youthcard.de',
     'Czech Republic' : 'youthcard.cz',
    // 'Medjimurje' : 'medimurje.youthcard.eu',
     'Development' : 'nuortenjoensuu.webweb.fi'
+
   };
   static const Map<String,String> serverImages = {
     'Nuortenjoensuu' : 'images/nuortenjoensuu.png',
@@ -24,6 +26,7 @@ class AppUrl {
  static const Map<String,String> anonymousApikeys = {
    'Nuortenjoensuu':'\$2y\$10\$PEXtBKieZfKREBW/ofsXu.dSofZ19rZSZgi87gjDT.MXheQrx7qm2',
    'Nuortenliperi':'\$2y\$10\$2V1D67i59auPdJO3SDZfounahm6zEmy3rO8U5NC3gqDs0OSpW7/3a',
+   'Kontiolahti' :'\$2y\$10\$2V1D67i59auPdJO3SDZfounahm6zEmy3rO8U5NC3gqDs0OSpW7/3a',
    'Development':'\$2y\$10\$PEXtBKieZfKREBW/ofsXu.dSofZ19rZSZgi87gjDT.MXheQrx7qm2',
    'Lousada':'\$2y\$10\$2V1D67i59auPdJO3SDZfounahm6zEmy3rO8U5NC3gqDs0OSpW7/3a',
    'Dresden': '\$2y\$10\$9K0fvauckPBRPaQc.fHFNO89WiKkX7xKGZAIAAzLmgpAqdN/Ymy/6',

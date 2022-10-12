@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:youth_card/src/views/activity/activitylist.dart';
+//import 'package:youth_card/src/views/activity/activitylist.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/views/activity/categorisedactivitylist.dart';
 

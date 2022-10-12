@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/util/widgets.dart';
@@ -51,11 +50,7 @@ String formatRuntime(int runtime) {
   return '$hours\h $minutes\m';
 }
 
-launchUrl(String url) async {
-  if (await canLaunch(url)) {
-    await launch(url);
-  }
-}
+
 Future<File> writeImageToStorage(Uint8List feedbackScreenshot) async {
   final Directory output = await getTemporaryDirectory();
   final String screenshotFilePath = '${output.path}/feedback.png';
@@ -140,9 +135,9 @@ Future<List<WebPage>> loadPages(BuildContext context, String commonname,user) as
 
       pages.addAll(result);
 
-  } catch (e, stack) {
+  } catch (e) {
 
-    String errormessage = e.toString();
+    //(String errormessage = e.toString();
 
     }
     return pages;

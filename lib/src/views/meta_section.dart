@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/style.dart';
-import 'package:youth_card/src/util/utils.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart'; // important
 class MetaSection extends StatelessWidget {
   final dynamic data;
 
@@ -95,7 +94,7 @@ class MetaSection extends StatelessWidget {
     var contentSection = Expanded(
       flex: 4,
       child: GestureDetector(
-        onTap: () => isLink ? launchUrl(content) : null,
+        onTap: () => isLink ? launchUrl(Uri.parse(content)) : null,
         child: Text(
           content,
           style: TextStyle(

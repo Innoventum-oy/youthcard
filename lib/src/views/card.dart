@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/objects/userbenefit.dart';
-import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -10,8 +10,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/views/userform.dart';
-import 'package:youth_card/src/views/validatecontact.dart';
-import 'package:url_launcher/url_launcher.dart';
 /*
 * User card
 */
@@ -119,7 +117,7 @@ class _MyCardState extends State<MyCard> {
   @override
   void initState() {
     this.user =widget.user ?? Provider.of<UserProvider>(context, listen: false).user;
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
 
       if(widget.user==null) {
         userLoaded = true;
@@ -175,7 +173,7 @@ class _MyCardState extends State<MyCard> {
           if(user.email!=null) TextButton(
 
             onPressed:(){
-              launch("mailto:"+(user.email??''));
+              launchUrlString("mailto:"+(user.email??''));
 
             },
             child:
@@ -197,7 +195,7 @@ class _MyCardState extends State<MyCard> {
           ),
           TextButton(
             onPressed:(){
-              launch("tel:"+(user.phone??''));
+              launchUrlString("tel:"+(user.phone??''));
             },
             child: Container(
               height: 25,
@@ -212,7 +210,7 @@ class _MyCardState extends State<MyCard> {
           if(user.data!['huoltajan_puhelinnumero']!=null)
             TextButton(
               onPressed:(){
-                launch("tel:"+(user.data!['huoltajan_puhelinnumero']??''));
+                launchUrlString("tel:"+(user.data!['huoltajan_puhelinnumero']??''));
               },
               child: Container(
                 height: 25,
@@ -341,7 +339,7 @@ class _MyCardState extends State<MyCard> {
         padding: const EdgeInsets.all(16.0),
          child: Text(
         label,
-        style: Theme.of(context).textTheme.headline6,
+        style: Theme.of(context).textTheme.titleLarge,
       ),
     ),
     );
@@ -365,11 +363,10 @@ class _MyCardState extends State<MyCard> {
     else if(this.fields.length>0 )
     {
       Map<String,dynamic> userdata = this.user.toMap();
-      Map<String,dynamic> p = {};
+
       Map<String,dynamic> fields = this.fields; // targetUser.description ?? {};
-      int elementNumber = 1;
-      //print('USERDATA');
-      //print(userdata.toString());
+
+
       user.data!.forEach((key,value) {
         print(key.toString()+':'+value.toString());
       });
