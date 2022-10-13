@@ -49,7 +49,7 @@ class _LoginState extends State<Login> {
       serverUrl = val;
     }));
     Settings().getServerName().then((val) => setState(() {
-      print("getting server for loginstate "+val);
+      print("getting server for loginstate: "+val);
           serverName = val;
           if(AppUrl.anonymousApikeys.containsKey(serverName)) {
             Settings().setValue(
@@ -178,13 +178,15 @@ class _LoginState extends State<Login> {
         ));
     return SafeArea(
       child: Scaffold(
+          backgroundColor: AppUrl.backgroundColors.containsKey(serverName) ? AppUrl.backgroundColors[serverName] : Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.youthcardLoginTitle),
           elevation: 0.1,
         ),
         body: SingleChildScrollView(
           child:Container(
-          padding: EdgeInsets.all(20.0),
+
+              padding: EdgeInsets.all(20.0),
           child: Form(
             key: formKey,
             child:  Column(

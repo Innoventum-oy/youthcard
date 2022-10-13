@@ -1,8 +1,10 @@
+import 'dart:ui';
+
 class AppUrl {
   static const Map<String,String> servers = {
     'Nuortenjoensuu' : 'nuortenjoensuu.fi',
     'Nuortenliperi' : 'nuortenliperi.fi',
-    'Kontiolahti' : 'https://kontiolahti.harrastuskalenteri.fi/',
+    'Kontiolahti' : 'kontiolahti.harrastuskalenteri.fi',
     'Lousada' : 'lousada.youthcard.pt',
     'Dresden' : 'dresden-youthcard.de',
     'Czech Republic' : 'youthcard.cz',
@@ -14,6 +16,10 @@ class AppUrl {
     'Nuortenjoensuu' : 'images/nuortenjoensuu.png',
     'Nuortenliperi' : 'images/nuortenliperi.png',
     'Lousada' : 'images/lousada.png',
+    'Kontiolahti': 'images/kontiolahti.png'
+  };
+  static const Map<String,Color> backgroundColors = {
+    'Kontiolahti' : Color.fromRGBO(93, 176, 51, 0.86),
   };
   static const Map<String,String> serverToLanguageMapping = {
     'fi':'Nuortenjoensuu',
