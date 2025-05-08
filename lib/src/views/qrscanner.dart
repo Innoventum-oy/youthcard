@@ -12,7 +12,7 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/providers/objectprovider.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/views/activity/activityvisitlist.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -290,6 +290,7 @@ class _QRScannerState extends State<QRScanner> {
     }
     getCameraPermission();
     super.initState();
+
   }
 
   void getCameraPermission() async {
@@ -498,6 +499,7 @@ class _QRScannerState extends State<QRScanner> {
                                   controller!.flipCamera().catchError((error) {
                                     print(error.toString());
                                     notify(error.toString());
+                                    return CameraFacing.back;
                                   });
                                   if (_isBackCamera(cameraState)) {
                                     setState(() {

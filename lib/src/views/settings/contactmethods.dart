@@ -4,8 +4,8 @@ import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/views/validatecontact.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-/*
+import 'package:youth_card/l10n/app_localizations.dart';
+/*f
 * Contact methods
 */
 

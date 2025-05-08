@@ -16,10 +16,9 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/objects/userbenefit.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ApiClient {
-
   static final _client = ApiClient._internal();
 
   //final _http = HttpClient();
@@ -33,15 +32,13 @@ class ApiClient {
   /*
   * _postJson handles POST request and returns the json decoded data from server back to caller function
   */
-  Future<dynamic> _postJson(Uri uri, Map<String, dynamic> data) async
-  {
+  Future<dynamic> _postJson(Uri uri, Map<String, dynamic> data) async {
     this.isProcessing = true;
     Map softwareInfo = {
       'appName': '',
       'packageName': '',
       'version': '',
       'buildNumber': '',
-
     };
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       softwareInfo['appName'] = packageInfo.appName;
@@ -51,8 +48,11 @@ class ApiClient {
     });
     Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'User-Agent': softwareInfo['appName'] + ' / ' + softwareInfo['version'] +
-          ' ' + softwareInfo['buildNumber']
+      'User-Agent': softwareInfo['appName'] +
+          ' / ' +
+          softwareInfo['version'] +
+          ' ' +
+          softwareInfo['buildNumber']
     };
     var request = new http.MultipartRequest("POST", uri);
     headers.forEach((k, v) {
@@ -64,15 +64,14 @@ class ApiClient {
       if (value is File) {
         print('adding file ' + key);
         request.files.add(await http.MultipartFile.fromPath(key, value.path));
-      }
-      else {
+      } else {
         print('adding $key = $value');
         request.fields[key] = json.encode(value);
       }
     });
     print('calling (post) ' + uri.toString());
-    http.Response response = await http.Response.fromStream(
-        await request.send());
+    http.Response response =
+        await http.Response.fromStream(await request.send());
     this.isProcessing = false;
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
@@ -83,17 +82,14 @@ class ApiClient {
           //debug
           //print(responseData);
           return responseData;
-        }
-        catch (e) {
+        } catch (e) {
           print(e.toString());
         }
-      }
-      else {
+      } else {
         print('response body was empty');
         return false;
       }
-    }
-    else {
+    } else {
       print(response.statusCode);
       if (response.body.isNotEmpty) {
         Map<String, dynamic> responseData = json.decode(response.body);
@@ -104,7 +100,6 @@ class ApiClient {
       return false;
     }
   }
-
 
   /*
   * _getJson handles request and returns the json decoded data from server back to caller function
@@ -127,11 +122,12 @@ class ApiClient {
       softwareInfo['version'] = packageInfo.version;
       softwareInfo['buildNumber'] = packageInfo.buildNumber;
     });
-    String userAgent = softwareInfo['appName'] + ' / ' +
-        softwareInfo['version'] + ' ' + softwareInfo['buildNumber'];
-    Map<String, String> headers = {
-      'User-Agent': userAgent
-    };
+    String userAgent = softwareInfo['appName'] +
+        ' / ' +
+        softwareInfo['version'] +
+        ' ' +
+        softwareInfo['buildNumber'];
+    Map<String, String> headers = {'User-Agent': userAgent};
 
     var response = await http.get(uri, headers: headers);
     //todo: better handling of statuscodes other than 200 or forwarding them to function calling _getJSON
@@ -143,12 +139,10 @@ class ApiClient {
           Map<String, dynamic> body = json.decode(response.body);
           return body;
         } on FormatException {
-
           print('The provided string is not valid JSON');
           print(response.body.toString());
           return null;
         }
-
 
         /* print('GETJSON DATA RECEIVED:');
         body.forEach((key, value) {
@@ -156,15 +150,11 @@ class ApiClient {
         });
         print('END GETJSON');
         */
-
-
-      }
-      else {
+      } else {
         print('response body was empty for uri .' + uri.toString());
         return false;
       }
-    }
-    else
+    } else
       return false;
   }
 
@@ -176,8 +166,7 @@ class ApiClient {
     if (!params.containsKey("api_key") || params["api_key"] == null) {
       //  print('no api_key provided in params: using anonymous apikey '+apikey+' for calling getDatalist');
       params["api_key"] = apikey;
-    }
-    else
+    } else
       print('using user api_key ' + params['api_key'].toString());
 
     params['method'] = 'json';
@@ -187,7 +176,20 @@ class ApiClient {
       return json == false ? [] : json;
     });
   }
+  Future<Map<String, dynamic>> deleteUserAccount(User loggedInUser) async {
+    final Map<String, dynamic> params = {
+      'method': 'json',
+      'action': 'deleteownuseraccount',
+      'api_key': loggedInUser.token,
 
+    };
+    var url = Uri.https(baseUrl, 'api/dispatcher/registration/', params);
+
+    return _getJson(url).then((json) {
+      //   print(json);
+      return json ?? false;
+    });
+  }
   /*
     * Get user contactmethods from server
     */
@@ -257,7 +259,15 @@ class ApiClient {
   * returns status (success / error) + possible related message from server
    */
   Future<Map<String, dynamic>>? register(
-      {required String firstname, required String lastname, String? phone, String? email, required String password, String? passwordConfirmation}) async {
+      {required String firstname,
+      required String lastname,
+      String? phone,
+      String? email,
+      required String password,
+      String? passwordConfirmation,
+      String? registrationCode,
+      String? guardianName,
+      String? guardianPhone,}) async {
     final Map<String, dynamic> registrationData = {
       'user': {
         'firstname': firstname,
@@ -265,8 +275,11 @@ class ApiClient {
         'phone': phone ?? false,
         'email': email,
         'password': password,
+        'guardianname': guardianName ?? false,
+        'guardianphone': guardianPhone ?? false,
         // 'password_confirmation': passwordConfirmation ?? false
-      }
+      },
+      'registrationcode': registrationCode ?? false
     };
     String baseUrl = await Settings().getServer();
     var url = Uri.https(baseUrl, AppUrl.registration);
@@ -299,13 +312,12 @@ class ApiClient {
     });
   }
 
-  Future<dynamic> dispatcherRequest(String targetModule,
-      Map<String, dynamic> params) async {
+  Future<dynamic> dispatcherRequest(
+      String targetModule, Map<String, dynamic> params) async {
     params['method'] = 'json';
     String baseUrl = await Settings().getServer();
     String? apikey = await Settings().getValue("anonymousapikey");
-    if (!params.containsKey("api_key"))
-      params["api_key"] = apikey;
+    if (!params.containsKey("api_key")) params["api_key"] = apikey;
 
     var url = Uri.https(baseUrl, 'api/dispatcher/$targetModule/', params);
 
@@ -323,8 +335,8 @@ class ApiClient {
         ? loggedInUser.token
         : await Settings().getValue("anonymousapikey");
     //  print('calling getDetails with apikey '+( apikey?? ' not set'));
-    var url = Uri.https(
-        baseUrl, 'api/$objectType/$objectId', { 'api_key': apikey});
+    var url =
+        Uri.https(baseUrl, 'api/$objectType/$objectId', {'api_key': apikey});
     // Returns only
     return _getJson(url).then((json) => json['data']).then((data) {
       return data != null ? data.first : null;
@@ -338,37 +350,39 @@ class ApiClient {
         ? loggedInUser.token
         : await Settings().getValue("anonymousapikey");
     //  print('calling getDetails with apikey '+( apikey?? ' not set'));
-    var url = Uri.https(
-        baseUrl, 'api/$objectType/$objectId', { 'api_key': apikey});
+    var url =
+        Uri.https(baseUrl, 'api/$objectType/$objectId', {'api_key': apikey});
     // Returns only
     return _getJson(url).then((data) {
       return data;
     });
   }
 
-  Future<dynamic> getDataList(String datatype,
-      Map<String, dynamic> params) async {
+  Future<dynamic> getDataList(
+      String datatype, Map<String, dynamic> params) async {
     String baseUrl = await Settings().getServer();
     String? apikey = await Settings().getValue("anonymousapikey");
-    if (!params.containsKey("api_key") || params["api_key"]== null) {
+    if (!params.containsKey("api_key") || params["api_key"] == null) {
       //  print('no api_key provided in params: using anonymous apikey '+apikey+' for calling getDatalist');
       params["api_key"] = apikey;
-    }
-    else
+    } else
       print('using user api_key ' + params['api_key'].toString());
 
     params['method'] = 'json';
     //debug: print params
-   //  params.forEach((key, value) {print('$key = $value');});
+    //  params.forEach((key, value) {print('$key = $value');});
 
     var url = Uri.https(baseUrl, 'api/$datatype/', params);
     print(url.toString());
     return _getJson(url).then((json) {
       if (json == false) return [];
       //  print(json);
-      if (json['data'] != null) print(
-          'getDatalist returning ' + json['data'].length.toString() + ' ' +
-              datatype + ' items');
+      if (json['data'] != null)
+        print('getDatalist returning ' +
+            json['data'].length.toString() +
+            ' ' +
+            datatype +
+            ' items');
       return (json['data'] ?? []);
     });
   }
@@ -376,8 +390,7 @@ class ApiClient {
   /*
   * Load list of activities for the activitylist view
    */
-  Future<List<ActivityClass>> loadActivityClasses(
-      Map<String, dynamic> params) async {
+  Future<List<ActivityClass>> loadActivityClasses(Map<String, dynamic> params) async {
     return getDataList('activityclass', params).then((data) {
       if (data == null) return [];
       return data
@@ -417,10 +430,11 @@ class ApiClient {
   /*
   * Load visit information for given activity + activitydate
    */
-  Future<dynamic> loadActivityDateVisits(int activityId, ActivityDate date,
-      user) async {
-    String? apikey = (user.token == null) ? await Settings().getValue(
-        "anonymousapikey") : user.token;
+  Future<dynamic> loadActivityDateVisits(
+      int activityId, ActivityDate date, user) async {
+    String? apikey = (user.token == null)
+        ? await Settings().getValue("anonymousapikey")
+        : user.token;
     final Map<String, dynamic> params = {
       'method': 'json',
       'action': 'activitydatevisits',
@@ -430,8 +444,8 @@ class ApiClient {
     };
     return this.dispatcherRequest('activity', params).then((data) {
       // print(data);
-      Map <dynamic, String> returnData = Map<dynamic, String>.from(
-          data['visits']);
+      Map<dynamic, String> returnData =
+          Map<dynamic, String>.from(data['visits']);
       return returnData;
     });
   }
@@ -442,22 +456,21 @@ class ApiClient {
   Future<List<Activity>> loadActivities(Map<String, dynamic> params) async {
     return getDataList('activity', params).then((data) {
       if (data == null) return [];
-      return data
-          .map<Activity>((data) => Activity.fromJson(data))
-          .toList();
+      return data.map<Activity>((data) => Activity.fromJson(data)).toList();
     });
   }
 
   /*
   * Load list of activitydates for selected activity
    */
-  Future<List<ActivityDate>> loadActivitydates(Activity activity,
-      User user) async {
+  Future<List<ActivityDate>> loadActivitydates(
+      Activity activity, User user) async {
     final Map<String, dynamic> params = {
       'method': 'json',
       'activityid': activity.id.toString(),
-      'api_key': user.token != null ? user.token : await Settings().getValue(
-          "anonymousapikey")
+      'api_key': user.token != null
+          ? user.token
+          : await Settings().getValue("anonymousapikey")
     };
 
     return getDataList('activitydate', params).then((data) {
@@ -473,22 +486,20 @@ class ApiClient {
   * Load list of users for selected activity
    */
   Future<List<User>> loadActivityUsers(int activityId, User user) async {
-    String? apikey = (user.token == null) ? await Settings().getValue(
-        "anonymousapikey") : user.token;
+    String? apikey = (user.token == null)
+        ? await Settings().getValue("anonymousapikey")
+        : user.token;
     final Map<String, dynamic> params = {
       'action': 'activityuserlist',
       'activityid': activityId.toString(),
       'api_key': apikey
     };
     return this.dispatcherRequest('activity', params).then((data) {
-      if (data == null) return [];
+      if (data == null || data['data'] == null) return [];
       print(data);
-      return data['data']
-          .map<User>((data) => User.fromJson(data))
-          .toList();
+      return data['data'].map<User>((data) => User.fromJson(data)).toList();
     });
   }
-
 
   /*
   * Load detailed activity information for the activity view
@@ -527,9 +538,7 @@ class ApiClient {
   Future<List<ImageObject>> loadImages(Map<String, dynamic> params) async {
     return getDataList('image', params).then((data) {
       if (data == null) return [];
-      return data
-          .map<Activity>((data) => ImageObject.fromJson(data))
-          .toList();
+      return data.map<Activity>((data) => ImageObject.fromJson(data)).toList();
     });
   }
 
@@ -544,17 +553,21 @@ class ApiClient {
   * Register current user for attending to activity
    */
   Future<Map<String, dynamic>> registerForActivity(activityId, User user,
-      {visitstatus: 'registered'}) async {
+      {visitstatus = 'registered'}) async {
     return updateActivityRegistration(
         activityId: activityId, user: user, visitStatus: visitstatus);
   }
 
   Future<Map<String, dynamic>> updateActivityRegistration(
-      {int? activityId, String visitStatus: 'registered', User? visitor, required User user, ActivityDate? visitDate}) async
-  {
-    print(
-        'Updating activityvisit for activity #' + activityId.toString() + ': ' +
-            visitStatus);
+      {int? activityId,
+      String visitStatus = 'registered',
+      User? visitor,
+      required User user,
+      ActivityDate? visitDate}) async {
+    print('Updating activityvisit for activity #' +
+        activityId.toString() +
+        ': ' +
+        visitStatus);
 
     /* todo - positioning
   */
@@ -562,21 +575,18 @@ class ApiClient {
       'action': 'recordvisit',
       'method': 'json',
       'activityid': activityId!.toString(),
-      'activitydate': visitDate?.id != null
-          ? visitDate!.id.toString()
-          : 'false',
+      'activitydate':
+          visitDate?.id != null ? visitDate!.id.toString() : 'false',
       'userid': visitor != null ? visitor.id.toString() : user.id.toString(),
       'visitstatus': visitStatus,
       'api_key': user.token!
 
       //'latitude': _latitude.toString(),
       //  'longitude':  _longitude.toString()
-
     };
     String baseUrl = await Settings().getServer();
     var url = Uri.https(baseUrl, '/api/dispatcher/activity/', params);
     var response = await _getJson(url);
-
 
     return response;
   }
@@ -588,9 +598,7 @@ class ApiClient {
     return getDataList('page', params).then((data) {
       if (data == null) return [];
 
-      return data
-          .map<WebPage>((data) => WebPage.fromJson(data))
-          .toList();
+      return data.map<WebPage>((data) => WebPage.fromJson(data)).toList();
     });
   }
 
@@ -598,8 +606,8 @@ class ApiClient {
     return this.getDetails('page', id, user);
   }
 
-  Future<Map<String, dynamic>>? sendFeedback(Map<String, dynamic> params,
-      Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>>? sendFeedback(
+      Map<String, dynamic> params, Map<String, dynamic> data) async {
     String baseUrl = await Settings().getServer();
     params['get_page'] = 'common';
     var url = Uri.https(baseUrl, 'api/dispatcher/common/', params);
@@ -632,24 +640,23 @@ class ApiClient {
     return this.getDetails('formcategory', id, user);
   }
 
-  Future<Map<String, dynamic>>? saveFormData(Map<String,dynamic> params, Map<String,dynamic> data) async {
+  Future<Map<String, dynamic>>? saveFormData(
+      Map<String, dynamic> params, Map<String, dynamic> data) async {
+    var url = Uri.https(baseUrl, 'api/dispatcher/forms/', params);
 
-
-    var url = Uri.https(baseUrl,'api/dispatcher/forms/',params);
-
-    return _postJson(url,data).then((json){
+    return _postJson(url, data).then((json) {
       print(json);
-      return json!=null ? json : false;
+      return json != null ? json : false;
     });
   }
-  Future<Map<String, dynamic>>? loadFormData(Map<String,dynamic> params) async {
 
+  Future<Map<String, dynamic>>? loadFormData(
+      Map<String, dynamic> params) async {
+    var url = Uri.https(baseUrl, 'api/dispatcher/forms/', params);
 
-    var url = Uri.https(baseUrl,'api/dispatcher/forms/',params);
-
-    return _getJson(url).then((json){
+    return _getJson(url).then((json) {
       //print(json);
-      return json!=null ? json : false;
+      return json != null ? json : false;
     });
   }
 
@@ -661,9 +668,7 @@ class ApiClient {
     //params['appid'] =appId;
     return getDataList('form', params).then((data) {
       if (data == null) return [];
-      return data
-          .map<Form>((data) => Form.fromJson(data))
-          .toList();
+      return data.map<Form>((data) => Form.fromJson(data)).toList();
     });
   }
 
@@ -682,9 +687,7 @@ class ApiClient {
       Map<String, dynamic> params) async {
     return getDataList('formelement', params).then((data) {
       if (data == null) return [];
-      return data
-          .map<Form>((data) => Form.fromJson(data))
-          .toList();
+      return data.map<Form>((data) => Form.fromJson(data)).toList();
     });
   }
 

@@ -15,7 +15,7 @@ class Form{
   List<FormElement> elements = [];
   LoadingStatus loadingStatus = LoadingStatus.Idle;
 
-  Form({this.id, this.title, this.description,this.isExpanded:false}){
+  Form({this.id, this.title, this.description,this.isExpanded =false}){
     this.elements = [];
   }
 

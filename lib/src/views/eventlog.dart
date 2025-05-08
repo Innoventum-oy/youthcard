@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 class EventLogView extends StatefulWidget {
   final String viewTitle = 'eventlog';
   @override

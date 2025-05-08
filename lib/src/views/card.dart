@@ -6,10 +6,11 @@ import 'package:youth_card/src/objects/userbenefit.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/views/userform.dart';
+import '../views/deleteaccountform.dart';
 /*
 * User card
 */
@@ -286,6 +287,7 @@ class _MyCardState extends State<MyCard> {
             child: Text(AppLocalizations.of(context)!.btnReturn)),
         ]),
         _getBenefitsSection(user),
+        const DeleteAccountAction(),
       //  ..._userInfoFields(user)
       ],
     );
@@ -302,6 +304,7 @@ class _MyCardState extends State<MyCard> {
                 : Container(),
             _loggedInView(context, user),
             _getBenefitsSection(user),
+            const DeleteAccountAction(),
           ],
         ));
   }

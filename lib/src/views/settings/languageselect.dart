@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
-
+import 'package:youth_card/l10n/app_localizations.dart';
 class LanguagesScreen extends StatefulWidget {
   @override
   _LanguagesScreenState createState() => _LanguagesScreenState();
@@ -38,7 +37,9 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
       {
       options.add(
         SettingsTile(
-          title: locale.toLanguageTag(),
+          title: Text(locale.toLanguageTag(),
+          style: TextStyle(fontSize: 13),
+          ),
           leading: trailingWidget(locale.languageCode),
           onPressed: (BuildContext context) {
             changeLanguage(locale.languageCode);

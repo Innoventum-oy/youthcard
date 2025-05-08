@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-//import 'package:youth_card/src/views/activity/activitylist.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/views/activity/categorisedactivitylist.dart';
 
 MaterialButton longButtons(String title, Function()? fun,
-    {Color color: const Color(0xfff063057), Color textColor: Colors.white}) {
+    {Color color = const Color(0xfff063057), Color textColor = Colors.white}) {
   return MaterialButton(
     onPressed: fun,
     textColor: textColor,
@@ -28,7 +27,7 @@ MaterialButton longButtons(String title, Function()? fun,
 }
 
 label(String title) => Text(title);
-
+headingLabel(String title) => Text(title,style: TextStyle(fontWeight: FontWeight.bold),);
 InputDecoration buildInputDecoration(String hintText, IconData icon) {
   return InputDecoration(
     prefixIcon: Icon(icon, color: Color.fromRGBO(50, 62, 72, 1.0)),

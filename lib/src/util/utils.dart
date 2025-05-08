@@ -1,6 +1,6 @@
 import 'package:feedback/feedback.dart';
 import 'package:intl/intl.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,7 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // important
+import 'package:youth_card/l10n/app_localizations.dart'; // important
 import 'package:youth_card/src/objects/webpage.dart';
 import 'package:youth_card/src/providers/webpageprovider.dart';
 import 'package:youth_card/src/util/api_client.dart';

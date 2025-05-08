@@ -2,12 +2,19 @@
   "@@locale": "fi",
 
   "about": "Tietoja",
-  "accountCreated": "Tili luotu",
+
+  "accountCreated" : "Tili luotu",
+  "accountDeleted" : "Käyttäjätili poistettu",
+  "accountDeletion": "Tilin poistaminen",
   "activities": "Tapahtumat",
   "activity": "Tapahtuma",
   "activityCalendar": "Tapahtumakalenteri",
   "activityRegistrationFailed" : "Ilmoittautuminen epäonnistui",
   "activityRegistrationSaved" : "Ilmoittautuminen vastaanotettu",
+  "ageOver18": "Oletko yli 18-vuotias?",
+  "agreeOnSavingInfo" : "Hyväksyn tietojeni tallentamisen",
+  "valueYes": "Kyllä",
+  "valueNo": "En",
   "address" : "Osoite",
   "answerSaved" : "Vastaus tallennettu",
   "authenticating" : "Kirjautuminen käynnissä",
@@ -36,6 +43,9 @@
   "city": "Kaupunki",
   "close": "Sulje",
   "codeScanned": "Koodi skannattu",
+  "codeAccepted": "Koodi hyväksytty",
+  "groupCode": "Ryhmäkoodi",
+  "confirmDeletingAccount": "Vahvista käyttäjätilin poistaminen",
   "confirmationKey": "Vahvistusavain",
   "confirmPassword": "Vahvista salasana",
   "contactInformation": "Yhteystiedot",
@@ -46,6 +56,10 @@
   "createAccount": "Luo käyttäjätili",
 
   "dateRange" : "Aikaväli",
+  "deletingAccountCannotUndone" : "Tilin poistetaan lopullisesti. Tätä toimintoa ei voi peruuttaa.",
+  "deleteYourAccount" : "Poista käyttäjätilisi",
+  "deleteAccount" : "Poista tili",
+  "deletingAccountFailed" : "Tilin poistaminen epäonnistui",
   "discover": "Tapahtumat",
 
   "email": "Sähköpostiosoite",
@@ -67,9 +81,10 @@
   "frontCamera": "Etukamera",
 
   "getCode": "Pyydä koodi",
+  "guardianInfo": "Huoltajan tiedot vaaditaan",
   "great" : "Hienoa!",
-  "guardianPhone" : "Huoltaja",
-
+  "guardianPhone": "Huoltajan puhelinnumero",
+  "guardianName": "Huoltajan nimi",
   "language": "Kieli",
   "lastName": "Sukunimi",
   "loading": "Ladataan",
@@ -116,6 +131,7 @@
   "pleaseEnterPassword": "Anna salasana",
   "pleaseEnableCamera": "Salli kameran käyttö jotta voit skannata QR-koodeja",
   "pleaseEnterConfirmationKey": "Anna vahvistuskoodi",
+  "pleaseEnterPhoneNumber" :"Anna puhelinnumero",
   "pleaseProvideValidEmail" : "Anna kelvollinen sähköpostiosoite",
   "pleaseEnterPhoneOrEmail" : "Anna puhelinnumero tai sähköpostiosoite",
   "pleaseEnterPhonenumber" :"Anna puhelinnumero",
@@ -124,6 +140,7 @@
   "pleaseWaitRegistering": "Käyttäjätiliä rekisteröidään",
   "postcode": "Postinumero",
   "previous": "Edellinen",
+  "privacyPolicy" : "Tietosuojakäytäntö",
   "processing": "Käsitellään",
 
   "qrScanner": "QR-skanneri",
@@ -163,6 +180,7 @@
   "userInformationUpdated": "Käyttäjätiedot päivitetty",
 
   "validateContactTitle": "Vahvista yhteystieto",
+  "valueIsRequired" : "Tämä tieto on pakollinen",
   "verified": "Vahvistettu",
   "verify": "Vahvista",
   "visitRecorded" : "Käynti lisätty",
@@ -171,7 +189,7 @@
   "visitRemoved" : "Käynti peruutettu",
 
   "writeAnswerHere" : "Kirjoita vastaus tähän",
-
+  "youHaveToAgreeToSavingUserInformation" : "Käyttäjätili voidaan luoda vain jos hyväksyt tietojen tallentamisen.",
   "youthcardLoginTitle": "Nuorisokortti - kirjaudu sisään",
   "youthcardDashboard": "Nuorisokortti",
   "youthcardSettings": "Nuorisokortti - asetukset"

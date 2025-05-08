@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/activitydate.dart';
@@ -219,7 +219,7 @@ class _ActivityViewState extends State<ActivityView> {
       });
     }
   }
-  void _loadDetails(user,{bool reload:false}) async {
+  void _loadDetails(user,{bool reload =false}) async {
     print('called _loadDetails for activity ' +
         widget._activity.id.toString() +
         ', awaiting provider for details!');

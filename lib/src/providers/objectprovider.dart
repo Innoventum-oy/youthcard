@@ -70,7 +70,7 @@ class UserBenefitProvider extends ObjectProvider {
 
 // returns json-decoded response
   @override
-  Future<dynamic> getDetails(int benefitId, user,{reload:false}) {
+  Future<dynamic> getDetails(int benefitId, user,{reload =false}) {
     return _apiClient.getUserBenefitDetails(benefitId, user);
   }
 }
@@ -89,7 +89,7 @@ class ActivityVisitListProvider extends ObjectProvider {
 
 // returns json-decoded response
   @override
-  Future<dynamic> getDetails(int id, user,{reload:false}) {
+  Future<dynamic> getDetails(int id, user,{reload =false}) {
     return _apiClient.getActivityVisitDetails(id, user);
   }
 
@@ -145,7 +145,7 @@ class ActivityListProvider extends ObjectProvider {
 
 
   @override
-  Future<List<Activity>> loadItems(params,{refresh:false}) async {
+  Future<List<Activity>> loadItems(params,{refresh =false}) async {
     print('Activityprovider loadItems called');
     String filename = md5.convert(utf8.encode(params.toString())).toString();
    // FileStorage.delete(filename);
@@ -207,7 +207,7 @@ class ActivityListProvider extends ObjectProvider {
 
   // returns json-decoded response
   @override
-  Future<dynamic> getDetails(int activityId, user,{reload:false}) async {
+  Future<dynamic> getDetails(int activityId, user,{reload =false}) async {
     print('getting activity details, reload is set to '+reload.toString());
    if(!reload) {
      final activitydata = await FileStorage.read(

@@ -3,12 +3,17 @@
 
   "about": "About",
   "accountCreated": "Account created",
+  "accountDeleted" : "User account deleted",
+  "accountCreationAccepted": "I acknowledge and accept that my information is saved to the database of the Sivulla application",
+  "accountDeletion": "Account Deletion",
   "activities": "Activities",
   "activity"  : "Activity",
   "activityCalendar": "Activity calendar",
   "activityRegistrationSaved": "Registration saved",
   "activityRegistrationFailed" : "Registering for activity failed",
   "address": "Address",
+  "ageOver18": "Are you 18+ years old?",
+  "agreeOnSavingInfo" : "I agree on saving my information",
   "answerSaved" : "Answer saved",
   "authenticating": "Authenticating ... Please wait",
 
@@ -37,6 +42,7 @@
   "clearCache": "Clear cache",
   "close": "Close",
   "codeScanned": "Code scanned",
+  "confirmDeletingAccount": "Confirm user account deletion",
   "confirmPassword": "Confirm password",
   "confirmationKey": "Confirmation key",
   "contactInformation": "Contact information",
@@ -47,6 +53,10 @@
   "createAccount": "Create account",
 
   "dateRange" : "Date Range",
+  "deletingAccountCannotUndone" : "The user account is removed immediately. This action cannot be undone.",
+  "deleteYourAccount" : "Delete your account",
+  "deleteAccount" : "Delete account",
+  "deletingAccountFailed" : "Failed to delete account",
   "discover": "Discover",
 
   "email": "Email",
@@ -69,8 +79,10 @@
 
   "getCode": "Get code",
   "great" : "Great!",
+  "groupCode" : "Group code",
+  "guardianInfo" : "Guardian Information",
   "guardianPhone" : "Guardian phone",
-
+  "guardianName" : "Guardian name",
   "language" : "Language",
   "lastName": "Last name",
   "loading": "Loading",
@@ -123,6 +135,7 @@
   "pleaseProvideValidPhonenumber" : "Please provide a valid phone number",
   "postcode": "Postcode",
   "previous": "Previous",
+  "privacyPolicy" : "Privacy policy",
   "processing": "Processing",
 
   "qrScanner": "QR Scanner",
@@ -160,6 +173,9 @@
   "userNotFound" : "User not found",
 
   "validateContactTitle" : "Validate contact information",
+  "valueIsRequired" : "This field is required",
+  "valueYes": "Yes",
+  "valueNo": "No",
   "verified" : "Verified",
   "verify" : "Verify",
   "visitRecorded" : "Visit recorded",
@@ -168,7 +184,7 @@
   "visitRemoved" : "Visit removed",
 
   "writeAnswerHere" : "Write your answer here",
-
+  "youHaveToAgreeToSavingUserInformation": "You have to accept saving information to create account",
   "youthcardLoginTitle": "Youth Card Login",
   "youthcardDashboard": "Youth Card",
   "youthcardSettings" : "Youth Card Settings"

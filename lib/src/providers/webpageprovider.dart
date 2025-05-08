@@ -42,7 +42,7 @@ class WebPageProvider extends ObjectProvider {
 
 // returns json-decoded response
   @override
-  Future<dynamic> getDetails(int pageId, user,{reload:false}) {
+  Future<dynamic> getDetails(int pageId, user,{reload =false}) {
     return _apiClient.getPageDetails(pageId, user);
   }
 

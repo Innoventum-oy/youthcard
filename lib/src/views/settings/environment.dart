@@ -3,7 +3,7 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 

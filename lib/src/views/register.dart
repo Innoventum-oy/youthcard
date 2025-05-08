@@ -7,8 +7,9 @@ import 'package:youth_card/src/util/api_client.dart';
 
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
+import 'package:youth_card/src/views/webpagetextcontent.dart';
 
 
 enum ContactMethod{
@@ -16,28 +17,55 @@ enum ContactMethod{
   Email
 }
 class Register extends StatefulWidget {
+  const Register({super.key});
+
   @override
-  _RegisterState createState() => _RegisterState();
+  RegisterState createState() => RegisterState();
+
+  static RegisterState? of(BuildContext context) =>
+      context.findAncestorStateOfType<RegisterState>();
 }
 
-class _RegisterState extends State<Register> {
+class RegisterState extends State<Register> {
   final formKey = new GlobalKey<FormState>();
   final ApiClient _apiClient = ApiClient();
-  String? _firstname, _lastname, _email,_phone, _password, _confirmPassword;
+  String? _firstname,
+      _lastname,
+      _email,
+      _phone,
+      _password,
+      _confirmPassword,
+      _guardianname,
+      _guardianphone,
+      _registrationCode;
+  bool isOver18 = true;
+  bool _savingInfoAccepted = false;
 
   ContactMethod selectedContactMethod = ContactMethod.Phone;
   Map<String,TextEditingController> controllers = {
   'lastname' : new TextEditingController(),
   'firstname': new TextEditingController(),
   'email' : new TextEditingController(),
-  'phone' : new TextEditingController()
+  'phone' : new TextEditingController(),
+  'code': TextEditingController(), ''
+   'password': TextEditingController(),
+  'guadianname': TextEditingController(),
+  'guardianphone': TextEditingController()
   };
 
  List<Widget> formButtons(auth)
   {
     var doRegister = () {
       final form = formKey.currentState;
-      if (form!.validate()) {
+      if(_savingInfoAccepted!=true){
+        Flushbar(
+          title: AppLocalizations.of(context)!.registrationFailed,
+          message: AppLocalizations.of(context)!.youHaveToAgreeToSavingUserInformation,
+          duration: const Duration(seconds: 10),
+        ).show(context);
+
+      }
+      else if (form!.validate()) {
         form.save();
         _apiClient.register(
             firstname:_firstname.toString(),
@@ -45,7 +73,10 @@ class _RegisterState extends State<Register> {
             email:_email.toString(),
             phone: _phone.toString(),
             password:_password.toString(),
-            passwordConfirmation:_confirmPassword.toString()
+            passwordConfirmation:_confirmPassword.toString(),
+          registrationCode: _registrationCode.toString(),
+          guardianName: _guardianname.toString(),
+          guardianPhone: _guardianphone.toString(),
         )!.then((responsedata) {
           var response = responsedata['data'] ?? responsedata;
           if(response!=null) if( response['status']!=null) {
@@ -71,7 +102,6 @@ class _RegisterState extends State<Register> {
                   Provider.of<UserProvider>(context, listen: false).setUser(
                       authUser);
                   setState(() {
-                    print('setting registeredStatus to Registered');
                     auth.setRegisteredStatus(Status.Registered);
                   });
                 }
@@ -111,12 +141,11 @@ class _RegisterState extends State<Register> {
       String pattern = r'(^(?:[+0])?[0-9]{8,12}$)';
       RegExp regExp = new RegExp(pattern);
       if (!regExp.hasMatch(value)) {
-
         _msg = AppLocalizations.of(context)!.pleaseProvideValidPhonenumber;
       }
-
       return _msg;
     }
+
     String? validateEmail(String? value) {
       String? _msg;
       RegExp regex = new RegExp(
@@ -128,6 +157,33 @@ class _RegisterState extends State<Register> {
       }
       return _msg;
     }
+    String? validateGuardianPhone(String? value) {
+      String? msg;
+      if (isOver18) return null;
+      if (value!.isEmpty) {
+        return AppLocalizations.of(context)!.pleaseEnterPhonenumber;
+      }
+      return msg;
+    }
+      final guardianNameField = TextFormField(
+        autofocus: false,
+        controller: controllers['guardianname'],
+        validator: (value) => value!.isEmpty && !isOver18
+            ? AppLocalizations.of(context)!.valueIsRequired
+            : null,
+        onSaved: (value) => _guardianname = value,
+        decoration: buildInputDecoration(
+            AppLocalizations.of(context)!.guardianName, Icons.person),
+      );
+
+      final codeField = TextFormField(
+        autofocus: false,
+        controller: controllers['code'],
+       // validator: validateCode,
+        onSaved: (value) => _registrationCode = value,
+        decoration: buildInputDecoration(
+            AppLocalizations.of(context)!.groupCode, Icons.code),
+      );
 
     final firstnameField = TextFormField(
       autofocus: false,
@@ -160,6 +216,14 @@ class _RegisterState extends State<Register> {
       onChanged: (value) => _phone = value,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.phone, Icons.phone_iphone),
     );
+    final guardianPhoneField = TextFormField(
+      autofocus: false,
+      controller: controllers['guardianphone'],
+      validator: validateGuardianPhone,
+      onChanged: (value) => _guardianphone = value,
+      decoration: buildInputDecoration(
+          AppLocalizations.of(context)!.guardianPhone, Icons.phone_iphone),
+    );
     final passwordField = TextFormField(
       autofocus: false,
       obscureText: true,
@@ -181,7 +245,27 @@ class _RegisterState extends State<Register> {
       obscureText: true,
       decoration: buildInputDecoration(AppLocalizations.of(context)!.confirmPassword, Icons.lock),
     );
+    final acceptSavingInfoField = CheckboxListTile(
+        value:  _savingInfoAccepted,
+        onChanged: (val){
 
+          setState(() {
+            _savingInfoAccepted = val ?? false;
+          });
+
+        },title: Text(AppLocalizations.of(context)!.agreeOnSavingInfo),
+        subtitle: TextButton(
+            onPressed: () {
+              //View account info page
+              setState(() {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => ContentPageView('privacy-policy')));
+              });
+            },
+            child:Row(children:[Icon(Icons.info),Text(AppLocalizations.of(context)!.moreInformation,          style: const TextStyle(
+                fontWeight: FontWeight.w300, color: Color(0xFFffe8d7)))])
+        )
+    );
     var loading = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -190,33 +274,62 @@ class _RegisterState extends State<Register> {
       ],
     );
 
-    List <Widget> formfields = [
+    List <Widget> formFields = [
       label(AppLocalizations.of(context)!.firstName),
       SizedBox(height: 5.0),
       firstnameField,
-      SizedBox(height: 15.0),
+      SizedBox(height: 10.0),
       label(AppLocalizations.of(context)!.lastName),
       SizedBox(height: 5.0),
       lastnameField,
-      SizedBox(height: 15.0),
+      SizedBox(height: 10.0),
+      label(AppLocalizations.of(context)!.ageOver18),
+      AgeSelectDisplay(options: [
+        {'value': AppLocalizations.of(context)!.valueYes, 'id': 1},
+        {'value': AppLocalizations.of(context)!.valueNo, 'id': 0}
+      ]),
+    ];
+    if (!isOver18) {
+      formFields.addAll([
+        headingLabel(AppLocalizations.of(context)!.guardianInfo),
+        Padding(
+
+          padding: EdgeInsets.only(left: 15),
+        child:
+        Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,children:[  const SizedBox(height: 10.0),
+
+  const SizedBox(height: 5.0),
+  label(AppLocalizations.of(context)!.guardianName),
+  guardianNameField,
+  const SizedBox(height: 10.0),
+  label(AppLocalizations.of(context)!.guardianPhone),
+  guardianPhoneField,
+  const SizedBox(height: 25.0),]
+        ),
+        ),
+
+      ]);
+    }
+    formFields.addAll([
       label(AppLocalizations.of(context)!.password),
-      SizedBox(height: 10.0),
+      SizedBox(height: 5.0),
       passwordField,
-      SizedBox(height: 15.0),
-      label(AppLocalizations.of(context)!.confirmPassword),
       SizedBox(height: 10.0),
+      label(AppLocalizations.of(context)!.confirmPassword),
+      SizedBox(height: 5.0),
       confirmPasswordField,
       SizedBox(height: 15.0),
-  ];
+  ]);
     switch(selectedContactMethod) {
       case ContactMethod.Email:
         //add email field + change to phone field button
       //clear possible phone field value
       _phone='';
       controllers['phone']!.clear();
-      formfields.add(label(AppLocalizations.of(context)!.email));
-      formfields.add(emailField);
-      formfields.add(TextButton(
+      formFields.add(label(AppLocalizations.of(context)!.email));
+      formFields.add(emailField);
+      formFields.add(TextButton(
           onPressed: () {
             // Change to phone field
             setState((){
@@ -233,9 +346,9 @@ class _RegisterState extends State<Register> {
         //clear possible email field value
         _email = '';
         controllers['email']!.clear();
-        formfields.add(label(AppLocalizations.of(context)!.phone));
-        formfields.add(phoneField);
-        formfields.add(TextButton(
+        formFields.add(label(AppLocalizations.of(context)!.phone));
+        formFields.add(phoneField);
+        formFields.add(TextButton(
         onPressed: () {
           // Change to email field
           setState((){
@@ -247,11 +360,13 @@ class _RegisterState extends State<Register> {
 
     }
 
-   formfields.add( SizedBox(height: 20.0));
-    formfields.add( auth.registeredStatus == Status.Authenticating
+   formFields.addAll([ SizedBox(height: 20.0),
+    auth.registeredStatus == Status.Authenticating
     ? loading
-        : longButtons(AppLocalizations.of(context)!.createAccount, doRegister));
-    formfields.add(ElevatedButton(
+        : longButtons(AppLocalizations.of(context)!.createAccount, doRegister),
+     const SizedBox(height: 5.0),
+     acceptSavingInfoField,
+    ElevatedButton(
       onPressed: () {
       // Navigate back to the first screen by popping the current route
       // off the stack.
@@ -259,9 +374,9 @@ class _RegisterState extends State<Register> {
 
       },
       child: Text(AppLocalizations.of(context)!.btnReturn,style: TextStyle(fontWeight: FontWeight.w300)))
-    );
+    ]);
 
-    return formfields;
+    return formFields;
   }
 
   Widget registerViewBody(auth)
@@ -348,5 +463,48 @@ class _RegisterState extends State<Register> {
         )
       ),
     );
+  }
+}
+
+
+class AgeSelectDisplay extends StatefulWidget {
+  final List<dynamic> options;
+  final int? selectedOption; // default / original selected option
+
+  const AgeSelectDisplay(
+      {super.key, required this.options, this.selectedOption});
+
+  @override
+  RadioGroupWidget createState() => RadioGroupWidget();
+}
+
+class RadioGroupWidget extends State<AgeSelectDisplay> {
+  // Default Radio Button Item
+  int? selectedOptionValue;
+
+  @override
+  Widget build(BuildContext context) {
+    //  print('building radio group; group value is '+this.selectedOptionValue.toString());
+
+    return Column(children: [
+      ...widget.options
+          .map((data) =>
+          RadioListTile<dynamic>(
+            title: Text("${data['value']}"),
+            groupValue: selectedOptionValue,
+            value: data['id'],
+            onChanged: (val) {
+              setState(() {
+                //   print('selecting: '+data.value.toString()+' ('+data.id.toString()+')');
+                selectedOptionValue = data['id'];
+                Register.of(context)!.setState(() {
+                  Register.of(context)!.isOver18 =
+                  data['id'] == 1 ? true : false;
+                });
+              });
+            },
+          ))
+          .toList(),
+    ]);
   }
 }

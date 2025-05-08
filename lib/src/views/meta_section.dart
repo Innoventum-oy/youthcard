@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart'; // important
 class MetaSection extends StatelessWidget {
   final dynamic data;
@@ -64,7 +64,7 @@ class MetaSection extends StatelessWidget {
   }
 */
   Widget _getSectionOrContainer(String title, String content,
-      {dynamic formatterFunction, bool isLink: false}) {
+      {dynamic formatterFunction, bool isLink = false}) {
 
 
     //print('_getSectionOrContainer called with title '+title+', content '+content);
@@ -88,7 +88,7 @@ class MetaSection extends StatelessWidget {
       style: {"*" : Style(color:Colors.white)}
     );
   }
-  Widget _getMetaInfoSection(String title, String content, {bool isLink: false})
+  Widget _getMetaInfoSection(String title, String content, {bool isLink = false})
   {
 
     var contentSection = Expanded(

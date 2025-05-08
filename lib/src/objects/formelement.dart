@@ -17,7 +17,7 @@ class FormElement{
     this.position,
     this.type,
     this.title,
-    this.required:false,
+    this.required =false,
     this.help,
     this.description,
     // this.answer,

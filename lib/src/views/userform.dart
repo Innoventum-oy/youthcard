@@ -1,18 +1,16 @@
 import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
-//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:youth_card/src/objects/user.dart';
-//import 'package:youth_card/src/providers/objectprovider.dart' as objectModel;
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
-//import 'package:youth_card/src/util/navigator.dart';
+
 
 class UserForm extends StatefulWidget {
   final User? targetUser;

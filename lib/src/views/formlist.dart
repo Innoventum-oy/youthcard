@@ -7,7 +7,7 @@ import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/views/displayform.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectModel;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/objects/form.dart' as iCMSForm;
 import 'package:youth_card/src/objects/formcategory.dart' as iCMSFormCategory;
 /*

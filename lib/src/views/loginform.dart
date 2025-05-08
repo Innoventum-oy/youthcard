@@ -6,11 +6,12 @@ import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/validators.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+import 'package:youth_card/src/views/webpagetextcontent.dart';
 
 class Login extends StatefulWidget {
   final String viewTitle = 'login';
@@ -196,7 +197,19 @@ class _LoginState extends State<Login> {
           serverSelectDialog(context);
           },)
                   ),
-                   SizedBox(height: 5.0),
+                  SizedBox(height: 5.0),
+                  TextButton(
+                    child: Text(
+                        AppLocalizations.of(context)!.environment +
+                            ': ' +
+                            serverName,
+                        style: TextStyle(fontWeight: FontWeight.w300)),
+                    onPressed: () {
+                      serverSelectDialog(context);
+                    },
+                  ),
+                  SizedBox(height: 10.0),
+
                   label(AppLocalizations.of(context)!.phoneOrEmail),
                   SizedBox(height: 5.0),
                   contactField,
@@ -217,22 +230,12 @@ class _LoginState extends State<Login> {
                   SizedBox(height: 5.0),
                   forgotLabel,
                   SizedBox(height: 5.0),
-                  TextButton(
-                    child: Text(
-                        AppLocalizations.of(context)!.environment +
-                            ': ' +
-                            serverName,
-                        style: TextStyle(fontWeight: FontWeight.w300)),
-                    onPressed: () {
-                      serverSelectDialog(context);
-                    },
-                  ),
-                  SizedBox(height: 10.0),
+
                   auth.loggedInStatus == Status.Authenticating
                       ? cancelButton
                       : Container(),
                   getVersionInfo(),
-
+                  policyLink(),
                 ],
               ),
             ),
@@ -290,8 +293,6 @@ class _LoginState extends State<Login> {
     servers.forEach((serverTitle, itemUrl) {
       tiles.add(SettingsTile(
         title: serverTitle,
-        titleTextStyle:TextStyle(fontSize:13),
-        // subtitle: serverUrl,
 
        leading: trailingWidget(serverTitle),
         onPressed: (BuildContext context) {
@@ -330,5 +331,18 @@ class _LoginState extends State<Login> {
   Widget getVersionInfo() {
     return Text(appName + ' v.' + version + '(' + buildNumber + ')',
         style: TextStyle(color: Color(0xFF777777)));
+  }
+  Widget policyLink() {
+    return TextButton(
+        onPressed: () {
+          //View policy page
+          setState(() {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => ContentPageView('privacy-policy')));
+          });
+        },
+        child: Text(AppLocalizations.of(context)!.privacyPolicy,
+            style: const TextStyle(
+                fontWeight: FontWeight.w300, color: Color(0xFFffe8d7))));
   }
 }

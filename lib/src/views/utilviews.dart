@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class BottomGradient extends StatelessWidget {
   final double offset;
 
-  BottomGradient({this.offset: 0.95});
+  BottomGradient({this.offset = 0.95});
 
   BottomGradient.noOffset() : offset = 1.0;
 

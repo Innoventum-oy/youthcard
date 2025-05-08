@@ -22,226 +22,299 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "about": MessageLookupByLibrary.simpleMessage("Tietoja"),
-        "accountCreated": MessageLookupByLibrary.simpleMessage("Tili luotu"),
-        "activities": MessageLookupByLibrary.simpleMessage("Tapahtumat"),
-        "activity": MessageLookupByLibrary.simpleMessage("Tapahtuma"),
-        "activityCalendar":
-            MessageLookupByLibrary.simpleMessage("Tapahtumakalenteri"),
-        "activityRegistrationFailed": MessageLookupByLibrary.simpleMessage(
-            "Ilmoittautuminen epäonnistui"),
-        "activityRegistrationSaved": MessageLookupByLibrary.simpleMessage(
-            "Ilmoittautuminen vastaanotettu"),
-        "address": MessageLookupByLibrary.simpleMessage("Osoite"),
-        "answerSaved":
-            MessageLookupByLibrary.simpleMessage("Vastaus tallennettu"),
-        "authenticating":
-            MessageLookupByLibrary.simpleMessage("Kirjautuminen käynnissä"),
-        "benefits": MessageLookupByLibrary.simpleMessage("Edut"),
-        "btnConfirm": MessageLookupByLibrary.simpleMessage("Vahvista"),
-        "btnContinue": MessageLookupByLibrary.simpleMessage("Jatka"),
-        "btnContinueWithoutLogin":
-            MessageLookupByLibrary.simpleMessage("Jatka kirjautumatta"),
-        "btnDashboard": MessageLookupByLibrary.simpleMessage("Etusivu"),
-        "btnEdit": MessageLookupByLibrary.simpleMessage("Muokkaa"),
-        "btnLogin": MessageLookupByLibrary.simpleMessage("Kirjaudu"),
-        "btnReturn": MessageLookupByLibrary.simpleMessage("Takaisin"),
-        "btnSend": MessageLookupByLibrary.simpleMessage("Lähetä"),
-        "btnSetNewPassword":
-            MessageLookupByLibrary.simpleMessage("Aseta salasana"),
-        "btnUseEmail":
-            MessageLookupByLibrary.simpleMessage("Käytä sähköpostiosoitetta"),
-        "btnUsePhone":
-            MessageLookupByLibrary.simpleMessage("Käytä puhelinnumeroa"),
-        "btnValidateContact":
-            MessageLookupByLibrary.simpleMessage("Vahvista yhteystieto nyt"),
-        "btnValidateContactLater":
-            MessageLookupByLibrary.simpleMessage("Myöhemmin"),
-        "calendar": MessageLookupByLibrary.simpleMessage("Kalenteri"),
-        "cameraNotAvailable":
-            MessageLookupByLibrary.simpleMessage("Kamera ei ole käytettävissä"),
-        "cancel": MessageLookupByLibrary.simpleMessage("Peruuta"),
-        "changesSaved":
-            MessageLookupByLibrary.simpleMessage("Muutokset tallennettu"),
-        "choose": MessageLookupByLibrary.simpleMessage("Valitse"),
-        "chooseFile": MessageLookupByLibrary.simpleMessage("Valitse tiedosto"),
-        "city": MessageLookupByLibrary.simpleMessage("Kaupunki"),
-        "clearCache":
-            MessageLookupByLibrary.simpleMessage("Tyhjennä välimuisti"),
-        "close": MessageLookupByLibrary.simpleMessage("Sulje"),
-        "codeScanned": MessageLookupByLibrary.simpleMessage("Koodi skannattu"),
-        "confirmPassword":
-            MessageLookupByLibrary.simpleMessage("Vahvista salasana"),
-        "confirmationKey":
-            MessageLookupByLibrary.simpleMessage("Vahvistusavain"),
-        "contactInformation":
-            MessageLookupByLibrary.simpleMessage("Yhteystiedot"),
-        "contactInformationValidated":
-            MessageLookupByLibrary.simpleMessage("Yhteystieto vahvistettu"),
-        "contactMethod": MessageLookupByLibrary.simpleMessage("Yhteystieto"),
-        "contactMethods": MessageLookupByLibrary.simpleMessage("Yhteystiedot"),
-        "contentNotFound":
-            MessageLookupByLibrary.simpleMessage("Sisältöä ei löytynyt"),
-        "createAccount":
-            MessageLookupByLibrary.simpleMessage("Luo käyttäjätili"),
-        "dateRange": MessageLookupByLibrary.simpleMessage("Aikaväli"),
-        "discover": MessageLookupByLibrary.simpleMessage("Tapahtumat"),
-        "email": MessageLookupByLibrary.simpleMessage("Sähköpostiosoite"),
-        "emailOrPhoneNumber": MessageLookupByLibrary.simpleMessage(
-            "Puhelinnumero tai sähköpostiosoite"),
-        "environment": MessageLookupByLibrary.simpleMessage("Kohdepalvelin"),
-        "erasmusDisclaimer": MessageLookupByLibrary.simpleMessage(
-            "Hanke on rahoitettu Euroopan komission tuella.Tästä sovelluksesta vastaa ainoastaan sen laatija, eikä komissio ole vastuussa siihen sisältyvien tietojen mahdollisesta käytöstä."),
-        "error": MessageLookupByLibrary.simpleMessage("Virhe"),
-        "errorsInForm": MessageLookupByLibrary.simpleMessage(
-            "Lomakkeen sisällössä on virheitä"),
-        "eventLog": MessageLookupByLibrary.simpleMessage("Tapahtumaloki"),
-        "feedback": MessageLookupByLibrary.simpleMessage("Palaute"),
-        "feedbackSent":
-            MessageLookupByLibrary.simpleMessage("Palaute lähetetty"),
-        "fieldCannotBeEmpty":
-            MessageLookupByLibrary.simpleMessage("Tämä tieto on pakollinen"),
-        "firstName": MessageLookupByLibrary.simpleMessage("Etunimi"),
-        "flashOff": MessageLookupByLibrary.simpleMessage("Valo pois"),
-        "flashOn": MessageLookupByLibrary.simpleMessage("Valo päälle"),
-        "forgotPassword":
-            MessageLookupByLibrary.simpleMessage("Unohditko salasanan?"),
-        "forms": MessageLookupByLibrary.simpleMessage("Lomakkeet"),
-        "frontCamera": MessageLookupByLibrary.simpleMessage("Etukamera"),
-        "getCode": MessageLookupByLibrary.simpleMessage("Pyydä koodi"),
-        "great": MessageLookupByLibrary.simpleMessage("Hienoa!"),
-        "guardianPhone": MessageLookupByLibrary.simpleMessage("Huoltaja"),
-        "language": MessageLookupByLibrary.simpleMessage("Kieli"),
-        "lastName": MessageLookupByLibrary.simpleMessage("Sukunimi"),
-        "loading": MessageLookupByLibrary.simpleMessage("Ladataan"),
-        "loadingBenefits":
-            MessageLookupByLibrary.simpleMessage("Ladataan etuja"),
-        "locationRetrieved":
-            MessageLookupByLibrary.simpleMessage("Koordinaatit haettu"),
-        "locations": MessageLookupByLibrary.simpleMessage("Sijainnit"),
-        "logIsEmpty":
-            MessageLookupByLibrary.simpleMessage("Tapahtumaloki on tyhjä"),
-        "login": MessageLookupByLibrary.simpleMessage("Kirjautuminen"),
-        "loginFailed":
-            MessageLookupByLibrary.simpleMessage("Kirjautuminen epäonnistui"),
-        "logout": MessageLookupByLibrary.simpleMessage("Kirjaudu ulos"),
-        "moreInformation": MessageLookupByLibrary.simpleMessage("lisätiedot"),
-        "myActivities": MessageLookupByLibrary.simpleMessage("Omat tapahtumat"),
-        "myCard": MessageLookupByLibrary.simpleMessage("Oma kortti"),
-        "noActiveBenefits":
-            MessageLookupByLibrary.simpleMessage("Ei etuja käytössä"),
-        "noActivitiesFound":
-            MessageLookupByLibrary.simpleMessage("Tapahtumia ei löytynyt"),
-        "noContactMethodsFound":
-            MessageLookupByLibrary.simpleMessage("Yhteystietoja ei löytynyt"),
-        "noFormsFound": MessageLookupByLibrary.simpleMessage(
-            "Julkaistuja lomakkeita ei löytynyt"),
-        "noThankYou": MessageLookupByLibrary.simpleMessage("Ei kiitos"),
-        "noUsersFound":
-            MessageLookupByLibrary.simpleMessage("Ei ilmoittautuneita"),
-        "noVisitsFound": MessageLookupByLibrary.simpleMessage("Ei käyntejä"),
-        "noVisitsToday":
-            MessageLookupByLibrary.simpleMessage("Ei käyntejä tänään"),
-        "notVerified": MessageLookupByLibrary.simpleMessage("Ei vahvistettu"),
-        "notification": MessageLookupByLibrary.simpleMessage("Ilmoitus"),
-        "ok": MessageLookupByLibrary.simpleMessage("Ok"),
-        "optionFalse": MessageLookupByLibrary.simpleMessage("Ei"),
-        "optionTrue": MessageLookupByLibrary.simpleMessage("Kyllä"),
-        "pageContent": MessageLookupByLibrary.simpleMessage("Sivusisältö"),
-        "pageIsEmpty": MessageLookupByLibrary.simpleMessage("Sivu on tyhjä"),
-        "participants": MessageLookupByLibrary.simpleMessage("Osallistujat"),
-        "password": MessageLookupByLibrary.simpleMessage("Salasana"),
-        "passwordChanged":
-            MessageLookupByLibrary.simpleMessage("Salasana vaihdettu"),
-        "passwordIsRequired":
-            MessageLookupByLibrary.simpleMessage("Salasana on pakollinen"),
-        "passwordsDontMatch":
-            MessageLookupByLibrary.simpleMessage("Salasanat eivät täsmää"),
-        "pause": MessageLookupByLibrary.simpleMessage("Tauota"),
-        "phone": MessageLookupByLibrary.simpleMessage("Puhelin"),
-        "phoneNumber": MessageLookupByLibrary.simpleMessage("Puhelinnumero"),
-        "phoneOrEmail": MessageLookupByLibrary.simpleMessage(
-            "Puhelin tai sähköpostiosoite"),
-        "pleaseCompleteFormProperly": MessageLookupByLibrary.simpleMessage(
-            "Täytäthän kaikki vaadittavat kohdat"),
-        "pleaseEnableCamera": MessageLookupByLibrary.simpleMessage(
-            "Salli kameran käyttö jotta voit skannata QR-koodeja"),
-        "pleaseEnterConfirmationKey":
-            MessageLookupByLibrary.simpleMessage("Anna vahvistuskoodi"),
-        "pleaseEnterPassword":
-            MessageLookupByLibrary.simpleMessage("Anna salasana"),
-        "pleaseEnterPhonenumber":
-            MessageLookupByLibrary.simpleMessage("Anna puhelinnumero"),
-        "pleaseProvideValidEmail": MessageLookupByLibrary.simpleMessage(
-            "Anna kelvollinen sähköpostiosoite"),
-        "pleaseProvideValidPhonenumber":
-            MessageLookupByLibrary.simpleMessage("Tarkista puhelinnumero"),
-        "pleaseProvideYourName":
-            MessageLookupByLibrary.simpleMessage("Anna nimesi"),
-        "pleaseWaitRegistering": MessageLookupByLibrary.simpleMessage(
-            "Käyttäjätiliä rekisteröidään"),
-        "postcode": MessageLookupByLibrary.simpleMessage("Postinumero"),
-        "previous": MessageLookupByLibrary.simpleMessage("Edellinen"),
-        "processing": MessageLookupByLibrary.simpleMessage("Käsitellään"),
-        "qrScanner": MessageLookupByLibrary.simpleMessage("QR-skanneri"),
-        "readMore": MessageLookupByLibrary.simpleMessage("Lue lisää"),
-        "readyToScan":
-            MessageLookupByLibrary.simpleMessage("Valmis skannaamaan"),
-        "rearCamera": MessageLookupByLibrary.simpleMessage("Takakamera"),
-        "registrationFailed":
-            MessageLookupByLibrary.simpleMessage("Tilin luonti epäonnistui"),
-        "requestFailed":
-            MessageLookupByLibrary.simpleMessage("Pyyntö epaonnistui"),
-        "requestNewCode":
-            MessageLookupByLibrary.simpleMessage("Pyydä uusi koodi"),
-        "requestNewPasswordTitle":
-            MessageLookupByLibrary.simpleMessage("Vaihda salasana"),
-        "resume": MessageLookupByLibrary.simpleMessage("jatka"),
-        "retrievingCoordinates":
-            MessageLookupByLibrary.simpleMessage("Haetaan sijaintia"),
-        "save": MessageLookupByLibrary.simpleMessage("Tallenna"),
-        "saveAnswer": MessageLookupByLibrary.simpleMessage("Tallenna vastaus"),
-        "savingDataFailed": MessageLookupByLibrary.simpleMessage(
-            "Tietojen tallennus epäonnistui"),
-        "settings": MessageLookupByLibrary.simpleMessage("Asetukset"),
-        "settingsAccount": MessageLookupByLibrary.simpleMessage("Tili"),
-        "settingsCommon": MessageLookupByLibrary.simpleMessage("Yleiset"),
-        "settingsMisc": MessageLookupByLibrary.simpleMessage("Sekalaisia"),
-        "showWelcomeScreen":
-            MessageLookupByLibrary.simpleMessage("Näytä avausruutu"),
-        "signUp": MessageLookupByLibrary.simpleMessage("Ilmoittaudu"),
-        "statusError": MessageLookupByLibrary.simpleMessage("Virhe"),
-        "termsOfService": MessageLookupByLibrary.simpleMessage("Käyttöehdot"),
-        "thankyouForFeedback":
-            MessageLookupByLibrary.simpleMessage("Kiitos palautteestasi!"),
-        "today": MessageLookupByLibrary.simpleMessage("Tänään"),
-        "unknownUser":
-            MessageLookupByLibrary.simpleMessage("Tuntematon käyttäjä"),
-        "unnamed": MessageLookupByLibrary.simpleMessage("nimetön"),
-        "unnamedActivity":
-            MessageLookupByLibrary.simpleMessage("Nimetön tapahtuma"),
-        "userInformation":
-            MessageLookupByLibrary.simpleMessage("Käyttäjätiedot"),
-        "userInformationUpdated":
-            MessageLookupByLibrary.simpleMessage("Käyttäjätiedot päivitetty"),
-        "userNotFound":
-            MessageLookupByLibrary.simpleMessage("Käyttäjätietoja ei löytynyt"),
-        "validateContactTitle":
-            MessageLookupByLibrary.simpleMessage("Vahvista yhteystieto"),
-        "verified": MessageLookupByLibrary.simpleMessage("Vahvistettu"),
-        "verify": MessageLookupByLibrary.simpleMessage("Vahvista"),
-        "visitAdded": MessageLookupByLibrary.simpleMessage("Käynti merkitty"),
-        "visitRecorded": MessageLookupByLibrary.simpleMessage("Käynti lisätty"),
-        "visitRemoved":
-            MessageLookupByLibrary.simpleMessage("Käynti peruutettu"),
-        "visits": MessageLookupByLibrary.simpleMessage("Käynnit"),
-        "writeAnswerHere":
-            MessageLookupByLibrary.simpleMessage("Kirjoita vastaus tähän"),
-        "youthcardDashboard":
-            MessageLookupByLibrary.simpleMessage("Nuorisokortti"),
-        "youthcardLoginTitle": MessageLookupByLibrary.simpleMessage(
-            "Nuorisokortti - kirjaudu sisään"),
-        "youthcardSettings":
-            MessageLookupByLibrary.simpleMessage("Nuorisokortti - asetukset")
-      };
+    "about": MessageLookupByLibrary.simpleMessage("Tietoja"),
+    "accountCreated": MessageLookupByLibrary.simpleMessage("Tili luotu"),
+    "accountDeleted": MessageLookupByLibrary.simpleMessage(
+      "Käyttäjätili poistettu",
+    ),
+    "accountDeletion": MessageLookupByLibrary.simpleMessage(
+      "Tilin poistaminen",
+    ),
+    "activities": MessageLookupByLibrary.simpleMessage("Tapahtumat"),
+    "activity": MessageLookupByLibrary.simpleMessage("Tapahtuma"),
+    "activityCalendar": MessageLookupByLibrary.simpleMessage(
+      "Tapahtumakalenteri",
+    ),
+    "activityRegistrationFailed": MessageLookupByLibrary.simpleMessage(
+      "Ilmoittautuminen epäonnistui",
+    ),
+    "activityRegistrationSaved": MessageLookupByLibrary.simpleMessage(
+      "Ilmoittautuminen vastaanotettu",
+    ),
+    "address": MessageLookupByLibrary.simpleMessage("Osoite"),
+    "ageOver18": MessageLookupByLibrary.simpleMessage("Oletko yli 18-vuotias?"),
+    "agreeOnSavingInfo": MessageLookupByLibrary.simpleMessage(
+      "Hyväksyn tietojeni tallentamisen",
+    ),
+    "answerSaved": MessageLookupByLibrary.simpleMessage("Vastaus tallennettu"),
+    "authenticating": MessageLookupByLibrary.simpleMessage(
+      "Kirjautuminen käynnissä",
+    ),
+    "benefits": MessageLookupByLibrary.simpleMessage("Edut"),
+    "btnConfirm": MessageLookupByLibrary.simpleMessage("Vahvista"),
+    "btnContinue": MessageLookupByLibrary.simpleMessage("Jatka"),
+    "btnContinueWithoutLogin": MessageLookupByLibrary.simpleMessage(
+      "Jatka kirjautumatta",
+    ),
+    "btnDashboard": MessageLookupByLibrary.simpleMessage("Etusivu"),
+    "btnEdit": MessageLookupByLibrary.simpleMessage("Muokkaa"),
+    "btnLogin": MessageLookupByLibrary.simpleMessage("Kirjaudu"),
+    "btnReturn": MessageLookupByLibrary.simpleMessage("Takaisin"),
+    "btnSend": MessageLookupByLibrary.simpleMessage("Lähetä"),
+    "btnSetNewPassword": MessageLookupByLibrary.simpleMessage("Aseta salasana"),
+    "btnUseEmail": MessageLookupByLibrary.simpleMessage(
+      "Käytä sähköpostiosoitetta",
+    ),
+    "btnUsePhone": MessageLookupByLibrary.simpleMessage("Käytä puhelinnumeroa"),
+    "btnValidateContact": MessageLookupByLibrary.simpleMessage(
+      "Vahvista yhteystieto nyt",
+    ),
+    "btnValidateContactLater": MessageLookupByLibrary.simpleMessage(
+      "Myöhemmin",
+    ),
+    "calendar": MessageLookupByLibrary.simpleMessage("Kalenteri"),
+    "cameraNotAvailable": MessageLookupByLibrary.simpleMessage(
+      "Kamera ei ole käytettävissä",
+    ),
+    "cancel": MessageLookupByLibrary.simpleMessage("Peruuta"),
+    "changesSaved": MessageLookupByLibrary.simpleMessage(
+      "Muutokset tallennettu",
+    ),
+    "choose": MessageLookupByLibrary.simpleMessage("Valitse"),
+    "chooseFile": MessageLookupByLibrary.simpleMessage("Valitse tiedosto"),
+    "city": MessageLookupByLibrary.simpleMessage("Kaupunki"),
+    "clearCache": MessageLookupByLibrary.simpleMessage("Tyhjennä välimuisti"),
+    "close": MessageLookupByLibrary.simpleMessage("Sulje"),
+    "codeScanned": MessageLookupByLibrary.simpleMessage("Koodi skannattu"),
+    "confirmDeletingAccount": MessageLookupByLibrary.simpleMessage(
+      "Vahvista käyttäjätilin poistaminen",
+    ),
+    "confirmPassword": MessageLookupByLibrary.simpleMessage(
+      "Vahvista salasana",
+    ),
+    "confirmationKey": MessageLookupByLibrary.simpleMessage("Vahvistusavain"),
+    "contactInformation": MessageLookupByLibrary.simpleMessage("Yhteystiedot"),
+    "contactInformationValidated": MessageLookupByLibrary.simpleMessage(
+      "Yhteystieto vahvistettu",
+    ),
+    "contactMethod": MessageLookupByLibrary.simpleMessage("Yhteystieto"),
+    "contactMethods": MessageLookupByLibrary.simpleMessage("Yhteystiedot"),
+    "contentNotFound": MessageLookupByLibrary.simpleMessage(
+      "Sisältöä ei löytynyt",
+    ),
+    "createAccount": MessageLookupByLibrary.simpleMessage("Luo käyttäjätili"),
+    "dateRange": MessageLookupByLibrary.simpleMessage("Aikaväli"),
+    "deleteAccount": MessageLookupByLibrary.simpleMessage("Poista tili"),
+    "deleteYourAccount": MessageLookupByLibrary.simpleMessage(
+      "Poista käyttäjätilisi",
+    ),
+    "deletingAccountCannotUndone": MessageLookupByLibrary.simpleMessage(
+      "Tilin poistetaan lopullisesti. Tätä toimintoa ei voi peruuttaa.",
+    ),
+    "deletingAccountFailed": MessageLookupByLibrary.simpleMessage(
+      "Tilin poistaminen epäonnistui",
+    ),
+    "discover": MessageLookupByLibrary.simpleMessage("Tapahtumat"),
+    "email": MessageLookupByLibrary.simpleMessage("Sähköpostiosoite"),
+    "emailOrPhoneNumber": MessageLookupByLibrary.simpleMessage(
+      "Puhelinnumero tai sähköpostiosoite",
+    ),
+    "environment": MessageLookupByLibrary.simpleMessage("Kohdepalvelin"),
+    "erasmusDisclaimer": MessageLookupByLibrary.simpleMessage(
+      "Hanke on rahoitettu Euroopan komission tuella.Tästä sovelluksesta vastaa ainoastaan sen laatija, eikä komissio ole vastuussa siihen sisältyvien tietojen mahdollisesta käytöstä.",
+    ),
+    "error": MessageLookupByLibrary.simpleMessage("Virhe"),
+    "errorsInForm": MessageLookupByLibrary.simpleMessage(
+      "Lomakkeen sisällössä on virheitä",
+    ),
+    "eventLog": MessageLookupByLibrary.simpleMessage("Tapahtumaloki"),
+    "feedback": MessageLookupByLibrary.simpleMessage("Palaute"),
+    "feedbackSent": MessageLookupByLibrary.simpleMessage("Palaute lähetetty"),
+    "fieldCannotBeEmpty": MessageLookupByLibrary.simpleMessage(
+      "Tämä tieto on pakollinen",
+    ),
+    "firstName": MessageLookupByLibrary.simpleMessage("Etunimi"),
+    "flashOff": MessageLookupByLibrary.simpleMessage("Valo pois"),
+    "flashOn": MessageLookupByLibrary.simpleMessage("Valo päälle"),
+    "forgotPassword": MessageLookupByLibrary.simpleMessage(
+      "Unohditko salasanan?",
+    ),
+    "forms": MessageLookupByLibrary.simpleMessage("Lomakkeet"),
+    "frontCamera": MessageLookupByLibrary.simpleMessage("Etukamera"),
+    "getCode": MessageLookupByLibrary.simpleMessage("Pyydä koodi"),
+    "great": MessageLookupByLibrary.simpleMessage("Hienoa!"),
+    "groupCode": MessageLookupByLibrary.simpleMessage("Ryhmäkoodi"),
+    "guardianInfo": MessageLookupByLibrary.simpleMessage(
+      "Huoltajan tiedot vaaditaan",
+    ),
+    "guardianName": MessageLookupByLibrary.simpleMessage("Huoltajan nimi"),
+    "guardianPhone": MessageLookupByLibrary.simpleMessage(
+      "Huoltajan puhelinnumero",
+    ),
+    "language": MessageLookupByLibrary.simpleMessage("Kieli"),
+    "lastName": MessageLookupByLibrary.simpleMessage("Sukunimi"),
+    "loading": MessageLookupByLibrary.simpleMessage("Ladataan"),
+    "loadingBenefits": MessageLookupByLibrary.simpleMessage("Ladataan etuja"),
+    "locationRetrieved": MessageLookupByLibrary.simpleMessage(
+      "Koordinaatit haettu",
+    ),
+    "locations": MessageLookupByLibrary.simpleMessage("Sijainnit"),
+    "logIsEmpty": MessageLookupByLibrary.simpleMessage(
+      "Tapahtumaloki on tyhjä",
+    ),
+    "login": MessageLookupByLibrary.simpleMessage("Kirjautuminen"),
+    "loginFailed": MessageLookupByLibrary.simpleMessage(
+      "Kirjautuminen epäonnistui",
+    ),
+    "logout": MessageLookupByLibrary.simpleMessage("Kirjaudu ulos"),
+    "moreInformation": MessageLookupByLibrary.simpleMessage("lisätiedot"),
+    "myActivities": MessageLookupByLibrary.simpleMessage("Omat tapahtumat"),
+    "myCard": MessageLookupByLibrary.simpleMessage("Oma kortti"),
+    "noActiveBenefits": MessageLookupByLibrary.simpleMessage(
+      "Ei etuja käytössä",
+    ),
+    "noActivitiesFound": MessageLookupByLibrary.simpleMessage(
+      "Tapahtumia ei löytynyt",
+    ),
+    "noContactMethodsFound": MessageLookupByLibrary.simpleMessage(
+      "Yhteystietoja ei löytynyt",
+    ),
+    "noFormsFound": MessageLookupByLibrary.simpleMessage(
+      "Julkaistuja lomakkeita ei löytynyt",
+    ),
+    "noThankYou": MessageLookupByLibrary.simpleMessage("Ei kiitos"),
+    "noUsersFound": MessageLookupByLibrary.simpleMessage("Ei ilmoittautuneita"),
+    "noVisitsFound": MessageLookupByLibrary.simpleMessage("Ei käyntejä"),
+    "noVisitsToday": MessageLookupByLibrary.simpleMessage("Ei käyntejä tänään"),
+    "notVerified": MessageLookupByLibrary.simpleMessage("Ei vahvistettu"),
+    "notification": MessageLookupByLibrary.simpleMessage("Ilmoitus"),
+    "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+    "optionFalse": MessageLookupByLibrary.simpleMessage("Ei"),
+    "optionTrue": MessageLookupByLibrary.simpleMessage("Kyllä"),
+    "pageContent": MessageLookupByLibrary.simpleMessage("Sivusisältö"),
+    "pageIsEmpty": MessageLookupByLibrary.simpleMessage("Sivu on tyhjä"),
+    "participants": MessageLookupByLibrary.simpleMessage("Osallistujat"),
+    "password": MessageLookupByLibrary.simpleMessage("Salasana"),
+    "passwordChanged": MessageLookupByLibrary.simpleMessage(
+      "Salasana vaihdettu",
+    ),
+    "passwordIsRequired": MessageLookupByLibrary.simpleMessage(
+      "Salasana on pakollinen",
+    ),
+    "passwordsDontMatch": MessageLookupByLibrary.simpleMessage(
+      "Salasanat eivät täsmää",
+    ),
+    "pause": MessageLookupByLibrary.simpleMessage("Tauota"),
+    "phone": MessageLookupByLibrary.simpleMessage("Puhelin"),
+    "phoneNumber": MessageLookupByLibrary.simpleMessage("Puhelinnumero"),
+    "phoneOrEmail": MessageLookupByLibrary.simpleMessage(
+      "Puhelin tai sähköpostiosoite",
+    ),
+    "pleaseCompleteFormProperly": MessageLookupByLibrary.simpleMessage(
+      "Täytäthän kaikki vaadittavat kohdat",
+    ),
+    "pleaseEnableCamera": MessageLookupByLibrary.simpleMessage(
+      "Salli kameran käyttö jotta voit skannata QR-koodeja",
+    ),
+    "pleaseEnterConfirmationKey": MessageLookupByLibrary.simpleMessage(
+      "Anna vahvistuskoodi",
+    ),
+    "pleaseEnterPassword": MessageLookupByLibrary.simpleMessage(
+      "Anna salasana",
+    ),
+    "pleaseEnterPhonenumber": MessageLookupByLibrary.simpleMessage(
+      "Anna puhelinnumero",
+    ),
+    "pleaseProvideValidEmail": MessageLookupByLibrary.simpleMessage(
+      "Anna kelvollinen sähköpostiosoite",
+    ),
+    "pleaseProvideValidPhonenumber": MessageLookupByLibrary.simpleMessage(
+      "Tarkista puhelinnumero",
+    ),
+    "pleaseProvideYourName": MessageLookupByLibrary.simpleMessage(
+      "Anna nimesi",
+    ),
+    "pleaseWaitRegistering": MessageLookupByLibrary.simpleMessage(
+      "Käyttäjätiliä rekisteröidään",
+    ),
+    "postcode": MessageLookupByLibrary.simpleMessage("Postinumero"),
+    "previous": MessageLookupByLibrary.simpleMessage("Edellinen"),
+    "privacyPolicy": MessageLookupByLibrary.simpleMessage("Tietosuojakäytäntö"),
+    "processing": MessageLookupByLibrary.simpleMessage("Käsitellään"),
+    "qrScanner": MessageLookupByLibrary.simpleMessage("QR-skanneri"),
+    "readMore": MessageLookupByLibrary.simpleMessage("Lue lisää"),
+    "readyToScan": MessageLookupByLibrary.simpleMessage("Valmis skannaamaan"),
+    "rearCamera": MessageLookupByLibrary.simpleMessage("Takakamera"),
+    "registrationFailed": MessageLookupByLibrary.simpleMessage(
+      "Tilin luonti epäonnistui",
+    ),
+    "requestFailed": MessageLookupByLibrary.simpleMessage("Pyyntö epaonnistui"),
+    "requestNewCode": MessageLookupByLibrary.simpleMessage("Pyydä uusi koodi"),
+    "requestNewPasswordTitle": MessageLookupByLibrary.simpleMessage(
+      "Vaihda salasana",
+    ),
+    "resume": MessageLookupByLibrary.simpleMessage("jatka"),
+    "retrievingCoordinates": MessageLookupByLibrary.simpleMessage(
+      "Haetaan sijaintia",
+    ),
+    "save": MessageLookupByLibrary.simpleMessage("Tallenna"),
+    "saveAnswer": MessageLookupByLibrary.simpleMessage("Tallenna vastaus"),
+    "savingDataFailed": MessageLookupByLibrary.simpleMessage(
+      "Tietojen tallennus epäonnistui",
+    ),
+    "settings": MessageLookupByLibrary.simpleMessage("Asetukset"),
+    "settingsAccount": MessageLookupByLibrary.simpleMessage("Tili"),
+    "settingsCommon": MessageLookupByLibrary.simpleMessage("Yleiset"),
+    "settingsMisc": MessageLookupByLibrary.simpleMessage("Sekalaisia"),
+    "showWelcomeScreen": MessageLookupByLibrary.simpleMessage(
+      "Näytä avausruutu",
+    ),
+    "signUp": MessageLookupByLibrary.simpleMessage("Ilmoittaudu"),
+    "statusError": MessageLookupByLibrary.simpleMessage("Virhe"),
+    "termsOfService": MessageLookupByLibrary.simpleMessage("Käyttöehdot"),
+    "thankyouForFeedback": MessageLookupByLibrary.simpleMessage(
+      "Kiitos palautteestasi!",
+    ),
+    "today": MessageLookupByLibrary.simpleMessage("Tänään"),
+    "unknownUser": MessageLookupByLibrary.simpleMessage("Tuntematon käyttäjä"),
+    "unnamed": MessageLookupByLibrary.simpleMessage("nimetön"),
+    "unnamedActivity": MessageLookupByLibrary.simpleMessage(
+      "Nimetön tapahtuma",
+    ),
+    "userInformation": MessageLookupByLibrary.simpleMessage("Käyttäjätiedot"),
+    "userInformationUpdated": MessageLookupByLibrary.simpleMessage(
+      "Käyttäjätiedot päivitetty",
+    ),
+    "userNotFound": MessageLookupByLibrary.simpleMessage(
+      "Käyttäjätietoja ei löytynyt",
+    ),
+    "validateContactTitle": MessageLookupByLibrary.simpleMessage(
+      "Vahvista yhteystieto",
+    ),
+    "valueIsRequired": MessageLookupByLibrary.simpleMessage(
+      "Tämä tieto on pakollinen",
+    ),
+    "valueNo": MessageLookupByLibrary.simpleMessage("En"),
+    "valueYes": MessageLookupByLibrary.simpleMessage("Kyllä"),
+    "verified": MessageLookupByLibrary.simpleMessage("Vahvistettu"),
+    "verify": MessageLookupByLibrary.simpleMessage("Vahvista"),
+    "visitAdded": MessageLookupByLibrary.simpleMessage("Käynti merkitty"),
+    "visitRecorded": MessageLookupByLibrary.simpleMessage("Käynti lisätty"),
+    "visitRemoved": MessageLookupByLibrary.simpleMessage("Käynti peruutettu"),
+    "visits": MessageLookupByLibrary.simpleMessage("Käynnit"),
+    "writeAnswerHere": MessageLookupByLibrary.simpleMessage(
+      "Kirjoita vastaus tähän",
+    ),
+    "youHaveToAgreeToSavingUserInformation":
+        MessageLookupByLibrary.simpleMessage(
+          "Käyttäjätili voidaan luoda vain jos hyväksyt tietojen tallentamisen.",
+        ),
+    "youthcardDashboard": MessageLookupByLibrary.simpleMessage("Nuorisokortti"),
+    "youthcardLoginTitle": MessageLookupByLibrary.simpleMessage(
+      "Nuorisokortti - kirjaudu sisään",
+    ),
+    "youthcardSettings": MessageLookupByLibrary.simpleMessage(
+      "Nuorisokortti - asetukset",
+    ),
+  };
 }

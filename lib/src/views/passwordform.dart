@@ -5,7 +5,7 @@ import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/util/validators.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 
 class ResetPassword extends StatefulWidget {
   @override

@@ -15,7 +15,7 @@ import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/views/activity/activitylist.dart';
 import 'package:youth_card/src/views/activity/categorisedactivitylist.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/views/settings.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:intl/intl.dart';

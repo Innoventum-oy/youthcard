@@ -1,8 +1,11 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/webpageprovider.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/utils.dart';
 import'package:youth_card/src/objects/webpage.dart';
@@ -143,11 +146,21 @@ class _ContentPageViewState extends State<ContentPageView> {
 
   Widget _pageContentSection(page) {
     List<Widget> textContents = [];
+    if(kDebugMode){
+      log('Displaying page ${page.id}');
+    }
+    if(page.textcontents!=null && page.textcontents.length>0) {
 
-    if(page.textcontents!=null)
-    for(var i in page.textcontents)
-      textContents.add(Html(data:i.toString()));
-    else textContents.add(Padding(padding:EdgeInsets.all(20),child:Text(AppLocalizations.of(context)!.pageIsEmpty)));
+      for (var i in page.textcontents) {
+        textContents.add(Html(data: i.toString()));
+
+      }
+    }
+    else {
+
+      textContents.add(Padding(padding: EdgeInsets.all(20),
+          child: Text(AppLocalizations.of(context)!.pageIsEmpty)));
+    }
     return Container(
         child:
         Column(
