@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'dart:async';
 //import 'dart:convert';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 
 //geolocator for user location
 import 'package:geolocator/geolocator.dart';

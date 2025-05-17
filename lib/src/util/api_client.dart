@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:youth_card/src/objects/activityvisit.dart';
 import 'package:youth_card/src/objects/form.dart';
@@ -59,42 +60,44 @@ class ApiClient {
       request.headers[k] = v;
     });
 
-    print('POSTing data as MultipartRequest:');
+
     data.forEach((key, value) async {
       if (value is File) {
-        print('adding file ' + key);
+
         request.files.add(await http.MultipartFile.fromPath(key, value.path));
       } else {
-        print('adding $key = $value');
+
         request.fields[key] = json.encode(value);
       }
     });
-    print('calling (post) ' + uri.toString());
+
     http.Response response =
         await http.Response.fromStream(await request.send());
     this.isProcessing = false;
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
-        print('RESPONSE');
-        print(response.body);
+
         try {
           Map<String, dynamic> responseData = json.decode(response.body);
-          //debug
+
           //print(responseData);
           return responseData;
         } catch (e) {
-          print(e.toString());
+
         }
       } else {
-        print('response body was empty');
+        if(kDebugMode){
+          print('response body was empty for uri .' + uri.toString());
+        }
+
         return false;
       }
     } else {
-      print(response.statusCode);
+
       if (response.body.isNotEmpty) {
         Map<String, dynamic> responseData = json.decode(response.body);
         //debug
-        print(response.body);
+
         return (responseData);
       }
       return false;
@@ -106,7 +109,7 @@ class ApiClient {
   */
   Future<dynamic> _getJson(Uri uri) async {
     //debug
-    print('calling ' + uri.toString());
+
     this.isProcessing = true;
     //Create software version header
     Map softwareInfo = {
@@ -139,19 +142,15 @@ class ApiClient {
           Map<String, dynamic> body = json.decode(response.body);
           return body;
         } on FormatException {
-          print('The provided string is not valid JSON');
-          print(response.body.toString());
+
           return null;
         }
 
-        /* print('GETJSON DATA RECEIVED:');
-        body.forEach((key, value) {
-          if (key != 'data') print('$key = $value');
-        });
-        print('END GETJSON');
-        */
+
       } else {
-        print('response body was empty for uri .' + uri.toString());
+        if(kDebugMode) {
+          print('response body was empty for uri .' + uri.toString());
+        }
         return false;
       }
     } else
@@ -167,7 +166,7 @@ class ApiClient {
       //  print('no api_key provided in params: using anonymous apikey '+apikey+' for calling getDatalist');
       params["api_key"] = apikey;
     } else
-      print('using user api_key ' + params['api_key'].toString());
+
 
     params['method'] = 'json';
     var url = Uri.https(baseUrl, 'api/dispatcher/common/', params);
@@ -285,7 +284,7 @@ class ApiClient {
     var url = Uri.https(baseUrl, AppUrl.registration);
 
     return _postJson(url, registrationData).then((json) {
-      // print(json);
+
       return json != null ? json : false;
     });
   }
@@ -304,7 +303,7 @@ class ApiClient {
       'password': password,
       'verification': password
     };
-    //params.forEach((key, value) {print('$key = $value');});
+
     var url = Uri.https(baseUrl, AppUrl.checkValidationToken, params);
     //   var response = _getJson(url) as Map<String, dynamic>;
     return _getJson(url).then((json) {
@@ -322,7 +321,7 @@ class ApiClient {
     var url = Uri.https(baseUrl, 'api/dispatcher/$targetModule/', params);
 
     return _getJson(url).then((data) {
-      //  print(data);
+
       return data;
     });
   }
@@ -334,7 +333,7 @@ class ApiClient {
     String? apikey = loggedInUser.token != null
         ? loggedInUser.token
         : await Settings().getValue("anonymousapikey");
-    //  print('calling getDetails with apikey '+( apikey?? ' not set'));
+
     var url =
         Uri.https(baseUrl, 'api/$objectType/$objectId', {'api_key': apikey});
     // Returns only
@@ -349,7 +348,7 @@ class ApiClient {
     String? apikey = loggedInUser.token != null
         ? loggedInUser.token
         : await Settings().getValue("anonymousapikey");
-    //  print('calling getDetails with apikey '+( apikey?? ' not set'));
+
     var url =
         Uri.https(baseUrl, 'api/$objectType/$objectId', {'api_key': apikey});
     // Returns only
@@ -365,24 +364,18 @@ class ApiClient {
     if (!params.containsKey("api_key") || params["api_key"] == null) {
       //  print('no api_key provided in params: using anonymous apikey '+apikey+' for calling getDatalist');
       params["api_key"] = apikey;
-    } else
-      print('using user api_key ' + params['api_key'].toString());
+    }
 
     params['method'] = 'json';
     //debug: print params
     //  params.forEach((key, value) {print('$key = $value');});
 
     var url = Uri.https(baseUrl, 'api/$datatype/', params);
-    print(url.toString());
+
     return _getJson(url).then((json) {
       if (json == false) return [];
       //  print(json);
-      if (json['data'] != null)
-        print('getDatalist returning ' +
-            json['data'].length.toString() +
-            ' ' +
-            datatype +
-            ' items');
+
       return (json['data'] ?? []);
     });
   }
@@ -443,7 +436,7 @@ class ApiClient {
       'api_key': apikey
     };
     return this.dispatcherRequest('activity', params).then((data) {
-      // print(data);
+
       Map<dynamic, String> returnData =
           Map<dynamic, String>.from(data['visits']);
       return returnData;
@@ -475,7 +468,7 @@ class ApiClient {
 
     return getDataList('activitydate', params).then((data) {
       if (data == null) return [];
-      print(data);
+
       return data
           .map<ActivityDate>((data) => ActivityDate.fromJson(data))
           .toList();
@@ -496,7 +489,6 @@ class ApiClient {
     };
     return this.dispatcherRequest('activity', params).then((data) {
       if (data == null || data['data'] == null) return [];
-      print(data);
       return data['data'].map<User>((data) => User.fromJson(data)).toList();
     });
   }
@@ -513,12 +505,12 @@ class ApiClient {
    */
   Future<List<UserBenefit>> loadUserBenefits(
       Map<String, dynamic> params) async {
-    //debug: print params
+
 
     return this.dispatcherRequest('activity', params).then((data) {
       data = data['data'];
       if (data == null) return [];
-      //  print(data);
+
       return data
           .map<UserBenefit>((data) => UserBenefit.fromJson(data))
           .toList();
@@ -564,10 +556,7 @@ class ApiClient {
       User? visitor,
       required User user,
       ActivityDate? visitDate}) async {
-    print('Updating activityvisit for activity #' +
-        activityId.toString() +
-        ': ' +
-        visitStatus);
+
 
     /* todo - positioning
   */
@@ -613,7 +602,7 @@ class ApiClient {
     var url = Uri.https(baseUrl, 'api/dispatcher/common/', params);
 
     return _postJson(url, data).then((json) {
-      print(json);
+
       return json != null ? json : false;
     });
   }
@@ -645,7 +634,7 @@ class ApiClient {
     var url = Uri.https(baseUrl, 'api/dispatcher/forms/', params);
 
     return _postJson(url, data).then((json) {
-      print(json);
+
       return json != null ? json : false;
     });
   }
@@ -655,7 +644,7 @@ class ApiClient {
     var url = Uri.https(baseUrl, 'api/dispatcher/forms/', params);
 
     return _getJson(url).then((json) {
-      //print(json);
+
       return json != null ? json : false;
     });
   }
@@ -665,7 +654,7 @@ class ApiClient {
   */
 
   Future<List<Form>> loadForms(Map<String, dynamic> params) async {
-    //params['appid'] =appId;
+
     return getDataList('form', params).then((data) {
       if (data == null) return [];
       return data.map<Form>((data) => Form.fromJson(data)).toList();

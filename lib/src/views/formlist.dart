@@ -47,10 +47,10 @@ class _FormListState extends State<FormList> {
 
   @override
   void initState(){
-    print('initing FormList view state');
+
     this.loadFormCategories();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print("WidgetsBinding");
+
       if(!categoriesLoaded)
         this.loadFormCategories();
     });
@@ -59,7 +59,7 @@ class _FormListState extends State<FormList> {
 
   Future<void> loadForms(formCategory)
   async {
-    print('loadForms called for category '+formCategory.name);
+
     User user = Provider.of<UserProvider>(context, listen: false).user;
     Map<String,dynamic> params={
       'status' :'active',
@@ -68,20 +68,15 @@ class _FormListState extends State<FormList> {
 
     };
     params['category']=formCategory.id.toString();
-    print('loadingstatus for Category '+formCategory.loadingStatus.toString());
+
     if(formCategory.loadingStatus==LoadingStatus.Idle) {
       formCategory.loadingStatus = LoadingStatus.Loading;
       dynamic result = await widget.formProvider.loadItems(params);
 
       setState(() {
-        print(result.length.toString() + ' forms found for category ' +
-            formCategory.name);
+
         formCategory.loadingStatus = LoadingStatus.Ready;
         formCategory.forms.addAll(result);
-        /*  formCategory.forms.map<Item>((form){
-          return Item(id:form.id,title:form.title,description:form.description,isExpanded: false);
-        }).toList();
-        */
 
       });
     }
@@ -97,10 +92,9 @@ class _FormListState extends State<FormList> {
     };
     dynamic result = await widget.formCategoryProvider.loadItems(params);
 
-
-    print(result.length.toString()+' categories loaded.');
-    if(result!=null)
-    this.categories = result;
+    if(result!=null) {
+      this.categories = result;
+    }
     categoriesLoaded = true;
     if(this.categories.isNotEmpty)
     {

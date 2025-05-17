@@ -60,17 +60,9 @@ class Activity {
       return DateTime.now();
     }
 
-  //   print (response);
-    Map<String, dynamic> responseData = response['data'] ?? response;
-   /* if (responseData['accesslevel'] != null) if ((responseData.runtimeType ==
-                String
-            ? int.parse(responseData['accesslevel'])
-            : responseData['accesslevel']) >
-        10) {
-      //print("Access to object {$responseData['objectid']}: " + responseData['accesslevel'].toString());
 
-    }*/
-    responseData.forEach((key, value) { print('$key = $value');});
+    Map<String, dynamic> responseData = response['data'] ?? response;
+
     Map<String, dynamic> coverpicture;
     if (responseData['coverpicture'].runtimeType == String) {
 

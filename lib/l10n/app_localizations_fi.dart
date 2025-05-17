@@ -18,7 +18,8 @@ class AppLocalizationsFi extends AppLocalizations {
   String get accountDeleted => 'Käyttäjätili poistettu';
 
   @override
-  String get accountCreationAccepted => 'I acknowledge and accept that my information is saved to the database of the Sivulla application';
+  String get accountCreationAccepted =>
+      'I acknowledge and accept that my information is saved to the database of the Sivulla application';
 
   @override
   String get accountDeletion => 'Tilin poistaminen';
@@ -156,7 +157,8 @@ class AppLocalizationsFi extends AppLocalizations {
   String get dateRange => 'Aikaväli';
 
   @override
-  String get deletingAccountCannotUndone => 'Tilin poistetaan lopullisesti. Tätä toimintoa ei voi peruuttaa.';
+  String get deletingAccountCannotUndone =>
+      'Tilin poistetaan lopullisesti. Tätä toimintoa ei voi peruuttaa.';
 
   @override
   String get deleteYourAccount => 'Poista käyttäjätilisi';
@@ -183,7 +185,8 @@ class AppLocalizationsFi extends AppLocalizations {
   String get eventLog => 'Tapahtumaloki';
 
   @override
-  String get erasmusDisclaimer => 'Hanke on rahoitettu Euroopan komission tuella.Tästä sovelluksesta vastaa ainoastaan sen laatija, eikä komissio ole vastuussa siihen sisältyvien tietojen mahdollisesta käytöstä.';
+  String get erasmusDisclaimer =>
+      'Hanke on rahoitettu Euroopan komission tuella.Tästä sovelluksesta vastaa ainoastaan sen laatija, eikä komissio ole vastuussa siihen sisältyvien tietojen mahdollisesta käytöstä.';
 
   @override
   String get error => 'Virhe';
@@ -276,6 +279,9 @@ class AppLocalizationsFi extends AppLocalizations {
   String get myCard => 'Oma kortti';
 
   @override
+  String get networkError => 'Verkkovirhe';
+
+  @override
   String get noActivitiesFound => 'Tapahtumia ei löytynyt';
 
   @override
@@ -348,10 +354,12 @@ class AppLocalizationsFi extends AppLocalizations {
   String get phoneOrEmail => 'Puhelin tai sähköpostiosoite';
 
   @override
-  String get pleaseCompleteFormProperly => 'Täytäthän kaikki vaadittavat kohdat';
+  String get pleaseCompleteFormProperly =>
+      'Täytäthän kaikki vaadittavat kohdat';
 
   @override
-  String get pleaseEnableCamera => 'Salli kameran käyttö jotta voit skannata QR-koodeja';
+  String get pleaseEnableCamera =>
+      'Salli kameran käyttö jotta voit skannata QR-koodeja';
 
   @override
   String get pleaseEnterPassword => 'Anna salasana';
@@ -507,7 +515,8 @@ class AppLocalizationsFi extends AppLocalizations {
   String get writeAnswerHere => 'Kirjoita vastaus tähän';
 
   @override
-  String get youHaveToAgreeToSavingUserInformation => 'Käyttäjätili voidaan luoda vain jos hyväksyt tietojen tallentamisen.';
+  String get youHaveToAgreeToSavingUserInformation =>
+      'Käyttäjätili voidaan luoda vain jos hyväksyt tietojen tallentamisen.';
 
   @override
   String get youthcardLoginTitle => 'Nuorisokortti - kirjaudu sisään';

@@ -50,7 +50,7 @@ class _LoginState extends State<Login> {
       serverUrl = val;
     }));
     Settings().getServerName().then((val) => setState(() {
-      print("getting server for loginstate: "+val);
+
           serverName = val;
           if(AppUrl.anonymousApikeys.containsKey(serverName)) {
             Settings().setValue(
@@ -146,16 +146,15 @@ class _LoginState extends State<Login> {
       Navigator.pushReplacementNamed(context, '/dashboard');
 
     };
-    var doLogin = () {
+    var doLogin = () async {
       final form = formKey.currentState;
 
       if (form!.validate()) {
         form.save();
 
-        final Future<Map<String, dynamic>> successfulMessage =
-            auth.login(_contact!, _password!,server: serverUrl);
+        try {
+          final response = await auth.login(_contact!, _password!, server: serverUrl);
 
-        successfulMessage.then((response) {
           if (response['status']) {
             User user = response['user'];
             Provider.of<UserProvider>(context, listen: false).setUser(user);
@@ -168,7 +167,13 @@ class _LoginState extends State<Login> {
               duration: Duration(seconds: 3),
             ).show(context);
           }
-        });
+        } catch (e) {
+          Flushbar(
+            title: AppLocalizations.of(context)!.loginFailed,
+            message: AppLocalizations.of(context)!.networkError, // or e.toString()
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
       } else {
         print("form is invalid");
       }
@@ -270,9 +275,15 @@ class _LoginState extends State<Login> {
                   minWidth:
                   MediaQuery.of(context).size.width *
                       0.9),
-              child: SettingsSection(
+              child: SettingsTheme(
+                themeData: const SettingsThemeData(
+                  settingsTileTextColor: Colors.white,
+                ),
+                platform: detectPlatform(context),
+                child:SettingsSection(
                   tiles: environmentOptions(context)),
             ),
+          ),
           ),
           insetPadding: EdgeInsets.symmetric(horizontal: 20),
           actions: <Widget>[
@@ -288,15 +299,15 @@ class _LoginState extends State<Login> {
 
   }
   List<SettingsTile> environmentOptions(BuildContext context) {
-    final Map servers = AppUrl.servers;
+    final Map<String,String> servers = AppUrl.servers;
     List<SettingsTile> tiles = [];
-    servers.forEach((serverTitle, itemUrl) {
+    servers.forEach((String serverTitle, String itemUrl) {
       tiles.add(SettingsTile(
-        title: serverTitle,
+        title: Text(serverTitle),
 
        leading: trailingWidget(serverTitle),
         onPressed: (BuildContext context) {
-            print('setting server to '+serverTitle);
+
             serverName = serverTitle;
             serverUrl = itemUrl;
             print('setting serverUrl to '+serverUrl);
@@ -305,7 +316,7 @@ class _LoginState extends State<Login> {
             if (AppUrl.anonymousApikeys.containsKey(serverTitle)) {
               Settings().setValue(
                   'anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
-              print("Anonymous api key for " + serverTitle + " set to " +AppUrl.anonymousApikeys[serverTitle]!);
+
             }
             else
               Settings().setValue('anonymousapikey', null);
@@ -314,7 +325,7 @@ class _LoginState extends State<Login> {
             //  Navigator.pushReplacementNamed(context, '/login');
             Navigator.of(context, rootNavigator: true).pop();
             setState(() {
-              print('updating state');
+
             });
         },
       ));

@@ -69,7 +69,7 @@ class _DashBoardState extends State<DashBoard> {
   }
   /* load related page */
   _loadWebPage(user)async {
-    print('calling loaditem for webpage');
+
     await Provider.of<WebPageProvider>(context,listen:false).loadItem({
       'language': Localizations.localeOf(context).toString(),
       'commonname': widget.viewTitle,
@@ -141,7 +141,7 @@ class _DashBoardState extends State<DashBoard> {
       });
     } catch (e, stack) {
       _isLoading = false;
-      print('loadItems returned error $e\n Stack trace:\n $stack');
+
       errormessage = e.toString();
       if (_loadingStates[type] == LoadingState.LOADING) {
         setState(() => _loadingStates[type] = LoadingState.ERROR);
@@ -151,15 +151,12 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
-    //for debugging, track builds in print
-    print('building dasboard state');
+
     //AuthProvider auth = Provider.of<AuthProvider>(context);
     User user = Provider.of<UserProvider>(context).user;
     this.page = Provider.of<WebPageProvider>(context).page;
 
     this.imageprovider = objectmodel.ImageProvider();
-
-    print(this.page.runtimeType.toString() + ': ' + this.page.id.toString());
 
     bool hasInfoPage =
         this.page.id != null && this.page.runtimeType.toString() == 'WebPage'
@@ -182,7 +179,7 @@ class _DashBoardState extends State<DashBoard> {
       }
 
     }
-    else print('page.data is null');
+
     List<Widget> dashboardButtons = [];
 
       if (user.token != null) dashboardButtons.add(
@@ -275,7 +272,7 @@ class _DashBoardState extends State<DashBoard> {
           IconButton(
               icon: Icon(Icons.refresh),
               onPressed: () {
-                print('Refreshing view');
+
                 setState(() {
                   _loadingStates.forEach((key, value) {
                     _loadingStates[key] = LoadingState.LOADING;

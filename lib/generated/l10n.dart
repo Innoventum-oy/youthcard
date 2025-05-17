@@ -745,6 +745,16 @@ class S {
     return Intl.message('My Card', name: 'myCard', desc: '', args: []);
   }
 
+  /// `Network error`
+  String get networkError {
+    return Intl.message(
+      'Network error',
+      name: 'networkError',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Could not find any activities`
   String get noActivitiesFound {
     return Intl.message(

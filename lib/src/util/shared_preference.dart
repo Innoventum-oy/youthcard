@@ -2,8 +2,7 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/util/local_storage.dart';
-import 'dart:io';
-
+import 'dart:ui' as ui;
 
 import 'dart:async';
 
@@ -35,16 +34,16 @@ class UserPreferences {
   final filename = "local_user";
 
   Future<bool> saveUser(User user) async {
-    return FileStorage.write(user, this.filename);
+    return getFileStorage().write(user, this.filename);
   }
 
   Future<User> getUser() async {
-    final userdata = await FileStorage.read(this.filename);
+    final userdata = await getFileStorage().read(this.filename);
     return(userdata!=false ? User.fromJson(userdata) : User());
     }
 
   void removeUser() async {
-    FileStorage.delete(this.filename);
+    getFileStorage().delete(this.filename);
 
   }
   Future<String> getToken(args) async {
@@ -60,7 +59,8 @@ class Settings{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     //Intl.findSystemLocale();
-    String systemLocale =  Platform.localeName; //Intl.getCurrentLocale();
+
+    String systemLocale =  ui.PlatformDispatcher.instance.locale.toString();
 
     String language = prefs.getString('language') ?? systemLocale ;
    // print("Returning language " + language+ " - system locale is " + systemLocale);
@@ -69,7 +69,7 @@ class Settings{
   Future<String> getServer() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String server = prefs.getString('server') ?? AppUrl.servers.values.first ;
-   print("getServer returning " + server);
+
     return server ;
   }
   Future<bool> isServerSelected() async {
@@ -106,7 +106,7 @@ class Settings{
     return token;
   }
   Future<bool> setValue(String arg,dynamic val) async {
-    print('storing '+arg+':'+val);
+
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(arg,val);
     return true;

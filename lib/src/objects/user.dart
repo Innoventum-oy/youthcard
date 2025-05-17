@@ -19,7 +19,7 @@ class User {
   int? accesslevel;
 
   factory User.fromJson(Map<String, dynamic> responseData,{description}) {
-    print('CREATING USER Object FROM JSON DATA:');
+
 
     if(responseData['data']!=null && responseData['data'].length>0) responseData = responseData['data'];
     int accesslevel = responseData['accesslevel']!=null ? (responseData['accesslevel'] is int ? responseData['accesslevel']: int.parse(responseData['accesslevel'])) : 0;

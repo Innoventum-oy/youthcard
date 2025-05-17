@@ -101,6 +101,7 @@
   "myActivities": "Omat tapahtumat",
   "myCard": "Oma kortti",
 
+  "networkError" : "Verkkovirhe",
   "noActivitiesFound" : "Tapahtumia ei löytynyt",
   "noFormsFound" : "Julkaistuja lomakkeita ei löytynyt",
   "noUsersFound": "Ei ilmoittautuneita",

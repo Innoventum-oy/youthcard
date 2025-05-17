@@ -5,7 +5,9 @@ import 'package:youth_card/src/views/settings/environment.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
+// lib/src/util/local_storage.dart
 import 'package:youth_card/src/util/local_storage.dart';
+
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/views/webpagetextcontent.dart';
 
@@ -195,7 +197,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             style: TextStyle(fontSize: 13),
     ),
             leading: Icon(Icons.clear), onPressed: (BuildContext context) {
-              FileStorage.clear();
+              getFileStorage().clear();
             }),
             SettingsTile(
                 title: Text(AppLocalizations.of(context)!.showWelcomeScreen,

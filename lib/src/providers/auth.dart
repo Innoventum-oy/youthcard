@@ -61,7 +61,7 @@ class AuthProvider with ChangeNotifier {
   }
   void setUserId(newId)
   {
-    print('userid set to '+newId);
+
     _userId = newId;
     notifyListeners();
   }
@@ -75,7 +75,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<Map<String, dynamic>> login(String email, String password,{String? server}) async {
     var result;
-    print('passed server '+(server ??'none'));
+
     String baseUrl = server ?? await Settings().getServer();
     final Map<String, dynamic> loginData = {
       'user': {
@@ -86,7 +86,7 @@ class AuthProvider with ChangeNotifier {
 
     _loggedInStatus = Status.Authenticating;
     notifyListeners();
-    print('calling login url '+Uri.https(baseUrl,AppUrl.login).toString());
+
     Response response = await post(Uri.https(baseUrl,AppUrl.login),
       body: json.encode(loginData),
       headers: {'Content-Type': 'application/json'},
@@ -96,7 +96,7 @@ class AuthProvider with ChangeNotifier {
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       var userData = responseData['data'];
-      print('User logged in, saving local userdata: '+userData.toString());
+
       User authUser = User.fromJson(userData);
 
       UserPreferences().saveUser(authUser);
@@ -106,9 +106,7 @@ class AuthProvider with ChangeNotifier {
 
       result = {'status': true, 'message': 'Success', 'user': authUser};
     } else {
-      if(response.body!="")
-      print(response.body);
-      else print('response body was empty, statuscode:'+response.statusCode.toString());
+
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();
       result = {
@@ -121,7 +119,7 @@ class AuthProvider with ChangeNotifier {
 
   // user logout method
   Future<bool> logout(User user) async {
-    print('logging out user');
+
     String baseUrl = await Settings().getServer();
     final Map<String, dynamic> logoutData = {
        'user': {
@@ -147,11 +145,10 @@ class AuthProvider with ChangeNotifier {
 
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();
-      print('user logged out');
 
       return true;
       }
-    print('logout response code was '+response.statusCode.toString());
+
     return false;
 
   }
@@ -159,7 +156,7 @@ class AuthProvider with ChangeNotifier {
 
   void cancellogin()
   {
-    print('running auth.cancellogin');
+
     _loggedInStatus = Status.NotLoggedIn;
     notifyListeners();
 
@@ -202,7 +199,6 @@ class AuthProvider with ChangeNotifier {
   }
 
   static onError(error) {
-    print("the error is $error.detail");
 
     return {'status': false, 'message': 'Unsuccessful Request', 'data': error};
 

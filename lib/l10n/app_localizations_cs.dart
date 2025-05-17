@@ -18,7 +18,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get accountDeleted => 'User account deleted';
 
   @override
-  String get accountCreationAccepted => 'I acknowledge and accept that my information is saved to the database of the Sivulla application';
+  String get accountCreationAccepted =>
+      'I acknowledge and accept that my information is saved to the database of the Sivulla application';
 
   @override
   String get accountDeletion => 'Account Deletion';
@@ -156,7 +157,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get dateRange => 'Date Range';
 
   @override
-  String get deletingAccountCannotUndone => 'The user account is removed immediately. This action cannot be undone.';
+  String get deletingAccountCannotUndone =>
+      'The user account is removed immediately. This action cannot be undone.';
 
   @override
   String get deleteYourAccount => 'Delete your account';
@@ -183,7 +185,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get eventLog => 'Přihlášení do akce';
 
   @override
-  String get erasmusDisclaimer => 'This project has been funded with support from the European Commission.\nThis publication reflects the views only of the author, and the Commission cannot be held responsible for any use which may be EN made of the information contained therein.';
+  String get erasmusDisclaimer =>
+      'This project has been funded with support from the European Commission.\nThis publication reflects the views only of the author, and the Commission cannot be held responsible for any use which may be EN made of the information contained therein.';
 
   @override
   String get error => 'Error';
@@ -274,6 +277,9 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get myCard => 'Moje karta';
+
+  @override
+  String get networkError => 'Network error';
 
   @override
   String get noActivitiesFound => 'Could not find any activities';
@@ -372,7 +378,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get pleaseEnterPhonenumber => 'Please enter phone number';
 
   @override
-  String get pleaseProvideValidPhonenumber => 'Please provide a valid phone number';
+  String get pleaseProvideValidPhonenumber =>
+      'Please provide a valid phone number';
 
   @override
   String get postcode => 'Poštovní směrovací číslo';
@@ -507,7 +514,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get writeAnswerHere => 'Write your answer here';
 
   @override
-  String get youHaveToAgreeToSavingUserInformation => 'You have to accept saving information to create account';
+  String get youHaveToAgreeToSavingUserInformation =>
+      'You have to accept saving information to create account';
 
   @override
   String get youthcardLoginTitle => 'Youth Card Přihlášení';

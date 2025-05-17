@@ -67,7 +67,6 @@ class _DisplayFormState extends State<DisplayForm> {
   }
 
   Future<void> loadAnswers(form) async {
-        print('loadAnswers called for form '+form.id.toString()+' '+form.title+', user '+this.user!.id.toString());
 
     Map<String, dynamic> params = {
       'formid': form.id.toString(),
@@ -80,19 +79,18 @@ class _DisplayFormState extends State<DisplayForm> {
       setState(() {
         answersLoaded = true;
         if(responseData['answersetkey']!=null) {
-          print('setting returned answersetkey '+responseData['answersetkey']);
+
           this.answersetKey = int.parse(responseData['answersetkey']);
         }
           var response = responseData['data'];
           //    print(response.toString());
           if (response != null)
             response.forEach(( key, data) {
-              print(data['formelementid']);
+
               int eid = data['formelementid'] is int ? data['formelementid'] : int.parse(data['formelementid']);
               if(data['answer']!=null) {
                 dynamic answer;
-                print('setting  answer to ' + data['answer'].toString() +
-                    ', type: ' + data['answer'].runtimeType.toString());
+
                 try {
                   answer = json.decode(data['answer']);
                 } on FormatException {
@@ -195,10 +193,7 @@ class _DisplayFormState extends State<DisplayForm> {
           'formid': widget.form.id.toString(),
           'api_key': this.user != null ? this.user!.token : null,
         };
-        if (this.answersetKey != null) {
-          print('UPDATING ANSWERSET ' + this.answersetKey.toString());
-          params['answersetid'] = this.answersetKey.toString();
-        }
+
         if (hasData)
           _apiClient
               .saveFormData(params, requestData)!
@@ -219,7 +214,7 @@ class _DisplayFormState extends State<DisplayForm> {
                 ).show(context);
                 if(response['data']!=null)
                   response['data'].forEach((key,dataset){
-                    print(key.toString()+': '+dataset.toString());
+
                 });
                 break;
 

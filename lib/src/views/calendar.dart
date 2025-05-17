@@ -70,13 +70,13 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
       //  'fields': ['id','startdate','enddate','']
      // 'sort': 'nexteventdate',
     };
-    print('Loading page $_pageNumber');
+
     try {
       var nextActivities =
       await widget.provider.loadItems(params);
       setState(() {
         _loadingState = LoadingState.DONE;
-        print('loadingstate set to DONE after loading ' + nextActivities.length.toString()+ ' items');
+
         data.addAll(nextActivities);
 
         for (var item in data) {
@@ -105,8 +105,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
         _pageNumber++;
       });
     } catch (e, stack) {
-      //_isLoading = false;
-      print('loadItems returned error $e\n Stack trace:\n $stack');
+
       errormessage = e.toString();
       if (_loadingState == LoadingState.LOADING) {
         setState(() => _loadingState = LoadingState.ERROR);
@@ -172,7 +171,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
 
     bool isTester = false;
     if(user.data!=null) {
-      print(user.data.toString());
+
       if (user.data!['istester'] != null) {
         if (user.data!['istester'] == 'true') isTester = true;
       }
@@ -264,7 +263,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
             child: ValueListenableBuilder<List<Activity>>(
               valueListenable: _selectedEvents,
               builder: (context, value, _) {
-                print(value);
+
                 return ListView.builder(
                     itemCount: value.length,
                     itemBuilder: (BuildContext context, int index) {

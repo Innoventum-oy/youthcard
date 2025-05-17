@@ -32,7 +32,7 @@ class UserProvider with ChangeNotifier {
 
   Future<User> loadUser(int userId, User loadingUser)
   async {
-    print('loading user details for user id '+userId.toString());
+
     dynamic userdata = await this.getObject(userId,loadingUser);
     if(userdata!=null) {
 
@@ -62,7 +62,7 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> refreshUser({String? fields}) async {
-    print('refreshing user information from server');
+
     try {
       User u = this.user;
       dynamic userData =
@@ -73,7 +73,7 @@ class UserProvider with ChangeNotifier {
       userData = userData['data'];
       // userData['access_token'] = u.token;
       // userData['renewal_token'] = u.renewalToken;
-      print('user score: ' + userData['availablescore'].toString());
+
       u = u.copyWith(
         firstname: userData['firstname'],
         lastname: userData['lastname'],
@@ -92,8 +92,7 @@ class UserProvider with ChangeNotifier {
       );
       this.setUser(u);
     } catch (e, stack) {
-      print(
-          'refreshing user information returned error $e\n Stack trace:\n $stack');
+
     }
   }
   Future<void>getUserBenefits([User? loadingUser]) async {
@@ -114,13 +113,12 @@ class UserProvider with ChangeNotifier {
      // print(result.length.toString() + ' benefits currently loaded for user '+this.user.fullname+'!');
     }
     catch (e, stack) {
-      print('loadItems returned error $e\n Stack trace:\n $stack');
 
     }
   }
 
   Future<void> getContactMethods([User? loadingUser]) async {
-    print('getContactMethods called for user provider');
+
     if(this.user.id==null) return;
 
     final Map<String, dynamic> params = {
@@ -133,7 +131,7 @@ class UserProvider with ChangeNotifier {
 
       notifyListeners();
       if(data==null) return [];
-      print(data);
+
       if(data['data']==null) return [];
       return data['data']
           .map<ContactMethod>((data) => ContactMethod.fromJson(data))

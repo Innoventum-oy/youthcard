@@ -73,7 +73,6 @@ class ActivityVisit {
       return DateTime.now();
     }
 
-    print('creating activityvisit from json data, id '+map['id']);
     //map.forEach((key, value) { print('$key = $value');});
     return ActivityVisit(
       id: int.parse(map['id']),

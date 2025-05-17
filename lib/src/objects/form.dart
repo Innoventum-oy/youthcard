@@ -29,7 +29,7 @@ class Form{
 
   factory Form.fromJson(Map<String, dynamic> response) {
     Map<String, dynamic> map = response['data'] ?? response;
-    map.forEach((key, value) { print('$key = $value');});
+
     return Form(
       id: int.parse(map['id']) ,
       title: map['title'] ,

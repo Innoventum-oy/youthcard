@@ -4,8 +4,7 @@ import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/views/activity/activity.dart';
 
 goToActivity(BuildContext context, Activity item) {
-  print('goToActivity called for #'+item.id.toString());
-  print(item);
+
   objectmodel.ActivityListProvider provider = objectmodel.ActivityListProvider();
   objectmodel.ImageProvider imageprovider = objectmodel.ImageProvider();
   _pushWidgetWithFade(context, ActivityView(item, provider,imageprovider));

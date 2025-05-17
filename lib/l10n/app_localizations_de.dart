@@ -18,7 +18,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get accountDeleted => 'User account deleted';
 
   @override
-  String get accountCreationAccepted => 'I acknowledge and accept that my information is saved to the database of the Sivulla application';
+  String get accountCreationAccepted =>
+      'I acknowledge and accept that my information is saved to the database of the Sivulla application';
 
   @override
   String get accountDeletion => 'Account Deletion';
@@ -156,7 +157,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dateRange => 'Date Range';
 
   @override
-  String get deletingAccountCannotUndone => 'The user account is removed immediately. This action cannot be undone.';
+  String get deletingAccountCannotUndone =>
+      'The user account is removed immediately. This action cannot be undone.';
 
   @override
   String get deleteYourAccount => 'Delete your account';
@@ -183,7 +185,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get eventLog => 'Ereignisprotokoll';
 
   @override
-  String get erasmusDisclaimer => 'This project has been funded with support from the European Commission.\nThis publication reflects the views only of the author, and the Commission cannot be held responsible for any use which may be EN made of the information contained therein.';
+  String get erasmusDisclaimer =>
+      'This project has been funded with support from the European Commission.\nThis publication reflects the views only of the author, and the Commission cannot be held responsible for any use which may be EN made of the information contained therein.';
 
   @override
   String get error => 'Error';
@@ -276,6 +279,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get myCard => 'Meine Card';
 
   @override
+  String get networkError => 'Network error';
+
+  @override
   String get noActivitiesFound => 'Could not find any activities';
 
   @override
@@ -348,7 +354,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get phoneOrEmail => 'Telefon oder Email';
 
   @override
-  String get pleaseCompleteFormProperly => 'Bitte das Formular richtig ausfüllen';
+  String get pleaseCompleteFormProperly =>
+      'Bitte das Formular richtig ausfüllen';
 
   @override
   String get pleaseEnableCamera => 'Please enable camera for scanning QR codes';
@@ -357,10 +364,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get pleaseEnterPassword => 'Bitte Passwort eingeben';
 
   @override
-  String get pleaseEnterConfirmationKey => 'Bitte Bestätigungsschlüssel eingeben';
+  String get pleaseEnterConfirmationKey =>
+      'Bitte Bestätigungsschlüssel eingeben';
 
   @override
-  String get pleaseWaitRegistering => 'Benutzerkonto wird registriert, bitte warten';
+  String get pleaseWaitRegistering =>
+      'Benutzerkonto wird registriert, bitte warten';
 
   @override
   String get pleaseProvideValidEmail => 'Bitte gültige E-Mailadresse angeben';
@@ -372,7 +381,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get pleaseEnterPhonenumber => 'Bitte Telefonnummer eingeben';
 
   @override
-  String get pleaseProvideValidPhonenumber => 'Bitte gültige Telefonnummer eingeben';
+  String get pleaseProvideValidPhonenumber =>
+      'Bitte gültige Telefonnummer eingeben';
 
   @override
   String get postcode => 'Postleitzahl';
@@ -507,7 +517,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get writeAnswerHere => 'Write your answer here';
 
   @override
-  String get youHaveToAgreeToSavingUserInformation => 'You have to accept saving information to create account';
+  String get youHaveToAgreeToSavingUserInformation =>
+      'You have to accept saving information to create account';
 
   @override
   String get youthcardLoginTitle => 'Youth Card Anmeldung';

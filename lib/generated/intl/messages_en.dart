@@ -157,6 +157,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "moreInformation": MessageLookupByLibrary.simpleMessage("More information"),
     "myActivities": MessageLookupByLibrary.simpleMessage("My activities"),
     "myCard": MessageLookupByLibrary.simpleMessage("My Card"),
+    "networkError": MessageLookupByLibrary.simpleMessage("Network error"),
     "noActiveBenefits": MessageLookupByLibrary.simpleMessage(
       "No active benefits",
     ),

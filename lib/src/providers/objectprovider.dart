@@ -23,8 +23,7 @@ abstract class ObjectProvider with ChangeNotifier {
   ApiClient _apiClient = ApiClient();
 
   bool setUser(User user) {
-    print('user set for objectprovider to ' + user.lastname.toString() + ' ' +
-        user.firstname.toString());
+
     _user = user;
     // do it silent:  notifyListeners();
     return true;
@@ -96,7 +95,6 @@ class ActivityVisitListProvider extends ObjectProvider {
   Future<List<ActivityVisit>?> loadActivityVisits(Activity activity,{loadParams}) async
   {
     this._data?.clear();
-    print('loadVisits called for '+(activity.name ?? '')+' user:'+(this.user.fullname));
 
     DateTime now = DateTime.now();
     final Map<String, String> params = {
@@ -108,7 +106,7 @@ class ActivityVisitListProvider extends ObjectProvider {
     };
     if(loadParams['enddate']!=null) params['startdateTo'] =loadParams['enddate'];
     this._data = await _apiClient.loadActivityVisits(params);
-    print(this._data!.length.toString()+' activityvisits loaded');
+
     notifyListeners();
     return this._data ;
   }
@@ -130,7 +128,7 @@ class ActivityListProvider extends ObjectProvider {
  */
   Future<void> loadMyItems() async
   {
-    print('loadMyItems called for '+this.user.fullname);
+
 
     DateTime now = DateTime.now();
     final Map<String, String> params = {
@@ -146,46 +144,36 @@ class ActivityListProvider extends ObjectProvider {
 
   @override
   Future<List<Activity>> loadItems(params,{refresh =false}) async {
-    print('Activityprovider loadItems called');
+
     String filename = md5.convert(utf8.encode(params.toString())).toString();
    // FileStorage.delete(filename);
-    var activitydata = await FileStorage.read(filename,expiration: 30);
+    var activitydata = await getFileStorage().read(filename,expiration: 30);
    /* (activitydata as Activity).map<Activity>((data) => Activity.fromJson(data))
         .toList();*/
     if (activitydata != false && activitydata.length>0 && !refresh)
     {
-     // print(activitydata);
-      //@todo refresh
-      print('Loaded activity list from local storage $filename');
+
       List <Activity> activities = [];
 
       for(var data in activitydata) {
-        /*
-        data.forEach((key,value){
 
-          if(value!=null) print(key+': '+value.toString());
-        });
-      */
-       // print(data.runtimeType.toString());
         Activity a = Activity.fromJson(data);
         activities.add(a);
 
           }
-      //print('received '+activities.length.toString()+' activities from server');
+
       this._data = activities;
       return activities;
       }
-    else print('activitydata was false (or refresh was requested), loading remote results');
 
     final remoteactivitydata =  await _apiClient.loadActivities(params);
-    FileStorage.write(remoteactivitydata,filename);
+    getFileStorage().write(remoteactivitydata,filename);
     notifyListeners();
     return remoteactivitydata;
 
   }
 
   Future<dynamic> getActivityDates(Activity activity, user) async{
-    print('Activityprovider getActivityDates called');
 
     final remoteactivitydatedata =  await _apiClient.loadActivitydates(activity,user);
 
@@ -208,22 +196,20 @@ class ActivityListProvider extends ObjectProvider {
   // returns json-decoded response
   @override
   Future<dynamic> getDetails(int activityId, user,{reload =false}) async {
-    print('getting activity details, reload is set to '+reload.toString());
+
    if(!reload) {
-     final activitydata = await FileStorage.read(
+     final activitydata = await getFileStorage().read(
          "activity_" + activityId.toString() + "_user_" + user.id.toString(),
          expiration: 30);
      if (activitydata != false) {
-       //@todo refresh
-       print(
-           'Loaded activity details from local storage for activity ${activityId
-               .toString()}');
+
        return activitydata;
      }
    }
-    final remoteactivitydata = await _apiClient.getActivityDetails(activityId, user);
-   print('writing received activitydata to local storage for #'+activityId.toString());
-    FileStorage.write(remoteactivitydata,"activity_" + activityId.toString() + "_user_"+user.id.toString());
+
+   final remoteactivitydata = await _apiClient.getActivityDetails(activityId, user);
+
+    getFileStorage().write(remoteactivitydata,"activity_" + activityId.toString() + "_user_"+user.id.toString());
     return remoteactivitydata;
 
   }

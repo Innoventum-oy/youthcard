@@ -170,6 +170,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "moreInformation": MessageLookupByLibrary.simpleMessage("lisätiedot"),
     "myActivities": MessageLookupByLibrary.simpleMessage("Omat tapahtumat"),
     "myCard": MessageLookupByLibrary.simpleMessage("Oma kortti"),
+    "networkError": MessageLookupByLibrary.simpleMessage("Verkkovirhe"),
     "noActiveBenefits": MessageLookupByLibrary.simpleMessage(
       "Ei etuja käytössä",
     ),

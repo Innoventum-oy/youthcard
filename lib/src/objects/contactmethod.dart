@@ -10,7 +10,6 @@ class ContactMethod {
 
   factory ContactMethod.fromJson(Map<String, dynamic> responseData) {
 
-    responseData.forEach((key, value) { print('$key = $value');});
     return ContactMethod(
       id: int.parse(responseData['id'].toString()),
       type: responseData['type'],

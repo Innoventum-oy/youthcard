@@ -50,7 +50,7 @@ class _MyCardState extends State<MyCard> {
     //  print('_getUserInfo called, retrieving user information from userprovider for user '+targetId.toString());
     dynamic fielddata = await provider.getFields(targetId, Provider.of<UserProvider>(context, listen: false).user);
     setState(() {
-    print('user fields loaded');
+
       if(fielddata!=null) {
         this.fields = fielddata;
       }
@@ -74,7 +74,6 @@ class _MyCardState extends State<MyCard> {
       if(userdata!=null) {
         this.user = User.fromJson(userdata['data'].first['data'],description:userdata['description']);
       }
-      print('user info loaded');
       userLoaded = true;
       _benefitsLoadingState = LoadingState.DONE;
 
@@ -86,7 +85,7 @@ class _MyCardState extends State<MyCard> {
 
 
   _loadBenefits(user) async {
-    print('loadbenefits called');
+
 
     final Map<String, String> params = {
       'action': 'loaduserbenefits',
@@ -106,8 +105,7 @@ class _MyCardState extends State<MyCard> {
         //_isLoading = false;
       });
     } catch (e, stack) {
-      //_isLoading = false;
-      print('loadItems returned error $e\n Stack trace:\n $stack');
+
       errormessage = e.toString();
       if (_benefitsLoadingState == LoadingState.LOADING) {
         setState(() => _benefitsLoadingState = LoadingState.ERROR);
@@ -157,13 +155,6 @@ class _MyCardState extends State<MyCard> {
       }
     }
 
-    if(user.description!=null)
-      {
-        Map<String,dynamic> description = user.description ?? {};
-        description.forEach((key, value){
-          print(key+': '+value+' '+user.data![key].toString());
-        });
-      }else print('user description is NULL');
 
     contactItems.clear();
     contactItems.add(Padding(
@@ -366,13 +357,7 @@ class _MyCardState extends State<MyCard> {
     else if(this.fields.length>0 )
     {
       Map<String,dynamic> userdata = this.user.toMap();
-
       Map<String,dynamic> fields = this.fields; // targetUser.description ?? {};
-
-
-      user.data!.forEach((key,value) {
-        print(key.toString()+':'+value.toString());
-      });
 
       fields['fields'].forEach((name, definition) {
         dynamic value;
@@ -415,7 +400,7 @@ class _MyCardState extends State<MyCard> {
     return widgets;
   }
   Widget _getBenefitsSection(user) {
-    print('_getBenefitsSection gets called');
+
     switch (_benefitsLoadingState) {
       case LoadingState.DONE:
         //data loaded

@@ -98,6 +98,8 @@
   "myActivities": "My activities",
   "myCard": "My Card",
 
+  "networkError" : "Network error",
+
   "noActivitiesFound" : "Could not find any activities",
   "noActiveBenefits" : "No active benefits",
   "noContactMethodsFound" : "No contact methods found",

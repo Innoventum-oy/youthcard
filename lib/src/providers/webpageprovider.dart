@@ -24,7 +24,7 @@ class WebPageProvider extends ObjectProvider {
   Future<void> refresh(User user) async{
     int? id = this.page.id;
     this.clear();
-    print('refreshing page '+(id.toString() ));
+
     if(id!=null){ dynamic result = await this.getDetails(id, user);
     if(result!=null) {
       _page = WebPage.fromJson(result);
@@ -51,7 +51,6 @@ class WebPageProvider extends ObjectProvider {
     //clear current page
     _page = new WebPage(id: _page.id);
     pages.addAll(await _apiClient.loadPages(params));
-    print('webpageprovider loaditem was called for commonname '+params['commonname']+'. pages loaded:'+pages.length.toString());
     if(pages.isNotEmpty) {
       this._page = pages.first;
     }
