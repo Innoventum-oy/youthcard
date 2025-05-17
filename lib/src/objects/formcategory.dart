@@ -1,19 +1,19 @@
-import 'package:youth_card/src/objects/form.dart' as iCMSForm;
+import 'package:youth_card/src/objects/form.dart' as icms_form;
 
 enum LoadingStatus {
-  Idle,
-  Loading,
-  Ready,
-  Error
+  idle,
+  loading,
+  ready,
+  error
 }
 class FormCategory{
   int? id;
   String? name;
   String? description;
-  List<iCMSForm.Form> forms = [];
+  List<icms_form.Form> forms = [];
   FormCategory({this.id, this.name, this.description});
   bool tasksLoaded = false;
-  LoadingStatus loadingStatus = LoadingStatus.Idle;
+  LoadingStatus loadingStatus = LoadingStatus.idle;
 
   Map<String, dynamic> toJson() {
     return {

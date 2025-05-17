@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/activity.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/providers/index.dart' as objectmodel;
 import 'package:youth_card/src/views/activity/activity.dart';
 
 goToActivity(BuildContext context, Activity item) {

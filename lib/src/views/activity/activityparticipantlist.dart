@@ -4,7 +4,7 @@ import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/activitydate.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/providers/index.dart' as object_model;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -16,16 +16,16 @@ import 'package:youth_card/src/views/card.dart';
 class ActivityParticipantList extends StatefulWidget {
   final ActivityDate _activityDate;
   final Activity _activity;
-  final objectmodel.ActivityListProvider activityProvider;
+  final object_model.ActivityListProvider activityProvider;
 
   const ActivityParticipantList(this._activityDate,this._activity, this.activityProvider, {super.key});
 
   @override
-  _ActivityParticipantListState createState() =>
-      _ActivityParticipantListState();
+  ActivityParticipantListState createState() =>
+      ActivityParticipantListState();
 }
 
-class _ActivityParticipantListState extends State<ActivityParticipantList> {
+class ActivityParticipantListState extends State<ActivityParticipantList> {
   final ApiClient _apiClient = ApiClient();
   bool userListLoaded = false;
   bool visitListLoaded = false;
@@ -50,14 +50,11 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
         userListLoaded = true;
         if (activityUserData.isNotEmpty) {
           users.addAll(activityUserData);
-          print('${activityUserData.length} users loaded');
           _loadActivityVisits(widget._activity.id!,widget._activityDate,user);
         } else {
-          print('no users found for activity');
         }
       });
-    } catch (e, stack) {
-      print('loadActivityUsers returned error $e\n Stack trace:\n $stack');
+    } catch (e) {
       //Notify(e.toString());
       e.toString();
     }
@@ -70,13 +67,10 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
       setState(() {
         visitListLoaded = true;
         if (activityVisitData.isNotEmpty) {
-          print('${activityVisitData.length} visits loaded');
         } else {
-          print('no visit information found for activity');
         }
       });
-    } catch (e, stack) {
-      print('loadActivityVisits returned error $e\n Stack trace:\n $stack');
+    } catch (e) {
       //Notify(e.toString());
       e.toString();
     }
@@ -151,9 +145,7 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
             Map<String,dynamic> result = await _apiClient.updateActivityRegistration(activityId:widget._activity.id!,visitStatus:value ? 'visited':'cancelled',visitor: user,user:loggedInUser,visitDate:widget._activityDate) ;
             setState(() {
             if(result['visitstatus']!=null) {
-              print('updatevisit returned visitstatus ${result['visitstatus']} for user '+result['userid']);
               activityVisitData[result['userid']] = result['visitstatus'];
-              print(activityVisitData);
             }
 
           });

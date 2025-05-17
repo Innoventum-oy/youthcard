@@ -14,10 +14,10 @@ class ValidateContact extends StatefulWidget {
 
   const ValidateContact({super.key, this.contactmethod});
   @override
-  _ValidateContactState createState() => _ValidateContactState();
+  ValidateContactState createState() => ValidateContactState();
 }
 
-class _ValidateContactState extends State<ValidateContact> {
+class ValidateContactState extends State<ValidateContact> {
   bool contactsLoaded = false;
   final formKey = GlobalKey<FormState>();
   ContactMethod contactmethod = ContactMethod();
@@ -31,15 +31,12 @@ class _ValidateContactState extends State<ValidateContact> {
   @override
   void initState(){
 
-    print('initState called for validatecontact');
 
 
 
       String address = contactmethod.address ??'null';
-      print('setting _contact to $address');
       _contact = address;
       selectedMethod = contactmethod;
-      print('Widget called with contactmethod $address');
 
     // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
 
@@ -56,7 +53,6 @@ class _ValidateContactState extends State<ValidateContact> {
     if(widget.contactmethod!=null) {
       contactItems.add(widget.contactmethod as ContactMethod);
     } else if(!contactsLoaded) {
-      print('Loading contactmethods from userprovider');
       Provider
           .of<UserProvider>(context)
           . getContactMethods();
@@ -98,18 +94,17 @@ class _ValidateContactState extends State<ValidateContact> {
   Widget contactValidationFormBody(auth,user)
   {
 
-    print('verification status:${auth.verificationStatus}');
 
     switch(auth.verificationStatus)
     {
-      case VerificationStatus.UserNotFound:
-      case VerificationStatus.CodeNotRequested:
+      case VerificationStatus.userNotFound:
+      case VerificationStatus.codeNotRequested:
         return getConfirmationKeyForm(auth,user);
 
-      case VerificationStatus.CodeReceived:
+      case VerificationStatus.codeReceived:
         return enterConfirmationKeyForm(auth);
 
-      case VerificationStatus.Verified:
+      case VerificationStatus.verified:
         return successForm();
       default:
         //something went wrong if we end up in the default case
@@ -134,8 +129,7 @@ class _ValidateContactState extends State<ValidateContact> {
             setState(() {
               auth.setContactMethodId(response['contactmethodid']);
               if(response['userid']!=null) auth.setUserId(response['userid']);
-              print('contact method id set to ${response['contactmethodid']}');
-              auth.setVerificationStatus(VerificationStatus.CodeReceived);
+              auth.setVerificationStatus(VerificationStatus.codeReceived);
             });
 
           } else {
@@ -147,7 +141,6 @@ class _ValidateContactState extends State<ValidateContact> {
           }
         });
       } else {
-        print("form is invalid");
       }
     }
 
@@ -205,12 +198,7 @@ class _ValidateContactState extends State<ValidateContact> {
             });
       } else {
         //No contact methods found error
-        return Container(
-
-            child: Text(AppLocalizations.of(context)!.noContactMethodsFound),
-
-
-        );
+        return Text(AppLocalizations.of(context)!.noContactMethodsFound);
 
       }
     }
@@ -228,7 +216,7 @@ class _ValidateContactState extends State<ValidateContact> {
 
 
         SizedBox(height: 20.0),
-        auth.verificationStatus == VerificationStatus.Validating
+        auth.verificationStatus == VerificationStatus.validating
             ? loading
             : longButtons(AppLocalizations.of(context)!.getCode,
             getVerificationCode),
@@ -242,7 +230,6 @@ class _ValidateContactState extends State<ValidateContact> {
   Widget enterConfirmationKeyForm(auth) {
     final confirmationController = TextEditingController();
 
-    print('current _confirmkey value: $_confirmkey');
 
     var loading = Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -263,26 +250,22 @@ class _ValidateContactState extends State<ValidateContact> {
     );
 
     void sendVerificationCode() {
-      print('sending confirmation key');
       final form = formKey.currentState;
 
       if (form!.validate()) {
         form.save();
-        print('${'checking confirmationkey - user: '+auth.userId},  contactmethodid ${auth.contactMethodId}, key: $_confirmkey');
 
         final Future<Map<String, dynamic>> successfulMessage =
         _apiClient.sendConfirmationKey(userid: auth.userId,contact: auth.contactMethodId, code:_confirmkey!.toString());
 
         successfulMessage.then((response) {
-          print('received response from sendConfirmationKey');
           if (response['status'] == 'success') {
             setState(() {
               auth.setSinglePass(response['singlepass']);
-              auth.setVerificationStatus(VerificationStatus.Verified);
+              auth.setVerificationStatus(VerificationStatus.verified);
             });
 
           } else {
-            print('sendConfirmationKey returned status '+response['status']);
             Flushbar(
               title: AppLocalizations.of(context)!.requestFailed,
               message: response['message'].toString(),
@@ -291,7 +274,6 @@ class _ValidateContactState extends State<ValidateContact> {
           }
         });
       } else {
-        print("form is invalid");
       }
     }
 
@@ -305,7 +287,7 @@ class _ValidateContactState extends State<ValidateContact> {
         confirmationKeyField,
 
         SizedBox(height: 20.0),
-        auth.verificationStatus == VerificationStatus.Validating
+        auth.verificationStatus == VerificationStatus.validating
             ? loading
             : longButtons(AppLocalizations.of(context)!.btnConfirm,
             sendVerificationCode),
@@ -329,7 +311,7 @@ class _ValidateContactState extends State<ValidateContact> {
   }
   Widget bottomNavigation(auth) {
     List<Widget> elements = [];
-    if(auth.loggedInStatus != Status.LoggedIn ) {
+    if(auth.loggedInStatus != Status.loggedIn ) {
       elements.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.login,
             style: TextStyle(fontWeight: FontWeight.w300)),
@@ -356,26 +338,26 @@ class _ValidateContactState extends State<ValidateContact> {
   Widget returnButton(auth)
   {
     switch(auth.verificationStatus){
-      case VerificationStatus.Verified:
+      case VerificationStatus.verified:
       // display button to return to code request form
         return ElevatedButton(
             child: Text(AppLocalizations.of(context)!.requestNewCode,
                 style: TextStyle(fontWeight: FontWeight.w300)),
             onPressed: () async {
               setState(() {
-                auth.setVerificationStatus(VerificationStatus.CodeNotRequested);
+                auth.setVerificationStatus(VerificationStatus.codeNotRequested);
               });
             });
 
-      case VerificationStatus.Validating:
-        case VerificationStatus.UserNotFound:
-        case VerificationStatus.CodeReceived:
+      case VerificationStatus.validating:
+        case VerificationStatus.userNotFound:
+        case VerificationStatus.codeReceived:
         return ElevatedButton(
             child: Text(AppLocalizations.of(context)!.previous,
                 style: TextStyle(fontWeight: FontWeight.w300)),
             onPressed: () async {
               setState(() {
-                auth.setVerificationStatus(VerificationStatus.CodeNotRequested);
+                auth.setVerificationStatus(VerificationStatus.codeNotRequested);
               });
             });
       default:

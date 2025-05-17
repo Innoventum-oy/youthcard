@@ -67,13 +67,15 @@ class Activity {
     if (responseData['coverpicture'].runtimeType == String) {
 
       coverpicture = {'objectid': responseData['coverpicture']};
-    } else if (responseData['coverpicture'].runtimeType == int)
+    } else if (responseData['coverpicture'].runtimeType == int) {
       coverpicture = {'objectid': responseData['coverpicture'].toString()};
+    }
     else if (responseData['coverpicture'] != null) {
 
       coverpicture = responseData['coverpicture'];
-    } else
+    } else {
       coverpicture = <String, dynamic>{};
+    }
 
 
     return Activity(

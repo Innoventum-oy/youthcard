@@ -6,8 +6,8 @@ import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/objects/formelement.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:youth_card/src/objects/user.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectModel;
-import 'package:youth_card/src/objects/form.dart' as iCMSForm;
+import 'package:youth_card/src/providers/index.dart' as object_model;
+import 'package:youth_card/src/objects/form.dart' as icms_form;
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/util/utils.dart';
@@ -18,20 +18,20 @@ import '../../main.dart';
 import 'formlist.dart';
 
 class DisplayForm extends StatefulWidget {
-  final objectModel.FormElementProvider formElementProvider =
-      objectModel.FormElementProvider();
-  final iCMSForm.Form form;
+  final object_model.FormElementProvider formElementProvider =
+      object_model.FormElementProvider();
+  final icms_form.Form form;
 
   DisplayForm(this.form, {super.key});
 
   @override
-  _DisplayFormState createState() => _DisplayFormState();
+  DisplayFormState createState() => DisplayFormState();
 
-  static _DisplayFormState? of(BuildContext context) =>
-      context.findAncestorStateOfType<_DisplayFormState>();
+  static DisplayFormState? of(BuildContext context) =>
+      context.findAncestorStateOfType<DisplayFormState>();
 }
 
-class _DisplayFormState extends State<DisplayForm> {
+class DisplayFormState extends State<DisplayForm> {
   final formKey = GlobalKey<FormState>();
   final ApiClient _apiClient = ApiClient();
 
@@ -51,13 +51,13 @@ class _DisplayFormState extends State<DisplayForm> {
     };
 
     params['formid'] = form.id.toString();
-    if (form.loadingStatus == iCMSForm.LoadingStatus.Idle) {
-      form.loadingStatus = iCMSForm.LoadingStatus.Loading;
+    if (form.loadingStatus == icms_form.LoadingStatus.idle) {
+      form.loadingStatus = icms_form.LoadingStatus.loading;
       dynamic result = await widget.formElementProvider.getElements(params);
 
       setState(() {
         //     print(result.length.toString() + ' elements found for form ' + form.title);
-        form.loadingStatus = iCMSForm.LoadingStatus.Ready;
+        form.loadingStatus = icms_form.LoadingStatus.ready;
         form.elements.clear();
         for (var i in result) {
           form.elements.add(i);
@@ -120,7 +120,7 @@ class _DisplayFormState extends State<DisplayForm> {
     //print('initing FillForm view state');
     // this.loadFormCategories();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.form.loadingStatus = iCMSForm.LoadingStatus.Idle;
+      widget.form.loadingStatus = icms_form.LoadingStatus.idle;
       if (!elementsLoaded) loadElements(widget.form);
     });
     super.initState();
@@ -131,7 +131,7 @@ class _DisplayFormState extends State<DisplayForm> {
     //Get user provider
     user = Provider.of<UserProvider>(context).user;
     //Get current form
-    iCMSForm.Form form = widget.form;
+    icms_form.Form form = widget.form;
 
     //tester status sets display of bug reporting button
     bool isTester = false;
@@ -155,7 +155,7 @@ class _DisplayFormState extends State<DisplayForm> {
     );
   }
 
-  Widget formBody(iCMSForm.Form form) {
+  Widget formBody(icms_form.Form form) {
     void sendForm() {
       final form = formKey.currentState;
       if (form!.validate()) {
@@ -306,7 +306,7 @@ class _DisplayFormState extends State<DisplayForm> {
     Widget input = Placeholder();
 
     switch (form.loadingStatus) {
-      case iCMSForm.LoadingStatus.Ready:
+      case icms_form.LoadingStatus.ready:
         if (!(answersLoaded && elementsLoaded)) return loader;
         if (form.elements.isNotEmpty) {
           Map<String,dynamic> p = {};
@@ -364,7 +364,9 @@ class _DisplayFormState extends State<DisplayForm> {
 
                             if(value! && !formData[e.id].contains(element.id)) {
                               formData[e.id].add(element.id);
-                            } else if(formData[e.id].contains(element.id)) formData[e.id].remove(element.id);
+                            } else if(formData[e.id].contains(element.id)) {
+                              formData[e.id].remove(element.id);
+                            }
                           });
                         }
                     ));
@@ -436,7 +438,7 @@ class _DisplayFormState extends State<DisplayForm> {
           longButtons(AppLocalizations.of(context)!.saveAnswer, sendForm),
         ]);
       default:
-        if (form.loadingStatus == iCMSForm.LoadingStatus.Idle &&
+        if (form.loadingStatus == icms_form.LoadingStatus.idle &&
             !elementsLoaded) {
           loadElements(widget.form);
         }
@@ -453,10 +455,10 @@ class TextFormFieldItem extends StatefulWidget {
   const TextFormFieldItem({super.key, required this.element, required this.value, required this.params});
 
   @override
-  _TextFormFieldItemState createState() => _TextFormFieldItemState();
+  TextFormFieldItemState createState() => TextFormFieldItemState();
 }
 
-class _TextFormFieldItemState extends State<TextFormFieldItem> {
+class TextFormFieldItemState extends State<TextFormFieldItem> {
   late String selectedValue;
   final _textEditingController = TextEditingController();
 
@@ -522,10 +524,10 @@ class TextFieldItem extends StatefulWidget {
   const TextFieldItem({super.key, required this.element, required this.value, this.params});
 
   @override
-  _TextFieldItemState createState() => _TextFieldItemState();
+  TextFieldItemState createState() => TextFieldItemState();
 }
 
-class _TextFieldItemState extends State<TextFieldItem> {
+class TextFieldItemState extends State<TextFieldItem> {
   late String selectedValue;
   final _textEditingController = TextEditingController();
 
@@ -594,28 +596,25 @@ class RadioGroupWidget extends State<RadioGroup> {
     }
     //  print('building radio group; group value is '+this.selectedOptionValue.toString());
 
-    return Container(
-      //height: 350.0,
-      child: Column(children: [
-        if (widget.element.description != null)
-          Text(widget.element.description ?? ''),
-        ...widget.options
-            .map((data) => RadioListTile<dynamic>(
-                  title: Text("${data.value}"),
-                  groupValue: selectedOptionValue,
-                  value: data.id,
-                  onChanged: (val) {
-                    setState(() {
-                      //   print('selecting: '+data.value.toString()+' ('+data.id.toString()+')');
-                      selectedOptionValue = data.id;
+    return Column(children: [
+      if (widget.element.description != null)
+        Text(widget.element.description ?? ''),
+      ...widget.options
+          .map((data) => RadioListTile<dynamic>(
+                title: Text("${data.value}"),
+                groupValue: selectedOptionValue,
+                value: data.id,
+                onChanged: (val) {
+                  setState(() {
+                    //   print('selecting: '+data.value.toString()+' ('+data.id.toString()+')');
+                    selectedOptionValue = data.id;
 
-                      DisplayForm.of(context)!
-                          .formData[widget.element.id ?? 0] = data.id;
-                    });
-                  },
-                ))
-            ,
-      ]),
-    );
+                    DisplayForm.of(context)!
+                        .formData[widget.element.id ?? 0] = data.id;
+                  });
+                },
+              ))
+          ,
+    ]);
   }
 }

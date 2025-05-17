@@ -2,10 +2,10 @@
 import 'package:youth_card/src/objects/formelement.dart';
 
 enum LoadingStatus {
-  Idle,
-  Loading,
-  Ready,
-  Error
+  idle,
+  loading,
+  ready,
+  error
 }
 class Form{
   int? id;
@@ -13,7 +13,7 @@ class Form{
   String? description;
   bool isExpanded;
   List<FormElement> elements = [];
-  LoadingStatus loadingStatus = LoadingStatus.Idle;
+  LoadingStatus loadingStatus = LoadingStatus.idle;
 
   Form({this.id, this.title, this.description,this.isExpanded =false}){
     elements = [];

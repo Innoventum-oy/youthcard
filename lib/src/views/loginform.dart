@@ -20,10 +20,10 @@ class Login extends StatefulWidget {
   const Login({super.key, this.user});
 
   @override
-  _LoginState createState() => _LoginState();
+  LoginState createState() => LoginState();
 }
 
-class _LoginState extends State<Login> {
+class LoginState extends State<Login> {
   final formKey = GlobalKey<FormState>();
 
   String? _contact, _password;
@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
   String version = '';
   String buildNumber = '';
   bool openServerSelect = false;
-  _LoginState() {
+  LoginState() {
 
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) => setState(() {
           appName = packageInfo.appName;
@@ -62,7 +62,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    print('current server: $serverName / $serverUrl, should we show dialog? $openServerSelect');
+
     if(openServerSelect==true)
     {
       openServerSelect = false;
@@ -121,7 +121,7 @@ class _LoginState extends State<Login> {
           child: Text(AppLocalizations.of(context)!.createAccount,
               style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
-            auth.setRegisteredStatus(Status.NotRegistered);
+            auth.setRegisteredStatus(Status.notRegistered);
             Navigator.pushReplacementNamed(context, '/register');
           },
         ),
@@ -175,7 +175,6 @@ class _LoginState extends State<Login> {
           ).show(context);
         }
       } else {
-        print("form is invalid");
       }
     }
     Widget titleText = AppUrl.serverImages.containsKey(serverName) ? Image.asset(AppUrl.serverImages[serverName] ?? 'images/icon.png',height:100) : Text(serverName,
@@ -221,12 +220,12 @@ class _LoginState extends State<Login> {
                   SizedBox(height: 5.0),
                   passwordField,
                   SizedBox(height: 10.0),
-                  auth.loggedInStatus == Status.Authenticating
+                  auth.loggedInStatus == Status.authenticating
                       ? loading
                       : longButtons(
                           AppLocalizations.of(context)!.btnLogin, doLogin),
                   SizedBox(height: 10.0),
-                  auth.loggedInStatus == Status.Authenticating
+                  auth.loggedInStatus == Status.authenticating
                       ? Container()
                       : longButtons(
                       AppLocalizations.of(context)!.btnContinueWithoutLogin, bypassLogin),
@@ -234,7 +233,7 @@ class _LoginState extends State<Login> {
                   forgotLabel,
                   SizedBox(height: 5.0),
 
-                  auth.loggedInStatus == Status.Authenticating
+                  auth.loggedInStatus == Status.authenticating
                       ? cancelButton
                       : Container(),
                   getVersionInfo(),
@@ -308,7 +307,6 @@ class _LoginState extends State<Login> {
 
             serverName = serverTitle;
             serverUrl = itemUrl;
-            print('setting serverUrl to $serverUrl');
             Settings().setValue('server', serverUrl);
             Settings().setValue('servername', serverTitle);
             if (AppUrl.anonymousApikeys.containsKey(serverTitle)) {

@@ -10,9 +10,9 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:youth_card/l10n/app_localizations.dart'; // important
 import 'package:youth_card/src/objects/webpage.dart';
-import 'package:youth_card/src/providers/webpageprovider.dart';
+import 'package:youth_card/src/providers/web_page_provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
-enum LoadingState { DONE, LOADING, WAITING, ERROR }
+enum LoadingState { done, loading, waiting, error }
 
 final dollarFormat = NumberFormat("#,##0.00", "en_US");
 final sourceFormat = DateFormat('yyyy-MM-dd');
@@ -60,64 +60,66 @@ Future<File> writeImageToStorage(Uint8List feedbackScreenshot) async {
   return screenshotFile;
 }
 Future<void> feedbackAction(BuildContext context, User user) async {
-
   String appName = '';
 
   String version = '';
 
 
-   await PackageInfo.fromPlatform().then((PackageInfo packageInfo){
-      appName = packageInfo.appName;
-      version = packageInfo.version;
-
-    });
+  await PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+    appName = packageInfo.appName;
+    version = packageInfo.version;
+  });
 
   final ApiClient apiClient = ApiClient();
-  BetterFeedback.of(context).show((UserFeedback feedback) async{
-          Map<String,dynamic> params={
-            'method' :'json',
-            'modulename' :'feedback',
-            'moduletype' :'pages',
-            'action' :'saveobject',
-            'api_key': user.token
-          };
-          final screenshotFile =
-          await writeImageToStorage(feedback.screenshot);
-          Map<String,dynamic> data = {
-            'objecttype' :'feedback',
-            'objectid' :'create',
-            'data_email' : user.email,
-            'data_phone' :user.phone,
-            'data_sender' : '${user.lastname!} ${user.firstname!}',
-            'data_subject':'$appName $version ${AppLocalizations.of(context)!.feedback}',
-            'data_content': feedback.text,
-            'file_file': screenshotFile
-          };
-          apiClient.sendFeedback(params,data)!.then((var response) async {
-            switch (response['status']) {
-              case 'success':
-                showDialog<String>(
-                    context: context,
-                    builder:(BuildContext context) =>AlertDialog(
+  if (context.mounted) {
+    BetterFeedback.of(context).show((UserFeedback feedback) async {
+      Map<String, dynamic> params = {
+        'method': 'json',
+        'modulename': 'feedback',
+        'moduletype': 'pages',
+        'action': 'saveobject',
+        'api_key': user.token
+      };
+      final screenshotFile =
+      await writeImageToStorage(feedback.screenshot);
+      Map<String, dynamic> data = {
+        'objecttype': 'feedback',
+        'objectid': 'create',
+        'data_email': user.email,
+        'data_phone': user.phone,
+        'data_sender': '${user.lastname!} ${user.firstname!}',
+        'data_subject': '$appName $version ${AppLocalizations.of(context)!
+            .feedback}',
+        'data_content': feedback.text,
+        'file_file': screenshotFile
+      };
+      apiClient.sendFeedback(params, data)!.then((var response) async {
+        switch (response['status']) {
+          case 'success':
+            showDialog<String>(
+                context: context,
+                builder: (BuildContext context) =>
+                    AlertDialog(
                       title: Text(AppLocalizations.of(context)!.feedbackSent),
-                      content: Text(AppLocalizations.of(context)!.thankyouForFeedback),
+                      content: Text(
+                          AppLocalizations.of(context)!.thankyouForFeedback),
 
-                      actions:<Widget>[
+                      actions: <Widget>[
                         ElevatedButton(
                           child: Text(AppLocalizations.of(context)!.ok),
-                          onPressed:() => Navigator.pop(context, 'Ok'),
+                          onPressed: () => Navigator.pop(context, 'Ok'),
                         )
                       ],
                     )
-                );
-            }
-            if(response['error']!=null) {
-              handleNotifications([response['error']], context);
-            }
-          });
-        });
-      }
-
+            );
+        }
+        if (response['error'] != null) {
+          handleNotifications([response['error']], context);
+        }
+      });
+    });
+  }
+}
 Future<List<WebPage>> loadPages(BuildContext context, String commonname,user) async {
 
   List<WebPage> pages = [];

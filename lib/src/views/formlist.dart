@@ -6,26 +6,26 @@ import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/views/displayform.dart';
 import 'package:provider/provider.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectModel;
+import 'package:youth_card/src/providers/index.dart' as object_model;
 import 'package:youth_card/l10n/app_localizations.dart';
-import 'package:youth_card/src/objects/form.dart' as iCMSForm;
-import 'package:youth_card/src/objects/formcategory.dart' as iCMSFormCategory;
+import 'package:youth_card/src/objects/form.dart' as icms_form;
+import 'package:youth_card/src/objects/formcategory.dart' as icms_form_category;
 /*
 * Forms list
 */
 
 class FormList extends StatefulWidget {
 
-  final objectModel.FormCategoryProvider formCategoryProvider =
-  objectModel.FormCategoryProvider();
-  final objectModel.FormProvider formProvider =
-  objectModel.FormProvider();
+  final object_model.FormCategoryProvider formCategoryProvider =
+  object_model.FormCategoryProvider();
+  final object_model.FormProvider formProvider =
+  object_model.FormProvider();
 
 
   FormList({super.key});
 
   @override
-  _FormListState createState() => _FormListState();
+  FormListState createState() => FormListState();
 }
 /*
 class Item extends iCMSForm.Form {
@@ -35,11 +35,11 @@ class Item extends iCMSForm.Form {
 }
 */
 
-class _FormListState extends State<FormList> {
+class FormListState extends State<FormList> {
 
   List<Widget> categoryWidgets = [];
-  List<iCMSFormCategory.FormCategory> categories = [];
-  List<iCMSForm.Form> tasks=[];
+  List<icms_form_category.FormCategory> categories = [];
+  List<icms_form.Form> tasks=[];
 
   bool categoriesLoaded = false;
   bool tasksLoaded = false;
@@ -70,13 +70,13 @@ class _FormListState extends State<FormList> {
     };
     params['category']=formCategory.id.toString();
 
-    if(formCategory.loadingStatus==LoadingStatus.Idle) {
-      formCategory.loadingStatus = LoadingStatus.Loading;
+    if(formCategory.loadingStatus==LoadingStatus.idle) {
+      formCategory.loadingStatus = LoadingStatus.loading;
       dynamic result = await widget.formProvider.loadItems(params);
 
       setState(() {
 
-        formCategory.loadingStatus = LoadingStatus.Ready;
+        formCategory.loadingStatus = LoadingStatus.ready;
         formCategory.forms.addAll(result);
 
       });
@@ -99,9 +99,7 @@ class _FormListState extends State<FormList> {
     categoriesLoaded = true;
     if(categories.isNotEmpty)
     {
-      print(result.toString());
-      for(iCMSFormCategory.FormCategory c in categories) {
-        print(c.toString());
+      for(icms_form_category.FormCategory c in categories) {
         setState(() {
           loadForms(c);
         });
@@ -115,10 +113,9 @@ class _FormListState extends State<FormList> {
 
   @override
   Widget build(BuildContext context) {
-    print('rebuilding Tasklist view');
     categoryWidgets.clear();
     user = Provider.of<UserProvider>(context).user;
-    for(iCMSFormCategory.FormCategory c in categories) {
+    for(icms_form_category.FormCategory c in categories) {
       categoryWidgets.add(Padding(
         padding: const EdgeInsets.all(10.0),
         child: Text(c.name.toString(),style:TextStyle(fontSize:20)),
@@ -225,11 +222,10 @@ class _FormListState extends State<FormList> {
   }
 
   Widget _getTasks(formCategory,user) {
-    print('getTasks called for formCategory ${formCategory.name} having ${formCategory.forms.length} items and loadingStatus ${formCategory.loadingStatus}');
 
 
     switch (formCategory.loadingStatus) {
-      case LoadingStatus.Ready:
+      case LoadingStatus.ready:
 
       //data loaded
       // List<iCMSForm.Form> tasks = formCategory.forms;
@@ -254,7 +250,7 @@ class _FormListState extends State<FormList> {
               formCategory.forms[index].isExpanded = !isExpanded;
             });
           },
-          children: formCategory.forms.map<ExpansionPanel>((iCMSForm.Form form){
+          children: formCategory.forms.map<ExpansionPanel>((icms_form.Form form){
             return ExpansionPanel(
               headerBuilder: (BuildContext context, bool isExpanded) {
                 return ListTile(title:Text(form.title.toString())

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/l10n/app_localizations.dart'; // important
-import 'package:youth_card/src/providers/objectprovider.dart';
-import 'package:youth_card/src/providers/webpageprovider.dart';
+import 'package:youth_card/src/providers/activity_list_provider.dart';
+import 'package:youth_card/src/providers/web_page_provider.dart';
 import 'package:youth_card/src/views/card.dart';
 import 'package:youth_card/src/views/dashboard.dart';
 import 'package:youth_card/src/views/loginform.dart';
@@ -35,7 +35,6 @@ class YouthCard extends StatelessWidget {
   // This widget is the root of Youth Card application.
   @override
   Widget build(BuildContext context) {
-    print('build called for youthcard class');
 
     return MultiProvider(
       providers: [
@@ -65,12 +64,10 @@ class YouthCard extends StatelessWidget {
           home: FutureBuilder(
               future: UserPreferences().getUser(),
               builder: (context, snapshot) {
-                print('main.dart, snapshot connectionstate:${snapshot.connectionState}');
                 switch (snapshot.connectionState) {
 
                   case ConnectionState.none:
                   case ConnectionState.waiting:
-                    print('returning welcome splash screen');
                     return Welcome(); //return CircularProgressIndicator();
 
                   default:
@@ -80,28 +77,22 @@ class YouthCard extends StatelessWidget {
                     {
                       User userdata = snapshot.data as User;
                       if(snapshot.data == null) {
-                        print("Snapshot.data was null");
                       } else {
-                        print("snapshot data was not null");
                       }
                       if (userdata.token != null)
                       {
-                        print('setting userdata to userprovider');
                         Provider.of<UserProvider>(context, listen: false).setUserSilent(userdata);
                         return DashBoard();
                       }
                     }
                     else {
-                      print("Snapshot has no data. User remains empty.");
                     }
 
                     if (snapshot.hasError) {
-                      print('snapshot has error');
                       return Login(user:User()); //Text('Error: ${snapshot.error}');
                     }
                     else
                       {
-                      print('user token was null, direct to login');
                        return Login(user:User());
                       }
                 }

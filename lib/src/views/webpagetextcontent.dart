@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/user.dart';
-import 'package:youth_card/src/providers/webpageprovider.dart';
+import 'package:youth_card/src/providers/web_page_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
@@ -23,12 +23,12 @@ class ContentPageView extends StatefulWidget {
 
   ContentPageView(this.commonname,{super.key, this.providedPage});
   @override
-  _ContentPageViewState createState() => _ContentPageViewState();
+  ContentPageViewState createState() => ContentPageViewState();
 }
 
-class _ContentPageViewState extends State<ContentPageView> {
+class ContentPageViewState extends State<ContentPageView> {
 
-  LoadingState _pageLoadingState = LoadingState.LOADING;
+  LoadingState _pageLoadingState = LoadingState.loading;
   String? errormessage;
   List<WebPage> pages = [];
 
@@ -47,25 +47,24 @@ class _ContentPageViewState extends State<ContentPageView> {
       await widget.pageProvider.loadItem(params);
       setState(() {
         pages.add(widget.pageProvider.page);
-        _pageLoadingState = LoadingState.DONE;
+        _pageLoadingState = LoadingState.done;
 
         //pages.addAll(result);
         // print(result.length.toString() + ' pages currently loaded!');
         //_isLoading = false;
       });
-    } catch (e, stack) {
+    } catch (e) {
       // _isLoading = false;
-      print('loadPages returned error $e\n Stack trace:\n $stack');
       errormessage = e.toString();
-      if (_pageLoadingState == LoadingState.LOADING) {
-        setState(() => _pageLoadingState = LoadingState.ERROR);
+      if (_pageLoadingState == LoadingState.loading) {
+        setState(() => _pageLoadingState = LoadingState.error);
       }
     }
   }
   _setWebPage(){
     pages.add(widget.providedPage!);
     setState(() =>
-    _pageLoadingState = LoadingState.DONE);
+    _pageLoadingState = LoadingState.done);
   }
   @override
   void initState() {
@@ -73,12 +72,9 @@ class _ContentPageViewState extends State<ContentPageView> {
       User user = Provider.of<UserProvider>(context, listen: false).user;
 
       if(widget.providedPage!=null) {
-        print(widget.providedPage!.data?.toString());
-        print('setting provided page ${widget.providedPage!.pagetitle ??''}');
         _setWebPage();
       }
       else {
-        print('loading page ${widget.commonname}');
         _loadWebPage(widget.commonname, user);
 
       }
@@ -103,14 +99,12 @@ class _ContentPageViewState extends State<ContentPageView> {
 
   Widget _getPageSection(user) {
     switch (_pageLoadingState) {
-      case LoadingState.DONE:
+      case LoadingState.done:
       //data loaded
         if(pages.isEmpty) {
-          return Container(
-          child:ListTile(
+          return ListTile(
               leading: Icon(Icons.error),
-              title: Text('${AppLocalizations.of(context)!.contentNotFound} (${widget.commonname} [${Localizations.localeOf(context)}])')),
-        );
+              title: Text('${AppLocalizations.of(context)!.contentNotFound} (${widget.commonname} [${Localizations.localeOf(context)}])'));
         }
         return ListView.builder(
             itemCount: pages.length,
@@ -118,7 +112,7 @@ class _ContentPageViewState extends State<ContentPageView> {
               return _pageContentSection(pages[index]);
             });
 
-      case LoadingState.ERROR:
+      case LoadingState.error:
       //data loading returned error state
         return Container(
           alignment: Alignment.center,
@@ -129,7 +123,7 @@ class _ContentPageViewState extends State<ContentPageView> {
           ),
         );
 
-      case LoadingState.LOADING:
+      case LoadingState.loading:
       //data loading in progress
         return Container(
           alignment: Alignment.center,
@@ -163,12 +157,8 @@ class _ContentPageViewState extends State<ContentPageView> {
       textContents.add(Padding(padding: EdgeInsets.all(20),
           child: Text(AppLocalizations.of(context)!.pageIsEmpty)));
     }
-    return Container(
-        child:
-        Column(
-            children:textContents
-        )
-
+    return Column(
+        children:textContents
     );
   }
 }

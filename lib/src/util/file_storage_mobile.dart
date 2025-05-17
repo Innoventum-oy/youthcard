@@ -4,7 +4,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 import 'dart:io';
 import 'dart:convert';
-import 'package:glob/glob.dart';
 import 'dart:async';
 
 class MobileFileStorage implements FileStorageInterface {
@@ -42,9 +41,7 @@ class MobileFileStorage implements FileStorageInterface {
 
   @override
   Future<void> clear() async {
-    final servername = await Settings().getServerName();
 
-    final filemask = Glob("${(await getApplicationDocumentsDirectory()).path}/$servername.*.json");
     Directory dir = await getApplicationDocumentsDirectory();
 
     var directoryListing = dir.listSync().whereType<File>();

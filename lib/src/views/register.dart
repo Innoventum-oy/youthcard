@@ -13,8 +13,8 @@ import 'package:youth_card/src/views/webpagetextcontent.dart';
 
 
 enum ContactMethod{
-  Phone,
-  Email
+  phone,
+  email
 }
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -41,7 +41,7 @@ class RegisterState extends State<Register> {
   bool isOver18 = true;
   bool _savingInfoAccepted = false;
 
-  ContactMethod selectedContactMethod = ContactMethod.Phone;
+  ContactMethod selectedContactMethod = ContactMethod.phone;
   Map<String,TextEditingController> controllers = {
   'lastname' : TextEditingController(),
   'firstname': TextEditingController(),
@@ -79,7 +79,7 @@ class RegisterState extends State<Register> {
           guardianPhone: _guardianphone.toString(),
         )!.then((responsedata) {
           var response = responsedata['data'] ?? responsedata;
-          if(response!=null) if( response['status']!=null) {
+          if(response!=null && response['status']!=null) {
             switch(response['status']) {
               case 'error':
                 Flushbar(
@@ -92,17 +92,17 @@ class RegisterState extends State<Register> {
               case 'success':
                 if (response['user'] != null) {
                   var userData = response['user'];
-                  print('saving users to UserPreferences');
+
                   User authUser = User.fromJson(userData);
 
                   UserPreferences().saveUser(authUser);
 
-                  auth.setLoggedInStatus(Status.LoggedIn);
+                  auth.setLoggedInStatus(Status.loggedIn);
                   auth.setContactMethodId(response['contactmethodid']);
                   Provider.of<UserProvider>(context, listen: false).setUser(
                       authUser);
                   setState(() {
-                    auth.setRegisteredStatus(Status.Registered);
+                    auth.setRegisteredStatus(Status.registered);
                   });
                 }
             }
@@ -176,14 +176,6 @@ class RegisterState extends State<Register> {
             AppLocalizations.of(context)!.guardianName, Icons.person),
       );
 
-      final codeField = TextFormField(
-        autofocus: false,
-        controller: controllers['code'],
-       // validator: validateCode,
-        onSaved: (value) => _registrationCode = value,
-        decoration: buildInputDecoration(
-            AppLocalizations.of(context)!.groupCode, Icons.code),
-      );
 
     final firstnameField = TextFormField(
       autofocus: false,
@@ -235,7 +227,7 @@ class RegisterState extends State<Register> {
     final confirmPasswordField = TextFormField(
       autofocus: false,
       validator: (value) { if(value != _password) {
-        print('$value != $_password');
+
         return AppLocalizations.of(context)!.passwordsDontMatch;
       }
       if(value!.isEmpty)  return AppLocalizations.of(context)!.passwordIsRequired;
@@ -322,7 +314,7 @@ class RegisterState extends State<Register> {
       SizedBox(height: 15.0),
   ]);
     switch(selectedContactMethod) {
-      case ContactMethod.Email:
+      case ContactMethod.email:
         //add email field + change to phone field button
       //clear possible phone field value
       _phone='';
@@ -333,7 +325,7 @@ class RegisterState extends State<Register> {
           onPressed: () {
             // Change to phone field
             setState((){
-              selectedContactMethod = ContactMethod.Phone;
+              selectedContactMethod = ContactMethod.phone;
             });
           },
           child: Text(AppLocalizations.of(context)!.btnUsePhone,style: TextStyle(fontWeight: FontWeight.w300)))
@@ -352,7 +344,7 @@ class RegisterState extends State<Register> {
         onPressed: () {
           // Change to email field
           setState((){
-            selectedContactMethod = ContactMethod.Email;
+            selectedContactMethod = ContactMethod.email;
          });
         },
         child: Text(AppLocalizations.of(context)!.btnUseEmail,style: TextStyle(fontWeight: FontWeight.w300)))
@@ -361,7 +353,7 @@ class RegisterState extends State<Register> {
     }
 
    formFields.addAll([ SizedBox(height: 20.0),
-    auth.registeredStatus == Status.Authenticating
+    auth.registeredStatus == Status.authenticating
     ? loading
         : longButtons(AppLocalizations.of(context)!.createAccount, doRegister),
      const SizedBox(height: 5.0),
@@ -391,7 +383,7 @@ class RegisterState extends State<Register> {
 
     switch(auth.registeredStatus){
 
-      case Status.NotRegistered:
+      case Status.notRegistered:
        return Container(
           padding: EdgeInsets.all(40.0),
           child: Form(
@@ -405,13 +397,13 @@ class RegisterState extends State<Register> {
           ),
         );
 
-      case Status.Registering:
+      case Status.registering:
         // display spinner
       return loading;
 
 
-      case Status.Registered:
-        print('Status.Registered switch handler');
+      case Status.registered:
+
 
         return  Padding(
           padding:EdgeInsets.all(20),

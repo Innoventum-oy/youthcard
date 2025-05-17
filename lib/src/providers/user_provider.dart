@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/objectprovider.dart';
+import 'package:youth_card/src/providers/user_benefit_provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
 
 class UserProvider with ChangeNotifier {

@@ -16,12 +16,13 @@ class UserForm extends StatefulWidget {
   final User? targetUser;
   const UserForm({super.key, this.targetUser});
   @override
-  _UserFormState createState() => _UserFormState();
-  static _UserFormState? of(BuildContext context) =>
-      context.findAncestorStateOfType<_UserFormState>();
+  UserFormState createState() => UserFormState();
+
+  static UserFormState? of(BuildContext context) =>
+      context.findAncestorStateOfType<UserFormState>();
 }
 
-class _UserFormState extends State<UserForm>{
+class UserFormState extends State<UserForm>{
   final formKey = GlobalKey<FormState>();
   final ApiClient _apiClient = ApiClient();
   bool userLoaded = false;
@@ -73,7 +74,6 @@ class _UserFormState extends State<UserForm>{
   }
   @override
   void initState(){
-    print('initing UserForm view state');
     // this.loadFormCategories();
     //this.user = Provider.of<UserProvider>(context, listen: false).user;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -97,7 +97,6 @@ class _UserFormState extends State<UserForm>{
   @override
   Widget build(BuildContext context)
   {
-    print('build called for userform');
     //check if bug reporting should be displayed.
     bool isTester = false;
     if(user.data!=null) {
@@ -209,16 +208,13 @@ class _UserFormState extends State<UserForm>{
       Map<String,dynamic> userdata = targetUser.toMap();
       Map<String,dynamic> p = {};
       Map<String,dynamic> fields = this.fields; // targetUser.description ?? {};
-      int elementNumber = 1;
-      //print('USERDATA');
-      //print(userdata.toString());
-      user.data!.forEach((key,value) {print('$key:$value');});
-      print(user.data.toString());
+
+      user.data!.forEach((key,value) {});
       fields['fields'].forEach((name, definition){
 
         input = null;
        dynamic type = (definition?['type'] ?? '').toString();
-          //  print(e.id.toString()+': '+e.type.toString());
+
             //create input field matching element type
             /*
             * possible types:
@@ -247,14 +243,11 @@ class _UserFormState extends State<UserForm>{
               //print('user data includes '+name+' with value '+user.data![name].toString());
               formData[name] = user.data![name];
             }
-            else print('no data found for '+name);
-              print('${'Element $elementNumber '+name+' has type '+type}, value ${formData[name]}');
-              elementNumber++;
+
               switch(type) {
 
                 case 'password':
                   // for now, do not display the password fields here
-                print('not displaying the element '+name);
                   break;
 
                 case 'textline':
@@ -275,13 +268,10 @@ class _UserFormState extends State<UserForm>{
                 case 'checkbox' :
                   bool isChecked = formData.containsKey(name) ? (formData[name]!=false)  : false;
                if(definition?['options']!=null) {
-                 print('options: ${definition?['options'].length > 0 ? definition['options']
-                         .toString() : ''}');
                  List<Widget> checkboxes = [];
                  for( String option in definition?['options'])
                  {
                    if(formData[name]==null || formData[name] is! List) {
-                     print('creating empty list container for '+name);
                      List<String> list = [];
                      formData[name] = list;
                    }
@@ -294,7 +284,9 @@ class _UserFormState extends State<UserForm>{
 
                            if(value! && !formData[name].contains(option)) {
                              formData[name].add(option);
-                           } else if(formData[name].contains(option)) formData[name].remove(option);
+                           } else if(formData[name].contains(option)) {
+                             formData[name].remove(option);
+                           }
                          });
                        }
                    ));
@@ -327,14 +319,13 @@ class _UserFormState extends State<UserForm>{
 
                 case 'radio':
                   if(definition?['options']!=null) {
-                    print('options: ${definition?['options'].length > 0 ? definition['options']
-                            .toString() : ''}');
                     List<dynamic> radioButtons = [];
                     if (definition?['options'] is String) { }
-                    else
-                    for( String option in definition?['options']) {
-                   //   bool isChecked = this.formData[name] == option;
-                      radioButtons.add({'value':option,'key':option});
+                    else {
+                      for (String option in definition?['options']) {
+                        //   bool isChecked = this.formData[name] == option;
+                        radioButtons.add({'value': option, 'key': option});
+                      }
                     }
                     input = RadioGroup(element: name,options:radioButtons as dynamic,selectedOption: formData[name]);
                 }
@@ -387,7 +378,6 @@ class _UserFormState extends State<UserForm>{
 
               }//end switch
               if(input!=null) {
-                print(input.toString());
                 //add the input with label and surrounding element to list
                 inputs.add(
                     Padding(
@@ -432,9 +422,9 @@ class TextFormFieldItem extends StatefulWidget{
   final Map<String,dynamic>? params ;
   const TextFormFieldItem({super.key, required this.element, required this.value,this.params});
   @override
-  _TextFormFieldItemState createState() => _TextFormFieldItemState();
+  TextFormFieldItemState createState() => TextFormFieldItemState();
 }
-class _TextFormFieldItemState extends State<TextFormFieldItem>{
+class TextFormFieldItemState extends State<TextFormFieldItem>{
   late String selectedValue;
   final  _textEditingController = TextEditingController();
   @override
@@ -495,10 +485,10 @@ class TextFieldItem extends StatefulWidget{
   final Map<String,dynamic>? params ;
   const TextFieldItem({super.key, required this.element, required this.value,this.params});
   @override
-  _TextFieldItemState createState() => _TextFieldItemState();
+  TextFieldItemState createState() => TextFieldItemState();
 }
 
-class _TextFieldItemState extends State<TextFieldItem> {
+class TextFieldItemState extends State<TextFieldItem> {
 
   late String selectedValue;
   final  _textEditingController = TextEditingController();
@@ -527,7 +517,6 @@ class _TextFieldItemState extends State<TextFieldItem> {
   }
   @override
   Widget build(BuildContext context) {
-    print('textfield has value ${widget.value}');
     selectedValue = widget.value;
     return TextField(
       controller: _textEditingController,
@@ -558,29 +547,24 @@ class RadioGroupWidget extends State<RadioGroup> {
   @override
   Widget build(BuildContext context) {
     selectedOptionValue ??= (widget.selectedOption ?? '');
-    print('building radio group ${widget.element}; value is $selectedOptionValue');
 
-    return    Container(
-      //height: 350.0,
-      child: Column(
-          children:[
+    return    Column(
+        children:[
 
-            ...widget.options.map((data) => RadioListTile<dynamic>(
-              title: Text("${data['value']}"),
-              groupValue: selectedOptionValue,
-              value: data['key'],
-              onChanged: (val) {
-                setState(() {
-                  print('selecting: ${data['value']} (${data['key']})');
-                  selectedOptionValue = data['key'] ;
+          ...widget.options.map((data) => RadioListTile<dynamic>(
+            title: Text("${data['value']}"),
+            groupValue: selectedOptionValue,
+            value: data['key'],
+            onChanged: (val) {
+              setState(() {
+                selectedOptionValue = data['key'] ;
 
-                  UserForm.of(context)!.formData[widget.element] = data['key'];
+                UserForm.of(context)!.formData[widget.element] = data['key'];
 
-                });
-              },
-            )),
-          ]),
-    );
+              });
+            },
+          )),
+        ]);
 
 
   }

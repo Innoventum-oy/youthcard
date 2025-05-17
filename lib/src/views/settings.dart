@@ -5,7 +5,6 @@ import 'package:youth_card/src/views/settings/environment.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
-// lib/src/util/local_storage.dart
 import 'package:youth_card/src/util/local_storage.dart';
 
 import 'package:youth_card/src/providers/user_provider.dart';
@@ -15,10 +14,10 @@ class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class SettingsScreenState extends State<SettingsScreen> {
   bool lockInBackground = true;
   bool notificationsEnabled = true;
   String servername='Loading..';
@@ -27,7 +26,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String version = '';
   String buildNumber = '';
   String language = 'Loading..';
-  _SettingsScreenState() {
+
+  SettingsScreenState() {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) =>setState(() {
 
       appName = packageInfo.appName;
@@ -40,7 +40,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       servername = val;
     }));
     Settings().getLanguage().then((val) => setState((){
-    print('current language:$val');
       language = val;
     }));
   }

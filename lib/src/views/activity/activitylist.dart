@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/providers/index.dart' as object_model;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
@@ -13,20 +13,20 @@ import 'package:intl/intl.dart';
 
 class ActivityList extends StatefulWidget {
   final String viewTitle = 'activitylist';
-  final objectmodel.ActivityListProvider activityProvider;
-  final objectmodel.ImageProvider imageProvider;
+  final object_model.ActivityListProvider activityProvider;
+  final object_model.ImageProvider imageProvider;
   final String viewType;
   const ActivityList(this.activityProvider,this.imageProvider,{super.key, this.viewType='all'});
   @override
-  _ActivityListState createState() => _ActivityListState();
+  ActivityListState createState() => ActivityListState();
 }
 
-class _ActivityListState extends State<ActivityList>  {
+class ActivityListState extends State<ActivityList>  {
 
   Map<String,dynamic>? map;
   List<Activity> data =[];
   User? user;
-  LoadingState _loadingState = LoadingState.LOADING;
+  LoadingState _loadingState = LoadingState.loading;
   bool _isLoading = false;
   int iteration =1;
   int buildtime = 1;
@@ -57,7 +57,6 @@ class _ActivityListState extends State<ActivityList>  {
       'api_key':user.token,
 
     };
-    print("activitylist type:${widget.viewType}");
 
     switch(widget.viewType)
     {
@@ -82,30 +81,26 @@ class _ActivityListState extends State<ActivityList>  {
 
 
     }
-    print('Loading activitylist page $_pageNumber');
     try {
 
       var nextActivities =
       await widget.activityProvider.loadItems(params);
       setState(() {
-        _loadingState = LoadingState.DONE;
+        _loadingState = LoadingState.done;
         if(nextActivities.isNotEmpty) {
           data.addAll(nextActivities);
-          print('${data.length} activities currently loaded!');
           _isLoading = false;
           _pageNumber++;
         }
         else
           {
-            print('no more activities were found');
           }
       });
-    } catch (e,stack) {
+    } catch (e) {
       _isLoading = false;
-      print('loadItems returned error $e\n Stack trace:\n $stack');
       errormessage = e.toString();
-      if (_loadingState == LoadingState.LOADING) {
-        setState(() => _loadingState = LoadingState.ERROR);
+      if (_loadingState == LoadingState.loading) {
+        setState(() => _loadingState = LoadingState.error);
       }
     }
   }
@@ -125,12 +120,10 @@ class _ActivityListState extends State<ActivityList>  {
   @override
   Widget build(BuildContext context){
 
-  print('viewtype: ${widget.viewType}');
 
   User user = Provider.of<UserProvider>(context,listen: false).user;
   bool isTester = false;
   if(user.data!=null) {
-    print(user.data.toString());
     if (user.data!['istester'] != null) {
       if (user.data!['istester'] == 'true') isTester = true;
     }
@@ -156,20 +149,19 @@ class _ActivityListState extends State<ActivityList>  {
    // User user = Provider.of<UserProvider>(context).user;
 
     switch (_loadingState) {
-      case LoadingState.DONE:
+      case LoadingState.done:
 
         //data loaded
         return ListView.builder(
             itemCount: data.length,
             itemBuilder: (BuildContext context, int index) {
               if (!_isLoading && index > (data.length * 0.7)) {
-              print('calling loadnextpage, user token is '+user.token);
                 _loadNextPage(user);
               }
 
               return ActivityListItem(data[index]);
             });
-      case LoadingState.ERROR:
+      case LoadingState.error:
         //data loading returned error state
         return Align(alignment:Alignment.center,
             child:ListTile(
@@ -178,7 +170,7 @@ class _ActivityListState extends State<ActivityList>  {
             ),
         );
 
-      case LoadingState.LOADING:
+      case LoadingState.loading:
         //data loading in progress
         return Align(alignment:Alignment.center,
           child:Center(

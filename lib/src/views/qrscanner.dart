@@ -10,8 +10,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:provider/provider.dart';
-import 'package:youth_card/src/providers/objectprovider.dart';
-import 'package:youth_card/src/providers/user_provider.dart';
+import 'package:youth_card/src/providers/index.dart';
+
 import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/views/activity/activityvisitlist.dart';
@@ -65,7 +65,7 @@ class _QRScannerState extends State<QRScanner> {
   Future<Position> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
-    print('retrieving current location');
+
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       // Location services are not enabled don't continue
@@ -95,7 +95,7 @@ class _QRScannerState extends State<QRScanner> {
       var location = await Geolocator.getCurrentPosition();
       _latitude = location.latitude.toString();
       _longitude = location.longitude.toString();
-      print('location retrieved');
+
       return location;
     }
     catch(e)
@@ -164,7 +164,7 @@ class _QRScannerState extends State<QRScanner> {
 
   Future dataRequest(scannedcode) async
   {
-    print('called dataRequest for code '+scannedcode.code);
+
     User user = Provider.of<UserProvider>(context,listen:false).user;
     Map<String, String> params = {
       'action': 'handleqr',
@@ -179,20 +179,13 @@ class _QRScannerState extends State<QRScanner> {
     if (selectedActivity.id != null) {
       params['activityid'] = selectedActivity.id.toString();
     }
-    //for debugging: print params
-    params.forEach((key, value) {
-      print('$key = $value');
-    });
-    print('Sending scanned code ' + scannedcode.code );
-
-    print('Using latitude ${_latitude?? ''}, longitude ${_longitude??''}');
 
     //dispatcherrequest returns received JSON data or false
     dynamic response = await _apiClient.dispatcherRequest('activity', params);
     setState(() {
       if(response==false)
         {
-          print('re-queuing code '+scannedcode.code);
+
           queue.add(()=>dataRequest(scannedcode));
         }
       else{
@@ -276,13 +269,11 @@ class _QRScannerState extends State<QRScanner> {
 
   @override
   void initState() {
-    print('initState called for QRscanner');
     _currentPosition = _getCurrentLocation();
     //get the user
     User user = Provider.of<UserProvider>(context, listen: false).user;
 
     if(widget.activity!=null && selectedActivity.id==null) {
-     print('widget called with activity ${widget.activity!.name ?? ''}');
       selectedActivity = widget.activity!;
     }
     else { //set the user for activitylistprovider
@@ -298,11 +289,9 @@ class _QRScannerState extends State<QRScanner> {
   void getCameraPermission() async {
 
     var status = await Permission.camera.status;
-    print('Camera status: $status'); // prints PermissionStatus.granted
+    // prints PermissionStatus.granted
     if (!status.isGranted) {
-      print('creating permission request');
       final result = await Permission.camera.request();
-      print('request result:$result');
       if (result.isGranted) {
         setState(() {
           canShowQRScanner = true;
@@ -335,7 +324,6 @@ class _QRScannerState extends State<QRScanner> {
   }
   @override
   Widget build(BuildContext context) {
-    print('build called for QRscanner');
     //set up to date user in build
     user = Provider.of<UserProvider>(context).user;
 
@@ -354,7 +342,6 @@ class _QRScannerState extends State<QRScanner> {
 
     if (widget.activity != null) {
       titleText += '\n${widget.activity!.name!}';
-      print('Current activity: ${widget.activity!.name ?? 'Not set'}');
     } else if (myActivities.isNotEmpty ) {
       if(selectedActivity.id==null) {
         //set default selection
@@ -397,7 +384,6 @@ class _QRScannerState extends State<QRScanner> {
               IconButton(
                   icon: Icon(Icons.refresh),
                   onPressed: () {
-                    print('Refreshing view');
                     setState(() {
 
 
@@ -499,7 +485,6 @@ class _QRScannerState extends State<QRScanner> {
                               onPressed: () {
                                 if (controller != null) {
                                   controller!.flipCamera().catchError((error) {
-                                    print(error.toString());
                                     notify(error.toString());
                                     return CameraFacing.back;
                                   });
@@ -531,7 +516,6 @@ class _QRScannerState extends State<QRScanner> {
                                     isPaused = true;
                                   });
                                 }).catchError((error) {
-                                  print(error.toString());
                                   notify(error.toString());
                                 });
                               },
@@ -549,7 +533,6 @@ class _QRScannerState extends State<QRScanner> {
                                     isPaused = false;
                                   });
                                 }).catchError((error) {
-                                  print(error.toString());
                                   notify(error.toString());
                                 });
                               },
@@ -578,7 +561,6 @@ class _QRScannerState extends State<QRScanner> {
   }
 
   Widget _buildQrView(BuildContext context) {
-    print('buildqrview called');
     // fit the scanArea depending on the device screen measurements
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
@@ -643,11 +625,4 @@ class _QRScannerState extends State<QRScanner> {
 
   }
 
-  @override
-  void dispose() {
-    if(controller!=null) {
-      controller!.dispose();
-    }
-    super.dispose();
-  }
 }

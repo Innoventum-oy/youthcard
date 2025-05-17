@@ -6,10 +6,10 @@ class EventLogView extends StatefulWidget {
 
   const EventLogView({super.key});
   @override
-  _EventLogViewState createState() => _EventLogViewState();
+  EventLogViewState createState() => EventLogViewState();
 }
 
-class _EventLogViewState extends State<EventLogView> {
+class EventLogViewState extends State<EventLogView> {
   @override
   Widget build(BuildContext context) {
     Future<List<String>?> getEventLog() => EventLog().getMessages();

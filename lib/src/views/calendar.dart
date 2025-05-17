@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/providers/index.dart' as object_model;
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -15,16 +15,16 @@ import 'package:youth_card/src/views/activity/activitylist_item.dart';
 
 class ActivityCalendar extends StatefulWidget {
   final String viewTitle = 'activitycalendar';
-  final objectmodel.ActivityListProvider provider;
-  final objectmodel.ImageProvider imageprovider;
+  final object_model.ActivityListProvider provider;
+  final object_model.ImageProvider imageprovider;
 
   const ActivityCalendar(this.provider,this.imageprovider, {super.key});
 
   @override
-  _ActivityCalendarState createState() => _ActivityCalendarState();
+  ActivityCalendarState createState() => ActivityCalendarState();
 }
 
-class _ActivityCalendarState extends State<ActivityCalendar> with TickerProviderStateMixin {
+class ActivityCalendarState extends State<ActivityCalendar> with TickerProviderStateMixin {
 
   List<Activity> data = [];
   final Map<DateTime, List<Activity>> _events = {};
@@ -41,7 +41,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
   DateTime? kLastDay;
   //DateTime? _rangeStart;
   //DateTime? _rangeEnd;
-  LoadingState _loadingState = LoadingState.LOADING;
+  LoadingState _loadingState = LoadingState.loading;
   //bool _isLoading = false;
 
   int iteration = 1;
@@ -75,7 +75,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
       var nextActivities =
       await widget.provider.loadItems(params);
       setState(() {
-        _loadingState = LoadingState.DONE;
+        _loadingState = LoadingState.done;
 
         data.addAll(nextActivities);
 
@@ -107,8 +107,8 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
     } catch (e) {
 
       errormessage = e.toString();
-      if (_loadingState == LoadingState.LOADING) {
-        setState(() => _loadingState = LoadingState.ERROR);
+      if (_loadingState == LoadingState.loading) {
+        setState(() => _loadingState = LoadingState.error);
       }
     }
   }
@@ -193,11 +193,11 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
 
   Widget _getCalendarSection(user) {
     switch (_loadingState) {
-      case LoadingState.DONE:
+      case LoadingState.done:
       //data loaded
         return _getCalendarContent(user);
 
-      case LoadingState.ERROR:
+      case LoadingState.error:
       //data loading returned error state
         return Align(alignment: Alignment.center,
           child: ListTile(
@@ -207,7 +207,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
           ),
         );
 
-      case LoadingState.LOADING:
+      case LoadingState.loading:
        // if (!_isLoading) _loadCalendarEvents(user);
         //data loading in progress
         return Align(alignment: Alignment.center,

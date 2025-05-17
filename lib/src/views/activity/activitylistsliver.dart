@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/activityclass.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/providers/index.dart' as object_model;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
@@ -11,22 +11,22 @@ import 'package:intl/intl.dart';
 import 'package:youth_card/src/util/navigator.dart';
 
 class ActivityListSliver extends StatefulWidget {
-  final objectmodel.ActivityListProvider activityProvider;
-  final objectmodel.ImageProvider imageProvider;
+  final object_model.ActivityListProvider activityProvider;
+  final object_model.ImageProvider imageProvider;
   final ActivityClass activityClass;
 
   const ActivityListSliver(
       this.activityProvider, this.imageProvider, this.activityClass, {super.key});
 
   @override
-  _ActivityListSliverState createState() => _ActivityListSliverState();
+  ActivityListSliverState createState() => ActivityListSliverState();
 }
 
-class _ActivityListSliverState extends State<ActivityListSliver> {
+class ActivityListSliverState extends State<ActivityListSliver> {
   Map<String, dynamic>? map;
   List<Activity> data = [];
   User? user;
-  LoadingState _loadingState = LoadingState.LOADING;
+  LoadingState _loadingState = LoadingState.loading;
   bool _isLoading = false;
   int iteration = 1;
   int buildtime = 1;
@@ -71,30 +71,25 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
       'sort': 'nexteventdate',
     };
 
-    print('Loading activities (activitylistsliver) page $_pageNumber for '+activityclass.name);
     try {
       var nextActivities = await widget.activityProvider.loadItems(params);
       setState(() {
-        _loadingState = LoadingState.DONE;
+        _loadingState = LoadingState.done;
         if (nextActivities.isNotEmpty) {
           data.addAll(nextActivities);
-          print('${data.length} activities currently loaded for '+activityclass.name);
           if (nextActivities.length >= limit) {
-            print('advancing pagenumber');
             _isLoading = false;
             _pageNumber++;
           }
         }
         else {
-          print('no activities currently loaded');
         }
       });
-    } catch (e, stack) {
+    } catch (e) {
       _isLoading = false;
-      print('loadItems returned error $e\n Stack trace:\n $stack');
       errormessage = e.toString();
-      if (_loadingState == LoadingState.LOADING) {
-        setState(() => _loadingState = LoadingState.ERROR);
+      if (_loadingState == LoadingState.loading) {
+        setState(() => _loadingState = LoadingState.error);
       }
     }
   }
@@ -118,7 +113,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
 
   Widget _getContentSection(user) {
     switch (_loadingState) {
-      case LoadingState.DONE:
+      case LoadingState.done:
         if(data.isEmpty) {
           return Container(
           padding: EdgeInsets.all(20),
@@ -136,16 +131,14 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
             scrollDirection: Axis.horizontal,
             itemCount: data.length,
             itemBuilder: (BuildContext context, int index) {
-              print('building item $index');
               if (!_isLoading && index > (data.length * 0.7)) {
-            print('loading page $index');
                 _loadNextPage(user, widget.activityClass);
               }
 
               return activityHorizontal(data[index]);
             });
 
-      case LoadingState.ERROR:
+      case LoadingState.error:
         //data loading returned error state
         return Align(
           alignment: Alignment.center,
@@ -156,7 +149,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
           ),
         );
 
-      case LoadingState.LOADING:
+      case LoadingState.loading:
         //data loading in progress
         return Align(
           alignment: Alignment.center,
@@ -170,7 +163,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
           ),
         );
       default:
-        return Container(child:Text('No activities found in this category'));
+        return Text('No activities found in this category');
     }
   }
 

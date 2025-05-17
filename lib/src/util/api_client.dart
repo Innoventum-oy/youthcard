@@ -49,11 +49,7 @@ class ApiClient {
     });
     Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'User-Agent': softwareInfo['appName'] +
-          ' / ' +
-          softwareInfo['version'] +
-          ' ' +
-          softwareInfo['buildNumber']
+      'User-Agent': "${softwareInfo['appName']} / ${softwareInfo['version']} ${softwareInfo['buildNumber']}",
     };
     var request = http.MultipartRequest("POST", uri);
     headers.forEach((k, v) {
@@ -125,11 +121,7 @@ class ApiClient {
       softwareInfo['version'] = packageInfo.version;
       softwareInfo['buildNumber'] = packageInfo.buildNumber;
     });
-    String userAgent = softwareInfo['appName'] +
-        ' / ' +
-        softwareInfo['version'] +
-        ' ' +
-        softwareInfo['buildNumber'];
+    String userAgent = "${softwareInfo['appName']} / ${softwareInfo['version']} ${softwareInfo['buildNumber']}";
     Map<String, String> headers = {'User-Agent': userAgent};
 
     var response = await http.get(uri, headers: headers);

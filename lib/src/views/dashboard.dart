@@ -5,14 +5,14 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/objects/webpage.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:youth_card/src/providers/webpageprovider.dart';
+import 'package:youth_card/src/providers/web_page_provider.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/views/card.dart';
 import 'package:youth_card/src/views/formlist.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
 import 'package:youth_card/src/views/calendar.dart';
 import 'package:youth_card/src/objects/activity.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/providers/index.dart' as objectmodel;
 import 'package:youth_card/src/views/activity/activitylist.dart';
 import 'package:youth_card/src/views/activity/categorisedactivitylist.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
@@ -30,10 +30,10 @@ class DashBoard extends StatefulWidget {
   DashBoard({super.key});
 
   @override
-  _DashBoardState createState() => _DashBoardState();
+  DashBoardState createState() => DashBoardState();
 }
 
-class _DashBoardState extends State<DashBoard> {
+class DashBoardState extends State<DashBoard> {
   final Map<String, LoadingState> _loadingStates = {};
   Map<String, List<Activity>> myActivities = {};
   List<FormCategory> formCategories = [];
@@ -60,10 +60,11 @@ class _DashBoardState extends State<DashBoard> {
 
     User user = Provider.of<UserProvider>(context, listen: false).user;
     //Check if user has activities available that they can edit / log visits for
-    if (user.token != null)
+    if (user.token != null) {
       for (var a in activityTypes) {
         _loadMyActivities(user, a);
       }
+    }
     _loadForms(user);
     //See if info page exists for the view
     _loadWebPage(user);
@@ -89,7 +90,7 @@ class _DashBoardState extends State<DashBoard> {
   _loadForms(user) async {
 
     _formsLoading = true;
-    _loadingStates['formcategories'] = LoadingState.LOADING;
+    _loadingStates['formcategories'] = LoadingState.loading;
 
 
     Map<String, dynamic> params = {
@@ -103,7 +104,7 @@ class _DashBoardState extends State<DashBoard> {
     }
 
     setState(() {
-      _loadingStates['formcategories'] = LoadingState.DONE;
+      _loadingStates['formcategories'] = LoadingState.done;
 
       _formsLoading = false;
     });
@@ -134,11 +135,11 @@ class _DashBoardState extends State<DashBoard> {
       var nextActivities = await widget.provider.loadItems(params);
       setState(() {
         //   print(nextActivities.length.toString() + ' items loaded for ' + type);
-        _loadingStates[type] = LoadingState.DONE;
+        _loadingStates[type] = LoadingState.done;
         List<Activity> loadedActivities = [];
         loadedActivities.addAll(nextActivities);
         myActivities[type] = loadedActivities;
-        //myActivities[type].addAll(nextActivities);
+
 
         _isLoading = false;
       });
@@ -146,8 +147,8 @@ class _DashBoardState extends State<DashBoard> {
       _isLoading = false;
 
       errormessage = e.toString();
-      if (_loadingStates[type] == LoadingState.LOADING) {
-        setState(() => _loadingStates[type] = LoadingState.ERROR);
+      if (_loadingStates[type] == LoadingState.loading) {
+        setState(() => _loadingStates[type] = LoadingState.error);
       }
     }
   }
@@ -283,14 +284,14 @@ class _DashBoardState extends State<DashBoard> {
 
                 setState(() {
                   _loadingStates.forEach((key, value) {
-                    _loadingStates[key] = LoadingState.LOADING;
+                    _loadingStates[key] = LoadingState.loading;
                   });
                   _isLoading = false;
-                  if (user.token != null)
+                  if (user.token != null) {
                     for (var a in activityTypes) {
                       _loadMyActivities(user, a);
                     }
-
+                  }
 
                   Provider.of<WebPageProvider>(context, listen: false)
                       .refresh(user);
@@ -424,17 +425,19 @@ class _DashBoardState extends State<DashBoard> {
   }
 
   void formsLink(user) {
-      if(_loadingStates['formcategories'] == LoadingState.LOADING)
+      if(_loadingStates['formcategories'] == LoadingState.loading) {
         if (!_formsLoading && user.token != null) {
           _loadForms(user);
         }
+      }
   }
 
   void myLocationsListLink(user, userprovider, imageprovider) {
-    if(_loadingStates['location']==LoadingState.LOADING)
-        if (!_isLoading && user.token != null) {
-          _loadMyActivities(user, 'location');
-        }
+    if(_loadingStates['location']==LoadingState.loading) {
+      if (!_isLoading && user.token != null) {
+        _loadMyActivities(user, 'location');
+      }
+    }
   }
   void openMyActivities(){
     Navigator.push(
@@ -446,9 +449,10 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
   void myActivitiesListLink(user, userprovider, imageprovider) {
-    if(_loadingStates['activity'] ==LoadingState.LOADING)
-        if (!_isLoading && user.token != null) {
-          _loadMyActivities(user, 'activity');
-        }
+    if(_loadingStates['activity'] ==LoadingState.loading) {
+      if (!_isLoading && user.token != null) {
+        _loadMyActivities(user, 'activity');
+      }
+    }
   }
 }

@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/objects/userbenefit.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/providers/index.dart' as object_model;
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
@@ -19,20 +19,20 @@ class MyCard extends StatefulWidget {
   final User? user;
   final String viewTitle = 'usercard';
   //TODO: remove this provider and just read the benefits from user object, provided by loaduser (which also loads the benefits for user)
-  final objectmodel.UserBenefitProvider userBenefitProvider =
-      objectmodel.UserBenefitProvider();
+  final object_model.UserBenefitProvider userBenefitProvider =
+      object_model.UserBenefitProvider();
 
   MyCard({super.key, this.user});
 
   @override
-  _MyCardState createState() => _MyCardState();
+  MyCardState createState() => MyCardState();
 }
 
-class _MyCardState extends State<MyCard> {
+class MyCardState extends State<MyCard> {
   List<UserBenefit> benefits = [];
   List<Widget> contactItems = [];
   List<ContactMethod> myContacts = [];
-  LoadingState _benefitsLoadingState = LoadingState.LOADING;
+  LoadingState _benefitsLoadingState = LoadingState.loading;
   bool fieldsLoaded = false;
   bool userLoaded = false;
   int? objectId;
@@ -75,7 +75,7 @@ class _MyCardState extends State<MyCard> {
         user = User.fromJson(userdata['data'].first['data'],description:userdata['description']);
       }
       userLoaded = true;
-      _benefitsLoadingState = LoadingState.DONE;
+      _benefitsLoadingState = LoadingState.done;
 
       benefits = widget.user!.userbenefits;
 
@@ -97,18 +97,17 @@ class _MyCardState extends State<MyCard> {
     try {
       var result = await widget.userBenefitProvider.loadItems(params);
       setState(() {
-        _benefitsLoadingState = LoadingState.DONE;
+        _benefitsLoadingState = LoadingState.done;
 
 
         benefits.addAll(result);
-       // print(result.length.toString() + ' benefits currently loaded!');
-        //_isLoading = false;
+
       });
     } catch (e) {
 
       errormessage = e.toString();
-      if (_benefitsLoadingState == LoadingState.LOADING) {
-        setState(() => _benefitsLoadingState = LoadingState.ERROR);
+      if (_benefitsLoadingState == LoadingState.loading) {
+        setState(() => _benefitsLoadingState = LoadingState.error);
       }
     }
   }
@@ -202,14 +201,14 @@ class _MyCardState extends State<MyCard> {
           if(user.data!['huoltajan_puhelinnumero']!=null)
             TextButton(
               onPressed:(){
-                launchUrlString("tel:"+(user.data!['huoltajan_puhelinnumero']??''));
+                launchUrlString("tel:${user.data!['huoltajan_puhelinnumero']??''}");
               },
               child: SizedBox(
                 height: 25,
                 child: Row(
                     children:[
                       Icon(Icons.phone_android),
-                      Text('${AppLocalizations.of(context)!.guardianPhone}: '+user.data!['huoltajan_puhelinnumero'])
+                      Text('${AppLocalizations.of(context)!.guardianPhone}: ${user.data!['huoltajan_puhelinnumero']}')
                     ]
                 ),
               ),
@@ -309,8 +308,12 @@ class _MyCardState extends State<MyCard> {
     ImageProvider<Object> avatarImage;
     if(user.data!=null && user.data!['userimageurl'] != null && user.data!['userimageurl']!.isNotEmpty) {
       avatarImage = NetworkImage(user.data!['userimageurl']);
-    } else if(user.image != null && user.image!.isNotEmpty) avatarImage = NetworkImage(user.image);
-    else avatarImage =Image.asset('images/profile.png').image ;
+    } else if(user.image != null && user.image!.isNotEmpty) {
+      avatarImage = NetworkImage(user.image);
+    }
+    else {
+      avatarImage =Image.asset('images/profile.png').image ;
+    }
     return Padding(
       padding: EdgeInsets.only(left: 20, right: 20),
       child: Row(
@@ -404,7 +407,7 @@ class _MyCardState extends State<MyCard> {
   Widget _getBenefitsSection(user) {
 
     switch (_benefitsLoadingState) {
-      case LoadingState.DONE:
+      case LoadingState.done:
         //data loaded
 
         return SizedBox(
@@ -422,7 +425,7 @@ class _MyCardState extends State<MyCard> {
 
         ),
         );
-      case LoadingState.ERROR:
+      case LoadingState.error:
         //data loading returned error state
         return Container(
           alignment: Alignment.center,
@@ -433,7 +436,7 @@ class _MyCardState extends State<MyCard> {
           ),
         );
 
-      case LoadingState.LOADING:
+      case LoadingState.loading:
         //data loading in progress
         return Container(
           alignment: Alignment.center,
@@ -451,16 +454,15 @@ class _MyCardState extends State<MyCard> {
   }
 
   Widget _userBenefitListItem(benefit) {
-    return Container(
-        child: Column(
-      children: [
-        CircleAvatar(
-          backgroundImage: NetworkImage(benefit.iconurl),
-          backgroundColor: Colors.white10,
-          radius: 28.0,
-        ),
-        Text(benefit.title ?? AppLocalizations.of(context)!.unnamed)
-      ],
-    ));
+    return Column(
+          children: [
+    CircleAvatar(
+      backgroundImage: NetworkImage(benefit.iconurl),
+      backgroundColor: Colors.white10,
+      radius: 28.0,
+    ),
+    Text(benefit.title ?? AppLocalizations.of(context)!.unnamed)
+          ],
+        );
   }
 }

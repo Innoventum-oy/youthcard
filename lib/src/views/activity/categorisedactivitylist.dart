@@ -1,33 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/activityclass.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/util/styles.dart';
 import 'package:youth_card/src/util/utils.dart';
-import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/views/activity/activitylistsliver.dart';
 import 'package:provider/provider.dart';
-
+import 'package:youth_card/src/providers/index.dart' as object_model;
 class CategorisedActivityList extends StatefulWidget {
 
-  final objectmodel.ImageProvider imageProvider;
+  final object_model.ImageProvider imageProvider;
   final String viewType;
 
   const CategorisedActivityList( this.imageProvider,
       {super.key, this.viewType = 'all'});
 
   @override
-  _CategorisedActivityListState createState() =>
-      _CategorisedActivityListState();
+  CategorisedActivityListState createState() =>
+      CategorisedActivityListState();
 }
 
-class _CategorisedActivityListState extends State<CategorisedActivityList> {
+class CategorisedActivityListState extends State<CategorisedActivityList> {
   Map<String, dynamic>? map;
   List<ActivityClass> data = [];
   User? user;
-  LoadingState _loadingState = LoadingState.LOADING;
+  LoadingState _loadingState = LoadingState.loading;
   bool _isLoading = false;
   int iteration = 1;
   int buildtime = 1;
@@ -57,30 +55,25 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
 
       'sort': 'name',
     };
-    print("categorised activitylist viewtype: ${widget.viewType}");
 
-    objectmodel.ActivityClassProvider activityClassProvider = objectmodel
-        .ActivityClassProvider();
+    object_model.ActivityClassProvider activityClassProvider = object_model.ActivityClassProvider();
 
 
-    print('Loading page $_pageNumber');
     try {
       var activityCategories = await activityClassProvider.loadItems(params);
       setState(() {
-        _loadingState = LoadingState.DONE;
+        _loadingState = LoadingState.done;
         data.addAll(activityCategories);
-        print('${data.length} activitycategories currently loaded!');
         if(activityCategories.length >= limit) {
           _isLoading = false;
           _pageNumber++;
         }
       });
-    } catch (e, stack) {
+    } catch (e) {
       _isLoading = false;
-      print('loadItems returned error $e\n Stack trace:\n $stack');
       errormessage = e.toString();
-      if (_loadingState == LoadingState.LOADING) {
-        setState(() => _loadingState = LoadingState.ERROR);
+      if (_loadingState == LoadingState.loading) {
+        setState(() => _loadingState = LoadingState.error);
       }
     }
   }
@@ -89,7 +82,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       User user = Provider
-          .of<UserProvider>(context, listen: false)
+          .of<object_model.UserProvider>(context, listen: false)
           .user;
       _loadNextPage(user);
     });
@@ -100,19 +93,18 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
   @protected
   @mustCallSuper
   void dispose() {
-    _loadingState = LoadingState.LOADING;
+    _loadingState = LoadingState.loading;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     User user = Provider
-        .of<UserProvider>(context, listen: false)
+        .of<object_model.UserProvider>(context, listen: false)
         .user;
 
     bool isTester = false;
     if(user.data!=null) {
-      print(user.data.toString());
       if (user.data!['istester'] != null) {
         if (user.data!['istester'] == 'true') isTester = true;
       }
@@ -130,11 +122,10 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
       IconButton(
       icon: Icon(Icons.refresh),
         onPressed: () {
-          print('Refreshing view');
           setState(() {
             data = [];
             _pageNumber = 0;
-            _loadingState = LoadingState.LOADING;
+            _loadingState = LoadingState.loading;
             _isLoading = false;
             _loadNextPage(user);
           });
@@ -147,9 +138,8 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
 
   Widget _getContentSection(user) {
     switch (_loadingState) {
-      case LoadingState.DONE:
+      case LoadingState.done:
       //data loaded
-      print('data loaded, returning customscrollview for ${data.length} categories');
         return data.isEmpty ? Container(
             padding: EdgeInsets.all(20),
             child:
@@ -176,7 +166,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
             },
             childCount: data.length))]
             );
-      case LoadingState.ERROR:
+      case LoadingState.error:
       //data loading returned error state
         return Align(
           alignment: Alignment.center,
@@ -187,7 +177,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
           ),
         );
 
-      case LoadingState.LOADING:
+      case LoadingState.loading:
       //data loading in progress
     //  if(!_isLoading) _loadNextPage(user);
         return Align(
@@ -208,9 +198,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
   }
 
   Widget activityClassView(activityClass) {
-    objectmodel.ActivityListProvider activityProvider = objectmodel
-        .ActivityListProvider();
-    print('creating activity list for class '+activityClass.name);
+    object_model.ActivityListProvider activityProvider = object_model.ActivityListProvider();
     return
       Container(
         decoration: BoxDecoration(color: const Color(0xff222128)),

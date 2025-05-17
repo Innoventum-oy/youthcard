@@ -23,7 +23,7 @@ class User {
 
     if(responseData['data']!=null && responseData['data'].length>0) responseData = responseData['data'];
     int accesslevel = responseData['accesslevel']!=null ? (responseData['accesslevel'] is int ? responseData['accesslevel']: int.parse(responseData['accesslevel'])) : 0;
-     responseData.forEach((key, value) { print('$key = $value');});
+     responseData.forEach((key, value) { });
     //print('User object description: '+description.toString());
     return User(
       id: responseData['id'] is int ? responseData['id'] : int.parse(responseData['id']),
@@ -114,16 +114,7 @@ class User {
 
   @override
   String toString() {
-    return 'User{' ' id: $id,' ' firstname: $firstname,' ' lastname: $lastname,' ' email: $email,' +
-        ' phone: $phone,' +
-        ' type: $type,' +
-        ' token: $token,' +
-        ' renewalToken: $renewalToken,' +
-        ' image: $image,' +
-        ' qrcode: $qrcode,' +
-
-
-        '}';
+    return 'User{' ' id: $id,' ' firstname: $firstname,' ' lastname: $lastname,' ' email: $email,' ' phone: $phone,' ' type: $type,' ' token: $token,' ' renewalToken: $renewalToken, image: $image, qrcode: $qrcode }';
   }
 
   User copyWith({

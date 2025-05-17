@@ -12,28 +12,28 @@ import 'package:youth_card/src/util/shared_preference.dart';
 
 
 enum Status {
-  NotLoggedIn,
-  NotRegistered,
-  LoggedIn,
-  Registered,
-  Authenticating,
-  Registering,
-  LoggedOut
+  notLoggedIn,
+  notRegistered,
+  loggedIn,
+  registered,
+  authenticating,
+  registering,
+  loggedOut
 }
 enum VerificationStatus{
-  CodeNotRequested,
-  Validating,
-  UserNotFound,
-  CodeReceived,
-  Verified,
-  PasswordChanged
+  codeNotRequested,
+  validating,
+  userNotFound,
+  codeReceived,
+  verified,
+  passwordChanged
 
 }
 class AuthProvider with ChangeNotifier {
 
-  Status _loggedInStatus = Status.NotLoggedIn;
-  Status _registeredStatus = Status.NotRegistered;
-  VerificationStatus _verificationStatus = VerificationStatus.CodeNotRequested;
+  Status _loggedInStatus = Status.notLoggedIn;
+  Status _registeredStatus = Status.notRegistered;
+  VerificationStatus _verificationStatus = VerificationStatus.codeNotRequested;
   String? _contactMethodId;
   String? _userId;
   String? _singlePass;
@@ -84,7 +84,7 @@ class AuthProvider with ChangeNotifier {
       }
     };
 
-    _loggedInStatus = Status.Authenticating;
+    _loggedInStatus = Status.authenticating;
     notifyListeners();
 
     Response response = await post(Uri.https(baseUrl,AppUrl.login),
@@ -101,13 +101,13 @@ class AuthProvider with ChangeNotifier {
 
       UserPreferences().saveUser(authUser);
 
-      _loggedInStatus = Status.LoggedIn;
+      _loggedInStatus = Status.loggedIn;
       notifyListeners();
 
       result = {'status': true, 'message': 'Success', 'user': authUser};
     } else {
 
-      _loggedInStatus = Status.NotLoggedIn;
+      _loggedInStatus = Status.notLoggedIn;
       notifyListeners();
       result = {
         'status': false,
@@ -140,10 +140,10 @@ class AuthProvider with ChangeNotifier {
        // print(responseData);
        // User authUser = User.fromJson(responseData);
       }*/
-      setRegisteredStatus( Status.NotRegistered );
+      setRegisteredStatus( Status.notRegistered );
       UserPreferences().removeUser();
 
-      _loggedInStatus = Status.NotLoggedIn;
+      _loggedInStatus = Status.notLoggedIn;
       notifyListeners();
 
       return true;
@@ -157,7 +157,7 @@ class AuthProvider with ChangeNotifier {
   void cancellogin()
   {
 
-    _loggedInStatus = Status.NotLoggedIn;
+    _loggedInStatus = Status.notLoggedIn;
     notifyListeners();
 
 

@@ -1,6 +1,5 @@
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/objects/webpage.dart';
-import 'package:youth_card/src/util/api_client.dart';
 
 import 'objectprovider.dart';
 

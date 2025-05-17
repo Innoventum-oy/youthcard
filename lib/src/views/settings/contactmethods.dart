@@ -13,22 +13,20 @@ class ContactMethodsView extends StatefulWidget {
   const ContactMethodsView({super.key});
 
   @override
-  _ContactMethodsViewState createState() => _ContactMethodsViewState();
+  ContactMethodsViewState createState() => ContactMethodsViewState();
 }
 
-class _ContactMethodsViewState extends State<ContactMethodsView> {
+class ContactMethodsViewState extends State<ContactMethodsView> {
   List<Widget> contactItems = [];
 
   @override
   void initState(){
-    print('initing ContactMethods view state');
     Provider.of<UserProvider>(context, listen: false).getContactMethods();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print('rebuilding ContactMethods view');
 
     List<ContactMethod> myContacts = Provider.of<UserProvider>(context,listen:true).contacts;
 
@@ -37,7 +35,6 @@ class _ContactMethodsViewState extends State<ContactMethodsView> {
       contactItems.clear();
       for(var i in myContacts)
       {
-        print(i.toString());
         contactItems.add(
             Row(
 
@@ -51,7 +48,7 @@ class _ContactMethodsViewState extends State<ContactMethodsView> {
                       flex:2,
                       child:(i.verified! ? Icon(Icons.check_circle_outlined,semanticLabel:AppLocalizations.of(context)!.verified) : TextButton(
                         onPressed: () {
-                          Provider.of<AuthProvider>(context,listen:false).setVerificationStatus(VerificationStatus.CodeNotRequested);
+                          Provider.of<AuthProvider>(context,listen:false).setVerificationStatus(VerificationStatus.codeNotRequested);
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => ValidateContact(contactmethod:i)),

@@ -42,7 +42,6 @@ class ActivityListItem extends StatelessWidget{
       buttons.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.signUp),
         onPressed: () {
-          print('signing up for activity {$activityItem.name}');
           _apiClient.registerForActivity(activityItem.id, user);
         },
       ));

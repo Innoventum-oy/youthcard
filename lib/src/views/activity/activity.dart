@@ -5,7 +5,7 @@ import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/activitydate.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/providers/index.dart' as object_model;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -19,16 +19,16 @@ import 'package:youth_card/src/views/qrscanner.dart';
 import 'package:youth_card/src/views/activity/activityparticipantlist.dart';
 class ActivityView extends StatefulWidget {
   final Activity _activity;
-  final objectmodel.ActivityListProvider provider;
-  final objectmodel.ImageProvider imageprovider;
+  final object_model.ActivityListProvider provider;
+  final object_model.ImageProvider imageprovider;
 
   const ActivityView(this._activity, this.provider, this.imageprovider, {super.key});
 
   @override
-  _ActivityViewState createState() => _ActivityViewState();
+  ActivityViewState createState() => ActivityViewState();
 }
 
-class _ActivityViewState extends State<ActivityView> {
+class ActivityViewState extends State<ActivityView> {
   final ApiClient _apiClient = ApiClient();
   Map<String, dynamic>? map;
   List<ActivityDate> activityDates = [];
@@ -63,7 +63,7 @@ class _ActivityViewState extends State<ActivityView> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       User user = Provider.of<UserProvider>(context, listen: false).user;
-      print('running addPostFrameCallback (initstate');
+
       _loadDetails(user);
       if (widget._activity.accesslevel >= 20)  _loadActivityDates(user);
     });
@@ -73,11 +73,11 @@ class _ActivityViewState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
-    print('rebuilding activity view: apiclient activity status is ${_apiClient.isProcessing}');
+
     final user = Provider.of<UserProvider>(context, listen: false).user;
     bool isTester = false;
     if(user.data!=null) {
-      print(user.data.toString());
+
       if (user.data!['istester'] != null) {
         if (user.data!['istester'] == 'true') isTester = true;
       }
@@ -94,7 +94,7 @@ class _ActivityViewState extends State<ActivityView> {
           IconButton(
           icon: Icon(Icons.refresh),
           onPressed: () {
-            print('Refreshing view');
+
             setState(() {
               _loadDetails(user,reload:true);
             });
@@ -132,7 +132,6 @@ class _ActivityViewState extends State<ActivityView> {
         onPressed: () {
           registerForActivity(activity,user);
           setState(() {
-            print('signing up for activity {$activity.name}');
 
           });
 
@@ -140,8 +139,6 @@ class _ActivityViewState extends State<ActivityView> {
       ));
 
 
-    }else {
-      print('registration not enabled for activity :${activity.registration}');
     }
     if (activity.accesslevel >= 20) {
       buttons.add(ElevatedButton(
@@ -195,9 +192,9 @@ class _ActivityViewState extends State<ActivityView> {
   }
   void registerForActivity(activity,user) async
   {
-    print('registerForActivity called');
+
     if (!_apiClient.isProcessing) {
-     print ('apiClient is not processing so we try again');
+
       Map<String,dynamic> result = await _apiClient.registerForActivity(
           activity.id, user);
       setState(() {
@@ -216,13 +213,13 @@ class _ActivityViewState extends State<ActivityView> {
             showMessage(context, AppLocalizations.of(context)!.activityRegistrationFailed,message);
 
         }
-       print('$result, apiclient status: ${_apiClient.isProcessing}');
+
 
       });
     }
   }
   void _loadDetails(user,{bool reload =false}) async {
-    print('called _loadDetails for activity ${widget._activity.id}, awaiting provider for details!');
+
     try {
       dynamic details =
           await widget.provider.getDetails(widget._activity.id!, user,reload:reload);
@@ -230,9 +227,9 @@ class _ActivityViewState extends State<ActivityView> {
       // print(details.runtimeType);
 
       setState(() =>_activityDetails =details ?? false);
-    } catch (e, stack) {
-      print('loadDetails returned error $e\n Stack trace:\n $stack');
-      //Notify(e.toString());
+    } catch (e) {
+
+
       e.toString();
     }
   }
@@ -246,13 +243,13 @@ class _ActivityViewState extends State<ActivityView> {
 
         if (activityDateData.isNotEmpty) {
           activityDates.addAll(activityDateData);
-          print('${activityDates.length} activity dates loaded');
+
         } else {
-          print('no more activities were found');
+
         }
       });
-    } catch (e, stack) {
-      print('loadActivityDates returned error $e\n Stack trace:\n $stack');
+    } catch (e) {
+
       //Notify(e.toString());
       e.toString();
     }

@@ -6,13 +6,13 @@ class LanguagesScreen extends StatefulWidget {
   const LanguagesScreen({super.key});
 
   @override
-  _LanguagesScreenState createState() => _LanguagesScreenState();
+  LanguagesScreenState createState() => LanguagesScreenState();
 }
 
-class _LanguagesScreenState extends State<LanguagesScreen> {
+class LanguagesScreenState extends State<LanguagesScreen> {
   String currentLocale = '';
 
-  _LanguagesScreenState() {
+  LanguagesScreenState() {
     Settings().getLanguage().then((val) => setState(() {
       currentLocale = val;
     }));

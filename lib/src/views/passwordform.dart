@@ -11,10 +11,10 @@ class ResetPassword extends StatefulWidget {
   const ResetPassword({super.key});
 
   @override
-  _ResetPasswordState createState() => _ResetPasswordState();
+  ResetPasswordState createState() => ResetPasswordState();
 }
 
-class _ResetPasswordState extends State<ResetPassword> {
+class ResetPasswordState extends State<ResetPassword> {
   final formKey = GlobalKey<FormState>();
 
   String? _contact, _confirmkey,_password;
@@ -36,8 +36,7 @@ class _ResetPasswordState extends State<ResetPassword> {
             setState(() {
               auth.setContactMethodId(response['contactmethodid']);
              if(response['userid']!=null) auth.setUserId(response['userid']);
-              print('contact method id set to ${response['contactmethodid']}');
-              auth.setVerificationStatus(VerificationStatus.CodeReceived);
+              auth.setVerificationStatus(VerificationStatus.codeReceived);
             });
 
           } else {
@@ -49,7 +48,6 @@ class _ResetPasswordState extends State<ResetPassword> {
           }
         });
       } else {
-        print("form is invalid");
       }
     }
 
@@ -79,7 +77,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         SizedBox(height: 5.0),
         contactField,
         SizedBox(height: 20.0),
-        auth.verificationStatus == VerificationStatus.Validating
+        auth.verificationStatus == VerificationStatus.validating
             ? loading
             : longButtons(AppLocalizations.of(context)!.getCode,
             getVerificationCode),
@@ -92,7 +90,6 @@ class _ResetPasswordState extends State<ResetPassword> {
 
   Widget enterConfirmationKeyForm(auth) {
     final confirmationController = TextEditingController();
-  print('current _confirmkey value: $_confirmkey');
     var loading = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -112,26 +109,22 @@ class _ResetPasswordState extends State<ResetPassword> {
     );
 
     void sendVerificationCode() {
-      print('sending confirmation key');
       final form = formKey.currentState;
 
       if (form!.validate()) {
         form.save();
-        print('${'checking confirmationkey - user: '+auth.userId},  contactmethodid ${auth.contactMethodId}, key: $_confirmkey');
 
         final Future<Map<String, dynamic>> successfulMessage =
         _apiClient.sendConfirmationKey(userid: auth.userId,contact: auth.contactMethodId, code:_confirmkey!.toString());
 
         successfulMessage.then((response) {
-          print('received response from sendConfirmationKey');
           if (response['status'] == 'success') {
             setState(() {
               auth.setSinglePass(response['singlepass']);
-              auth.setVerificationStatus(VerificationStatus.Verified);
+              auth.setVerificationStatus(VerificationStatus.verified);
             });
 
                 } else {
-            print('sendConfirmationKey returned status '+response['status']);
                 Flushbar(
                 title: AppLocalizations.of(context)!.requestFailed,
                 message: response['message'].toString(),
@@ -140,7 +133,6 @@ class _ResetPasswordState extends State<ResetPassword> {
                 }
             });
       } else {
-        print("form is invalid");
       }
     }
 
@@ -153,7 +145,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         confirmationKeyField,
 
         SizedBox(height: 20.0),
-        auth.verificationStatus == VerificationStatus.Validating
+        auth.verificationStatus == VerificationStatus.validating
             ? loading
             : longButtons(AppLocalizations.of(context)!.btnSend,
             sendVerificationCode),
@@ -193,8 +185,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         successfulMessage.then((response) {
           if (response['status'] == 'success') {
             setState(() {
-               print('password successfully changed for user');
-              auth.setVerificationStatus(VerificationStatus.PasswordChanged);
+              auth.setVerificationStatus(VerificationStatus.passwordChanged);
 
             });
 
@@ -207,7 +198,6 @@ class _ResetPasswordState extends State<ResetPassword> {
           }
         });
       } else {
-        print("form is invalid");
       }
     }
 
@@ -219,7 +209,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         SizedBox(height: 5.0),
         passwordField,
         SizedBox(height: 20.0),
-        auth.loggedInStatus == Status.Authenticating
+        auth.loggedInStatus == Status.authenticating
             ? loading
             : longButtons(AppLocalizations.of(context)!.btnSetNewPassword,
             setPassword),
@@ -260,14 +250,14 @@ class _ResetPasswordState extends State<ResetPassword> {
   Widget returnButton(auth)
   {
      switch(auth.verificationStatus){
-        case VerificationStatus.Verified:
+        case VerificationStatus.verified:
       // display button to return to code request form
           return TextButton(
               child: Text(AppLocalizations.of(context)!.requestNewCode,
                   style: TextStyle(fontWeight: FontWeight.w300)),
               onPressed: () async {
                 setState(() {
-                  auth.setVerificationStatus(VerificationStatus.CodeReceived);
+                  auth.setVerificationStatus(VerificationStatus.codeReceived);
                 });
               });
 
@@ -277,7 +267,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         style: TextStyle(fontWeight: FontWeight.w300)),
         onPressed: () async {
           setState(() {
-            auth.setVerificationStatus(VerificationStatus.CodeNotRequested);
+            auth.setVerificationStatus(VerificationStatus.codeNotRequested);
           });
       });
 
@@ -314,20 +304,19 @@ class _ResetPasswordState extends State<ResetPassword> {
   Widget passwordRetrievalFormBody(auth)
   {
 
-    print('verification status:${auth.verificationStatus}');
 
     switch(auth.verificationStatus)
     {
-      case VerificationStatus.UserNotFound:
-      case VerificationStatus.CodeNotRequested:
+      case VerificationStatus.userNotFound:
+      case VerificationStatus.codeNotRequested:
         return getConfirmationKeyForm(auth);
 
-      case VerificationStatus.CodeReceived:
+      case VerificationStatus.codeReceived:
         return enterConfirmationKeyForm(auth);
 
-      case VerificationStatus.Verified:
+      case VerificationStatus.verified:
       return updatePasswordForm(auth);
-      case VerificationStatus.PasswordChanged:
+      case VerificationStatus.passwordChanged:
         return successForm();
       default:
         return Container();

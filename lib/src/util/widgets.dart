@@ -3,11 +3,11 @@ import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/providers/index.dart' as object_model;
 import 'package:youth_card/src/views/activity/categorisedactivitylist.dart';
 
 MaterialButton longButtons(String title, Function()? fun,
-    {Color color = const Color(0xfff063057), Color textColor = Colors.white}) {
+    {Color color = const Color(0xff063057), Color textColor = Colors.white}) {
   return MaterialButton(
     onPressed: fun,
     textColor: textColor,
@@ -77,7 +77,7 @@ notifyDialog(String? titleText,Widget text, context)
 }
 
 Widget bottomNavigation(context,{int currentIndex=0}) {
-  objectmodel.ImageProvider imageprovider = objectmodel.ImageProvider();
+  object_model.ImageProvider imageprovider = object_model.ImageProvider();
   User user = Provider.of<UserProvider>(context).user;
   return BottomNavigationBar(
       currentIndex: currentIndex,

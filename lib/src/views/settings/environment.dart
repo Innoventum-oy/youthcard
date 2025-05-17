@@ -13,14 +13,14 @@ class EnvironmentScreen extends StatefulWidget {
   const EnvironmentScreen({super.key, required wrap});
 
   @override
-  _EnvironmentScreenState createState() => _EnvironmentScreenState();
+  EnvironmentScreenState createState() => EnvironmentScreenState();
 }
 
-class _EnvironmentScreenState extends State<EnvironmentScreen> {
+class EnvironmentScreenState extends State<EnvironmentScreen> {
 
   String servername = '';
 
-  _EnvironmentScreenState() {
+  EnvironmentScreenState() {
     Settings().getServerName().then((val) => setState(() {
           servername = val;
         }));
@@ -63,10 +63,8 @@ class _EnvironmentScreenState extends State<EnvironmentScreen> {
           if(AppUrl.anonymousApikeys.containsKey(serverTitle)) {
             Settings().setValue(
                 'anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
-              print("${"Anonymous api key for " + serverTitle} set to ${AppUrl.anonymousApikeys[serverTitle]!}");
             }
           else {
-            print("Anonymous api key for "+serverTitle + " not found");
             Settings().setValue('anonymousapikey', null);
           }
 

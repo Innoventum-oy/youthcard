@@ -6,9 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:youth_card/src/objects/activityvisit.dart';
 import 'package:youth_card/src/objects/webpage.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:youth_card/src/providers/webpageprovider.dart';
+import 'package:youth_card/src/providers/web_page_provider.dart';
 import 'package:youth_card/src/objects/activity.dart';
-import 'package:youth_card/src/providers/objectprovider.dart' as objectmodel;
+import 'package:youth_card/src/providers/index.dart' as object_model;
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/views/card.dart';
@@ -18,14 +18,14 @@ import 'package:date_range_form_field/date_range_form_field.dart';
 class ActivityVisitList extends StatefulWidget {
   final String viewTitle = 'activityvisitlist';
   final Activity _activity;
-  final objectmodel.ActivityVisitListProvider visitListProvider = objectmodel.ActivityVisitListProvider();
+  final object_model.ActivityVisitListProvider visitListProvider = object_model.ActivityVisitListProvider();
   ActivityVisitList(this._activity, {super.key});
 
   @override
-  _ActivityVisitListState createState() =>
-      _ActivityVisitListState();
+  ActivityVisitListState createState() =>
+      ActivityVisitListState();
 }
-class _ActivityVisitListState extends State<ActivityVisitList> {
+class ActivityVisitListState extends State<ActivityVisitList> {
 
   User user = User();
   WebPage page = WebPage();
@@ -38,7 +38,6 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
 
   @override
   void initState() {
-    print('initState ${widget.viewTitle}');
     user = Provider.of<UserProvider>(context,listen:false).user;
     widget.visitListProvider.setUser(user);
     _loadWebPage(user);
@@ -49,10 +48,8 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
   }
   void updateUsers() async
   {
-    print('updateUsers called!${myDateRange.start}');
     List<ActivityVisit> visits = ( await widget.visitListProvider.loadActivityVisits(widget._activity,loadParams:{'startdate':DateFormat('yyyy-MM-dd').format(myDateRange.start),'enddate':DateFormat('yyyy-MM-dd').format(myDateRange.end)})) as List<ActivityVisit>;
     setState((){
-      print('setState called!');
       this.visits = visits;
 
     });
@@ -60,7 +57,6 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
 
   /* load related page */
   _loadWebPage(user)async {
-    print('calling loaditem for webpage');
     await Provider.of<WebPageProvider>(context, listen: false).loadItem({
       'language': Localizations.localeOf(context).toString(),
       'commonname': widget.viewTitle,
@@ -74,7 +70,6 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
   @override
   Widget build(BuildContext context) {
     //current user
-    print('build ${widget.viewTitle}');
 
     page = Provider.of<WebPageProvider>(context).page;
     visits = widget.visitListProvider.list ?? [];
@@ -82,7 +77,6 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
     // Future<List<ActivityVisit>?> getVisits() => widget.visitListProvider.loadActivityVisits(widget._activity);
     bool hasInfoPage = page.id != null ? true : false;
     bool isTester = false;
-    print('VISITS ${visits.length}');
     if(user.data!=null) {
       if (user.data!['istester'] != null) {
         if (user.data!['istester'] == 'true') isTester = true;
@@ -107,7 +101,6 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
           IconButton(
               icon: Icon(Icons.refresh),
               onPressed: () {
-                print('Refreshing view');
                 updateUsers();
 
 
@@ -136,7 +129,6 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
                 },
                 onChanged: (value) {
                   setState(() {
-                    print('daterange changed');
                     myDateRange = value!;
                     updateUsers();
                   });
@@ -151,11 +143,9 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
 
             if(_users.isNotEmpty && _users.containsKey(visit.userid) )
             {
-              print('USER already on list!');
               User user = _users[visit.userid]!;
               return userListTile(visit,user);
            }
-            print('loading data for user ${visit.userid!}' );
             Future<User> userdata = visit.userprovider!.loadUser(visit.userid ?? 0, user);
 
             return FutureBuilder(
@@ -172,7 +162,6 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
                     );
                   }
                   if(snapshot.data.id!=null ){
-                    print(snapshot.data.toString());
                     User user = snapshot.data;
                     _users.putIfAbsent(user.id!,()=>user);
                    // if(!users.containsKey(user.id)) users[user.id!] = user;
@@ -237,17 +226,16 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
   }
 
   Widget _userBenefitListItem(benefit) {
-    return Container(
-        child: Column(
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(benefit.iconurl),
-              backgroundColor: Colors.white10,
-              radius: 20.0,
-            ),
-            Text(benefit.title ?? AppLocalizations.of(context)!.unnamed)
-          ],
-        ));
+    return Column(
+      children: [
+        CircleAvatar(
+          backgroundImage: NetworkImage(benefit.iconurl),
+          backgroundColor: Colors.white10,
+          radius: 20.0,
+        ),
+        Text(benefit.title ?? AppLocalizations.of(context)!.unnamed)
+      ],
+    );
   }
 
 }
