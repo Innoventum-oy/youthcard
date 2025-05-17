@@ -14,7 +14,7 @@ class ActivityClass {
 
     Map<String, dynamic> responseData =  response['data'];
     //responseData.forEach((key, value) { print('$key = $value');});
-    Map<String, dynamic>? cover = responseData['coverpicture'] ?? null;
+    Map<String, dynamic>? cover = responseData['coverpicture'];
     return ActivityClass(
         id: responseData['objectid'] !=null ? int.parse(responseData['objectid']) : null,
         name: responseData['name'],

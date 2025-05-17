@@ -12,6 +12,8 @@ import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/views/webpagetextcontent.dart';
 
 class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
@@ -38,7 +40,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       servername = val;
     }));
     Settings().getLanguage().then((val) => setState((){
-    print('current language:'+val);
+    print('current language:$val');
       language = val;
     }));
   }
@@ -235,7 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget getVersionInfo() {
 
 
-      return Text(appName + ' v.' + version + '(' + buildNumber + ')',
+      return Text('$appName v.$version($buildNumber)',
           style: TextStyle(color: Color(0xFF777777)));
     }
 

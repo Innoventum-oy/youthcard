@@ -9,6 +9,7 @@ import 'dart:async';
 
 class MobileFileStorage implements FileStorageInterface {
 
+  @override
   Future<bool> write(dynamic data, String filename) async {
     final servername = await Settings().getServerName();
 
@@ -18,18 +19,19 @@ class MobileFileStorage implements FileStorageInterface {
     return true;
   }
 
+  @override
   Future<dynamic> read(String filename, {int expiration = 0}) async {
     final servername = await Settings().getServerName();
     final file = File(
         '${(await getApplicationDocumentsDirectory()).path}/$servername.$filename.json');
     if (await file.exists()) {
-      if (expiration == 0)
+      if (expiration == 0) {
         return jsonDecode(await file.readAsString());
-      else {
+      } else {
         DateTime date = await file.lastModified();
-        if (date.difference(new DateTime.now()).inMinutes < expiration)
+        if (date.difference(DateTime.now()).inMinutes < expiration) {
           return jsonDecode(await file.readAsString());
-        else {
+        } else {
 
           return delete(filename);
         }
@@ -45,7 +47,7 @@ class MobileFileStorage implements FileStorageInterface {
     final filemask = Glob("${(await getApplicationDocumentsDirectory()).path}/$servername.*.json");
     Directory dir = await getApplicationDocumentsDirectory();
 
-    var directoryListing = dir.listSync().where((e) => e is File);
+    var directoryListing = dir.listSync().whereType<File>();
     for (var directoryEntry in directoryListing)
     {
       directoryEntry.delete();

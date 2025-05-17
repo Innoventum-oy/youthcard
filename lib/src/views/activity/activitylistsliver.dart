@@ -15,8 +15,8 @@ class ActivityListSliver extends StatefulWidget {
   final objectmodel.ImageProvider imageProvider;
   final ActivityClass activityClass;
 
-  ActivityListSliver(
-      this.activityProvider, this.imageProvider, this.activityClass);
+  const ActivityListSliver(
+      this.activityProvider, this.imageProvider, this.activityClass, {super.key});
 
   @override
   _ActivityListSliverState createState() => _ActivityListSliverState();
@@ -78,14 +78,16 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
         _loadingState = LoadingState.DONE;
         if (nextActivities.isNotEmpty) {
           data.addAll(nextActivities);
-          print(data.length.toString() + ' activities currently loaded for '+activityclass.name);
+          print('${data.length} activities currently loaded for '+activityclass.name);
           if (nextActivities.length >= limit) {
             print('advancing pagenumber');
             _isLoading = false;
             _pageNumber++;
           }
         }
-        else print('no activities currently loaded');
+        else {
+          print('no activities currently loaded');
+        }
       });
     } catch (e, stack) {
       _isLoading = false;
@@ -117,7 +119,8 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
   Widget _getContentSection(user) {
     switch (_loadingState) {
       case LoadingState.DONE:
-        if(data.length==0) return Container(
+        if(data.isEmpty) {
+          return Container(
           padding: EdgeInsets.all(20),
           child:
           ListTile(
@@ -127,14 +130,15 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
                 style:TextStyle(color:Colors.white)),
           ),
         );
+        }
         return ListView.builder(
             padding: EdgeInsets.symmetric(vertical: 16.0),
             scrollDirection: Axis.horizontal,
             itemCount: data.length,
             itemBuilder: (BuildContext context, int index) {
-              print('building item '+index.toString());
+              print('building item $index');
               if (!_isLoading && index > (data.length * 0.7)) {
-            print('loading page '+index.toString());
+            print('loading page $index');
                 _loadNextPage(user, widget.activityClass);
               }
 
@@ -213,9 +217,7 @@ class _ActivityListSliverState extends State<ActivityListSliver> {
                             : Icon(Icons.group_rounded, size: 150),
                   ),
                   Text(
-                      (activity.name != null
-                          ? activity.name
-                          : AppLocalizations.of(context)!.unnamedActivity)!,
+                      (activity.name ?? AppLocalizations.of(context)!.unnamedActivity)!,
                       style: TextStyle(color: Colors.white)),
                   Text(dateinfo, style: TextStyle(color: Colors.white)),
                   Row(

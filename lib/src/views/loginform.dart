@@ -17,14 +17,14 @@ class Login extends StatefulWidget {
   final String viewTitle = 'login';
   final dynamic user;
 
-  Login({this.user});
+  const Login({super.key, this.user});
 
   @override
   _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-  final formKey = new GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   String? _contact, _password;
   String serverName = '';
@@ -62,7 +62,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    print('current server: '+serverName+' / '+serverUrl+', should we show dialog? '+openServerSelect.toString());
+    print('current server: $serverName / $serverUrl, should we show dialog? $openServerSelect');
     if(openServerSelect==true)
     {
       openServerSelect = false;
@@ -142,11 +142,11 @@ class _LoginState extends State<Login> {
         ),
       ],
     );
-    var bypassLogin = (){
+    void bypassLogin(){
       Navigator.pushReplacementNamed(context, '/dashboard');
 
-    };
-    var doLogin = () async {
+    }
+    Future<void> doLogin() async {
       final form = formKey.currentState;
 
       if (form!.validate()) {
@@ -177,7 +177,7 @@ class _LoginState extends State<Login> {
       } else {
         print("form is invalid");
       }
-    };
+    }
     Widget titleText = AppUrl.serverImages.containsKey(serverName) ? Image.asset(AppUrl.serverImages[serverName] ?? 'images/icon.png',height:100) : Text(serverName,
         style:TextStyle(
             fontSize: 24.0
@@ -205,9 +205,7 @@ class _LoginState extends State<Login> {
                   SizedBox(height: 5.0),
                   TextButton(
                     child: Text(
-                        AppLocalizations.of(context)!.environment +
-                            ': ' +
-                            serverName,
+                        '${AppLocalizations.of(context)!.environment}: $serverName',
                         style: TextStyle(fontWeight: FontWeight.w300)),
                     onPressed: () {
                       serverSelectDialog(context);
@@ -257,10 +255,10 @@ class _LoginState extends State<Login> {
   void serverSelectDialog(BuildContext context){
     showDialog(
       context: context,
-      builder: (_) => new AlertDialog(
-          title: new Text(
+      builder: (_) => AlertDialog(
+          title: Text(
               AppLocalizations.of(context)!.environment),
-          content: Container(
+          content: SizedBox(
             width: double.maxFinite,
             child: ConstrainedBox(
               constraints: BoxConstraints(
@@ -310,7 +308,7 @@ class _LoginState extends State<Login> {
 
             serverName = serverTitle;
             serverUrl = itemUrl;
-            print('setting serverUrl to '+serverUrl);
+            print('setting serverUrl to $serverUrl');
             Settings().setValue('server', serverUrl);
             Settings().setValue('servername', serverTitle);
             if (AppUrl.anonymousApikeys.containsKey(serverTitle)) {
@@ -318,8 +316,9 @@ class _LoginState extends State<Login> {
                   'anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
 
             }
-            else
+            else {
               Settings().setValue('anonymousapikey', null);
+            }
             UserPreferences().removeUser();
             //  Provider.of<UserProvider>(context, listen: false).clearUser();
             //  Navigator.pushReplacementNamed(context, '/login');
@@ -340,7 +339,7 @@ class _LoginState extends State<Login> {
   }
 
   Widget getVersionInfo() {
-    return Text(appName + ' v.' + version + '(' + buildNumber + ')',
+    return Text('$appName v.$version($buildNumber)',
         style: TextStyle(color: Color(0xFF777777)));
   }
   Widget policyLink() {

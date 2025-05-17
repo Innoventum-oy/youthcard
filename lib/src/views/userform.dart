@@ -14,19 +14,19 @@ import 'package:provider/provider.dart';
 
 class UserForm extends StatefulWidget {
   final User? targetUser;
-  UserForm({this.targetUser});
+  const UserForm({super.key, this.targetUser});
   @override
-  _UserFormState createState() => new _UserFormState();
+  _UserFormState createState() => _UserFormState();
   static _UserFormState? of(BuildContext context) =>
       context.findAncestorStateOfType<_UserFormState>();
 }
 
 class _UserFormState extends State<UserForm>{
-  final formKey = new GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
   final ApiClient _apiClient = ApiClient();
   bool userLoaded = false;
   bool fieldsLoaded = false;
-  User user = new User();
+  User user = User();
   int? objectId;
   Map<String,dynamic> fields = {};
   Map<String,dynamic> formData = {};
@@ -44,7 +44,7 @@ class _UserFormState extends State<UserForm>{
     setState(() {
 
       if(userdata!=null) {
-        this.user = User.fromJson(userdata['data'].first['data'],description:userdata['description']);
+        user = User.fromJson(userdata['data'].first['data'],description:userdata['description']);
       //  print('user loaded by provider!');
       }
      // else print('No userdata returned by provider!!');
@@ -64,7 +64,7 @@ class _UserFormState extends State<UserForm>{
     setState(() {
 
       if(fielddata!=null) {
-        this.fields = fielddata;
+        fields = fielddata;
       }
 
       fieldsLoaded = true;
@@ -100,19 +100,19 @@ class _UserFormState extends State<UserForm>{
     print('build called for userform');
     //check if bug reporting should be displayed.
     bool isTester = false;
-    if(this.user.data!=null) {
-      if (this.user.data!['istester'] != null) {
-        if (this.user.data!['istester'] == 'true') isTester = true;
+    if(user.data!=null) {
+      if (user.data!['istester'] != null) {
+        if (user.data!['istester'] == 'true') isTester = true;
       }
     }
     return Scaffold(
       appBar: AppBar(
-          title: Text(this.user.fullname),
+          title: Text(user.fullname),
           elevation: 0.1,
           actions: [
             if(isTester) IconButton(
                 icon: Icon(Icons.bug_report),
-                onPressed:(){feedbackAction(context,this.user); }
+                onPressed:(){feedbackAction(context,user); }
             ),
           ]
       ),
@@ -128,15 +128,16 @@ class _UserFormState extends State<UserForm>{
   Widget formBody(User targetUser)
   {
 
-    var sendForm = () {
+    void sendForm() {
       final form = formKey.currentState;
       if (form!.validate()) {
         form.save();
 
         Map<String,dynamic> requestData = {};
-        this.formData.forEach((key,value){
-          if(value!=null && value !='null')
-          requestData.putIfAbsent('data_'+key.toString(), ()=> value);
+        formData.forEach((key,value){
+          if(value!=null && value !='null') {
+            requestData.putIfAbsent('data_$key', ()=> value);
+          }
         });
 
         Map<String,dynamic> params={
@@ -150,8 +151,9 @@ class _UserFormState extends State<UserForm>{
         };
 
         _apiClient.saveObject(params,requestData).then((var response) async {
-          if(response['objectid'] is int)
-            this.objectId = response['objectid'];
+          if(response['objectid'] is int) {
+            objectId = response['objectid'];
+          }
 
           switch(response['status']) {
             case 'fail':
@@ -185,7 +187,7 @@ class _UserFormState extends State<UserForm>{
 
       }
 
-    };
+    }
 
     //loading symbol display
 
@@ -202,7 +204,7 @@ class _UserFormState extends State<UserForm>{
     Widget? input ;
 
     //if(targetUser.description!=null)
-    if(this.fields.length>0)
+    if(fields.isNotEmpty)
     {
       Map<String,dynamic> userdata = targetUser.toMap();
       Map<String,dynamic> p = {};
@@ -210,7 +212,7 @@ class _UserFormState extends State<UserForm>{
       int elementNumber = 1;
       //print('USERDATA');
       //print(userdata.toString());
-      user.data!.forEach((key,value) {print(key.toString()+':'+value.toString());});
+      user.data!.forEach((key,value) {print('$key:$value');});
       print(user.data.toString());
       fields['fields'].forEach((name, definition){
 
@@ -239,14 +241,14 @@ class _UserFormState extends State<UserForm>{
 
             if(userdata.containsKey(name)) {
             //  print('user has own property '+name+' with value '+userdata[name].toString());
-              this.formData[name] = userdata[name];
+              formData[name] = userdata[name];
             }
             else if( user.data!.containsKey(name)) {
               //print('user data includes '+name+' with value '+user.data![name].toString());
-              this.formData[name] = user.data![name];
+              formData[name] = user.data![name];
             }
             else print('no data found for '+name);
-              print('Element $elementNumber '+name+' has type '+type+', value '+this.formData[name].toString());
+              print('${'Element $elementNumber '+name+' has type '+type}, value ${formData[name]}');
               elementNumber++;
               switch(type) {
 
@@ -271,43 +273,45 @@ class _UserFormState extends State<UserForm>{
                */
 
                 case 'checkbox' :
-                  bool isChecked = this.formData.containsKey(name) ? (this.formData[name]!=false)  : false;
+                  bool isChecked = formData.containsKey(name) ? (formData[name]!=false)  : false;
                if(definition?['options']!=null) {
-                 print('options: ' +
-                     (definition?['options'].length > 0 ? definition['options']
-                         .toString() : ''));
+                 print('options: ${definition?['options'].length > 0 ? definition['options']
+                         .toString() : ''}');
                  List<Widget> checkboxes = [];
                  for( String option in definition?['options'])
                  {
-                   if(this.formData[name]==null || !(this.formData[name] is List)) {
+                   if(formData[name]==null || formData[name] is! List) {
                      print('creating empty list container for '+name);
                      List<String> list = [];
-                     this.formData[name] = list;
+                     formData[name] = list;
                    }
-                   isChecked = this.formData[name].contains(option);
+                   isChecked = formData[name].contains(option);
                    checkboxes.add(CheckboxListTile(
                       title:Text(option),
                        value: isChecked,
                        onChanged: (bool? value){
                          setState((){
 
-                           if(value! && !this.formData[name].contains(option)) this.formData[name].add(option);
-                           else if(this.formData[name].contains(option)) this.formData[name].remove(option);
+                           if(value! && !formData[name].contains(option)) {
+                             formData[name].add(option);
+                           } else if(formData[name].contains(option)) formData[name].remove(option);
                          });
                        }
                    ));
                  }
                  input = Column(children:checkboxes);
                }
-                else  input = CheckboxListTile(
+                else {
+                 input = CheckboxListTile(
                     title : Text(definition['displayname'] ?? name),
                     value: isChecked,
                     onChanged: (bool? value){
                       setState((){
-                        this.formData[name] = value;
+                        formData[name] = value;
                       });
                     }
                   );
+               }
                   break;
 
                 case 'truevalue':
@@ -317,15 +321,14 @@ class _UserFormState extends State<UserForm>{
                         {'key':'true','value':AppLocalizations.of(context)!.optionTrue},
                         {'key':'false', 'value': AppLocalizations.of(context)!.optionFalse}
                       ] as dynamic,
-                      selectedOption: this.formData.containsKey(name) ?this.formData[name] : 'true'
+                      selectedOption: formData.containsKey(name) ?formData[name] : 'true'
                   );
                   break;
 
                 case 'radio':
                   if(definition?['options']!=null) {
-                    print('options: ' +
-                        (definition?['options'].length > 0 ? definition['options']
-                            .toString() : ''));
+                    print('options: ${definition?['options'].length > 0 ? definition['options']
+                            .toString() : ''}');
                     List<dynamic> radioButtons = [];
                     if (definition?['options'] is String) { }
                     else
@@ -333,7 +336,7 @@ class _UserFormState extends State<UserForm>{
                    //   bool isChecked = this.formData[name] == option;
                       radioButtons.add({'value':option,'key':option});
                     }
-                    input = RadioGroup(element: name,options:radioButtons as dynamic,selectedOption: this.formData[name]);
+                    input = RadioGroup(element: name,options:radioButtons as dynamic,selectedOption: formData[name]);
                 }
 
                 break;
@@ -348,7 +351,7 @@ class _UserFormState extends State<UserForm>{
 
                       if(result != null) {
                         File file = File(result.files.single.path as String);
-                        this.formData[name] = file;
+                        formData[name] = file;
                       } else {
                         // User canceled the picker
                       }
@@ -378,7 +381,7 @@ class _UserFormState extends State<UserForm>{
 
                   input = TextFormFieldItem(
                       element: name,
-                      value:this.formData.containsKey(name) && this.formData[name]!=null ? this.formData[name].toString() :'',
+                      value:formData.containsKey(name) && formData[name]!=null ? formData[name].toString() :'',
                       params:p
                   );
 
@@ -427,7 +430,8 @@ class TextFormFieldItem extends StatefulWidget{
   final String element;
   final String value;
   final Map<String,dynamic>? params ;
-  TextFormFieldItem({required this.element, required this.value,this.params});
+  const TextFormFieldItem({super.key, required this.element, required this.value,this.params});
+  @override
   _TextFormFieldItemState createState() => _TextFormFieldItemState();
 }
 class _TextFormFieldItemState extends State<TextFormFieldItem>{
@@ -455,14 +459,15 @@ class _TextFormFieldItemState extends State<TextFormFieldItem>{
     String? value = _textEditingController.text;
     //  print('running updateTextFieldValue, value: '+value);
     setState(() {
-      this.selectedValue = value;
+      selectedValue = value;
 
       UserForm.of(context)!.formData[widget.element] = value;
     });
   }
+  @override
   Widget build(BuildContext context){
     //  print('building textformfield '+widget.element.id.toString()+', initialValue: '+widget.value);
-    this.selectedValue = widget.value;
+    selectedValue = widget.value;
     return TextFormField(
         autovalidateMode: AutovalidateMode.always,
         controller: _textEditingController,
@@ -488,7 +493,7 @@ class TextFieldItem extends StatefulWidget{
   final String element;
   final String value;
   final Map<String,dynamic>? params ;
-  TextFieldItem({required this.element, required this.value,this.params});
+  const TextFieldItem({super.key, required this.element, required this.value,this.params});
   @override
   _TextFieldItemState createState() => _TextFieldItemState();
 }
@@ -515,14 +520,15 @@ class _TextFieldItemState extends State<TextFieldItem> {
   {
     String? value = _textEditingController.text;
     setState(() {
-      this.selectedValue = value;
+      selectedValue = value;
 
       UserForm.of(context)!.formData[widget.element] = value;
     });
   }
+  @override
   Widget build(BuildContext context) {
-    print('textfield has value '+widget.value.toString());
-    this.selectedValue = widget.value;
+    print('textfield has value ${widget.value}');
+    selectedValue = widget.value;
     return TextField(
       controller: _textEditingController,
       //textDirection: TextDirection
@@ -536,7 +542,7 @@ class RadioGroup extends StatefulWidget {
   final List<dynamic> options;
   final dynamic selectedOption;
 
-  RadioGroup({required this.element,required this.options,this.selectedOption});
+  const RadioGroup({super.key, required this.element,required this.options,this.selectedOption});
 
   @override
   RadioGroupWidget createState() => RadioGroupWidget();
@@ -549,10 +555,10 @@ class RadioGroupWidget extends State<RadioGroup> {
   dynamic selectedOptionValue;
 
 
+  @override
   Widget build(BuildContext context) {
-    if(this.selectedOptionValue==null)
-    this.selectedOptionValue = (widget.selectedOption ?? '') ;
-    print('building radio group '+widget.element+'; value is '+selectedOptionValue.toString());
+    selectedOptionValue ??= (widget.selectedOption ?? '');
+    print('building radio group ${widget.element}; value is $selectedOptionValue');
 
     return    Container(
       //height: 350.0,
@@ -565,14 +571,14 @@ class RadioGroupWidget extends State<RadioGroup> {
               value: data['key'],
               onChanged: (val) {
                 setState(() {
-                  print('selecting: '+data['value'].toString()+' ('+data['key'].toString()+')');
-                  this.selectedOptionValue = data['key'] ;
+                  print('selecting: ${data['value']} (${data['key']})');
+                  selectedOptionValue = data['key'] ;
 
                   UserForm.of(context)!.formData[widget.element] = data['key'];
 
                 });
               },
-            )).toList(),
+            )),
           ]),
     );
 

@@ -38,11 +38,11 @@ class User {
       image: responseData['image'],
       data: responseData,
       accesslevel : accesslevel,
-      description: description ?? null
+      description: description
     );
 
   }
-  String get fullname => (this.firstname ?? '')+' '+(this.lastname??'');
+  String get fullname => '${firstname ?? ''} ${lastname??''}';
 
   Map<String, dynamic> toJson() => {
     'id': id.toString(),
@@ -114,11 +114,7 @@ class User {
 
   @override
   String toString() {
-    return 'User{' +
-        ' id: $id,' +
-        ' firstname: $firstname,' +
-        ' lastname: $lastname,' +
-        ' email: $email,' +
+    return 'User{' ' id: $id,' ' firstname: $firstname,' ' lastname: $lastname,' ' email: $email,' +
         ' phone: $phone,' +
         ' type: $type,' +
         ' token: $token,' +
@@ -159,24 +155,24 @@ class User {
       image: image ?? this.image,
       qrcode: qrcode ?? this.qrcode,
 
-     data: data ?? this.data,
+     data: data ?? data,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': this.id,
-      'firstname': this.firstname,
-      'lastname': this.lastname,
-      'email': this.email,
-      'phone': this.phone,
-      'type': this.type,
-      'token': this.token,
-      'renewalToken': this.renewalToken,
-      'image': this.image,
-      'qrcode': this.qrcode,
+      'id': id,
+      'firstname': firstname,
+      'lastname': lastname,
+      'email': email,
+      'phone': phone,
+      'type': type,
+      'token': token,
+      'renewalToken': renewalToken,
+      'image': image,
+      'qrcode': qrcode,
 
-      'attributes' : this.data,
+      'attributes' : data,
     };
   }
 

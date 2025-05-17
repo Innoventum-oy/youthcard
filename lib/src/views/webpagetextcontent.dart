@@ -21,7 +21,7 @@ class ContentPageView extends StatefulWidget {
   final WebPage? providedPage;
   final WebPageProvider pageProvider = WebPageProvider();
 
-  ContentPageView(this.commonname,{this.providedPage});
+  ContentPageView(this.commonname,{super.key, this.providedPage});
   @override
   _ContentPageViewState createState() => _ContentPageViewState();
 }
@@ -74,11 +74,11 @@ class _ContentPageViewState extends State<ContentPageView> {
 
       if(widget.providedPage!=null) {
         print(widget.providedPage!.data?.toString());
-        print('setting provided page '+(widget.providedPage!.pagetitle ??''));
+        print('setting provided page ${widget.providedPage!.pagetitle ??''}');
         _setWebPage();
       }
       else {
-        print('loading page '+widget.commonname);
+        print('loading page ${widget.commonname}');
         _loadWebPage(widget.commonname, user);
 
       }
@@ -105,11 +105,13 @@ class _ContentPageViewState extends State<ContentPageView> {
     switch (_pageLoadingState) {
       case LoadingState.DONE:
       //data loaded
-        if(pages.isEmpty) return Container(
+        if(pages.isEmpty) {
+          return Container(
           child:ListTile(
               leading: Icon(Icons.error),
-              title: Text(AppLocalizations.of(context)!.contentNotFound+' ('+widget.commonname+' ['+Localizations.localeOf(context).toString()+'])')),
+              title: Text('${AppLocalizations.of(context)!.contentNotFound} (${widget.commonname} [${Localizations.localeOf(context)}])')),
         );
+        }
         return ListView.builder(
             itemCount: pages.length,
             itemBuilder: (BuildContext context, int index) {

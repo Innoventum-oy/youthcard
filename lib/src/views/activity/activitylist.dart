@@ -16,7 +16,7 @@ class ActivityList extends StatefulWidget {
   final objectmodel.ActivityListProvider activityProvider;
   final objectmodel.ImageProvider imageProvider;
   final String viewType;
-  ActivityList(this.activityProvider,this.imageProvider,{this.viewType='all'});
+  const ActivityList(this.activityProvider,this.imageProvider,{super.key, this.viewType='all'});
   @override
   _ActivityListState createState() => _ActivityListState();
 }
@@ -57,7 +57,7 @@ class _ActivityListState extends State<ActivityList>  {
       'api_key':user.token,
 
     };
-    print("activitylist type:"+widget.viewType);
+    print("activitylist type:${widget.viewType}");
 
     switch(widget.viewType)
     {
@@ -91,7 +91,7 @@ class _ActivityListState extends State<ActivityList>  {
         _loadingState = LoadingState.DONE;
         if(nextActivities.isNotEmpty) {
           data.addAll(nextActivities);
-          print(data.length.toString() + ' activities currently loaded!');
+          print('${data.length} activities currently loaded!');
           _isLoading = false;
           _pageNumber++;
         }
@@ -125,7 +125,7 @@ class _ActivityListState extends State<ActivityList>  {
   @override
   Widget build(BuildContext context){
 
-  print('viewtype: '+widget.viewType);
+  print('viewtype: ${widget.viewType}');
 
   User user = Provider.of<UserProvider>(context,listen: false).user;
   bool isTester = false;
@@ -136,9 +136,9 @@ class _ActivityListState extends State<ActivityList>  {
     }
   }
 
-  return new Scaffold(
-      appBar: new AppBar(
-          title: new Text(
+  return Scaffold(
+      appBar: AppBar(
+          title: Text(
             widget.viewType=='locations' ? AppLocalizations.of(context)!.locations : AppLocalizations.of(context)!.activities),
           actions: [
           if(isTester) IconButton(

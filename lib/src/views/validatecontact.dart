@@ -12,21 +12,21 @@ import 'package:youth_card/src/objects/contactmethod.dart';
 class ValidateContact extends StatefulWidget {
   final ContactMethod? contactmethod;
 
-  ValidateContact({this.contactmethod});
+  const ValidateContact({super.key, this.contactmethod});
   @override
   _ValidateContactState createState() => _ValidateContactState();
 }
 
 class _ValidateContactState extends State<ValidateContact> {
   bool contactsLoaded = false;
-  final formKey = new GlobalKey<FormState>();
-  ContactMethod contactmethod = new ContactMethod();
+  final formKey = GlobalKey<FormState>();
+  ContactMethod contactmethod = ContactMethod();
   List<ContactMethod> contactItems = [];
   ContactMethod? selectedMethod;
 
   String?  _confirmkey, _contact;
   String? errormessage;
-  ApiClient _apiClient = ApiClient();
+  final ApiClient _apiClient = ApiClient();
 
   @override
   void initState(){
@@ -35,11 +35,11 @@ class _ValidateContactState extends State<ValidateContact> {
 
 
 
-      String address = this.contactmethod.address ??'null';
-      print('setting _contact to '+address.toString());
+      String address = contactmethod.address ??'null';
+      print('setting _contact to $address');
       _contact = address;
-      selectedMethod = this.contactmethod;
-      print('Widget called with contactmethod '+address);
+      selectedMethod = contactmethod;
+      print('Widget called with contactmethod $address');
 
     // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
 
@@ -48,18 +48,20 @@ class _ValidateContactState extends State<ValidateContact> {
   super.initState();
 
   }
+  @override
   @protected
   @mustCallSuper
   void didChangeDependencies() {
     //Provider.of<UserProvider>(context, listen: false).getContactMethods();
-    if(widget.contactmethod!=null) contactItems.add(widget.contactmethod as ContactMethod);
-    else if(!this.contactsLoaded) {
+    if(widget.contactmethod!=null) {
+      contactItems.add(widget.contactmethod as ContactMethod);
+    } else if(!contactsLoaded) {
       print('Loading contactmethods from userprovider');
       Provider
           .of<UserProvider>(context)
           . getContactMethods();
 
-      this.contactsLoaded = true;
+      contactsLoaded = true;
     }
     super.didChangeDependencies();
   }
@@ -96,7 +98,7 @@ class _ValidateContactState extends State<ValidateContact> {
   Widget contactValidationFormBody(auth,user)
   {
 
-    print('verification status:'+auth.verificationStatus.toString());
+    print('verification status:${auth.verificationStatus}');
 
     switch(auth.verificationStatus)
     {
@@ -118,7 +120,7 @@ class _ValidateContactState extends State<ValidateContact> {
 
   Widget getConfirmationKeyForm(auth,user) {
 
-    var getVerificationCode = () {
+    void getVerificationCode() {
       final form = formKey.currentState;
 
       if (form!.validate()) {
@@ -132,7 +134,7 @@ class _ValidateContactState extends State<ValidateContact> {
             setState(() {
               auth.setContactMethodId(response['contactmethodid']);
               if(response['userid']!=null) auth.setUserId(response['userid']);
-              print('contact method id set to '+response['contactmethodid'].toString());
+              print('contact method id set to ${response['contactmethodid']}');
               auth.setVerificationStatus(VerificationStatus.CodeReceived);
             });
 
@@ -147,7 +149,7 @@ class _ValidateContactState extends State<ValidateContact> {
       } else {
         print("form is invalid");
       }
-    };
+    }
 
     var loading = Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -194,14 +196,14 @@ class _ValidateContactState extends State<ValidateContact> {
     }
     Widget contactField(user) {
       // User user = Provider.of<UserProvider>(context).user;
-      if(contactItems.isNotEmpty)
+      if(contactItems.isNotEmpty) {
         return ListView.builder(
             itemCount: contactItems.length,
             itemBuilder: (BuildContext context, int index) {
 
               return contactFieldItem(contactItems[index]);
             });
-      else {
+      } else {
         //No contact methods found error
         return Container(
 
@@ -219,7 +221,7 @@ class _ValidateContactState extends State<ValidateContact> {
         SizedBox(height: 15.0),
         Text(AppLocalizations.of(context)!.contactMethod, style: Theme.of(context).textTheme.headlineSmall,),
         SizedBox(height: 5.0),
-         widget.contactmethod!=null ? Text(_contact ?? '') : Container(
+         widget.contactmethod!=null ? Text(_contact ?? '') : SizedBox(
            height:200,
            child:contactField(user),
         ),
@@ -238,9 +240,9 @@ class _ValidateContactState extends State<ValidateContact> {
 
 
   Widget enterConfirmationKeyForm(auth) {
-    final _confirmationController = TextEditingController();
+    final confirmationController = TextEditingController();
 
-    print('current _confirmkey value: '+_confirmkey.toString());
+    print('current _confirmkey value: $_confirmkey');
 
     var loading = Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -252,7 +254,7 @@ class _ValidateContactState extends State<ValidateContact> {
 
     final confirmationKeyField = TextFormField(
       autofocus: true,
-      controller: _confirmationController,
+      controller: confirmationController,
       validator: (value) =>
       value!.isEmpty ? AppLocalizations.of(context)!.pleaseEnterConfirmationKey : null,
       onSaved: (value) => _confirmkey = value,
@@ -260,13 +262,13 @@ class _ValidateContactState extends State<ValidateContact> {
           AppLocalizations.of(context)!.confirmationKey, Icons.vpn_key),
     );
 
-    var sendVerificationCode = () {
+    void sendVerificationCode() {
       print('sending confirmation key');
       final form = formKey.currentState;
 
       if (form!.validate()) {
         form.save();
-        print('checking confirmationkey - user: '+auth.userId+',  contactmethodid '+auth.contactMethodId.toString()+', key: '+_confirmkey.toString());
+        print('${'checking confirmationkey - user: '+auth.userId},  contactmethodid ${auth.contactMethodId}, key: $_confirmkey');
 
         final Future<Map<String, dynamic>> successfulMessage =
         _apiClient.sendConfirmationKey(userid: auth.userId,contact: auth.contactMethodId, code:_confirmkey!.toString());
@@ -291,7 +293,7 @@ class _ValidateContactState extends State<ValidateContact> {
       } else {
         print("form is invalid");
       }
-    };
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

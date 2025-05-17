@@ -10,6 +10,8 @@ import 'package:youth_card/l10n/app_localizations.dart';
 */
 
 class ContactMethodsView extends StatefulWidget {
+  const ContactMethodsView({super.key});
+
   @override
   _ContactMethodsViewState createState() => _ContactMethodsViewState();
 }

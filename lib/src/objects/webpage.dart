@@ -39,11 +39,11 @@ class WebPage{
 
   Map<String, dynamic> toMap() {
     return {
-      'id': this.id,
-      'pagetitle': this.pagetitle,
-      'commonname': this.commonname,
-      'textcontents': this.textcontents,
-      'data' :this.data,
+      'id': id,
+      'pagetitle': pagetitle,
+      'commonname': commonname,
+      'textcontents': textcontents,
+      'data' :data,
     };
   }
 

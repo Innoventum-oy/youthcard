@@ -44,7 +44,7 @@ class UserBenefit {
             : null,
 
 
-        icon:  responseData['icon'] ?? null,
+        icon:  responseData['icon'],
         iconurl: responseData['iconurl'],
 
         accesslevel: responseData['accesslevel'] is int ? responseData['accesslevel'] : int.parse(responseData['accesslevel'])

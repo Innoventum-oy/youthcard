@@ -5,11 +5,11 @@ import 'package:url_launcher/url_launcher.dart'; // important
 class MetaSection extends StatelessWidget {
   final dynamic data;
 
-  MetaSection(this.data);
+  const MetaSection(this.data, {super.key});
 
   @override
   Widget build(BuildContext context) {
-  if(this.data==false) return Column();
+  if(data==false) return Column();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -20,7 +20,7 @@ class MetaSection extends StatelessWidget {
         Container(
           height: 8.0,
         ),
-        data['data']['contactinfo'].toString().length>0? _parseHtml(data['data']['contactinfo']?? ''):Container(),
+        data['data']['contactinfo'].toString().isNotEmpty? _parseHtml(data['data']['contactinfo']?? ''):Container(),
         _getSectionOrContainer(AppLocalizations.of(context)!.address,'address',),
         _getSectionOrContainer(AppLocalizations.of(context)!.postcode,'postcode'),
         _getSectionOrContainer(AppLocalizations.of(context)!.city,'city'),

@@ -10,7 +10,7 @@ import 'package:youth_card/src/providers/user_provider.dart';
 class EnvironmentScreen extends StatefulWidget {
   final bool wrap = false;
 
-  EnvironmentScreen({required wrap});
+  const EnvironmentScreen({super.key, required wrap});
 
   @override
   _EnvironmentScreenState createState() => _EnvironmentScreenState();
@@ -63,7 +63,7 @@ class _EnvironmentScreenState extends State<EnvironmentScreen> {
           if(AppUrl.anonymousApikeys.containsKey(serverTitle)) {
             Settings().setValue(
                 'anonymousapikey', AppUrl.anonymousApikeys[serverTitle]);
-              print("Anonymous api key for " + serverTitle + " set to " +AppUrl.anonymousApikeys[serverTitle]!);
+              print("${"Anonymous api key for " + serverTitle} set to ${AppUrl.anonymousApikeys[serverTitle]!}");
             }
           else {
             print("Anonymous api key for "+serverTitle + " not found");

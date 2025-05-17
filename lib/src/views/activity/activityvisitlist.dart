@@ -19,7 +19,7 @@ class ActivityVisitList extends StatefulWidget {
   final String viewTitle = 'activityvisitlist';
   final Activity _activity;
   final objectmodel.ActivityVisitListProvider visitListProvider = objectmodel.ActivityVisitListProvider();
-  ActivityVisitList(this._activity);
+  ActivityVisitList(this._activity, {super.key});
 
   @override
   _ActivityVisitListState createState() =>
@@ -27,10 +27,10 @@ class ActivityVisitList extends StatefulWidget {
 }
 class _ActivityVisitListState extends State<ActivityVisitList> {
 
-  User user = new User();
-  WebPage page = new WebPage();
+  User user = User();
+  WebPage page = WebPage();
   List<ActivityVisit> visits=[];
-  Map<int,User> _users = {};
+  final Map<int,User> _users = {};
   DateTimeRange myDateRange = DateTimeRange(
       start: DateTime.now().subtract(Duration(days:7)),
       end: DateTime.now().add(Duration(days:1))
@@ -38,10 +38,10 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
 
   @override
   void initState() {
-    print('initState '+widget.viewTitle);
-    this.user = Provider.of<UserProvider>(context,listen:false).user;
-    widget.visitListProvider.setUser(this.user);
-    _loadWebPage(this.user);
+    print('initState ${widget.viewTitle}');
+    user = Provider.of<UserProvider>(context,listen:false).user;
+    widget.visitListProvider.setUser(user);
+    _loadWebPage(user);
 
 
     updateUsers();
@@ -49,7 +49,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
   }
   void updateUsers() async
   {
-    print('updateUsers called!'+myDateRange.start.toString());
+    print('updateUsers called!${myDateRange.start}');
     List<ActivityVisit> visits = ( await widget.visitListProvider.loadActivityVisits(widget._activity,loadParams:{'startdate':DateFormat('yyyy-MM-dd').format(myDateRange.start),'enddate':DateFormat('yyyy-MM-dd').format(myDateRange.end)})) as List<ActivityVisit>;
     setState((){
       print('setState called!');
@@ -74,15 +74,15 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
   @override
   Widget build(BuildContext context) {
     //current user
-    print('build '+widget.viewTitle);
+    print('build ${widget.viewTitle}');
 
-    this.page = Provider.of<WebPageProvider>(context).page;
+    page = Provider.of<WebPageProvider>(context).page;
     visits = widget.visitListProvider.list ?? [];
 
     // Future<List<ActivityVisit>?> getVisits() => widget.visitListProvider.loadActivityVisits(widget._activity);
-    bool hasInfoPage = this.page.id != null ? true : false;
+    bool hasInfoPage = page.id != null ? true : false;
     bool isTester = false;
-    print('VISITS '+visits.length.toString());
+    print('VISITS ${visits.length}');
     if(user.data!=null) {
       if (user.data!['istester'] != null) {
         if (user.data!['istester'] == 'true') isTester = true;
@@ -90,14 +90,14 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget._activity.name!+': '+AppLocalizations.of(context)!.eventLog),
+        title: Text('${widget._activity.name!}: ${AppLocalizations.of(context)!.eventLog}'),
         elevation: 0.1,
         actions: [
           if(hasInfoPage)IconButton(
               icon: Icon(Icons.info_outline_rounded),
               onPressed:(){
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => ContentPageView(widget.viewTitle,providedPage:this.page),
+                  builder: (_) => ContentPageView(widget.viewTitle,providedPage:page),
                 ));}
           ),
           if(isTester) IconButton(
@@ -121,7 +121,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
             child: DateRangeField(
                 firstDate: DateTime(2017),
                 enabled: true,
-                initialValue: this.myDateRange,
+                initialValue: myDateRange,
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.dateRange,
                   prefixIcon: Icon(Icons.date_range),
@@ -149,48 +149,48 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
           itemBuilder: (BuildContext context, int index) {
             ActivityVisit visit = visits[index];
 
-            if(this._users.isNotEmpty && this._users.containsKey(visit.userid) )
+            if(_users.isNotEmpty && _users.containsKey(visit.userid) )
             {
               print('USER already on list!');
-              User user = this._users[visit.userid]!;
+              User user = _users[visit.userid]!;
               return userListTile(visit,user);
            }
-            print('loading data for user '+visit.userid!.toString() );
-            Future<User> userdata = visit.userprovider!.loadUser(visit.userid ?? 0, this.user);
+            print('loading data for user ${visit.userid!}' );
+            Future<User> userdata = visit.userprovider!.loadUser(visit.userid ?? 0, user);
 
             return FutureBuilder(
-                initialData: new User(),
+                initialData: User(),
                 future: userdata,
                 builder: (context, AsyncSnapshot snapshot){
 
 
                   if(snapshot.data==null){
-                    var titleDateFormat = new DateFormat('dd.MM HH:mm');
+                    var titleDateFormat = DateFormat('dd.MM HH:mm');
                     return ListTile(
                       leading: Icon(Icons.error),
-                      title: Text(titleDateFormat.format(visit.startdate?? DateTime.now())+': '+AppLocalizations.of(context)!.userNotFound),
+                      title: Text('${titleDateFormat.format(visit.startdate?? DateTime.now())}: ${AppLocalizations.of(context)!.userNotFound}'),
                     );
                   }
                   if(snapshot.data.id!=null ){
                     print(snapshot.data.toString());
                     User user = snapshot.data;
-                    this._users.putIfAbsent(user.id!,()=>user);
+                    _users.putIfAbsent(user.id!,()=>user);
                    // if(!users.containsKey(user.id)) users[user.id!] = user;
 
                     return userListTile(visit,user);
                   }
                   else {
-                    var titleDateFormat = new DateFormat('dd.MM HH:mm');
+                    var titleDateFormat = DateFormat('dd.MM HH:mm');
                     return ListTile(
                       leading: CircularProgressIndicator(),
-                      title: Text(titleDateFormat.format(visit.startdate?? DateTime.now()).toString()+': '+AppLocalizations.of(context)!.loading),
+                      title: Text('${titleDateFormat.format(visit.startdate?? DateTime.now())}: ${AppLocalizations.of(context)!.loading}'),
                     );
                   }
                 }
             );
           }
       ),) :  ListTile(
-          leading: Icon(Icons.info_outline),title:Text(AppLocalizations.of(context)!.noVisitsFound+' '+DateFormat('d.M.y').format(myDateRange.start)+(myDateRange.duration.inDays > 0 ? ' - '+DateFormat('d.M.y').format(myDateRange.end) :''))
+          leading: Icon(Icons.info_outline),title:Text('${AppLocalizations.of(context)!.noVisitsFound} ${DateFormat('d.M.y').format(myDateRange.start)}${myDateRange.duration.inDays > 0 ? ' - ${DateFormat('d.M.y').format(myDateRange.end)}' :''}')
       )
      ] ),
 
@@ -200,7 +200,7 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
 
   Widget userListTile(ActivityVisit visit, User user)
   {
-    var titleDateFormat = new DateFormat('dd.MM HH:mm');
+    var titleDateFormat = DateFormat('dd.MM HH:mm');
    return ListTile(
       leading: InkWell(
           child: CircleAvatar(
@@ -211,15 +211,16 @@ class _ActivityVisitListState extends State<ActivityVisitList> {
             child: getInitials(user),
           ),
           onTap: () {
-            if(user.id != null)
-            Navigator.push(
+            if(user.id != null) {
+              Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => MyCard(user:user)),
             );
+            }
 
           }),
-      title: Text(titleDateFormat.format(visit.startdate?? DateTime.now()).toString()+': '+user.fullname),
-      subtitle: user.userbenefits.isNotEmpty ? Container(
+      title: Text('${titleDateFormat.format(visit.startdate?? DateTime.now())}: ${user.fullname}'),
+      subtitle: user.userbenefits.isNotEmpty ? SizedBox(
         height: 30,
         //padding: EdgeInsets.only(left: 10, right: 10),
         child: GridView.builder(

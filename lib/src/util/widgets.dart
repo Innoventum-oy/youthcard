@@ -12,6 +12,10 @@ MaterialButton longButtons(String title, Function()? fun,
     onPressed: fun,
     textColor: textColor,
     color: color,
+    height: 45,
+    minWidth: 600,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10))),
     child: SizedBox(
       width: double.infinity,
       child: Text(
@@ -19,10 +23,6 @@ MaterialButton longButtons(String title, Function()? fun,
         textAlign: TextAlign.center,
       ),
     ),
-    height: 45,
-    minWidth: 600,
-    shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10))),
   );
 }
 
@@ -58,7 +58,7 @@ notifyDialog(String? titleText,Widget text, context)
   showDialog<String>(
       context: context,
       builder:(BuildContext context) =>AlertDialog(
-        title: Text(titleText!=null ? titleText : AppLocalizations.of(context)!.notification),
+        title: Text(titleText ?? AppLocalizations.of(context)!.notification),
         content: SingleChildScrollView(
             child:text
         ),

@@ -34,7 +34,7 @@ class ApiClient {
   * _postJson handles POST request and returns the json decoded data from server back to caller function
   */
   Future<dynamic> _postJson(Uri uri, Map<String, dynamic> data) async {
-    this.isProcessing = true;
+    isProcessing = true;
     Map softwareInfo = {
       'appName': '',
       'packageName': '',
@@ -55,7 +55,7 @@ class ApiClient {
           ' ' +
           softwareInfo['buildNumber']
     };
-    var request = new http.MultipartRequest("POST", uri);
+    var request = http.MultipartRequest("POST", uri);
     headers.forEach((k, v) {
       request.headers[k] = v;
     });
@@ -73,7 +73,7 @@ class ApiClient {
 
     http.Response response =
         await http.Response.fromStream(await request.send());
-    this.isProcessing = false;
+    isProcessing = false;
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
 
@@ -87,7 +87,7 @@ class ApiClient {
         }
       } else {
         if(kDebugMode){
-          print('response body was empty for uri .' + uri.toString());
+          print('response body was empty for uri .$uri');
         }
 
         return false;
@@ -110,7 +110,7 @@ class ApiClient {
   Future<dynamic> _getJson(Uri uri) async {
     //debug
 
-    this.isProcessing = true;
+    isProcessing = true;
     //Create software version header
     Map softwareInfo = {
       'appName': '',
@@ -135,7 +135,7 @@ class ApiClient {
     var response = await http.get(uri, headers: headers);
     //todo: better handling of statuscodes other than 200 or forwarding them to function calling _getJSON
     // print(response.statusCode);
-    this.isProcessing = false;
+    isProcessing = false;
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         try {
@@ -149,28 +149,28 @@ class ApiClient {
 
       } else {
         if(kDebugMode) {
-          print('response body was empty for uri .' + uri.toString());
+          print('response body was empty for uri .$uri');
         }
         return false;
       }
-    } else
+    } else {
       return false;
+    }
   }
 
   /* Save object data */
   Future<dynamic> saveObject(params, objectData) async {
-    this.isProcessing = true;
+    isProcessing = true;
     String baseUrl = await Settings().getServer();
     String? apikey = await Settings().getValue("anonymousapikey");
     if (!params.containsKey("api_key") || params["api_key"] == null) {
       //  print('no api_key provided in params: using anonymous apikey '+apikey+' for calling getDatalist');
       params["api_key"] = apikey;
-    } else
-
-
-    params['method'] = 'json';
+    } else {
+      params['method'] = 'json';
+    }
     var url = Uri.https(baseUrl, 'api/dispatcher/common/', params);
-    this.isProcessing = false;
+    isProcessing = false;
     return _postJson(url, objectData).then((json) {
       return json == false ? [] : json;
     });
@@ -285,7 +285,7 @@ class ApiClient {
 
     return _postJson(url, registrationData).then((json) {
 
-      return json != null ? json : false;
+      return json ?? false;
     });
   }
 
@@ -330,24 +330,20 @@ class ApiClient {
   Future<dynamic> getDetails(String objectType, int objectId, User loggedInUser,
       {fields}) async {
     String baseUrl = await Settings().getServer();
-    String? apikey = loggedInUser.token != null
-        ? loggedInUser.token
-        : await Settings().getValue("anonymousapikey");
+    String? apikey = loggedInUser.token ?? await Settings().getValue("anonymousapikey");
 
     var url =
         Uri.https(baseUrl, 'api/$objectType/$objectId', {'api_key': apikey});
     // Returns only
     return _getJson(url).then((json) => json['data']).then((data) {
-      return data != null ? data.first : null;
+      return data?.first;
     });
   }
 
   Future<dynamic> getObject(String objectType, int objectId, User loggedInUser,
       {fields}) async {
     String baseUrl = await Settings().getServer();
-    String? apikey = loggedInUser.token != null
-        ? loggedInUser.token
-        : await Settings().getValue("anonymousapikey");
+    String? apikey = loggedInUser.token ?? await Settings().getValue("anonymousapikey");
 
     var url =
         Uri.https(baseUrl, 'api/$objectType/$objectId', {'api_key': apikey});
@@ -396,7 +392,7 @@ class ApiClient {
   * Load detailed activity information for the activity view
    */
   Future<dynamic> getActivityClassDetails(int id, User user) async {
-    return this.getDetails('activityclass', id, user);
+    return getDetails('activityclass', id, user);
   }
 
   /*
@@ -417,7 +413,7 @@ class ApiClient {
   * Load detailed activityvisit information for selected activityvisit
    */
   Future<dynamic> getActivityVisitDetails(int id, User user) async {
-    return this.getDetails('activityvisit', id, user);
+    return getDetails('activityvisit', id, user);
   }
 
   /*
@@ -435,7 +431,7 @@ class ApiClient {
       'activitydateid': date.id.toString(),
       'api_key': apikey
     };
-    return this.dispatcherRequest('activity', params).then((data) {
+    return dispatcherRequest('activity', params).then((data) {
 
       Map<dynamic, String> returnData =
           Map<dynamic, String>.from(data['visits']);
@@ -461,9 +457,7 @@ class ApiClient {
     final Map<String, dynamic> params = {
       'method': 'json',
       'activityid': activity.id.toString(),
-      'api_key': user.token != null
-          ? user.token
-          : await Settings().getValue("anonymousapikey")
+      'api_key': user.token ?? await Settings().getValue("anonymousapikey")
     };
 
     return getDataList('activitydate', params).then((data) {
@@ -487,7 +481,7 @@ class ApiClient {
       'activityid': activityId.toString(),
       'api_key': apikey
     };
-    return this.dispatcherRequest('activity', params).then((data) {
+    return dispatcherRequest('activity', params).then((data) {
       if (data == null || data['data'] == null) return [];
       return data['data'].map<User>((data) => User.fromJson(data)).toList();
     });
@@ -497,7 +491,7 @@ class ApiClient {
   * Load detailed activity information for the activity view
    */
   Future<dynamic> getActivityDetails(int activityId, User user) async {
-    return this.getDetails('activity', activityId, user);
+    return getDetails('activity', activityId, user);
   }
 
   /*
@@ -507,7 +501,7 @@ class ApiClient {
       Map<String, dynamic> params) async {
 
 
-    return this.dispatcherRequest('activity', params).then((data) {
+    return dispatcherRequest('activity', params).then((data) {
       data = data['data'];
       if (data == null) return [];
 
@@ -521,7 +515,7 @@ class ApiClient {
   * Load detailed userbenefit information
    */
   Future<dynamic> getUserBenefitDetails(int benefitId, User user) async {
-    return this.getDetails('userbenefit', benefitId, user);
+    return getDetails('userbenefit', benefitId, user);
   }
 
   /*
@@ -538,7 +532,7 @@ class ApiClient {
   * Get image details based on image id
    */
   Future<dynamic> getImageDetails(int imageId, User user) async {
-    return this.getDetails('image', imageId, user);
+    return getDetails('image', imageId, user);
   }
 
   /*
@@ -592,7 +586,7 @@ class ApiClient {
   }
 
   Future<dynamic> getPageDetails(int id, User user) async {
-    return this.getDetails('page', id, user);
+    return getDetails('page', id, user);
   }
 
   Future<Map<String, dynamic>>? sendFeedback(
@@ -603,7 +597,7 @@ class ApiClient {
 
     return _postJson(url, data).then((json) {
 
-      return json != null ? json : false;
+      return json ?? false;
     });
   }
 
@@ -626,7 +620,7 @@ class ApiClient {
   * Load detailed activity information for selected form
    */
   Future<dynamic> getFormCategoryDetails(int id, User user) async {
-    return this.getDetails('formcategory', id, user);
+    return getDetails('formcategory', id, user);
   }
 
   Future<Map<String, dynamic>>? saveFormData(
@@ -635,7 +629,7 @@ class ApiClient {
 
     return _postJson(url, data).then((json) {
 
-      return json != null ? json : false;
+      return json ?? false;
     });
   }
 
@@ -645,7 +639,7 @@ class ApiClient {
 
     return _getJson(url).then((json) {
 
-      return json != null ? json : false;
+      return json ?? false;
     });
   }
 
@@ -665,7 +659,7 @@ class ApiClient {
   * Load detailed activity information for selected form
    */
   Future<dynamic> getFormDetails(int id, User user) async {
-    return this.getDetails('form', id, user);
+    return getDetails('form', id, user);
   }
 
 /*
@@ -684,7 +678,7 @@ class ApiClient {
   * Load detailed activity information for selected form
    */
   Future<dynamic> getFormElementDetails(int id, User user) async {
-    return this.getDetails('formelement', id, user);
+    return getDetails('formelement', id, user);
   }
 
 /*
@@ -693,7 +687,7 @@ class ApiClient {
   Future<List<FormElement>> getElements(Map<String, dynamic> params) async {
     params['action'] = 'getelements';
 
-    return this.dispatcherRequest('forms', params).then((data) {
+    return dispatcherRequest('forms', params).then((data) {
       if (data == null) return [];
       if (data['items'] == null) {
         return [];

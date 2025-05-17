@@ -9,8 +9,8 @@ class UserProvider with ChangeNotifier {
   UserProvider({this.id});
 
   int? id;
-  User _user = new User();
-  ApiClient _apiClient = ApiClient();
+  User _user = User();
+  final ApiClient _apiClient = ApiClient();
 
   User get user => _user;
   List<ContactMethod> contacts = [];
@@ -26,24 +26,26 @@ class UserProvider with ChangeNotifier {
   }
 
   void clearUser() {
-    _user = new User();
+    _user = User();
     notifyListeners();
   }
 
   Future<User> loadUser(int userId, User loadingUser)
   async {
 
-    dynamic userdata = await this.getObject(userId,loadingUser);
+    dynamic userdata = await getObject(userId,loadingUser);
     if(userdata!=null) {
 
-      this.setUserSilent(User.fromJson(userdata['data'].first,description:userdata['description']));
-      await this.getUserBenefits(loadingUser);
-      await this.getContactMethods(loadingUser);
+      setUserSilent(User.fromJson(userdata['data'].first,description:userdata['description']));
+      await getUserBenefits(loadingUser);
+      await getContactMethods(loadingUser);
       notifyListeners();
       //print(this._user);
     }
-    else this.clearUser();
-    return this._user;
+    else {
+      clearUser();
+    }
+    return _user;
   }
   Future<dynamic> getFields(int userId, user) {
     final Map<String, dynamic> params = {
@@ -64,9 +66,9 @@ class UserProvider with ChangeNotifier {
   Future<void> refreshUser({String? fields}) async {
 
     try {
-      User u = this.user;
+      User u = user;
       dynamic userData =
-      await this.getDetails(u.id!, this._user);
+      await getDetails(u.id!, _user);
 
 
       // keep token
@@ -90,18 +92,18 @@ class UserProvider with ChangeNotifier {
         //   currentStation: userData['currentstation'] is String ? {'objectid':userData['currentstation']} : userData['currentstation'],
 
       );
-      this.setUser(u);
-    } catch (e, stack) {
+      setUser(u);
+    } catch (e) {
 
     }
   }
   Future<void>getUserBenefits([User? loadingUser]) async {
-    if (this.user.id == null) return;
+    if (user.id == null) return;
 
     final Map<String, String> params = {
       'action': 'loaduserbenefits',
-      'userid': this.user.id!.toString(),
-      'api_key': loadingUser!=null ? (loadingUser.token ??'') : this.user.token ?? '',
+      'userid': user.id!.toString(),
+      'api_key': loadingUser!=null ? (loadingUser.token ??'') : user.token ?? '',
 
     };
     UserBenefitProvider userBenefitProvider =
@@ -109,25 +111,25 @@ class UserProvider with ChangeNotifier {
     try {
       var result = await userBenefitProvider.loadItems(params);
 
-      this._user.userbenefits.addAll(result);
+      _user.userbenefits.addAll(result);
      // print(result.length.toString() + ' benefits currently loaded for user '+this.user.fullname+'!');
     }
-    catch (e, stack) {
+    catch (e) {
 
     }
   }
 
   Future<void> getContactMethods([User? loadingUser]) async {
 
-    if(this.user.id==null) return;
+    if(user.id==null) return;
 
     final Map<String, dynamic> params = {
       'method' : 'json',
       'action': 'getcontactmethods',
-      'userid': this.user.id!.toString(),
-      'api_key': loadingUser!=null ? (loadingUser.token ??'') : this.user.token ?? '',
+      'userid': user.id!.toString(),
+      'api_key': loadingUser!=null ? (loadingUser.token ??'') : user.token ?? '',
     };
-    this.contacts =(await _apiClient.dispatcherRequest('registration',params).then((data) {
+    contacts =(await _apiClient.dispatcherRequest('registration',params).then((data) {
 
       notifyListeners();
       if(data==null) return [];

@@ -94,7 +94,7 @@ class DatabaseHelper {
         columns: [columnId, columnWord, columnFrequency],
         where: '$columnId = ?',
         whereArgs: [id]);
-    if (maps.length > 0) {
+    if (maps.isNotEmpty) {
       return Word.fromMap(maps.first);
     }
     return null;

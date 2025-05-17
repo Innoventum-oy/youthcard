@@ -27,19 +27,21 @@ class DashBoard extends StatefulWidget {
   final objectmodel.ActivityListProvider provider =
       objectmodel.ActivityListProvider();
 
+  DashBoard({super.key});
+
   @override
   _DashBoardState createState() => _DashBoardState();
 }
 
 class _DashBoardState extends State<DashBoard> {
-  Map<String, LoadingState> _loadingStates = {};
+  final Map<String, LoadingState> _loadingStates = {};
   Map<String, List<Activity>> myActivities = {};
   List<FormCategory> formCategories = [];
   bool _isLoading = false;
   bool _formsLoading = false;
   String? errormessage;
   List activityTypes = ['activity', 'location'];
-  WebPage page = new WebPage();
+  WebPage page = WebPage();
   objectmodel.ImageProvider imageprovider = objectmodel.ImageProvider();
   objectmodel.ActivityListProvider provider =
       objectmodel.ActivityListProvider();
@@ -92,12 +94,12 @@ class _DashBoardState extends State<DashBoard> {
 
     Map<String, dynamic> params = {
       'displayinapp': 'true',
-      'api_key': user != null ? user!.token : null,
+      'api_key': user?.token,
     };
     dynamic result = await objectmodel.FormCategoryProvider().loadItems(params);
 
     if (result.length>0) {
-      this.formCategories =result;
+      formCategories =result;
     }
 
     setState(() {
@@ -124,8 +126,9 @@ class _DashBoardState extends State<DashBoard> {
       'api_key': user.token ?? '',
       'sort': 'nexteventdate',
     };
-    if (type == 'activity')
+    if (type == 'activity') {
       params['startfrom'] = DateFormat('yyyy-MM-dd').format(now);
+    }
     try {
     //  print('checking for user own activities of type ' + type);
       var nextActivities = await widget.provider.loadItems(params);
@@ -139,7 +142,7 @@ class _DashBoardState extends State<DashBoard> {
 
         _isLoading = false;
       });
-    } catch (e, stack) {
+    } catch (e) {
       _isLoading = false;
 
       errormessage = e.toString();
@@ -154,12 +157,12 @@ class _DashBoardState extends State<DashBoard> {
 
     //AuthProvider auth = Provider.of<AuthProvider>(context);
     User user = Provider.of<UserProvider>(context).user;
-    this.page = Provider.of<WebPageProvider>(context).page;
+    page = Provider.of<WebPageProvider>(context).page;
 
-    this.imageprovider = objectmodel.ImageProvider();
+    imageprovider = objectmodel.ImageProvider();
 
     bool hasInfoPage =
-        this.page.id != null && this.page.runtimeType.toString() == 'WebPage'
+        page.id != null && page.runtimeType.toString() == 'WebPage'
             ? true
             : false;
     bool isTester = false;
@@ -173,16 +176,17 @@ class _DashBoardState extends State<DashBoard> {
 
     ImageProvider backgroundImage = AssetImage("images/splash.png");
 
-    if(this.page.data!=null) {
-      if (this.page.data!['thumbnailurl'] != null) {
-        backgroundImage = NetworkImage(this.page.data!['thumbnailurl']);
+    if(page.data!=null) {
+      if (page.data!['thumbnailurl'] != null) {
+        backgroundImage = NetworkImage(page.data!['thumbnailurl']);
       }
 
     }
 
     List<Widget> dashboardButtons = [];
 
-      if (user.token != null) dashboardButtons.add(
+      if (user.token != null) {
+        dashboardButtons.add(
         MaterialButton(
           //padding: EdgeInsets.all(8.0),
           textColor: Colors.white,
@@ -215,16 +219,20 @@ class _DashBoardState extends State<DashBoard> {
           },
 
         ));
-      if (user.token != null) dashboardButtons.add(
+      }
+      if (user.token != null) {
+        dashboardButtons.add(
         dashboardButton(AppLocalizations.of(context)!.qrScanner,
             Icons.qr_code, openQRScanner));
+      }
       dashboardButtons.add(
       dashboardButton(AppLocalizations.of(context)!.calendar,
           Icons.calendar_today, openCalendar));
     dashboardButtons.add(dashboardButton(AppLocalizations.of(context)!.discover,
           Icons.search, openActivityList));
-    if (myActivities['activity']?.isNotEmpty ?? false)
+    if (myActivities['activity']?.isNotEmpty ?? false) {
       dashboardButtons.add(dashboardButton(AppLocalizations.of(context)!.myActivities,Icons.list_alt_outlined,openMyActivities));
+    }
 
     bool hascontent = myActivities['location'] != null
         ? myActivities['location']!.isNotEmpty
@@ -234,7 +242,7 @@ class _DashBoardState extends State<DashBoard> {
           AppLocalizations.of(context)!.locations, Icons.house_outlined,
           openLocationsList));
     }
-    hascontent = formCategories.length > 0;
+    hascontent = formCategories.isNotEmpty;
     if (hascontent) {
       dashboardButtons.add(dashboardButton(AppLocalizations.of(context)!.forms,
           Icons.list_alt, openForms));
@@ -260,7 +268,7 @@ class _DashBoardState extends State<DashBoard> {
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (_) => ContentPageView(widget.viewTitle,
-                        providedPage: this.page),
+                        providedPage: page),
                   ));
                 }),
           if (isTester)
@@ -353,7 +361,7 @@ class _DashBoardState extends State<DashBoard> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => ActivityCalendar(provider, this.imageprovider)),
+          builder: (context) => ActivityCalendar(provider, imageprovider)),
     );
   }
 
@@ -361,7 +369,7 @@ class _DashBoardState extends State<DashBoard> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => CategorisedActivityList(this.imageprovider)),
+          builder: (context) => CategorisedActivityList(imageprovider)),
     );
   }
   void openLocationsList()
@@ -417,14 +425,16 @@ class _DashBoardState extends State<DashBoard> {
 
   void formsLink(user) {
       if(_loadingStates['formcategories'] == LoadingState.LOADING)
-        if (!_formsLoading && user.token != null)
+        if (!_formsLoading && user.token != null) {
           _loadForms(user);
+        }
   }
 
   void myLocationsListLink(user, userprovider, imageprovider) {
     if(_loadingStates['location']==LoadingState.LOADING)
-        if (!_isLoading && user.token != null)
+        if (!_isLoading && user.token != null) {
           _loadMyActivities(user, 'location');
+        }
   }
   void openMyActivities(){
     Navigator.push(
@@ -437,7 +447,8 @@ class _DashBoardState extends State<DashBoard> {
   }
   void myActivitiesListLink(user, userprovider, imageprovider) {
     if(_loadingStates['activity'] ==LoadingState.LOADING)
-        if (!_isLoading && user.token != null)
+        if (!_isLoading && user.token != null) {
           _loadMyActivities(user, 'activity');
+        }
   }
 }

@@ -16,14 +16,14 @@ class Form{
   LoadingStatus loadingStatus = LoadingStatus.Idle;
 
   Form({this.id, this.title, this.description,this.isExpanded =false}){
-    this.elements = [];
+    elements = [];
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': this.id,
-      'title': this.title ??'',
-      'description': this.description ??'',
+      'id': id,
+      'title': title ??'',
+      'description': description ??'',
     };
   }
 

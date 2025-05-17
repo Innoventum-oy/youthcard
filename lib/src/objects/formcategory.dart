@@ -17,9 +17,9 @@ class FormCategory{
 
   Map<String, dynamic> toJson() {
     return {
-      'id': this.id,
-      'name': this.name,
-      'description': this.description,
+      'id': id,
+      'name': name,
+      'description': description,
     };
   }
 

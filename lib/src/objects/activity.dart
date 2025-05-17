@@ -73,7 +73,7 @@ class Activity {
 
       coverpicture = responseData['coverpicture'];
     } else
-      coverpicture = Map<String, dynamic>();
+      coverpicture = <String, dynamic>{};
 
 
     return Activity(

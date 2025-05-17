@@ -15,7 +15,7 @@ class ActivityListItem extends StatelessWidget{
 
   final ApiClient _apiClient = ApiClient();
   final Activity activityItem;
-  ActivityListItem(this.activityItem);
+  ActivityListItem(this.activityItem, {super.key});
 
   int calculateDifference(DateTime date) {
     DateTime now = DateTime.now();
@@ -24,7 +24,7 @@ class ActivityListItem extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     User user = Provider.of<UserProvider>(context).user;
-    String dateinfo = activityItem.nexteventdate==null ? '':(calculateDifference(activityItem.nexteventdate!)!=0 ? DateFormat('kk:mm dd.MM.yyyy').format(activityItem.nexteventdate!) : 'Today '+DateFormat('kk:mm ').format(activityItem.nexteventdate!));
+    String dateinfo = activityItem.nexteventdate==null ? '':(calculateDifference(activityItem.nexteventdate!)!=0 ? DateFormat('kk:mm dd.MM.yyyy').format(activityItem.nexteventdate!) : 'Today ${DateFormat('kk:mm ').format(activityItem.nexteventdate!)}');
     List<Widget> buttons=[];
     buttons.add(ElevatedButton(
       child: Text(AppLocalizations.of(context)!.readMore),
@@ -62,9 +62,9 @@ class ActivityListItem extends StatelessWidget{
       }
     String subtitle= dateinfo ;
     if(activityItem.registration){
-      subtitle+=' ['+(activityItem.registeredvisitorcount!=null ? activityItem.registeredvisitorcount.toString() : '0')+(activityItem.maxvisitors!=null ? '/'+activityItem.maxvisitors.toString() :'') +']';
+      subtitle+=' [${activityItem.registeredvisitorcount!=null ? activityItem.registeredvisitorcount.toString() : '0'}${activityItem.maxvisitors!=null ? '/${activityItem.maxvisitors}' :''}]';
     }
-    if(activityItem.description!=null)subtitle+= '\n'+activityItem.description!;
+    if(activityItem.description!=null)subtitle+= '\n${activityItem.description!}';
     return Center(
       child:
       Card(
@@ -75,7 +75,7 @@ class ActivityListItem extends StatelessWidget{
           children: <Widget>[
              ListTile(
               leading: Icon(Icons.event),
-              title: Text((activityItem.name != null ? activityItem.name: AppLocalizations.of(context)!.unnamedActivity)!),
+              title: Text((activityItem.name ?? AppLocalizations.of(context)!.unnamedActivity)),
               subtitle: Text(subtitle,
                overflow: TextOverflow.ellipsis,
                 maxLines:5),

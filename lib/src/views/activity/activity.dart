@@ -22,7 +22,7 @@ class ActivityView extends StatefulWidget {
   final objectmodel.ActivityListProvider provider;
   final objectmodel.ImageProvider imageprovider;
 
-  ActivityView(this._activity, this.provider, this.imageprovider);
+  const ActivityView(this._activity, this.provider, this.imageprovider, {super.key});
 
   @override
   _ActivityViewState createState() => _ActivityViewState();
@@ -73,7 +73,7 @@ class _ActivityViewState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
-    print('rebuilding activity view: apiclient activity status is '+_apiClient.isProcessing.toString());
+    print('rebuilding activity view: apiclient activity status is ${_apiClient.isProcessing}');
     final user = Provider.of<UserProvider>(context, listen: false).user;
     bool isTester = false;
     if(user.data!=null) {
@@ -140,7 +140,9 @@ class _ActivityViewState extends State<ActivityView> {
       ));
 
 
-    }else print('registration not enabled for activity :'+activity.registration.toString());
+    }else {
+      print('registration not enabled for activity :${activity.registration}');
+    }
     if (activity.accesslevel >= 20) {
       buttons.add(ElevatedButton(
         child: Text(AppLocalizations.of(context)!.qrScanner),
@@ -214,22 +216,20 @@ class _ActivityViewState extends State<ActivityView> {
             showMessage(context, AppLocalizations.of(context)!.activityRegistrationFailed,message);
 
         }
-       print(result.toString()+', apiclient status: '+_apiClient.isProcessing.toString());
+       print('$result, apiclient status: ${_apiClient.isProcessing}');
 
       });
     }
   }
   void _loadDetails(user,{bool reload =false}) async {
-    print('called _loadDetails for activity ' +
-        widget._activity.id.toString() +
-        ', awaiting provider for details!');
+    print('called _loadDetails for activity ${widget._activity.id}, awaiting provider for details!');
     try {
       dynamic details =
           await widget.provider.getDetails(widget._activity.id!, user,reload:reload);
       //print(details.toString());
       // print(details.runtimeType);
 
-      setState(() =>_activityDetails =details!=null ? details : false);
+      setState(() =>_activityDetails =details ?? false);
     } catch (e, stack) {
       print('loadDetails returned error $e\n Stack trace:\n $stack');
       //Notify(e.toString());
@@ -246,7 +246,7 @@ class _ActivityViewState extends State<ActivityView> {
 
         if (activityDateData.isNotEmpty) {
           activityDates.addAll(activityDateData);
-          print(activityDates.length.toString() + ' activity dates loaded');
+          print('${activityDates.length} activity dates loaded');
         } else {
           print('no more activities were found');
         }
@@ -264,8 +264,7 @@ class _ActivityViewState extends State<ActivityView> {
         : (calculateDifference(date.startdate!) != 0
         ? DateFormat('kk:mm dd.MM.yyyy')
         .format(date.startdate!)
-        : 'Today ' +
-        DateFormat('kk:mm ').format(date.startdate!));
+        : 'Today ${DateFormat('kk:mm ').format(date.startdate!)}');
     return Center(
         child: Card(
             child: InkWell(
@@ -310,7 +309,7 @@ class _ActivityViewState extends State<ActivityView> {
         ? ''
         : (calculateDifference(activity.nexteventdate!) != 0
             ? DateFormat('kk:mm dd.MM.yyyy').format(activity.nexteventdate!)
-            : 'Today ' + DateFormat('kk:mm ').format(activity.nexteventdate!));
+            : 'Today ${DateFormat('kk:mm ').format(activity.nexteventdate!)}');
     double dateSectionHeight = activityDates.length*80;
     if(dateSectionHeight > 400) dateSectionHeight = 400;
     List<Widget> slivers = [
@@ -351,7 +350,7 @@ class _ActivityViewState extends State<ActivityView> {
       ),
     ];
 
-    if(activity.accesslevel >=20)
+    if(activity.accesslevel >=20) {
       slivers.add(
         Container(
           height: dateSectionHeight,
@@ -381,6 +380,7 @@ class _ActivityViewState extends State<ActivityView> {
         ),
 
       );
+    }
 
     slivers.add(Container(
       decoration: BoxDecoration(color: primaryDark),

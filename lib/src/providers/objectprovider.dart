@@ -19,8 +19,8 @@ import 'dart:convert';
 import 'package:youth_card/src/util/shared_preference.dart';
 
 abstract class ObjectProvider with ChangeNotifier {
-  User _user = new User();
-  ApiClient _apiClient = ApiClient();
+  User _user = User();
+  final ApiClient _apiClient = ApiClient();
 
   bool setUser(User user) {
 
@@ -94,21 +94,21 @@ class ActivityVisitListProvider extends ObjectProvider {
 
   Future<List<ActivityVisit>?> loadActivityVisits(Activity activity,{loadParams}) async
   {
-    this._data?.clear();
+    _data?.clear();
 
     DateTime now = DateTime.now();
     final Map<String, String> params = {
       'fields' :'id,startdate,enddate,userid,activityid,user,visitstatus,comment,interested,registered,cancelled',
       'activityid': activity.id.toString(),
-      'api_key': this.user.token ?? await Settings().getValue("anonymousapikey"),
+      'api_key': user.token ?? await Settings().getValue("anonymousapikey"),
       'sort' : 'startdate DESC',
       'startdateFrom':  (loadParams['startdate'] ?? DateFormat('yyyy-MM-dd').format(now))
     };
     if(loadParams['enddate']!=null) params['startdateTo'] =loadParams['enddate'];
-    this._data = await _apiClient.loadActivityVisits(params);
+    _data = await _apiClient.loadActivityVisits(params);
 
     notifyListeners();
-    return this._data ;
+    return _data ;
   }
 
 }
@@ -134,11 +134,11 @@ class ActivityListProvider extends ObjectProvider {
     final Map<String, String> params = {
       'accesslevel':'modify',
       'activitystatus': 'active',
-      'api_key': this.user.token ?? await Settings().getValue("anonymousapikey"),
+      'api_key': user.token ?? await Settings().getValue("anonymousapikey"),
       'gte:startdate': DateFormat('yyyy-MM-dd').format(now),
       'grouping':'activity.id'
     };
-     this._data = await this.loadItems(params,refresh:true);
+     _data = await loadItems(params,refresh:true);
   }
 
 
@@ -162,7 +162,7 @@ class ActivityListProvider extends ObjectProvider {
 
           }
 
-      this._data = activities;
+      _data = activities;
       return activities;
       }
 
@@ -199,7 +199,7 @@ class ActivityListProvider extends ObjectProvider {
 
    if(!reload) {
      final activitydata = await getFileStorage().read(
-         "activity_" + activityId.toString() + "_user_" + user.id.toString(),
+         "activity_${activityId}_user_${user.id}",
          expiration: 30);
      if (activitydata != false) {
 
@@ -209,7 +209,7 @@ class ActivityListProvider extends ObjectProvider {
 
    final remoteactivitydata = await _apiClient.getActivityDetails(activityId, user);
 
-    getFileStorage().write(remoteactivitydata,"activity_" + activityId.toString() + "_user_"+user.id.toString());
+    getFileStorage().write(remoteactivitydata,"activity_${activityId}_user_${user.id}");
     return remoteactivitydata;
 
   }
@@ -217,7 +217,8 @@ class ActivityListProvider extends ObjectProvider {
 
 class ActivityClassProvider extends ObjectProvider {
   ActivityClassProvider();
-  ApiClient _apiClient = ApiClient();
+  @override
+  final ApiClient _apiClient = ApiClient();
 
   @override
   Future<List<ActivityClass>> loadItems(params) async {
@@ -235,7 +236,8 @@ class ActivityClassProvider extends ObjectProvider {
 }
 class FormProvider extends ObjectProvider {
   FormProvider();
-  ApiClient _apiClient = ApiClient();
+  @override
+  final ApiClient _apiClient = ApiClient();
 
   @override
   Future<List<iCMSForm.Form>> loadItems(params) async {
@@ -255,7 +257,8 @@ class FormProvider extends ObjectProvider {
 
 class FormCategoryProvider extends ObjectProvider {
   FormCategoryProvider();
-  ApiClient _apiClient = ApiClient();
+  @override
+  final ApiClient _apiClient = ApiClient();
 
   @override
   Future<List<FormCategory>> loadItems(params) async {
@@ -271,7 +274,8 @@ class FormCategoryProvider extends ObjectProvider {
 }
 class FormElementProvider extends ObjectProvider {
   FormElementProvider();
-  ApiClient _apiClient = ApiClient();
+  @override
+  final ApiClient _apiClient = ApiClient();
 
   @override
   Future<List<FormElement>> loadItems(params) async {

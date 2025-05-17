@@ -3,6 +3,8 @@ import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
 class EventLogView extends StatefulWidget {
   final String viewTitle = 'eventlog';
+
+  const EventLogView({super.key});
   @override
   _EventLogViewState createState() => _EventLogViewState();
 }
@@ -11,9 +13,9 @@ class _EventLogViewState extends State<EventLogView> {
   @override
   Widget build(BuildContext context) {
     Future<List<String>?> getEventLog() => EventLog().getMessages();
-    return new Scaffold(
-      appBar: new AppBar(
-          title: new Text(AppLocalizations.of(context)!.eventLog)),
+    return Scaffold(
+      appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.eventLog)),
       body: FutureBuilder(
         initialData: [],
           future: getEventLog(),
@@ -29,9 +31,11 @@ class _EventLogViewState extends State<EventLogView> {
                 );
               });
             }
-            else return ListTile(
+            else {
+              return ListTile(
               title: Text(AppLocalizations.of(context)!.logIsEmpty),
             );
+            }
           }
       ),
     );

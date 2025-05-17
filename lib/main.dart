@@ -30,6 +30,8 @@ class NavigationService {
   GlobalKey<NavigatorState>();
 }
 class YouthCard extends StatelessWidget {
+  const YouthCard({super.key});
+
   // This widget is the root of Youth Card application.
   @override
   Widget build(BuildContext context) {
@@ -63,8 +65,7 @@ class YouthCard extends StatelessWidget {
           home: FutureBuilder(
               future: UserPreferences().getUser(),
               builder: (context, snapshot) {
-                print('main.dart, snapshot connectionstate:' +
-                    snapshot.connectionState.toString());
+                print('main.dart, snapshot connectionstate:${snapshot.connectionState}');
                 switch (snapshot.connectionState) {
 
                   case ConnectionState.none:
@@ -78,9 +79,11 @@ class YouthCard extends StatelessWidget {
                     if(snapshot.hasData)
                     {
                       User userdata = snapshot.data as User;
-                      if(snapshot.data == null)
+                      if(snapshot.data == null) {
                         print("Snapshot.data was null");
-                      else print("snapshot data was not null");
+                      } else {
+                        print("snapshot data was not null");
+                      }
                       if (userdata.token != null)
                       {
                         print('setting userdata to userprovider');
@@ -88,7 +91,9 @@ class YouthCard extends StatelessWidget {
                         return DashBoard();
                       }
                     }
-                    else print("Snapshot has no data. User remains empty.");
+                    else {
+                      print("Snapshot has no data. User remains empty.");
+                    }
 
                     if (snapshot.hasError) {
                       print('snapshot has error');

@@ -47,7 +47,7 @@ String formatRuntime(int runtime) {
   int hours = runtime ~/ 60;
   int minutes = runtime % 60;
 
-  return '$hours\h $minutes\m';
+  return '${hours}h ${minutes}m';
 }
 
 
@@ -72,7 +72,7 @@ Future<void> feedbackAction(BuildContext context, User user) async {
 
     });
 
-  final ApiClient _apiClient = ApiClient();
+  final ApiClient apiClient = ApiClient();
   BetterFeedback.of(context).show((UserFeedback feedback) async{
           Map<String,dynamic> params={
             'method' :'json',
@@ -88,12 +88,12 @@ Future<void> feedbackAction(BuildContext context, User user) async {
             'objectid' :'create',
             'data_email' : user.email,
             'data_phone' :user.phone,
-            'data_sender' : user.lastname!+' '+user.firstname!,
-            'data_subject':appName+' '+version+' '+AppLocalizations.of(context)!.feedback,
+            'data_sender' : '${user.lastname!} ${user.firstname!}',
+            'data_subject':'$appName $version ${AppLocalizations.of(context)!.feedback}',
             'data_content': feedback.text,
             'file_file': screenshotFile
           };
-          _apiClient.sendFeedback(params,data)!.then((var response) async {
+          apiClient.sendFeedback(params,data)!.then((var response) async {
             switch (response['status']) {
               case 'success':
                 showDialog<String>(
@@ -111,8 +111,9 @@ Future<void> feedbackAction(BuildContext context, User user) async {
                     )
                 );
             }
-            if(response['error']!=null)
+            if(response['error']!=null) {
               handleNotifications([response['error']], context);
+            }
           });
         });
       }
@@ -167,9 +168,9 @@ MaterialColor createMaterialColor(hexcode) {
   for (int i = 1; i < 10; i++) {
     strengths.add(0.1 * i);
   }
-  strengths.forEach((strength) {
+  for (var strength in strengths) {
     swatch[(strength * 1000).round()] =  sourceColor  ;
 
-  });
+  }
   return MaterialColor(sourceColor.value, swatch);
 }

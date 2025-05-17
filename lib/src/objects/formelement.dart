@@ -27,16 +27,16 @@ class FormElement{
 
   Map<String, dynamic> toMap() {
     return {
-      'id': this.id,
-      'tab': this.tab,
-      'position': this.position,
-      'type': this.type,
-      'title': this.title,
-      'required': this.required,
-      'help': this.help,
-      'description': this.description,
+      'id': id,
+      'tab': tab,
+      'position': position,
+      'type': type,
+      'title': title,
+      'required': required,
+      'help': help,
+      'description': description,
       //'answer': this.answer,
-      'notecount': this.notecount,
+      'notecount': notecount,
 
     };
   }
@@ -55,9 +55,8 @@ class FormElement{
       description: map['description']!=null ? map['description'] as String:null,
       // answer:map['answer']!=null ? map['answer'] as String: null,
       notecount:  map['notecount'] is int ? map['notecount'] :int.parse(map['notecount']),
-      data : map['data']!=null ? map['data']
-          .map<FormElementData>((data) => FormElementData.fromJson(data))
-          .toList() : null,
+      data : map['data']?.map<FormElementData>((data) => FormElementData.fromJson(data))
+          .toList(),
     );
   }
 }
@@ -73,11 +72,11 @@ class FormElementData{
 
   Map<String, dynamic> toJson() {
     return {
-      'id': this.id,
-      'score': this.score,
-      'value': this.value,
-      'imageurl': this.imageurl,
-      'position': this.position,
+      'id': id,
+      'score': score,
+      'value': value,
+      'imageurl': imageurl,
+      'position': position,
     };
   }
 

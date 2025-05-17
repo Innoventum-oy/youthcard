@@ -34,16 +34,16 @@ class UserPreferences {
   final filename = "local_user";
 
   Future<bool> saveUser(User user) async {
-    return getFileStorage().write(user, this.filename);
+    return getFileStorage().write(user, filename);
   }
 
   Future<User> getUser() async {
-    final userdata = await getFileStorage().read(this.filename);
+    final userdata = await getFileStorage().read(filename);
     return(userdata!=false ? User.fromJson(userdata) : User());
     }
 
   void removeUser() async {
-    getFileStorage().delete(this.filename);
+    getFileStorage().delete(filename);
 
   }
   Future<String> getToken(args) async {
@@ -79,10 +79,10 @@ class Settings{
   }
   Future<String> getServerName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? server = prefs.getString('servername') ?? null;
+    String? server = prefs.getString('servername');
     if(server==null) {
     //?? AppUrl.servers.keys.first ;
-      String language = await this.getLanguage();
+      String language = await getLanguage();
       language = language.split('_')[0];
       if(AppUrl.serverToLanguageMapping.containsKey(language)) {
         server = AppUrl.serverToLanguageMapping[language] ??

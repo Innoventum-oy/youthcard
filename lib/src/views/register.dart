@@ -27,7 +27,7 @@ class Register extends StatefulWidget {
 }
 
 class RegisterState extends State<Register> {
-  final formKey = new GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
   final ApiClient _apiClient = ApiClient();
   String? _firstname,
       _lastname,
@@ -43,10 +43,10 @@ class RegisterState extends State<Register> {
 
   ContactMethod selectedContactMethod = ContactMethod.Phone;
   Map<String,TextEditingController> controllers = {
-  'lastname' : new TextEditingController(),
-  'firstname': new TextEditingController(),
-  'email' : new TextEditingController(),
-  'phone' : new TextEditingController(),
+  'lastname' : TextEditingController(),
+  'firstname': TextEditingController(),
+  'email' : TextEditingController(),
+  'phone' : TextEditingController(),
   'code': TextEditingController(), ''
    'password': TextEditingController(),
   'guadianname': TextEditingController(),
@@ -55,7 +55,7 @@ class RegisterState extends State<Register> {
 
  List<Widget> formButtons(auth)
   {
-    var doRegister = () {
+    void doRegister() {
       final form = formKey.currentState;
       if(_savingInfoAccepted!=true){
         Flushbar(
@@ -122,40 +122,40 @@ class RegisterState extends State<Register> {
         ).show(context);
       }
 
-    };
+    }
     String? validateName(String? value) {
-      String? _msg;
+      String? msg0;
 
       if (value!.isEmpty) {
-        _msg = AppLocalizations.of(context)!.pleaseProvideYourName;
+        msg0 = AppLocalizations.of(context)!.pleaseProvideYourName;
       }
-      return _msg;
+      return msg0;
     }
     String? validatePhone(String? value)
     {
 
-      String? _msg;
+      String? msg0;
       if(value!.isEmpty) return AppLocalizations.of(context)!.pleaseEnterPhonenumber;
 
       //test for phone number pattern
       String pattern = r'(^(?:[+0])?[0-9]{8,12}$)';
-      RegExp regExp = new RegExp(pattern);
+      RegExp regExp = RegExp(pattern);
       if (!regExp.hasMatch(value)) {
-        _msg = AppLocalizations.of(context)!.pleaseProvideValidPhonenumber;
+        msg0 = AppLocalizations.of(context)!.pleaseProvideValidPhonenumber;
       }
-      return _msg;
+      return msg0;
     }
 
     String? validateEmail(String? value) {
-      String? _msg;
-      RegExp regex = new RegExp(
+      String? msg0;
+      RegExp regex = RegExp(
           r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
       if (value!.isEmpty) {
-        _msg = AppLocalizations.of(context)!.pleaseProvideValidEmail;
+        msg0 = AppLocalizations.of(context)!.pleaseProvideValidEmail;
       } else if (!regex.hasMatch(value)) {
-        _msg = AppLocalizations.of(context)!.pleaseProvideValidEmail;
+        msg0 = AppLocalizations.of(context)!.pleaseProvideValidEmail;
       }
-      return _msg;
+      return msg0;
     }
     String? validateGuardianPhone(String? value) {
       String? msg;
@@ -235,7 +235,7 @@ class RegisterState extends State<Register> {
     final confirmPasswordField = TextFormField(
       autofocus: false,
       validator: (value) { if(value != _password) {
-        print(value.toString()+' != '+_password.toString());
+        print('$value != $_password');
         return AppLocalizations.of(context)!.passwordsDontMatch;
       }
       if(value!.isEmpty)  return AppLocalizations.of(context)!.passwordIsRequired;
@@ -504,7 +504,7 @@ class RadioGroupWidget extends State<AgeSelectDisplay> {
               });
             },
           ))
-          .toList(),
+          ,
     ]);
   }
 }

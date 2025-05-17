@@ -15,8 +15,8 @@ class CategorisedActivityList extends StatefulWidget {
   final objectmodel.ImageProvider imageProvider;
   final String viewType;
 
-  CategorisedActivityList( this.imageProvider,
-      {this.viewType = 'all'});
+  const CategorisedActivityList( this.imageProvider,
+      {super.key, this.viewType = 'all'});
 
   @override
   _CategorisedActivityListState createState() =>
@@ -57,7 +57,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
 
       'sort': 'name',
     };
-    print("categorised activitylist viewtype: " + widget.viewType);
+    print("categorised activitylist viewtype: ${widget.viewType}");
 
     objectmodel.ActivityClassProvider activityClassProvider = objectmodel
         .ActivityClassProvider();
@@ -69,7 +69,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
       setState(() {
         _loadingState = LoadingState.DONE;
         data.addAll(activityCategories);
-        print(data.length.toString() + ' activitycategories currently loaded!');
+        print('${data.length} activitycategories currently loaded!');
         if(activityCategories.length >= limit) {
           _isLoading = false;
           _pageNumber++;
@@ -96,6 +96,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
     super.initState();
   }
 
+  @override
   @protected
   @mustCallSuper
   void dispose() {
@@ -117,10 +118,10 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
       }
     }
 
-    return new Scaffold(
+    return Scaffold(
       backgroundColor: primary,
-      appBar: new AppBar(
-          title: new Text(AppLocalizations.of(context)!.activities),
+      appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.activities),
           actions: [
             if(isTester) IconButton(
                 icon: Icon(Icons.bug_report),
@@ -148,7 +149,7 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
     switch (_loadingState) {
       case LoadingState.DONE:
       //data loaded
-      print('data loaded, returning customscrollview for '+data.length.toString()+' categories');
+      print('data loaded, returning customscrollview for ${data.length} categories');
         return data.isEmpty ? Container(
             padding: EdgeInsets.all(20),
             child:
@@ -167,8 +168,11 @@ class _CategorisedActivityListState extends State<CategorisedActivityList> {
 
                 _loadNextPage(user);
               }
-             if(data.isNotEmpty) return activityClassView(data[index]);
-             else return Container();
+             if(data.isNotEmpty) {
+               return activityClassView(data[index]);
+             } else {
+               return Container();
+             }
             },
             childCount: data.length))]
             );

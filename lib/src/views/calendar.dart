@@ -18,7 +18,7 @@ class ActivityCalendar extends StatefulWidget {
   final objectmodel.ActivityListProvider provider;
   final objectmodel.ImageProvider imageprovider;
 
-  ActivityCalendar(this.provider,this.imageprovider);
+  const ActivityCalendar(this.provider,this.imageprovider, {super.key});
 
   @override
   _ActivityCalendarState createState() => _ActivityCalendarState();
@@ -27,7 +27,7 @@ class ActivityCalendar extends StatefulWidget {
 class _ActivityCalendarState extends State<ActivityCalendar> with TickerProviderStateMixin {
 
   List<Activity> data = [];
-  Map<DateTime, List<Activity>> _events = {};
+  final Map<DateTime, List<Activity>> _events = {};
 
   ValueNotifier<List<Activity>> _selectedEvents = ValueNotifier([]);
 
@@ -104,7 +104,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
         //_isLoading = false;
         _pageNumber++;
       });
-    } catch (e, stack) {
+    } catch (e) {
 
       errormessage = e.toString();
       if (_loadingState == LoadingState.LOADING) {
@@ -176,9 +176,9 @@ class _ActivityCalendarState extends State<ActivityCalendar> with TickerProvider
         if (user.data!['istester'] == 'true') isTester = true;
       }
     }
-    return new Scaffold(
-        appBar: new AppBar(
-            title: new Text(AppLocalizations.of(context)!.activityCalendar),
+    return Scaffold(
+        appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.activityCalendar),
             actions: [
             if(isTester) IconButton(
         icon: Icon(Icons.bug_report),

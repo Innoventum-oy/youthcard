@@ -3,6 +3,8 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
 class LanguagesScreen extends StatefulWidget {
+  const LanguagesScreen({super.key});
+
   @override
   _LanguagesScreenState createState() => _LanguagesScreenState();
 }

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class BottomGradient extends StatelessWidget {
   final double offset;
 
-  BottomGradient({this.offset = 0.95});
+  const BottomGradient({super.key, this.offset = 0.95});
 
-  BottomGradient.noOffset() : offset = 1.0;
+  const BottomGradient.noOffset({super.key}) : offset = 1.0;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +29,8 @@ class TextBubble extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
 
-  TextBubble(this.text,
-      {this.backgroundColor = const Color(0xFF424242),
+  const TextBubble(this.text,
+      {super.key, this.backgroundColor = const Color(0xFF424242),
         this.textColor = Colors.white});
 
   @override

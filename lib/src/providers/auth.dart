@@ -74,7 +74,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> login(String email, String password,{String? server}) async {
-    var result;
+    Map<String, dynamic> result;
 
     String baseUrl = server ?? await Settings().getServer();
     final Map<String, dynamic> loginData = {
@@ -140,7 +140,7 @@ class AuthProvider with ChangeNotifier {
        // print(responseData);
        // User authUser = User.fromJson(responseData);
       }*/
-      this.setRegisteredStatus( Status.NotRegistered );
+      setRegisteredStatus( Status.NotRegistered );
       UserPreferences().removeUser();
 
       _loggedInStatus = Status.NotLoggedIn;
@@ -170,7 +170,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   static Future<FutureOr> onValue(Response response) async {
-    var result;
+    Map<String, Object> result;
     final Map<String, dynamic> responseData = json.decode(response.body);
 
     //print(response.statusCode);

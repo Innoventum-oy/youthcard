@@ -18,7 +18,7 @@ class ActivityParticipantList extends StatefulWidget {
   final Activity _activity;
   final objectmodel.ActivityListProvider activityProvider;
 
-  ActivityParticipantList(this._activityDate,this._activity, this.activityProvider);
+  const ActivityParticipantList(this._activityDate,this._activity, this.activityProvider, {super.key});
 
   @override
   _ActivityParticipantListState createState() =>
@@ -50,7 +50,7 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
         userListLoaded = true;
         if (activityUserData.isNotEmpty) {
           users.addAll(activityUserData);
-          print(activityUserData.length.toString() + ' users loaded');
+          print('${activityUserData.length} users loaded');
           _loadActivityVisits(widget._activity.id!,widget._activityDate,user);
         } else {
           print('no users found for activity');
@@ -64,13 +64,13 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
   }
   void _loadActivityVisits(activity,activitydate,user) async {
     try {
-      this.activityVisitData =
+      activityVisitData =
       await widget.activityProvider.getActivityDateVisits(widget._activity.id!,activitydate,user);
 
       setState(() {
         visitListLoaded = true;
-        if (this.activityVisitData.isNotEmpty) {
-          print(this.activityVisitData.length.toString() + ' visits loaded');
+        if (activityVisitData.isNotEmpty) {
+          print('${activityVisitData.length} visits loaded');
         } else {
           print('no visit information found for activity');
         }
@@ -96,10 +96,10 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
 
   @override
   Widget build(BuildContext context) {
-    var titleDateFormat = new DateFormat('dd.MM hh:mm');
-    return new Scaffold(
-        appBar: new AppBar(
-          title: new Text(AppLocalizations.of(context)!.participants+ ' '+(widget._activityDate.startdate !=null ? titleDateFormat.format(widget._activityDate.startdate ?? DateTime.now()).toString() : ''))
+    var titleDateFormat = DateFormat('dd.MM hh:mm');
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('${AppLocalizations.of(context)!.participants} ${widget._activityDate.startdate !=null ? titleDateFormat.format(widget._activityDate.startdate ?? DateTime.now()).toString() : ''}')
         ),
         body: userListLoaded ? userList() : Center(child:CircularProgressIndicator(),
         ),
@@ -109,7 +109,7 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
   Widget userList()
   {
     final loggedInUser = Provider.of<UserProvider>(context, listen: false).user;
-    if(users.isEmpty)
+    if(users.isEmpty) {
       return Align(
           alignment: Alignment.center,
           child:Row(
@@ -120,6 +120,7 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
               Text(AppLocalizations.of(context)!.noUsersFound,textAlign:TextAlign.center,)
           ]),
       );
+    }
     return ListView.builder(
         itemBuilder: (context,index){
           User user = users[index];
@@ -127,7 +128,7 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
       return SwitchListTile(
       //  isThreeLine: true,
         value: activityVisitData[user.id.toString()]=='visited' ?true:false,
-        title: Text(user.firstname!+' '+user.lastname!),
+        title: Text('${user.firstname!} ${user.lastname!}'),
        // subtitle:
         secondary: InkWell(
             child: CircleAvatar(
@@ -150,7 +151,7 @@ class _ActivityParticipantListState extends State<ActivityParticipantList> {
             Map<String,dynamic> result = await _apiClient.updateActivityRegistration(activityId:widget._activity.id!,visitStatus:value ? 'visited':'cancelled',visitor: user,user:loggedInUser,visitDate:widget._activityDate) ;
             setState(() {
             if(result['visitstatus']!=null) {
-              print('updatevisit returned visitstatus '+result['visitstatus'].toString()+' for user '+result['userid']);
+              print('updatevisit returned visitstatus ${result['visitstatus']} for user '+result['userid']);
               activityVisitData[result['userid']] = result['visitstatus'];
               print(activityVisitData);
             }

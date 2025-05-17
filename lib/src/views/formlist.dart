@@ -22,7 +22,7 @@ class FormList extends StatefulWidget {
   objectModel.FormProvider();
 
 
-  FormList();
+  FormList({super.key});
 
   @override
   _FormListState createState() => _FormListState();
@@ -48,11 +48,12 @@ class _FormListState extends State<FormList> {
   @override
   void initState(){
 
-    this.loadFormCategories();
+    loadFormCategories();
     WidgetsBinding.instance.addPostFrameCallback((_) {
 
-      if(!categoriesLoaded)
-        this.loadFormCategories();
+      if(!categoriesLoaded) {
+        loadFormCategories();
+      }
     });
     super.initState();
   }
@@ -88,18 +89,18 @@ class _FormListState extends State<FormList> {
 
     Map<String,dynamic> params={
       'displayinapp' : 'true',
-      'api_key': this.user!=null ? this.user!.token :null,
+      'api_key': user?.token,
     };
     dynamic result = await widget.formCategoryProvider.loadItems(params);
 
     if(result!=null) {
-      this.categories = result;
+      categories = result;
     }
     categoriesLoaded = true;
-    if(this.categories.isNotEmpty)
+    if(categories.isNotEmpty)
     {
       print(result.toString());
-      for(iCMSFormCategory.FormCategory c in this.categories) {
+      for(iCMSFormCategory.FormCategory c in categories) {
         print(c.toString());
         setState(() {
           loadForms(c);
@@ -116,7 +117,7 @@ class _FormListState extends State<FormList> {
   Widget build(BuildContext context) {
     print('rebuilding Tasklist view');
     categoryWidgets.clear();
-    this.user = Provider.of<UserProvider>(context).user;
+    user = Provider.of<UserProvider>(context).user;
     for(iCMSFormCategory.FormCategory c in categories) {
       categoryWidgets.add(Padding(
         padding: const EdgeInsets.all(10.0),
@@ -137,9 +138,9 @@ class _FormListState extends State<FormList> {
     );
 
     bool isTester = false;
-    if(this.user!.data!=null) {
-      if (this.user!.data!['istester'] != null) {
-        if (this.user!.data!['istester'] == 'true') isTester = true;
+    if(user!.data!=null) {
+      if (user!.data!['istester'] != null) {
+        if (user!.data!['istester'] == 'true') isTester = true;
       }
     }
     return Scaffold(
@@ -149,7 +150,7 @@ class _FormListState extends State<FormList> {
             actions: [
               if(isTester) IconButton(
                   icon: Icon(Icons.bug_report),
-                  onPressed:(){feedbackAction(context,this.user!); }
+                  onPressed:(){feedbackAction(context,user!); }
               ),
             ]
         ),
@@ -224,7 +225,7 @@ class _FormListState extends State<FormList> {
   }
 
   Widget _getTasks(formCategory,user) {
-    print('getTasks called for formCategory '+formCategory.name.toString()+' having '+formCategory.forms.length.toString()+' items and loadingStatus '+formCategory.loadingStatus.toString());
+    print('getTasks called for formCategory ${formCategory.name} having ${formCategory.forms.length} items and loadingStatus ${formCategory.loadingStatus}');
 
 
     switch (formCategory.loadingStatus) {
@@ -232,7 +233,7 @@ class _FormListState extends State<FormList> {
 
       //data loaded
       // List<iCMSForm.Form> tasks = formCategory.forms;
-        if(formCategory.forms.isEmpty)
+        if(formCategory.forms.isEmpty) {
           return Align(alignment:Alignment.center,
             child:Center(
               child:ListTile(
@@ -241,6 +242,7 @@ class _FormListState extends State<FormList> {
               ),
             ),
           );
+        }
 
 
 

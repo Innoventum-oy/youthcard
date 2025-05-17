@@ -22,7 +22,7 @@ class MyCard extends StatefulWidget {
   final objectmodel.UserBenefitProvider userBenefitProvider =
       objectmodel.UserBenefitProvider();
 
-  MyCard({this.user});
+  MyCard({super.key, this.user});
 
   @override
   _MyCardState createState() => _MyCardState();
@@ -39,7 +39,7 @@ class _MyCardState extends State<MyCard> {
   Map<String,dynamic> fields = {};
 
   String? errormessage;
-  User user = new User();
+  User user = User();
 
   /// Returns available fields information from server
   _getFields() async{
@@ -52,7 +52,7 @@ class _MyCardState extends State<MyCard> {
     setState(() {
 
       if(fielddata!=null) {
-        this.fields = fielddata;
+        fields = fielddata;
       }
 
       fieldsLoaded = true;
@@ -72,7 +72,7 @@ class _MyCardState extends State<MyCard> {
     dynamic userdata = await provider.getObject(targetId, Provider.of<UserProvider>(context, listen: false).user);
     setState(() {
       if(userdata!=null) {
-        this.user = User.fromJson(userdata['data'].first['data'],description:userdata['description']);
+        user = User.fromJson(userdata['data'].first['data'],description:userdata['description']);
       }
       userLoaded = true;
       _benefitsLoadingState = LoadingState.DONE;
@@ -104,7 +104,7 @@ class _MyCardState extends State<MyCard> {
        // print(result.length.toString() + ' benefits currently loaded!');
         //_isLoading = false;
       });
-    } catch (e, stack) {
+    } catch (e) {
 
       errormessage = e.toString();
       if (_benefitsLoadingState == LoadingState.LOADING) {
@@ -115,7 +115,7 @@ class _MyCardState extends State<MyCard> {
 
   @override
   void initState() {
-    this.user =widget.user ?? Provider.of<UserProvider>(context, listen: false).user;
+    user =widget.user ?? Provider.of<UserProvider>(context, listen: false).user;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
 
       if(widget.user==null) {
@@ -123,7 +123,7 @@ class _MyCardState extends State<MyCard> {
         _loadBenefits(user);
       }
       else {
-        this.user = widget.user as User;
+        user = widget.user as User;
        _getUserInfo();
       }
       _getFields();
@@ -165,12 +165,12 @@ class _MyCardState extends State<MyCard> {
           if(user.email!=null) TextButton(
 
             onPressed:(){
-              launchUrlString("mailto:"+(user.email??''));
+              launchUrlString("mailto:${user.email??''}");
 
             },
             child:
             SingleChildScrollView(
-              child:Container(
+              child:SizedBox(
                 height: 30,
                 child:Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,9 +187,9 @@ class _MyCardState extends State<MyCard> {
           ),
           TextButton(
             onPressed:(){
-              launchUrlString("tel:"+(user.phone??''));
+              launchUrlString("tel:${user.phone??''}");
             },
-            child: Container(
+            child: SizedBox(
               height: 25,
               child: Row(
                   children:[
@@ -204,12 +204,12 @@ class _MyCardState extends State<MyCard> {
               onPressed:(){
                 launchUrlString("tel:"+(user.data!['huoltajan_puhelinnumero']??''));
               },
-              child: Container(
+              child: SizedBox(
                 height: 25,
                 child: Row(
                     children:[
                       Icon(Icons.phone_android),
-                      Text(AppLocalizations.of(context)!.guardianPhone+': '+user.data!['huoltajan_puhelinnumero'])
+                      Text('${AppLocalizations.of(context)!.guardianPhone}: '+user.data!['huoltajan_puhelinnumero'])
                     ]
                 ),
               ),
@@ -251,7 +251,7 @@ class _MyCardState extends State<MyCard> {
                 : Container()),
         SizedBox(height: 20),
         Center(child: _loggedInView(context, user)),
-        ...this.contactItems,
+        ...contactItems,
         SizedBox(height: 20),
        // Text('Access:'+user.accesslevel.toString()),
         Row(
@@ -306,9 +306,10 @@ class _MyCardState extends State<MyCard> {
     nameparts.add(user.lastname ?? 'Doe');
 
     String username = nameparts.join(' ');
-    var avatarImage;
-    if(user.data!=null && user.data!['userimageurl'] != null && user.data!['userimageurl']!.isNotEmpty) avatarImage = NetworkImage(user.data!['userimageurl']);
-    else if(user.image != null && user.image!.isNotEmpty) avatarImage = NetworkImage(user.image);
+    ImageProvider<Object> avatarImage;
+    if(user.data!=null && user.data!['userimageurl'] != null && user.data!['userimageurl']!.isNotEmpty) {
+      avatarImage = NetworkImage(user.data!['userimageurl']);
+    } else if(user.image != null && user.image!.isNotEmpty) avatarImage = NetworkImage(user.image);
     else avatarImage =Image.asset('images/profile.png').image ;
     return Padding(
       padding: EdgeInsets.only(left: 20, right: 20),
@@ -353,8 +354,9 @@ class _MyCardState extends State<MyCard> {
   List<Widget> _userInfoFields(user)
   {
     List<Widget> widgets = [];
-    if(!(userLoaded && fieldsLoaded )) widgets.add(loader(context));
-    else if(this.fields.length>0 )
+    if(!(userLoaded && fieldsLoaded )) {
+      widgets.add(loader(context));
+    } else if(fields.isNotEmpty )
     {
       Map<String,dynamic> userdata = this.user.toMap();
       Map<String,dynamic> fields = this.fields; // targetUser.description ?? {};
@@ -369,7 +371,7 @@ class _MyCardState extends State<MyCard> {
           //print('user data includes '+name+' with value '+user.data![name].toString());
           value = user.data![name];
         }
-        if(value==null) value = '-';
+        value ??= '-';
        // if(value != null) {
 
           widgets.add(
@@ -405,7 +407,7 @@ class _MyCardState extends State<MyCard> {
       case LoadingState.DONE:
         //data loaded
 
-        return Container(
+        return SizedBox(
            height:50,
           child:Padding(
             padding: EdgeInsets.only(left: 20, right: 20),

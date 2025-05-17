@@ -8,19 +8,21 @@ import 'package:provider/provider.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
 
 class ResetPassword extends StatefulWidget {
+  const ResetPassword({super.key});
+
   @override
   _ResetPasswordState createState() => _ResetPasswordState();
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
-  final formKey = new GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   String? _contact, _confirmkey,_password;
 
-  ApiClient _apiClient = ApiClient();
+  final ApiClient _apiClient = ApiClient();
   Widget getConfirmationKeyForm(auth) {
-    final _contactController = TextEditingController();
-    var getVerificationCode = () {
+    final contactController = TextEditingController();
+    void getVerificationCode() {
       final form = formKey.currentState;
 
       if (form!.validate()) {
@@ -34,7 +36,7 @@ class _ResetPasswordState extends State<ResetPassword> {
             setState(() {
               auth.setContactMethodId(response['contactmethodid']);
              if(response['userid']!=null) auth.setUserId(response['userid']);
-              print('contact method id set to '+response['contactmethodid'].toString());
+              print('contact method id set to ${response['contactmethodid']}');
               auth.setVerificationStatus(VerificationStatus.CodeReceived);
             });
 
@@ -49,7 +51,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       } else {
         print("form is invalid");
       }
-    };
+    }
 
     var loading = Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -60,7 +62,7 @@ class _ResetPasswordState extends State<ResetPassword> {
     );
 
     final contactField = TextFormField(
-      controller: _contactController,
+      controller: contactController,
       autofocus: false,
       validator: validateContact,
       onSaved: (value) => _contact = value,
@@ -89,8 +91,8 @@ class _ResetPasswordState extends State<ResetPassword> {
 
 
   Widget enterConfirmationKeyForm(auth) {
-    final _confirmationController = TextEditingController();
-  print('current _confirmkey value: '+_confirmkey.toString());
+    final confirmationController = TextEditingController();
+  print('current _confirmkey value: $_confirmkey');
     var loading = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -101,7 +103,7 @@ class _ResetPasswordState extends State<ResetPassword> {
 
     final confirmationKeyField = TextFormField(
       autofocus: true,
-      controller: _confirmationController,
+      controller: confirmationController,
       validator: (value) =>
       value!.isEmpty ? AppLocalizations.of(context)!.pleaseEnterConfirmationKey : null,
       onSaved: (value) => _confirmkey = value,
@@ -109,13 +111,13 @@ class _ResetPasswordState extends State<ResetPassword> {
           AppLocalizations.of(context)!.confirmationKey, Icons.vpn_key),
     );
 
-    var sendVerificationCode = () {
+    void sendVerificationCode() {
       print('sending confirmation key');
       final form = formKey.currentState;
 
       if (form!.validate()) {
         form.save();
-        print('checking confirmationkey - user: '+auth.userId+',  contactmethodid '+auth.contactMethodId.toString()+', key: '+_confirmkey.toString());
+        print('${'checking confirmationkey - user: '+auth.userId},  contactmethodid ${auth.contactMethodId}, key: $_confirmkey');
 
         final Future<Map<String, dynamic>> successfulMessage =
         _apiClient.sendConfirmationKey(userid: auth.userId,contact: auth.contactMethodId, code:_confirmkey!.toString());
@@ -140,7 +142,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       } else {
         print("form is invalid");
       }
-    };
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +182,7 @@ class _ResetPasswordState extends State<ResetPassword> {
           AppLocalizations.of(context)!.confirmPassword, Icons.lock),
     );
 
-    var setPassword= () {
+    void setPassword() {
       final form = formKey.currentState;
 
       if (form!.validate()) {
@@ -207,7 +209,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       } else {
         print("form is invalid");
       }
-    };
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,7 +314,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   Widget passwordRetrievalFormBody(auth)
   {
 
-    print('verification status:'+auth.verificationStatus.toString());
+    print('verification status:${auth.verificationStatus}');
 
     switch(auth.verificationStatus)
     {

@@ -38,17 +38,17 @@ class ActivityVisit {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': this.id,
-      'userid': this.userid,
-      'activityid': this.activityid,
-      'startdate': this.startdate,
-      'enddate': this.enddate,
-      'comment': this.comment,
-      'visitstatus': this.visitstatus,
-      'interested': this.interested,
-      'registered': this.registered,
-      'cancelled': this.cancelled,
-      'userprovider' : this.userprovider,
+      'id': id,
+      'userid': userid,
+      'activityid': activityid,
+      'startdate': startdate,
+      'enddate': enddate,
+      'comment': comment,
+      'visitstatus': visitstatus,
+      'interested': interested,
+      'registered': registered,
+      'cancelled': cancelled,
+      'userprovider' : userprovider,
 
     };
   }
