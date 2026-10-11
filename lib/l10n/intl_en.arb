@@ -189,5 +189,14 @@
   "youHaveToAgreeToSavingUserInformation": "You have to accept saving information to create account",
   "youthcardLoginTitle": "Youth Card Login",
   "youthcardDashboard": "Youth Card",
-  "youthcardSettings" : "Youth Card Settings"
+  "youthcardSettings" : "Youth Card Settings",
+  "yourYouthCard": "Your Youth Card",
+  "quickAccess": "Quick access",
+  "comingUp": "Coming up",
+  "noUpcomingActivities": "No upcoming activities",
+  "all": "All",
+  "dashboardGreeting": "Good morning",
+  "memberId": "Member ID",
+  "home": "Home",
+  "findNearby": "Find something great nearby."
 }

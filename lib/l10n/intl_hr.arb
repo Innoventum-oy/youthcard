@@ -80,5 +80,14 @@
   "unknownUser": "Nepoznati korisnik",
   "youthcardLoginTitle": "Prijava Kartice za mlade",
   "youthcardDashboard": "Kartica za mlade",
-  "youthcardSettings" : "Postavke Kartice za mlade"
+  "youthcardSettings" : "Postavke Kartice za mlade",
+  "yourYouthCard": "Tvoja kartica za mlade",
+  "quickAccess": "Brzi pristup",
+  "comingUp": "Uskoro",
+  "noUpcomingActivities": "Nema nadolazećih aktivnosti",
+  "all": "Sve",
+  "dashboardGreeting": "Dobro jutro",
+  "memberId": "Članski broj",
+  "home": "Početna",
+  "findNearby": "Pronađi nešto sjajno u blizini."
 }

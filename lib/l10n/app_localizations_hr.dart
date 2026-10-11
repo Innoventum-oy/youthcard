@@ -527,4 +527,31 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get youthcardSettings => 'Postavke Kartice za mlade';
+
+  @override
+  String get yourYouthCard => 'Tvoja kartica za mlade';
+
+  @override
+  String get quickAccess => 'Brzi pristup';
+
+  @override
+  String get comingUp => 'Uskoro';
+
+  @override
+  String get noUpcomingActivities => 'Nema nadolazećih aktivnosti';
+
+  @override
+  String get all => 'Sve';
+
+  @override
+  String get dashboardGreeting => 'Dobro jutro';
+
+  @override
+  String get memberId => 'Članski broj';
+
+  @override
+  String get home => 'Početna';
+
+  @override
+  String get findNearby => 'Pronađi nešto sjajno u blizini.';
 }

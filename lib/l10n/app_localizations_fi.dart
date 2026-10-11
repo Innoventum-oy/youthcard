@@ -527,4 +527,31 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get youthcardSettings => 'Nuorisokortti - asetukset';
+
+  @override
+  String get yourYouthCard => 'Sinun nuorisokorttisi';
+
+  @override
+  String get quickAccess => 'Pikavalinnat';
+
+  @override
+  String get comingUp => 'Tulossa';
+
+  @override
+  String get noUpcomingActivities => 'Ei tulevia tapahtumia';
+
+  @override
+  String get all => 'Kaikki';
+
+  @override
+  String get dashboardGreeting => 'Hyvää huomenta';
+
+  @override
+  String get memberId => 'Jäsennumero';
+
+  @override
+  String get home => 'Etusivu';
+
+  @override
+  String get findNearby => 'Löydä kiinnostavaa tekemistä läheltä.';
 }

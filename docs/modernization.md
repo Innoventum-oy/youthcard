@@ -19,11 +19,13 @@ The app now uses a shared Material 3 color scheme and navigation bar. It follows
 
 The fresh brand concept supplies mint, navy, teal, and coral colors and vector wordmarks. These colors now drive the Flutter theme and both Figma modes. Welcome, sign in, dashboard, and card use the new brand artwork. Launcher icons and light/dark native splash screens are generated for Android, iOS, and web from the assets documented in [design/brand](../design/brand/README.md).
 
+Dashboard, Discover, and Calendar now include event thumbnails in their light and dark Figma views. The concept photos are kept in [design/concepts](../design/concepts/) as design references. In the app, lists use event cover images and fall back to category covers or a themed placeholder. The real images come from the iCMS API; the concept photos are not bundled into the app.
+
 ## Core API and loading
 
 GET requests use `core.ApiClient.requestJson` and multipart POST requests use `core.ApiClient.requestMultipart`, both with timeouts. Core prepares every attachment before sending and returns a typed response. Youth Card adapts `rawData` back to the legacy response maps expected by its existing callers. The older Core `postJson` attachment loop was also fixed to await each file.
 
-The activity list cache now uses stable sorted request keys, a 30-minute fresh window, and an offline fallback. Activity details also fall back to stale data on request errors. Dashboard startup loads the saved user once; card, calendar, forms, and sign in now guard key async UI updates after disposal. A wider migration of legacy object providers and models to Core's object model would need endpoint-by-endpoint response tests against an iCMS environment.
+Activity lists now reuse memory snapshots during a session and persisted JSON snapshots across app restarts. Both use stable sorted request keys and a 30-minute fresh window, with stale results available when offline. Calendar shares the app activity provider, so returning to it does not fetch the same request again. Discovery categories have the same persisted cache; explicit refresh bypasses fresh data. Event and category image requests use `cached_network_image`, which caches downloaded thumbnails separately. Activity details also fall back to stale data on request errors. Dashboard startup loads the saved user once; card, calendar, forms, and sign in guard key async UI updates after disposal. A wider migration of legacy object providers and models to Core's object model would need endpoint-by-endpoint response tests against an iCMS environment.
 
 ## Local storage decision
 

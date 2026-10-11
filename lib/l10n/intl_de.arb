@@ -106,5 +106,14 @@
   "verify" : "bestätigen",
   "visitRecorded" : "Besuch erfasst",
   "notVerified" : "nicht bestätigt",
-  "contactInformationValidated" : "Kontaktinformation bestätigt"
+  "contactInformationValidated" : "Kontaktinformation bestätigt",
+  "yourYouthCard": "Deine Youth Card",
+  "quickAccess": "Schnellzugriff",
+  "comingUp": "Demnächst",
+  "noUpcomingActivities": "Keine bevorstehenden Aktivitäten",
+  "all": "Alle",
+  "dashboardGreeting": "Guten Morgen",
+  "memberId": "Mitgliedsnummer",
+  "home": "Startseite",
+  "findNearby": "Entdecke tolle Angebote in deiner Nähe."
 }

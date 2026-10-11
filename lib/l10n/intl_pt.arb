@@ -82,5 +82,14 @@
   "youthcardLoginTitle": "Entrar no Youth Card",
   "youthcardDashboard": "Youth Card",
   "youthcardSettings" : "Definições do Youth Card"
-
+,
+  "yourYouthCard": "O teu Cartão Jovem",
+  "quickAccess": "Acesso rápido",
+  "comingUp": "Em breve",
+  "noUpcomingActivities": "Sem atividades futuras",
+  "all": "Todos",
+  "dashboardGreeting": "Bom dia",
+  "memberId": "Número de membro",
+  "home": "Início",
+  "findNearby": "Descobre algo interessante por perto."
 }

@@ -528,4 +528,31 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get youthcardSettings => 'Ustawienia karty młodzieżowej';
+
+  @override
+  String get yourYouthCard => 'Twoja karta młodzieżowa';
+
+  @override
+  String get quickAccess => 'Szybki dostęp';
+
+  @override
+  String get comingUp => 'Nadchodzące';
+
+  @override
+  String get noUpcomingActivities => 'Brak nadchodzących wydarzeń';
+
+  @override
+  String get all => 'Wszystkie';
+
+  @override
+  String get dashboardGreeting => 'Dzień dobry';
+
+  @override
+  String get memberId => 'Numer członkowski';
+
+  @override
+  String get home => 'Strona główna';
+
+  @override
+  String get findNearby => 'Odkryj coś ciekawego w pobliżu.';
 }

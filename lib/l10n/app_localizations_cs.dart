@@ -526,4 +526,31 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get youthcardSettings => 'Youth Card Nastavení';
+
+  @override
+  String get yourYouthCard => 'Tvoje karta mládeže';
+
+  @override
+  String get quickAccess => 'Rychlý přístup';
+
+  @override
+  String get comingUp => 'Nadcházející';
+
+  @override
+  String get noUpcomingActivities => 'Žádné nadcházející aktivity';
+
+  @override
+  String get all => 'Vše';
+
+  @override
+  String get dashboardGreeting => 'Dobré ráno';
+
+  @override
+  String get memberId => 'Členské číslo';
+
+  @override
+  String get home => 'Domů';
+
+  @override
+  String get findNearby => 'Objev něco skvělého ve svém okolí.';
 }

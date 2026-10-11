@@ -82,5 +82,14 @@
   "unknownUser": "Neznámý uživatel",
   "youthcardLoginTitle": "Youth Card Přihlášení",
   "youthcardDashboard": "Youth Card",
-  "youthcardSettings" : "Youth Card Nastavení"
+  "youthcardSettings" : "Youth Card Nastavení",
+  "yourYouthCard": "Tvoje karta mládeže",
+  "quickAccess": "Rychlý přístup",
+  "comingUp": "Nadcházející",
+  "noUpcomingActivities": "Žádné nadcházející aktivity",
+  "all": "Vše",
+  "dashboardGreeting": "Dobré ráno",
+  "memberId": "Členské číslo",
+  "home": "Domů",
+  "findNearby": "Objev něco skvělého ve svém okolí."
 }

@@ -93,5 +93,14 @@
   "contactInformationValidated": "Niezweryfikowany",
   "youthcardLoginTitle": "Logowanie karty młodzieżowej",
   "youthcardDashboard": "Karta młodzieżowa",
-  "youthcardSettings" : "Ustawienia karty młodzieżowej"
+  "youthcardSettings" : "Ustawienia karty młodzieżowej",
+  "yourYouthCard": "Twoja karta młodzieżowa",
+  "quickAccess": "Szybki dostęp",
+  "comingUp": "Nadchodzące",
+  "noUpcomingActivities": "Brak nadchodzących wydarzeń",
+  "all": "Wszystkie",
+  "dashboardGreeting": "Dzień dobry",
+  "memberId": "Numer członkowski",
+  "home": "Strona główna",
+  "findNearby": "Odkryj coś ciekawego w pobliżu."
 }

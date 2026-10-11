@@ -193,5 +193,14 @@
   "youHaveToAgreeToSavingUserInformation" : "Käyttäjätili voidaan luoda vain jos hyväksyt tietojen tallentamisen.",
   "youthcardLoginTitle": "Nuorisokortti - kirjaudu sisään",
   "youthcardDashboard": "Nuorisokortti",
-  "youthcardSettings": "Nuorisokortti - asetukset"
+  "youthcardSettings": "Nuorisokortti - asetukset",
+  "yourYouthCard": "Sinun nuorisokorttisi",
+  "quickAccess": "Pikavalinnat",
+  "comingUp": "Tulossa",
+  "noUpcomingActivities": "Ei tulevia tapahtumia",
+  "all": "Kaikki",
+  "dashboardGreeting": "Hyvää huomenta",
+  "memberId": "Jäsennumero",
+  "home": "Etusivu",
+  "findNearby": "Löydä kiinnostavaa tekemistä läheltä."
 }

@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
+import 'package:youth_card/src/util/activity_thumbnail.dart';
 
 class ActivityListItem extends StatelessWidget{
 
@@ -64,30 +65,45 @@ class ActivityListItem extends StatelessWidget{
       subtitle+=' [${activityItem.registeredvisitorcount!=null ? activityItem.registeredvisitorcount.toString() : '0'}${activityItem.maxvisitors!=null ? '/${activityItem.maxvisitors}' :''}]';
     }
     if(activityItem.description!=null)subtitle+= '\n${activityItem.description!}';
-    return Center(
-      child:
-      Card(
-        child: InkWell(
-          onTap: () => goToActivity(context, activityItem),
-         child:Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-             ListTile(
-              leading: Icon(Icons.event),
-              title: Text((activityItem.name ?? AppLocalizations.of(context)!.unnamedActivity)),
-              subtitle: Text(subtitle,
-               overflow: TextOverflow.ellipsis,
-                maxLines:5),
-               isThreeLine: true,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: buttons,
-            ),
-          ]
-        )
-      )
-    )
+    final theme = Theme.of(context);
+    return Card(
+      margin: const EdgeInsets.fromLTRB(24, 6, 24, 6),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => goToActivity(context, activityItem),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                ActivityThumbnail(eventUrl: activityItem.coverpictureurl,
+                    width: 96, height: 96),
+                const SizedBox(width: 14),
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(activityItem.name ??
+                        AppLocalizations.of(context)!.unnamedActivity,
+                        maxLines: 2, overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 6),
+                    Text(subtitle, maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant)),
+                  ],
+                )),
+              ]),
+              if (buttons.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Wrap(spacing: 8, runSpacing: 4, children: buttons),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
   void showMessage(BuildContext context, String title, Widget content) {

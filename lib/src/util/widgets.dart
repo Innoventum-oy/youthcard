@@ -73,33 +73,19 @@ notifyDialog(String? titleText,Widget text, context)
 
 }
 
-Widget bottomNavigation(context,{int currentIndex=0}) {
+Widget bottomNavigation(BuildContext context,{int currentIndex=0}) {
   object_model.ImageProvider imageprovider = object_model.ImageProvider();
   User user = Provider.of<UserProvider>(context).user;
-  return NavigationBar(
-      selectedIndex: currentIndex,
-      destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.home_outlined),
-          selectedIcon: const Icon(Icons.home),
-          label: AppLocalizations.of(context)!.btnDashboard,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.search),
-          label: AppLocalizations.of(context)!.activities,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.calendar_month_outlined),
-          selectedIcon: const Icon(Icons.calendar_month),
-          label: AppLocalizations.of(context)!.calendar,
-        ),
-       if(user.token!=null) NavigationDestination(
-          icon: const Icon(Icons.card_membership_outlined),
-          selectedIcon: const Icon(Icons.card_membership),
-          label: AppLocalizations.of(context)!.myCard,
-        ),
-      ],
-      onDestinationSelected: (index) {
+  final strings = AppLocalizations.of(context)!;
+  final colors = Theme.of(context).colorScheme;
+  final labels = [
+    strings.home,
+    strings.discover,
+    strings.calendar,
+    if (user.token != null) strings.myCard,
+  ];
+  void select(int index) {
+        if (index == currentIndex) return;
         switch (index) {
           case 0:
             Navigator.pushReplacementNamed(context, '/dashboard');
@@ -118,14 +104,59 @@ Widget bottomNavigation(context,{int currentIndex=0}) {
           case 2:
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ActivityCalendar(
-                object_model.ActivityListProvider(), imageprovider,
-              )),
+              MaterialPageRoute(builder: (context) => const ActivityCalendar()),
             );
             break;
           case 3:
             Navigator.pushReplacementNamed(context, '/card');
             break;
         }
-      });
+  }
+  return SafeArea(
+    top: false,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(24, 6, 24, 8),
+      child: Material(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            children: [
+              for (var index = 0; index < labels.length; index++)
+                Expanded(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(20),
+                    onTap: () => select(index),
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 3),
+                      decoration: BoxDecoration(
+                        color: index == currentIndex
+                            ? colors.primaryContainer
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        labels[index],
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: index == currentIndex
+                              ? colors.primary
+                              : colors.onSurfaceVariant,
+                          fontWeight: index == currentIndex
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }

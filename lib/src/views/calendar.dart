@@ -1,299 +1,340 @@
-import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:youth_card/src/objects/activity.dart';
-import 'package:youth_card/src/objects/user.dart';
-import 'package:youth_card/l10n/app_localizations.dart';
-import 'package:youth_card/src/providers/index.dart' as object_model;
-import 'package:youth_card/src/providers/user_provider.dart';
-import 'package:youth_card/src/util/utils.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:youth_card/l10n/app_localizations.dart';
+import 'package:youth_card/src/objects/activity.dart';
+import 'package:youth_card/src/providers/activity_list_provider.dart';
+import 'package:youth_card/src/providers/user_provider.dart';
+import 'package:youth_card/src/util/activity_thumbnail.dart';
+import 'package:youth_card/src/util/navigator.dart';
 import 'package:youth_card/src/util/widgets.dart';
-import 'package:youth_card/src/views/activity/activitylist_item.dart';
-
 
 class ActivityCalendar extends StatefulWidget {
-  final String viewTitle = 'activitycalendar';
-  final object_model.ActivityListProvider provider;
-  final object_model.ImageProvider imageprovider;
-
-  const ActivityCalendar(this.provider,this.imageprovider, {super.key});
+  const ActivityCalendar({super.key});
 
   @override
-  ActivityCalendarState createState() => ActivityCalendarState();
+  State<ActivityCalendar> createState() => _ActivityCalendarState();
 }
 
-class ActivityCalendarState extends State<ActivityCalendar> with TickerProviderStateMixin {
-
-  List<Activity> data = [];
-  final Map<DateTime, List<Activity>> _events = {};
-
-  ValueNotifier<List<Activity>> _selectedEvents = ValueNotifier([]);
-
-  Map<DateTime, List<Activity>> eventsHashMap = <DateTime, List<Activity>>{};
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-
-  //RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff; // Can be toggled on/off by longpressing a date
+class _ActivityCalendarState extends State<ActivityCalendar> {
+  late final DateTime _firstDay;
+  late final DateTime _lastDay;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  DateTime? kFirstDay;
-  DateTime? kLastDay;
-  //DateTime? _rangeStart;
-  //DateTime? _rangeEnd;
-  LoadingState _loadingState = LoadingState.loading;
-  //bool _isLoading = false;
-
-  int iteration = 1;
-  int buildtime = 1;
-  Map<String, dynamic>? map;
-  int limit = 1000;
-  int _pageNumber = 0;
-  String? errormessage;
-
-  _loadCalendarEvents(user) async {
-    //_isLoading = true;
-    int offset = limit * _pageNumber;
-    DateTime now = DateTime.now();
-
-    Map<String, String> params = {
-      'view':'calendar',
-      'activitystatus': 'active',
-      'activitytype': 'activity',
-      'limit': limit.toString(),
-      'offset': offset.toString(),
-      'startfrom': DateFormat('yyyy-MM-dd').format(kFirstDay ?? now),
-      if(user.token !=null) 'api_key': user.token,
-
-      'fields': 'id, nexteventdate,  name, description,registration,coverpictureurl,maxvisitors,registeredvisitorcount,latitude,longitude,city,registrationenddate,startdate,enddate,address,postcode'
-
-      //  'fields': ['id','startdate','enddate','']
-     // 'sort': 'nexteventdate',
-    };
-
-    try {
-      var nextActivities =
-      await widget.provider.loadItems(params);
-      if (!mounted) return;
-      setState(() {
-        _loadingState = LoadingState.done;
-
-        data.addAll(nextActivities);
-
-        for (var item in data) {
-
-          if(item.nexteventdate!=null) {
-            var date = DateTime.utc(item.nexteventdate!.year, item.nexteventdate!.month, item.nexteventdate!.day);
-            if (_events[date] == null) {
-              _events[date] = [];
-
-            }
-            _events[date]!.add(item);
-
-          }
-        }
-
-        //print('Adding all '+ _events.length.toString() +' events to eventsHashMap');
-        eventsHashMap =
-        LinkedHashMap<DateTime, List<Activity>>(equals: isSameDay,
-          hashCode: getHashCode,
-        )
-          ..addAll(_events);
-        //print("events in hashmap " + eventsHashMap.length.toString());
-        _onDaySelected(_focusedDay, _focusedDay);
-        _getEventsForDay(_selectedDay ?? now);
-        //_isLoading = false;
-        _pageNumber++;
-      });
-    } catch (e) {
-
-      errormessage = e.toString();
-      if (mounted && _loadingState == LoadingState.loading) {
-        setState(() => _loadingState = LoadingState.error);
-      }
-    }
-  }
-
-  int getHashCode(DateTime key) {
-    return key.day * 1000000 + key.month * 10000 + key.year;
-  }
-
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    //print('_OnDaySelected was called');
-    if (!isSameDay(_selectedDay, selectedDay)) {
-      setState(() {
-        //print('is not same day: '+selectedDay.toString());
-        _selectedDay = selectedDay;
-        _focusedDay = focusedDay;
-        //_rangeStart = null; // Important to clean those
-        //_rangeEnd = null;
-      //  _rangeSelectionMode = RangeSelectionMode.toggledOff;
-        _selectedEvents.value = _getEventsForDay(selectedDay);
-        //print(_selectedEvents);
-      });
-
-
-    }
-   // else print('was same day');
-  }
+  final Map<int, List<Activity>> _events = {};
+  List<Activity> _activities = [];
+  bool _loading = true;
+  bool _refreshing = false;
+  String? _error;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      User user = Provider
-          .of<UserProvider>(context, listen: false)
-          .user;
-      //print('writing selectedevents');
-      //_selectedDay = _focusedDay;
-      _loadCalendarEvents(user);
-      _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay?? DateTime.now()));
-
-    });
     super.initState();
+    final now = DateTime.now();
+    _firstDay = DateTime(now.year, now.month - 1);
+    _lastDay = DateTime(now.year, now.month + 4, 0);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadEvents());
   }
 
-  @override
-  void dispose() {
-    _selectedEvents.dispose();
-    super.dispose();
+  int _dayKey(DateTime date) => date.year * 10000 + date.month * 100 + date.day;
+
+  List<Activity> _eventsForDay(DateTime day) => _events[_dayKey(day)] ?? [];
+
+  Future<void> _loadEvents({bool refresh = false}) async {
+    if (_refreshing) return;
+    if (refresh) setState(() => _refreshing = true);
+    final user = context.read<UserProvider>().user;
+    final params = <String, String>{
+      'view': 'calendar',
+      'activitystatus': 'active',
+      'activitytype': 'activity',
+      'limit': '1000',
+      'offset': '0',
+      'startfrom': DateFormat('yyyy-MM-dd').format(_firstDay),
+      if (user.token != null) 'api_key': user.token!,
+      'fields':
+          'id,nexteventdate,name,description,registration,coverpictureurl,maxvisitors,registeredvisitorcount,latitude,longitude,city,registrationenddate,startdate,enddate,address,postcode',
+    };
+    try {
+      final activities = await context.read<ActivityListProvider>().loadItems(
+        params,
+        refresh: refresh,
+      );
+      if (!mounted) return;
+      final events = <int, List<Activity>>{};
+      for (final activity in activities) {
+        final date = activity.nexteventdate ?? activity.startdate;
+        if (date != null) {
+          events.putIfAbsent(_dayKey(date), () => []).add(activity);
+        }
+      }
+      setState(() {
+        _activities = activities;
+        _events
+          ..clear()
+          ..addAll(events);
+        _error = null;
+        _loading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _error = error.toString();
+        _loading = false;
+      });
+    } finally {
+      if (mounted && _refreshing) setState(() => _refreshing = false);
+    }
   }
 
-  List<Activity> _getEventsForDay(DateTime day) {
-   // if(eventsHashMap[day]!=null)print('events for $day: '+ eventsHashMap[day]!.length.toString());
-    return eventsHashMap[day] ?? [];
+  List<Activity> get _visibleActivities {
+    if (_selectedDay != null) return _eventsForDay(_selectedDay!);
+    final today = DateTime.now();
+    final start = DateTime(today.year, today.month, today.day);
+    final upcoming = _activities.where((activity) {
+      final date = activity.nexteventdate ?? activity.startdate;
+      return date != null && !date.isBefore(start);
+    }).toList();
+    upcoming.sort(
+      (a, b) => (a.nexteventdate ?? a.startdate!).compareTo(
+        b.nexteventdate ?? b.startdate!,
+      ),
+    );
+    return upcoming;
   }
-
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider
-        .of<UserProvider>(context)
-        .user;
-
-    bool isTester = false;
-    if(user.data!=null) {
-
-      if (user.data!['istester'] != null) {
-        if (user.data!['istester'] == 'true') isTester = true;
-      }
-    }
-    return Scaffold(
-        appBar: AppBar(
-            title: Text(AppLocalizations.of(context)!.activityCalendar),
-            actions: [
-            if(isTester) IconButton(
-        icon: Icon(Icons.bug_report),
-    onPressed:(){feedbackAction(context,user); }
-    ),
-            ]
-        ),
-        body: _getCalendarSection(user),
-      bottomNavigationBar: bottomNavigation(context,currentIndex:2),
-    );
-  }
-
-  Widget _getCalendarSection(user) {
-    switch (_loadingState) {
-      case LoadingState.done:
-      //data loaded
-        return _getCalendarContent(user);
-
-      case LoadingState.error:
-      //data loading returned error state
-        return Align(alignment: Alignment.center,
-          child: ListTile(
-            leading: Icon(Icons.error),
-            title: Text(
-                'Sorry, there was an error loading the data: $errormessage'),
-          ),
-        );
-
-      case LoadingState.loading:
-       // if (!_isLoading) _loadCalendarEvents(user);
-        //data loading in progress
-        return Align(alignment: Alignment.center,
-          child: Center(
-            child: ListTile(
-              leading: CircularProgressIndicator(),
-              title: Text(AppLocalizations.of(context)!.loading,
-                  textAlign: TextAlign.center),
-            ),
-          ),
-        );
-      default:
-        return Container();
-    }
-  }
-
-  Widget _getCalendarContent(user) {
-    final kNow = DateTime.now();
-     kFirstDay = DateTime(kNow.year, kNow.month - 1, kNow.day);
-     kLastDay = DateTime(kNow.year, kNow.month + 3, kNow.day);
+    final strings = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
-    return Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: Card(
-              clipBehavior: Clip.antiAlias,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: TableCalendar<Activity>(
-            firstDay: kFirstDay ?? kNow,
-            lastDay: kLastDay ?? kNow,
-            focusedDay: _focusedDay,
-            calendarFormat: _calendarFormat,
-            startingDayOfWeek: StartingDayOfWeek.monday,
-            headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
-            calendarStyle: CalendarStyle(
-              todayDecoration: BoxDecoration(color: colors.secondaryContainer, shape: BoxShape.circle),
-              todayTextStyle: TextStyle(color: colors.onSecondaryContainer),
-              selectedDecoration: BoxDecoration(color: colors.primary, shape: BoxShape.circle),
-            ),
-            selectedDayPredicate: (day) {
-              // Use `selectedDayPredicate` to determine which day is currently selected.
-              // If this returns true, then `day` will be marked as selected.
-
-              // Using `isSameDay` is recommended to disregard
-              // the time-part of compared DateTime objects.
-              return isSameDay(_selectedDay, day);
-            },
-            onDaySelected: _onDaySelected,
-            onFormatChanged: (format) {
-              if (_calendarFormat != format) {
-                // Call `setState()` when updating calendar format
-                setState(() {
-                  _calendarFormat = format;
-                });
-              }
-            },
-            onPageChanged: (focusedDay) {
-              // No need to call `setState()` here
-              _focusedDay = focusedDay;
-            },
-            eventLoader: _getEventsForDay,
+    final theme = Theme.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final visible = _visibleActivities;
+    return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 24,
+        title: Text(
+          strings.calendar,
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: colors.onSurface,
           ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Expanded(
-            child: ValueListenableBuilder<List<Activity>>(
-              valueListenable: _selectedEvents,
-              builder: (context, value, _) {
-
-                return ListView.builder(
-                    itemCount: value.length,
-                    itemBuilder: (BuildContext context, int index) {
-
-
-                      return ActivityListItem(value[index]);
-                    });
-              },
-            ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: _refreshing ? null : () => _loadEvents(refresh: true),
+            icon: const Icon(Icons.refresh),
           ),
         ],
-      );
-
+      ),
+      body: _loading
+          ? Center(child: CircularProgressIndicator(color: colors.primary))
+          : _error != null && _activities.isEmpty
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(strings.networkError),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: () => _loadEvents(refresh: true),
+                      child: const Icon(Icons.refresh),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: () => _loadEvents(refresh: true),
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          DateFormat.yMMMM(locale).format(_focusedDay),
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            color: colors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed:
+                            _focusedDay.year == _firstDay.year &&
+                                _focusedDay.month == _firstDay.month
+                            ? null
+                            : () => setState(
+                                () => _focusedDay = DateTime(
+                                  _focusedDay.year,
+                                  _focusedDay.month - 1,
+                                ),
+                              ),
+                        icon: const Icon(Icons.chevron_left),
+                      ),
+                      IconButton(
+                        onPressed:
+                            _focusedDay.year == _lastDay.year &&
+                                _focusedDay.month == _lastDay.month
+                            ? null
+                            : () => setState(
+                                () => _focusedDay = DateTime(
+                                  _focusedDay.year,
+                                  _focusedDay.month + 1,
+                                ),
+                              ),
+                        icon: const Icon(Icons.chevron_right),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    margin: EdgeInsets.zero,
+                    clipBehavior: Clip.antiAlias,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: TableCalendar<Activity>(
+                        key: ValueKey(
+                          _focusedDay.year * 12 + _focusedDay.month,
+                        ),
+                        firstDay: _firstDay,
+                        lastDay: _lastDay,
+                        focusedDay: _focusedDay,
+                        startingDayOfWeek: StartingDayOfWeek.monday,
+                        calendarFormat: CalendarFormat.month,
+                        availableCalendarFormats: const {
+                          CalendarFormat.month: 'Month',
+                        },
+                        headerVisible: false,
+                        rowHeight: 40,
+                        daysOfWeekHeight: 28,
+                        eventLoader: _eventsForDay,
+                        selectedDayPredicate: (day) =>
+                            isSameDay(_selectedDay, day),
+                        onDaySelected: (selected, focused) => setState(() {
+                          _selectedDay = selected;
+                          _focusedDay = focused;
+                        }),
+                        onPageChanged: (focused) =>
+                            setState(() => _focusedDay = focused),
+                        calendarStyle: CalendarStyle(
+                          outsideDaysVisible: false,
+                          todayDecoration: BoxDecoration(
+                            color: colors.primaryContainer,
+                            shape: BoxShape.circle,
+                          ),
+                          todayTextStyle: TextStyle(
+                            color: colors.onPrimaryContainer,
+                          ),
+                          selectedDecoration: BoxDecoration(
+                            color: colors.primary,
+                            shape: BoxShape.circle,
+                          ),
+                          selectedTextStyle: TextStyle(color: colors.onPrimary),
+                          markerDecoration: BoxDecoration(
+                            color: colors.tertiary,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          strings.comingUp,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      if (_selectedDay != null)
+                        TextButton(
+                          onPressed: () => setState(() => _selectedDay = null),
+                          child: Text(strings.all),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  if (visible.isEmpty)
+                    Card(
+                      margin: EdgeInsets.zero,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Text(strings.noUpcomingActivities),
+                      ),
+                    ),
+                  for (final activity in visible)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Card(
+                        margin: EdgeInsets.zero,
+                        color: colors.primaryContainer,
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                          onTap: () => goToActivity(context, activity),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Row(
+                              children: [
+                                ActivityThumbnail(
+                                  eventUrl: activity.coverpictureurl,
+                                  width: 72,
+                                  height: 72,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        DateFormat(
+                                          'd MMM • HH:mm',
+                                          locale,
+                                        ).format(
+                                          activity.nexteventdate ??
+                                              activity.startdate ??
+                                              DateTime.now(),
+                                        ),
+                                        style: theme.textTheme.labelMedium
+                                            ?.copyWith(
+                                              color: colors.primary,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        activity.name ??
+                                            strings.unnamedActivity,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                              color: colors.onPrimaryContainer,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+      bottomNavigationBar: bottomNavigation(context, currentIndex: 2),
+    );
   }
 }

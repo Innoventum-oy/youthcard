@@ -6,12 +6,35 @@ import 'package:intl/intl.dart';
 import '../objects/activity.dart';
 import '../objects/activitydate.dart';
 import '../util/local_storage.dart';
+import '../util/file_storage_interface.dart';
 import '../util/shared_preference.dart';
 import 'objectprovider.dart';
 
 class ActivityListProvider extends ObjectProvider {
 
-  ActivityListProvider();
+  ActivityListProvider({
+    Future<List<Activity>> Function(Map<String, dynamic>)? loadRemote,
+    FileStorageInterface? storage,
+    Future<String> Function()? serverName,
+    DateTime Function()? clock,
+  }) : _loadRemote = loadRemote ?? ApiClient().loadActivities,
+       _storage = storage ?? getFileStorage(),
+       _serverName = serverName ?? Settings().getServerName,
+       _clock = clock ?? DateTime.now;
+
+  static const cacheLifetime = Duration(minutes: 30);
+  final Future<List<Activity>> Function(Map<String, dynamic>) _loadRemote;
+  final FileStorageInterface _storage;
+  final Future<String> Function() _serverName;
+  final DateTime Function() _clock;
+  final Map<String, _ActivitySnapshot> _memory = {};
+  final Map<String, Future<List<Activity>>> _inFlight = {};
+
+  void clearMemoryCache() {
+    _memory.clear();
+    _inFlight.clear();
+    _data = null;
+  }
   List<Activity>? _data;
   List<Activity>? get list => _data;
   final ApiClient _apiClient = ApiClient();
@@ -30,34 +53,71 @@ class ActivityListProvider extends ObjectProvider {
 
 
   @override
-  Future<List<Activity>> loadItems(params,{refresh = false}) async {
+  Future<List<Activity>> loadItems(dynamic params,{bool refresh = false}) async {
     final entries = (params as Map).entries
         .map((entry) => MapEntry(entry.key.toString(), entry.value))
         .toList()..sort((a, b) => a.key.compareTo(b.key));
     final sortedParams = <String, dynamic>{for (final entry in entries) entry.key: entry.value};
     final filename = 'activities_${md5.convert(utf8.encode(jsonEncode(sortedParams)))}';
-    final storage = getFileStorage();
-    final cached = await storage.read(filename, expiration: 30);
-    if (cached is List && !refresh) {
-      _data = cached.map((data) => Activity.fromJson(Map<String, dynamic>.from(data))).toList();
-      return _data!;
+    final key = '${await _serverName()}:$filename';
+    final snapshot = _memory[key];
+    if (!refresh && snapshot != null && _clock().isBefore(snapshot.expiresAt)) {
+      _data = snapshot.items;
+      return snapshot.items;
     }
+    if (_inFlight[key] case final pending?) return pending;
 
+    final pending = _loadAndCache(key, filename, sortedParams,
+        refresh: refresh, staleMemory: snapshot);
+    _inFlight[key] = pending;
     try {
-      final remote = await _apiClient.loadActivities(sortedParams);
-      _data = remote;
-      await storage.write(remote, filename);
+      return await pending;
+    } finally {
+      _inFlight.remove(key);
+    }
+  }
+
+  Future<List<Activity>> _loadAndCache(
+    String key,
+    String filename,
+    Map<String, dynamic> params, {
+    required bool refresh,
+    _ActivitySnapshot? staleMemory,
+  }) async {
+    final cached = await _storage.read(filename, expiration: 30);
+    if (cached is List && !refresh) {
+      final items = _decodeActivities(cached);
+      _remember(key, items);
+      return items;
+    }
+    try {
+      final remote = await _loadRemote(params);
+      _remember(key, remote);
+      await _storage.write(remote, filename);
       notifyListeners();
       return remote;
     } catch (_) {
-      final stale = cached is List ? cached : await storage.read(filename);
+      if (staleMemory != null) {
+        _data = staleMemory.items;
+        return staleMemory.items;
+      }
+      final stale = cached is List ? cached : await _storage.read(filename);
       if (stale is List) {
-        _data = stale.map((data) => Activity.fromJson(Map<String, dynamic>.from(data))).toList();
-        return _data!;
+        final items = _decodeActivities(stale);
+        _remember(key, items);
+        return items;
       }
       rethrow;
     }
+  }
 
+  List<Activity> _decodeActivities(List cached) => cached
+      .map((data) => Activity.fromJson(Map<String, dynamic>.from(data)))
+      .toList();
+
+  void _remember(String key, List<Activity> items) {
+    _data = items;
+    _memory[key] = _ActivitySnapshot(items, _clock().add(cacheLifetime));
   }
 
   Future<dynamic> getActivityDates(Activity activity, user) async{
@@ -106,4 +166,11 @@ class ActivityListProvider extends ObjectProvider {
     }
 
   }
+}
+
+class _ActivitySnapshot {
+  const _ActivitySnapshot(this.items, this.expiresAt);
+
+  final List<Activity> items;
+  final DateTime expiresAt;
 }

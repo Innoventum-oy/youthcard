@@ -1133,6 +1133,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Youth Card Settings'**
   String get youthcardSettings;
+
+  /// No description provided for @yourYouthCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Youth Card'**
+  String get yourYouthCard;
+
+  /// No description provided for @quickAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick access'**
+  String get quickAccess;
+
+  /// No description provided for @comingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming up'**
+  String get comingUp;
+
+  /// No description provided for @noUpcomingActivities.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming activities'**
+  String get noUpcomingActivities;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @dashboardGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get dashboardGreeting;
+
+  /// No description provided for @memberId.
+  ///
+  /// In en, this message translates to:
+  /// **'Member ID'**
+  String get memberId;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @findNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'Find something great nearby.'**
+  String get findNearby;
 }
 
 class _AppLocalizationsDelegate

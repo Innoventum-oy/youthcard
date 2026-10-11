@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:youth_card/src/providers/web_page_provider.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/util/brand.dart';
+import 'package:youth_card/src/util/activity_thumbnail.dart';
+import 'package:youth_card/src/util/navigator.dart';
 import 'package:youth_card/src/views/card.dart';
 import 'package:youth_card/src/views/formlist.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
@@ -40,6 +42,7 @@ class DashBoardState extends State<DashBoard> {
   List<FormCategory> formCategories = [];
   bool _isLoading = false;
   bool _formsLoading = false;
+  Activity? _upcoming;
   String? errormessage;
   List activityTypes = ['activity', 'location'];
   WebPage page = WebPage();
@@ -67,9 +70,31 @@ class DashBoardState extends State<DashBoard> {
       }
     }
     _loadForms(user);
+    _loadUpcoming(user);
     //See if info page exists for the view
     _loadWebPage(user);
 
+  }
+
+  Future<void> _loadUpcoming(User user, {bool refresh = false}) async {
+    final params = <String, String>{
+      'view': 'dashboard-upcoming',
+      'activitystatus': 'active',
+      'activitytype': 'activity',
+      'limit': '1',
+      'offset': '0',
+      'startfrom': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      'sort': 'nexteventdate',
+      if (user.token != null) 'api_key': user.token!,
+      'fields': 'id,name,nexteventdate,startdate,coverpictureurl,description',
+    };
+    try {
+      final items = await context.read<objectmodel.ActivityListProvider>()
+          .loadItems(params, refresh: refresh);
+      if (mounted) setState(() => _upcoming = items.isEmpty ? null : items.first);
+    } catch (_) {
+      // The dashboard remains usable when activities are unavailable.
+    }
   }
   /* load related page */
   _loadWebPage(user)async {
@@ -162,139 +187,68 @@ class DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<UserProvider>().user;
+    page = context.watch<WebPageProvider>().page;
+    final strings = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final signedIn = user.token != null;
+    final hasInfoPage = page.id != null && page.runtimeType == WebPage;
+    final isTester = user.data?['istester'] == 'true';
 
-    //AuthProvider auth = Provider.of<AuthProvider>(context);
-    User user = Provider.of<UserProvider>(context).user;
-    page = Provider.of<WebPageProvider>(context).page;
-
-    imageprovider = objectmodel.ImageProvider();
-
-    bool hasInfoPage =
-        page.id != null && page.runtimeType.toString() == 'WebPage'
-            ? true
-            : false;
-    bool isTester = false;
-
-    if (user.data != null) {
-      if (user.data!['istester'] != null) {
-        if (user.data!['istester'] == 'true') isTester = true;
-      }
-    }
-
-
-    List<Widget> dashboardButtons = [];
-
-      if (user.token != null) {
-        dashboardButtons.add(
-          Card(
-            color: Theme.of(context).colorScheme.primary,
-            margin: const EdgeInsets.only(bottom: 20),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(20),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MyCard()),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(children: [
-                      const BrandIcon(size: 36),
-                      const SizedBox(width: 12),
-                      Text('YOUTH CARD', style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.85),
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      )),
-                    ]),
-                    const SizedBox(height: 20),
-                    Text(user.fullname.trim().isEmpty
-                        ? AppLocalizations.of(context)!.myCard
-                        : user.fullname,
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 24),
-                    Text('${AppLocalizations.of(context)!.myCard}  →',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      }
-      if (user.token != null) {
-        dashboardButtons.add(
-        dashboardButton(AppLocalizations.of(context)!.qrScanner,
-            Icons.qr_code, openQRScanner));
-      }
-      dashboardButtons.add(
-      dashboardButton(AppLocalizations.of(context)!.calendar,
-          Icons.calendar_today, openCalendar));
-    dashboardButtons.add(dashboardButton(AppLocalizations.of(context)!.discover,
-          Icons.search, openActivityList));
-    if (myActivities['activity']?.isNotEmpty ?? false) {
-      dashboardButtons.add(dashboardButton(AppLocalizations.of(context)!.myActivities,Icons.list_alt_outlined,openMyActivities));
-    }
-
-    bool hascontent = myActivities['location'] != null
-        ? myActivities['location']!.isNotEmpty
-        : false;
-    if (hascontent) {
-      dashboardButtons.add(dashboardButton(
-          AppLocalizations.of(context)!.locations, Icons.house_outlined,
-          openLocationsList));
-    }
-    hascontent = formCategories.isNotEmpty;
-    if (hascontent) {
-      dashboardButtons.add(dashboardButton(AppLocalizations.of(context)!.forms,
-          Icons.list_alt, openForms));
-    }
-
-    dashboardButtons.add( dashboardButton(AppLocalizations.of(context)!.settings,
-          Icons.settings, openSettingsScreen));
-    dashboardButtons.add(dashboardButton(
-          user.token == null
-              ? AppLocalizations.of(context)!.login
-              : AppLocalizations.of(context)!.logout,
-          (user.token == null) ? Icons.login : Icons.logout,
-          openLoginLink));
+    final moreActions = <Widget>[
+      if (myActivities['activity']?.isNotEmpty ?? false)
+        dashboardButton(strings.myActivities, Icons.list_alt_outlined,
+            openMyActivities),
+      if (myActivities['location']?.isNotEmpty ?? false)
+        dashboardButton(strings.locations, Icons.place_outlined,
+            openLocationsList),
+      if (formCategories.isNotEmpty)
+        dashboardButton(strings.forms, Icons.description_outlined, openForms),
+      dashboardButton(strings.settings, Icons.settings_outlined,
+          openSettingsScreen),
+      dashboardButton(signedIn ? strings.logout : strings.login,
+          signedIn ? Icons.logout : Icons.login, openLoginLink),
+    ];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.youthcardDashboard),
-        elevation: 0.1,
+        title: const SizedBox.shrink(),
+        toolbarHeight: 48,
         actions: [
           if (hasInfoPage)
             IconButton(
-                icon: Icon(Icons.info_outline_rounded),
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => ContentPageView(widget.viewTitle,
-                        providedPage: page),
-                  ));
-                }),
+              icon: const Icon(Icons.info_outline_rounded),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => ContentPageView(widget.viewTitle,
+                    providedPage: page),
+              )),
+            ),
           if (isTester)
             IconButton(
-                icon: Icon(Icons.bug_report),
-                onPressed: () {
-                  feedbackAction(context, user);
-                }),
+              icon: const Icon(Icons.bug_report),
+              onPressed: () => feedbackAction(context, user),
+            ),
           IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: () {
-                if (user.token != null) {
-                  for (final type in activityTypes) {
-                    _loadMyActivities(user, type);
-                  }
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              if (signedIn) {
+                for (final type in activityTypes) {
+                  _loadMyActivities(user, type);
                 }
-                Provider.of<WebPageProvider>(context, listen: false).refresh(user);
-                _loadForms(user);
-              }),
-          if (user.token != null)
-            InkWell(
+              }
+              context.read<WebPageProvider>().refresh(user);
+              _loadForms(user);
+              _loadUpcoming(user, refresh: true);
+            },
+          ),
+          if (signedIn)
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(22),
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => MyCard())),
                 child: CircleAvatar(
                   radius: 20,
                   backgroundImage: user.image != null && user.image!.isNotEmpty
@@ -302,26 +256,153 @@ class DashBoardState extends State<DashBoard> {
                       : null,
                   child: getInitials(user),
                 ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MyCard()),
-                  );
-                }),
+              ),
+            ),
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
         children: [
-          Text(AppLocalizations.of(context)!.youthcardDashboard,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              )),
+          Text(strings.dashboardGreeting,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                  color: colors.onSurfaceVariant)),
+          const SizedBox(height: 16),
+          Text(strings.yourYouthCard,
+              style: theme.textTheme.headlineMedium?.copyWith(
+                  color: colors.onSurface, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 20),
+          if (signedIn) ...[
+            Card(
+              margin: EdgeInsets.zero,
+              color: colors.primary,
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => MyCard())),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        Expanded(child: Text('YOUTH CARD',
+                            style: theme.textTheme.labelMedium?.copyWith(
+                                color: colors.onPrimary,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.1))),
+                        const BrandIcon(size: 46),
+                      ]),
+                      const SizedBox(height: 6),
+                      Text(user.fullname.trim().isEmpty
+                              ? strings.myCard : user.fullname,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                              color: colors.onPrimary,
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 12),
+                      if (user.id != null)
+                        Text('${strings.memberId}  •  ${user.id}',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                                color: colors.onPrimary)),
+                      const SizedBox(height: 12),
+                      Text('${strings.myCard}  →',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                              color: colors.onPrimary,
+                              fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+          Text(strings.quickAccess,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          Row(children: [
+            Expanded(child: _shortcut(Icons.qr_code_scanner,
+                strings.qrScanner, signedIn ? openQRScanner : openLoginLink)),
+            const SizedBox(width: 10),
+            Expanded(child: _shortcut(Icons.search,
+                strings.discover, openActivityList)),
+            const SizedBox(width: 10),
+            Expanded(child: _shortcut(Icons.calendar_month_outlined,
+                strings.calendar, openCalendar)),
+          ]),
           const SizedBox(height: 24),
-          ...dashboardButtons,
+          if (_upcoming != null) ...[
+            Card(
+              margin: EdgeInsets.zero,
+              color: theme.brightness == Brightness.dark
+                  ? const Color(0xFF703B3A)
+                  : const Color(0xFFFFE4DE),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () => goToActivity(context, _upcoming!),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(children: [
+                    ActivityThumbnail(eventUrl: _upcoming!.coverpictureurl,
+                        width: 76, height: 76,
+                        borderRadius: BorderRadius.circular(12)),
+                    const SizedBox(width: 14),
+                    Expanded(child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(strings.comingUp.toUpperCase(),
+                            style: theme.textTheme.labelMedium?.copyWith(
+                                color: colors.primary,
+                                fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 6),
+                        Text(_upcoming!.name ?? strings.unnamedActivity,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold)),
+                        if (_upcoming!.nexteventdate != null) ...[
+                          const SizedBox(height: 6),
+                          Text(DateFormat('d MMM • HH:mm',
+                                  Localizations.localeOf(context).toString())
+                              .format(_upcoming!.nexteventdate!),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colors.onSurfaceVariant)),
+                        ],
+                      ],
+                    )),
+                  ]),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+          ...moreActions,
         ],
       ),
-        bottomNavigationBar: bottomNavigation(context),
+      bottomNavigationBar: bottomNavigation(context),
+    );
+  }
+
+  Widget _shortcut(IconData icon, String label, VoidCallback onTap) {
+    final theme = Theme.of(context);
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(icon, color: theme.colorScheme.primary, size: 27),
+              const SizedBox(height: 8),
+              Text(label, maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -349,7 +430,7 @@ class DashBoardState extends State<DashBoard> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => ActivityCalendar(provider, imageprovider)),
+          builder: (context) => const ActivityCalendar()),
     );
   }
 

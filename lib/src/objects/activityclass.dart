@@ -6,31 +6,44 @@ class ActivityClass {
   String? coverpictureurl;
   int accesslevel;
 
-  ActivityClass({this.id, this.name, this.description,this.coverpicture,this.coverpictureurl,this.accesslevel=0});
-
-
+  ActivityClass({
+    this.id,
+    this.name,
+    this.description,
+    this.coverpicture,
+    this.coverpictureurl,
+    this.accesslevel = 0,
+  });
 
   factory ActivityClass.fromJson(Map<String, dynamic> response) {
-
-    Map<String, dynamic> responseData =  response['data'];
-    //responseData.forEach((key, value) { print('$key = $value');});
-    Map<String, dynamic>? cover = responseData['coverpicture'];
+    final responseData = Map<String, dynamic>.from(
+      response['data'] ?? response,
+    );
+    final cover = responseData['coverpicture'];
+    final rawId = responseData['objectid'] ?? responseData['id'];
+    final rawAccess = responseData['accesslevel'];
     return ActivityClass(
-        id: responseData['objectid'] !=null ? int.parse(responseData['objectid']) : null,
-        name: responseData['name'],
-        description: responseData['description'],
-        coverpicture: cover == null ? 'default' : cover['objectid'],
-        coverpictureurl: responseData['coverpictureurl'],
-        accesslevel: responseData['accesslevel'] is int ? responseData['accesslevel'] : int.parse(responseData['accesslevel'])
+      id: rawId == null ? null : int.tryParse(rawId.toString()),
+      name: responseData['name'],
+      description: responseData['description'],
+      coverpicture: cover is Map
+          ? cover['objectid']?.toString()
+          : cover?.toString() ?? 'default',
+      coverpictureurl: responseData['coverpictureurl'] is String
+          ? responseData['coverpictureurl'] as String
+          : null,
+      accesslevel: rawAccess is int
+          ? rawAccess
+          : int.tryParse(rawAccess?.toString() ?? '') ?? 0,
     );
   }
 
   Map toJson() => {
-    'id' : id,
+    'id': id,
     'name': name,
-    'description' : description,
-    'coverpicture':coverpicture,
-    'coverpictureurl' : coverpictureurl,
+    'description': description,
+    'coverpicture': coverpicture,
+    'coverpictureurl': coverpictureurl,
+    'accesslevel': accesslevel,
   };
 }
-

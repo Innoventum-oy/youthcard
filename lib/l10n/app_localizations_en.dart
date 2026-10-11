@@ -526,4 +526,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get youthcardSettings => 'Youth Card Settings';
+
+  @override
+  String get yourYouthCard => 'Your Youth Card';
+
+  @override
+  String get quickAccess => 'Quick access';
+
+  @override
+  String get comingUp => 'Coming up';
+
+  @override
+  String get noUpcomingActivities => 'No upcoming activities';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get dashboardGreeting => 'Good morning';
+
+  @override
+  String get memberId => 'Member ID';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get findNearby => 'Find something great nearby.';
 }
