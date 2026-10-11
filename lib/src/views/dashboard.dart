@@ -7,6 +7,7 @@ import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/providers/web_page_provider.dart';
 import 'package:youth_card/src/util/widgets.dart';
+import 'package:youth_card/src/util/brand.dart';
 import 'package:youth_card/src/views/card.dart';
 import 'package:youth_card/src/views/formlist.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
@@ -199,11 +200,15 @@ class DashBoardState extends State<DashBoard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('YOUTH CARD', style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.85),
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                    )),
+                    Row(children: [
+                      const BrandIcon(size: 36),
+                      const SizedBox(width: 12),
+                      Text('YOUTH CARD', style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.85),
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      )),
+                    ]),
                     const SizedBox(height: 20),
                     Text(user.fullname.trim().isEmpty
                         ? AppLocalizations.of(context)!.myCard

@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:youth_card/src/util/brand.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
@@ -207,7 +208,7 @@ class LoginState extends State<Login> {
       } else {
       }
     }
-    Widget titleText = AppUrl.serverImages.containsKey(serverName) ? Image.asset(AppUrl.serverImages[serverName] ?? 'images/icon.png',height:100) : Text(serverName,
+    Widget titleText = AppUrl.serverImages.containsKey(serverName) ? Image.asset(AppUrl.serverImages[serverName] ?? 'images/brand/app-icon.png',height:100) : Text(serverName,
         style:TextStyle(
             fontSize: 24.0
         ));
@@ -217,7 +218,16 @@ class LoginState extends State<Login> {
               ? Theme.of(context).scaffoldBackgroundColor
               : (AppUrl.backgroundColors[serverName] ?? Theme.of(context).scaffoldBackgroundColor),
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.youthcardLoginTitle),
+          title: Row(children: [
+            const BrandIcon(size: 28),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Text(
+                AppLocalizations.of(context)!.youthcardLoginTitle,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ]),
           elevation: 0.1,
         ),
         body: SingleChildScrollView(

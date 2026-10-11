@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/widgets.dart';
+import 'package:youth_card/src/util/brand.dart';
 import 'package:youth_card/src/views/userform.dart';
 import '../views/deleteaccountform.dart';
 /*
@@ -257,6 +258,19 @@ class MyCardState extends State<MyCard> {
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(children: [
+                Row(children: [
+                  const BrandIcon(size: 36),
+                  const SizedBox(width: 12),
+                  Text(
+                    'YOUTH CARD',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                ]),
+                const SizedBox(height: 16),
                 if (user.qrcode != null && user.qrcode!.isNotEmpty)
                   Card(
                     color: Colors.white,

@@ -17,6 +17,8 @@ Editable mobile screen designs are in [Youth Card modern screens](https://www.fi
 
 The app now uses a shared Material 3 color scheme and navigation bar. It follows the device's light or dark appearance automatically, including themed fields, buttons, cards, navigation, and text. The Figma file contains editable light and dark variants of all nine screens with a two-mode color variable collection. Welcome, sign in, dashboard, card, discovery list, activity detail, calendar, forms list, and settings received direct layout work. Dynamic form fields inherit the new theme. The detailed Figma compositions still need visual QA with live content and translations.
 
+The fresh brand concept supplies mint, navy, teal, and coral colors and vector wordmarks. These colors now drive the Flutter theme and both Figma modes. Welcome, sign in, dashboard, and card use the new brand artwork. Launcher icons and light/dark native splash screens are generated for Android, iOS, and web from the assets documented in [design/brand](../design/brand/README.md).
+
 ## Core API and loading
 
 GET requests use `core.ApiClient.requestJson` and multipart POST requests use `core.ApiClient.requestMultipart`, both with timeouts. Core prepares every attachment before sending and returns a typed response. Youth Card adapts `rawData` back to the legacy response maps expected by its existing callers. The older Core `postJson` attachment loop was also fixed to await each file.

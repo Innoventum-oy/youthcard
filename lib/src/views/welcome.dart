@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
+import 'package:youth_card/src/util/brand.dart';
 
 class Welcome extends StatelessWidget {
 
@@ -21,10 +22,12 @@ class Welcome extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF143E42),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF203C47)
+                      : const Color(0xFFD5F8EE),
                   borderRadius: BorderRadius.circular(28),
                 ),
-                child: Image.asset('images/colortextlogo.png', height: 180),
+                child: const BrandWordmark(height: 88),
               ),
               const SizedBox(height: 32),
               Text(AppLocalizations.of(context)!.discover,

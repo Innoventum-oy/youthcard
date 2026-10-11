@@ -14,6 +14,7 @@ import 'package:youth_card/src/views/welcome.dart';
 import 'package:youth_card/src/providers/auth.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
+import 'package:youth_card/src/util/brand.dart';
 import 'package:provider/provider.dart';
 import 'package:feedback/feedback.dart';
 import 'src/objects/user.dart';
@@ -33,11 +34,17 @@ class NavigationService {
 ThemeData _appTheme(Brightness brightness) {
   final dark = brightness == Brightness.dark;
   final colors = ColorScheme.fromSeed(
-    seedColor: const Color(0xFF0A6059),
+    seedColor: YouthCardBrand.teal,
     brightness: brightness,
-    primary: dark ? const Color(0xFF8DD7C9) : const Color(0xFF0A6059),
-    secondary: dark ? const Color(0xFFFFC6A6) : const Color(0xFF9B532E),
-    surface: dark ? const Color(0xFF111A1B) : const Color(0xFFFAFBF7),
+    primary: dark ? YouthCardBrand.mint : YouthCardBrand.teal,
+    onPrimary: dark ? YouthCardBrand.navy : Colors.white,
+    primaryContainer: dark ? const Color(0xFF23515A) : const Color(0xFFD5F8EE),
+    onPrimaryContainer: dark ? const Color(0xFFE6FFF8) : YouthCardBrand.navy,
+    secondary: dark ? const Color(0xFFFF9B8D) : const Color(0xFFB43D2F),
+    tertiary: dark ? YouthCardBrand.coral : YouthCardBrand.mint,
+    surface: dark ? YouthCardBrand.navy : const Color(0xFFF7FBF9),
+    onSurface: dark ? const Color(0xFFF4FAF8) : YouthCardBrand.navy,
+    onSurfaceVariant: dark ? const Color(0xFFB8CED0) : const Color(0xFF516A70),
   );
   return ThemeData(
     useMaterial3: true,
@@ -45,7 +52,7 @@ ThemeData _appTheme(Brightness brightness) {
     colorScheme: colors,
     scaffoldBackgroundColor: colors.surface,
     cardTheme: CardThemeData(
-      color: dark ? const Color(0xFF1B292A) : Colors.white,
+      color: dark ? const Color(0xFF203C47) : Colors.white,
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     ),
