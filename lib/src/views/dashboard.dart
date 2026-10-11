@@ -33,6 +33,17 @@ String dashboardGreetingForHour(AppLocalizations strings, int hour) {
   return strings.dashboardEvening;
 }
 
+String? dashboardBackgroundUrl(WebPage page) {
+  final candidate = page.data?['thumbnailurl']?.toString().trim();
+  final uri = Uri.tryParse(candidate ?? '');
+  if (uri == null ||
+      (uri.scheme != 'https' && uri.scheme != 'http') ||
+      uri.host.isEmpty) {
+    return null;
+  }
+  return uri.toString();
+}
+
 class DashBoard extends StatefulWidget {
   final String viewTitle = 'dashboard';
   final objectmodel.ActivityListProvider provider =
@@ -221,6 +232,7 @@ class DashBoardState extends State<DashBoard> {
     final colors = theme.colorScheme;
     final signedIn = user.token != null;
     final hasInfoPage = page.id != null && page.runtimeType == WebPage;
+    final backgroundUrl = dashboardBackgroundUrl(page);
     final isTester = user.data?['istester'] == 'true';
 
     final moreActions = <Widget>[
@@ -290,13 +302,77 @@ class DashBoardState extends State<DashBoard> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
         children: [
-          Text(dashboardGreetingForHour(strings, DateTime.now().hour),
+          if (backgroundUrl != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: SizedBox(
+                height: 168,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: backgroundUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (_, _) =>
+                          ColoredBox(color: colors.primaryContainer),
+                      errorWidget: (_, _, _) =>
+                          ColoredBox(color: colors.primaryContainer),
+                    ),
+                    DecoratedBox(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0x99000000), Color(0xCC000000)],
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              dashboardGreetingForHour(
+                                strings,
+                                DateTime.now().hour,
+                              ),
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              strings.yourYouthCard,
+                              style: theme.textTheme.headlineMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else ...[
+            Text(
+              dashboardGreetingForHour(strings, DateTime.now().hour),
               style: theme.textTheme.bodyLarge?.copyWith(
-                  color: colors.onSurfaceVariant)),
-          const SizedBox(height: 16),
-          Text(strings.yourYouthCard,
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              strings.yourYouthCard,
               style: theme.textTheme.headlineMedium?.copyWith(
-                  color: colors.onSurface, fontWeight: FontWeight.bold)),
+                color: colors.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
           const SizedBox(height: 20),
           if (signedIn) ...[
             Card(

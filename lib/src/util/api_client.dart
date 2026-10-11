@@ -20,7 +20,6 @@ class ApiClient {
   //final _http = HttpClient();
   ApiClient._internal();
 
-  final String baseUrl = AppUrl.baseURL;
   bool isProcessing = false;
 
   factory ApiClient() => _client;
@@ -85,6 +84,7 @@ class ApiClient {
     });
   }
   Future<Map<String, dynamic>> deleteUserAccount(User loggedInUser) async {
+    final baseUrl = await Settings().getServer();
     final Map<String, dynamic> params = {
       'method': 'json',
       'action': 'deleteownuseraccount',
@@ -534,6 +534,7 @@ class ApiClient {
 
   Future<Map<String, dynamic>>? saveFormData(
       Map<String, dynamic> params, Map<String, dynamic> data) async {
+    final baseUrl = await Settings().getServer();
     var url = Uri.https(baseUrl, 'api/dispatcher/forms/', params);
 
     return _postJson(url, data).then((json) {
@@ -544,6 +545,7 @@ class ApiClient {
 
   Future<Map<String, dynamic>>? loadFormData(
       Map<String, dynamic> params) async {
+    final baseUrl = await Settings().getServer();
     var url = Uri.https(baseUrl, 'api/dispatcher/forms/', params);
 
     return _getJson(url).then((json) {

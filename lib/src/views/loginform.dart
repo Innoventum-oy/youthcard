@@ -29,8 +29,8 @@ class LoginState extends State<Login> {
   final formKey = GlobalKey<FormState>();
 
   String? _contact, _password;
-  String serverName = '';
-  String serverUrl = '';
+  String serverName = kReleaseMode ? AppUrl.productionServerName : '';
+  String serverUrl = kReleaseMode ? AppUrl.productionServerHost : '';
   String appName = '';
   String packageName = '';
   String version = '';
@@ -64,7 +64,7 @@ class LoginState extends State<Login> {
         //print("Anonymous api key for " + serverName + " set to " +AppUrl.anonymousApikeys[serverName]!);
       }
     }); });
-    if (kIsWeb) {
+    if (kIsWeb && !kReleaseMode) {
       final host = Uri.base.host;
       final servers = AppUrl.servers;
       final foundEntry = servers.entries.firstWhere(
@@ -248,19 +248,22 @@ class LoginState extends State<Login> {
             child:  Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(child:GestureDetector(child: titleText, onTap: () {
-          serverSelectDialog(context);
-          },)
+                  Center(
+                    child: kReleaseMode
+                        ? titleText
+                        : GestureDetector(
+                            onTap: () => serverSelectDialog(context),
+                            child: titleText,
+                          ),
                   ),
                   SizedBox(height: 5.0),
-                  TextButton(
-                    child: Text(
-                        '${AppLocalizations.of(context)!.environment}: $serverName',
-                        style: TextStyle(fontWeight: FontWeight.w300)),
-                    onPressed: () {
-                      serverSelectDialog(context);
-                    },
-                  ),
+                  if (!kReleaseMode)
+                    TextButton(
+                      child: Text(
+                          '${AppLocalizations.of(context)!.environment}: $serverName',
+                          style: TextStyle(fontWeight: FontWeight.w300)),
+                      onPressed: () => serverSelectDialog(context),
+                    ),
                   SizedBox(height: 10.0),
 
                   label(AppLocalizations.of(context)!.phoneOrEmail),
@@ -303,6 +306,7 @@ class LoginState extends State<Login> {
     );
   }
   void serverSelectDialog(BuildContext context){
+    if (kReleaseMode) return;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(

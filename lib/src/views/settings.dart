@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -41,15 +42,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _section(context, strings.settingsCommon, [
-            _tile(Icons.cloud_outlined, strings.environment, () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => EnvironmentScreen(wrap: true),
-                ),
-              );
-            }),
-          ]),
+          if (!kReleaseMode)
+            _section(context, strings.settingsCommon, [
+              _tile(Icons.cloud_outlined, strings.environment, () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => EnvironmentScreen(wrap: true),
+                  ),
+                );
+              }),
+            ]),
           if (signedIn)
             _section(context, strings.settingsAccount, [
               _tile(

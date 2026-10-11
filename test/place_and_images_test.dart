@@ -3,6 +3,7 @@ import 'package:youth_card/l10n/app_localizations_en.dart';
 import 'package:youth_card/l10n/app_localizations_fi.dart';
 import 'package:youth_card/src/objects/activity.dart';
 import 'package:youth_card/src/objects/activityclass.dart';
+import 'package:youth_card/src/objects/webpage.dart';
 import 'package:youth_card/src/util/category_cover_images.dart';
 import 'package:youth_card/src/util/place_activity_matcher.dart';
 import 'package:youth_card/src/views/dashboard.dart';
@@ -68,5 +69,19 @@ void main() {
     expect(dashboardGreetingForHour(en, 15), 'Good afternoon');
     expect(dashboardGreetingForHour(en, 20), 'Good evening');
     expect(dashboardGreetingForHour(fi, 15), 'Hyvää iltapäivää');
+  });
+
+  test('dashboard uses only valid page thumbnail URLs', () {
+    expect(
+      dashboardBackgroundUrl(WebPage(data: {
+        'thumbnailurl': 'https://nuortenliperi.fi/openimage/123',
+      })),
+      'https://nuortenliperi.fi/openimage/123',
+    );
+    expect(dashboardBackgroundUrl(WebPage(data: {'thumbnailurl': ''})), isNull);
+    expect(
+      dashboardBackgroundUrl(WebPage(data: {'thumbnailurl': '/openimage/123'})),
+      isNull,
+    );
   });
 }

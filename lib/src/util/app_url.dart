@@ -4,9 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AppUrl {
+  static const productionServerName = 'Nuortenliperi';
+  static const productionServerHost = 'nuortenliperi.fi';
   static const Map<String,String> servers = {
-    'Nuortenjoensuu' : 'nuortenjoensuu.fi',
-    'Nuortenliperi' : 'nuortenliperi.fi',
+    if (!kReleaseMode) 'Nuortenjoensuu' : 'nuortenjoensuu.fi',
+    productionServerName : productionServerHost,
  //   'Nuortenliperi DEV' : 'dev.nuortenliperi.fi',
  //   'Kontiolahti' : 'kontiolahti.harrastuskalenteri.fi',
   //  'Pirkkala'  : 'nuortenpirkkala.fi',
@@ -47,7 +49,7 @@ class AppUrl {
    //'Czech Republic': '\$2y\$10\$BCuPRRLN276mqCGl4MpzFOelx/yjTB/B/9DD6hqmGy.6KQemiOk4O',
    //'Pirkkala' : '\$2y\$10\$2V1D67i59auPdJO3SDZfounahm6zEmy3rO8U5NC3gqDs0OSpW7/3a'
  };
-  static const String liveBaseURL = "nuortenjoensuu.fi";
+  static const String liveBaseURL = productionServerHost;
   static const String localBaseURL = "http://10.0.2.2:4000/api/";
 
   static const String baseURL = liveBaseURL;

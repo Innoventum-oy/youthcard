@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import 'package:youth_card/src/objects/user.dart';
@@ -76,7 +76,9 @@ class AuthProvider with ChangeNotifier {
   Future<Map<String, dynamic>> login(String email, String password,{String? server}) async {
     Map<String, dynamic> result;
 
-    String baseUrl = server ?? await Settings().getServer();
+    String baseUrl = kReleaseMode
+        ? await Settings().getServer()
+        : server ?? await Settings().getServer();
     final Map<String, dynamic> loginData = {
       'user': {
         'email': email,

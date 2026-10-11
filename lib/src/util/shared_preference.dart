@@ -2,6 +2,7 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/util/local_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:ui' as ui;
 
 import 'dart:async';
@@ -54,6 +55,9 @@ class UserPreferences {
 }
 
 class Settings{
+  Settings({bool? releaseMode}) : _releaseMode = releaseMode ?? kReleaseMode;
+
+  final bool _releaseMode;
 
   Future<String> getLanguage() async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -67,17 +71,20 @@ class Settings{
     return language ;
   }
   Future<String> getServer() async {
+    if (_releaseMode) return AppUrl.productionServerHost;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String server = prefs.getString('server') ?? AppUrl.servers.values.first ;
 
     return server ;
   }
   Future<bool> isServerSelected() async {
+    if (_releaseMode) return true;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('servername')!=null && prefs.getString('servername')!.isNotEmpty ? true : false;
 
   }
   Future<String> getServerName() async {
+    if (_releaseMode) return AppUrl.productionServerName;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? server = prefs.getString('servername');
     if(server==null) {
@@ -99,6 +106,9 @@ class Settings{
     return server;
   }
   Future<String> getValue(arg) async {
+    if (_releaseMode && arg == 'anonymousapikey') {
+      return AppUrl.anonymousApikeys[AppUrl.productionServerName]!;
+    }
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString(arg).toString() ;
