@@ -121,7 +121,8 @@ class CategorisedActivityListState extends State<CategorisedActivityList> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.activities),
+        title: const SizedBox.shrink(),
+        toolbarHeight: 48,
         actions: [
           if (isTester)
             IconButton(
@@ -270,13 +271,10 @@ class CategorisedActivityListState extends State<CategorisedActivityList> {
               ],
             ),
             const SizedBox(height: 8),
-            SizedBox(
-              height: 260,
-              child: ActivityListSliver(
-                activityProvider,
-                widget.imageProvider,
-                activityClass,
-              ),
+            ActivityListSliver(
+              activityProvider,
+              widget.imageProvider,
+              activityClass,
             ),
           ],
         ),

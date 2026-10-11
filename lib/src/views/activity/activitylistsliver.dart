@@ -118,39 +118,46 @@ class ActivityListSliverState extends State<ActivityListSliver> {
     switch (_loadingState) {
       case LoadingState.done:
         if (data.isEmpty) {
-          return Container(
-            padding: EdgeInsets.all(20),
-            child: ListTile(
-              leading: Icon(
-                Icons.error,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-              title: Text(
-                AppLocalizations.of(context)!.noActivitiesFound,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(2, 12, 2, 4),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.event_busy_outlined,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
-              ),
+                const SizedBox(width: 10),
+                Text(
+                  AppLocalizations.of(context)!.noActivitiesFound,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
             ),
           );
         }
-        return ListView.builder(
-          padding: EdgeInsets.symmetric(vertical: 16.0),
-          scrollDirection: Axis.horizontal,
-          itemCount: data.length,
-          itemBuilder: (BuildContext context, int index) {
-            if (!_isLoading && _hasMore && index > (data.length * 0.7)) {
-              _loadNextPage(user, widget.activityClass);
-            }
+        return SizedBox(
+          height: 260,
+          child: ListView.builder(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            scrollDirection: Axis.horizontal,
+            itemCount: data.length,
+            itemBuilder: (BuildContext context, int index) {
+              if (!_isLoading && _hasMore && index > (data.length * 0.7)) {
+                _loadNextPage(user, widget.activityClass);
+              }
 
-            return activityHorizontal(data[index]);
-          },
+              return activityHorizontal(data[index]);
+            },
+          ),
         );
 
       case LoadingState.error:
         //data loading returned error state
-        return Align(
-          alignment: Alignment.center,
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(2, 12, 2, 4),
           child: ListTile(
             leading: Icon(Icons.error),
             title: Text(
@@ -161,8 +168,8 @@ class ActivityListSliverState extends State<ActivityListSliver> {
 
       case LoadingState.loading:
         //data loading in progress
-        return Align(
-          alignment: Alignment.center,
+        return SizedBox(
+          height: 56,
           child: Center(
             child: ListTile(
               leading: CircularProgressIndicator(),

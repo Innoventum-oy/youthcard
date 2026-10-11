@@ -24,8 +24,9 @@ class _ActivityCalendarState extends State<ActivityCalendar> {
   DateTime? _selectedDay;
   final Map<int, List<Activity>> _events = {};
   List<Activity> _activities = [];
+  int _visibleLimit = 20;
   bool _loading = true;
-  bool _refreshing = false;
+  bool _fetching = false;
   String? _error;
 
   @override
@@ -42,41 +43,52 @@ class _ActivityCalendarState extends State<ActivityCalendar> {
   List<Activity> _eventsForDay(DateTime day) => _events[_dayKey(day)] ?? [];
 
   Future<void> _loadEvents({bool refresh = false}) async {
-    if (_refreshing) return;
-    if (refresh) setState(() => _refreshing = true);
+    if (_fetching) return;
+    _fetching = true;
     final user = context.read<UserProvider>().user;
     final params = <String, String>{
       'view': 'calendar',
       'activitystatus': 'active',
       'activitytype': 'activity',
-      'limit': '1000',
-      'offset': '0',
+      'limit': '250',
+      'sort': 'nexteventdate',
       'startfrom': DateFormat('yyyy-MM-dd').format(_firstDay),
       if (user.token != null) 'api_key': user.token!,
-      'fields':
-          'id,nexteventdate,name,description,registration,coverpictureurl,maxvisitors,registeredvisitorcount,latitude,longitude,city,registrationenddate,startdate,enddate,address,postcode',
+      'fields': 'id,nexteventdate,name,coverpictureurl,startdate',
     };
+    final activities = <Activity>[];
+    final events = <int, List<Activity>>{};
     try {
-      final activities = await context.read<ActivityListProvider>().loadItems(
-        params,
-        refresh: refresh,
-      );
-      if (!mounted) return;
-      final events = <int, List<Activity>>{};
-      for (final activity in activities) {
-        final date = activity.nexteventdate ?? activity.startdate;
-        if (date != null) {
-          events.putIfAbsent(_dayKey(date), () => []).add(activity);
+      for (var page = 0; page < 8; page++) {
+        final pageParams = {...params, 'offset': '${page * 250}'};
+        final next = await context.read<ActivityListProvider>().loadItems(
+          pageParams,
+          refresh: refresh,
+        );
+        if (!mounted) return;
+        activities.addAll(next);
+        for (final activity in next) {
+          final date = activity.nexteventdate ?? activity.startdate;
+          if (date != null) {
+            events.putIfAbsent(_dayKey(date), () => []).add(activity);
+          }
+        }
+        setState(() {
+          _activities = List.of(activities);
+          _events
+            ..clear()
+            ..addAll(events);
+          _error = null;
+          _loading = false;
+        });
+        final lastDate = next.isEmpty
+            ? null
+            : next.last.nexteventdate ?? next.last.startdate;
+        if (next.length < 250 ||
+            (lastDate != null && lastDate.isAfter(_lastDay))) {
+          break;
         }
       }
-      setState(() {
-        _activities = activities;
-        _events
-          ..clear()
-          ..addAll(events);
-        _error = null;
-        _loading = false;
-      });
     } catch (error) {
       if (!mounted) return;
       setState(() {
@@ -84,7 +96,11 @@ class _ActivityCalendarState extends State<ActivityCalendar> {
         _loading = false;
       });
     } finally {
-      if (mounted && _refreshing) setState(() => _refreshing = false);
+      if (mounted) {
+        setState(() {
+          _fetching = false;
+        });
+      }
     }
   }
 
@@ -123,7 +139,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> {
         ),
         actions: [
           IconButton(
-            onPressed: _refreshing ? null : () => _loadEvents(refresh: true),
+            onPressed: _fetching ? null : () => _loadEvents(refresh: true),
             icon: const Icon(Icons.refresh),
           ),
         ],
@@ -201,6 +217,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> {
                         key: ValueKey(
                           _focusedDay.year * 12 + _focusedDay.month,
                         ),
+                        locale: locale,
                         firstDay: _firstDay,
                         lastDay: _lastDay,
                         focusedDay: _focusedDay,
@@ -243,6 +260,10 @@ class _ActivityCalendarState extends State<ActivityCalendar> {
                       ),
                     ),
                   ),
+                  if (_fetching) ...[
+                    const SizedBox(height: 8),
+                    const LinearProgressIndicator(),
+                  ],
                   const SizedBox(height: 24),
                   Row(
                     children: [
@@ -262,6 +283,16 @@ class _ActivityCalendarState extends State<ActivityCalendar> {
                     ],
                   ),
                   const SizedBox(height: 12),
+                  if (_error != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(strings.networkError),
+                        ),
+                      ),
+                    ),
                   if (visible.isEmpty)
                     Card(
                       margin: EdgeInsets.zero,
@@ -270,7 +301,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> {
                         child: Text(strings.noUpcomingActivities),
                       ),
                     ),
-                  for (final activity in visible)
+                  for (final activity in visible.take(_visibleLimit))
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Card(
@@ -330,6 +361,11 @@ class _ActivityCalendarState extends State<ActivityCalendar> {
                           ),
                         ),
                       ),
+                    ),
+                  if (visible.length > _visibleLimit)
+                    TextButton(
+                      onPressed: () => setState(() => _visibleLimit += 20),
+                      child: Text(strings.readMore),
                     ),
                 ],
               ),
