@@ -230,6 +230,7 @@ class ActivityCategoryBrowserState extends State<ActivityCategoryBrowser> {
             children: [
               ActivityThumbnail(
                 categoryUrl: activityClass.coverpictureurl,
+                categoryImageId: activityClass.coverpicture,
                 width: 88,
                 height: 72,
               ),
@@ -279,6 +280,7 @@ class ActivityCategoryDetail extends StatelessWidget {
                 children: [
                   ActivityThumbnail(
                     categoryUrl: activityClass.coverpictureurl,
+                    categoryImageId: activityClass.coverpicture,
                     width: 88,
                     height: 72,
                   ),

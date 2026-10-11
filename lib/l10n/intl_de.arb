@@ -113,6 +113,8 @@
   "noUpcomingActivities": "Keine bevorstehenden Aktivitäten",
   "all": "Alle",
   "dashboardGreeting": "Guten Morgen",
+  "dashboardAfternoon": "Guten Tag",
+  "dashboardEvening": "Guten Abend",
   "memberId": "Mitgliedsnummer",
   "home": "Startseite",
   "findNearby": "Entdecke tolle Angebote in deiner Nähe."

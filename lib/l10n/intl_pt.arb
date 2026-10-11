@@ -89,6 +89,8 @@
   "noUpcomingActivities": "Sem atividades futuras",
   "all": "Todos",
   "dashboardGreeting": "Bom dia",
+  "dashboardAfternoon": "Boa tarde",
+  "dashboardEvening": "Boa noite",
   "memberId": "Número de membro",
   "home": "Início",
   "findNearby": "Descobre algo interessante por perto."

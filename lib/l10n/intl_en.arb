@@ -196,6 +196,8 @@
   "noUpcomingActivities": "No upcoming activities",
   "all": "All",
   "dashboardGreeting": "Good morning",
+  "dashboardAfternoon": "Good afternoon",
+  "dashboardEvening": "Good evening",
   "memberId": "Member ID",
   "home": "Home",
   "findNearby": "Find something great nearby.",

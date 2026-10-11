@@ -546,6 +546,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get dashboardGreeting => 'Dobré ráno';
 
   @override
+  String get dashboardAfternoon => 'Dobré odpoledne';
+
+  @override
+  String get dashboardEvening => 'Dobrý večer';
+
+  @override
   String get memberId => 'Členské číslo';
 
   @override

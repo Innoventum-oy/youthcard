@@ -78,6 +78,7 @@ class ActivityListItem extends StatelessWidget{
             children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 ActivityThumbnail(eventUrl: activityItem.coverpictureurl,
+                    categoryId: activityItem.activityClassId,
                     width: 96, height: 96),
                 const SizedBox(width: 14),
                 Expanded(child: Column(

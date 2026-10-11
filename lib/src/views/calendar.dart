@@ -54,7 +54,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> {
       'sort': 'nexteventdate',
       'startfrom': DateFormat('yyyy-MM-dd').format(_firstDay),
       if (user.token != null) 'api_key': user.token!,
-      'fields': 'id,nexteventdate,name,coverpictureurl,startdate',
+      'fields': 'id,nexteventdate,name,coverpictureurl,startdate,activityclass',
     };
     final activities = <Activity>[];
     final events = <int, List<Activity>>{};
@@ -316,6 +316,7 @@ class _ActivityCalendarState extends State<ActivityCalendar> {
                               children: [
                                 ActivityThumbnail(
                                   eventUrl: activity.coverpictureurl,
+                                  categoryId: activity.activityClassId,
                                   width: 72,
                                   height: 72,
                                   borderRadius: BorderRadius.circular(12),

@@ -18,6 +18,10 @@ Date: 2026-10-11
 
 The feed and secondary category route are implemented. `ActivityListProvider` caches each feed page by its sorted parameters for 30 minutes. Search currently filters only the loaded pages, and the UI states that limitation. The remaining API task is to confirm a server-side search parameter and make searching comprehensive across all pages.
 
+Place picks now appear only when an upcoming activity in the loaded feed has the same street address. Opening a place requests upcoming activities with the iCMS `address` filter and checks their addresses again locally. The API does not expose a venue ID on activities, so places that share an address can show the same activities; this is an address association, not a confirmed venue relationship. Place cards and the place detail hero reuse an associated activity thumbnail when the location has no photo. A place can also be absent from picks until the activity page containing its event is loaded.
+
+Activity thumbnails now resolve the category's `coverpicture` image ID through `/openimage/{id}` when an activity has no usable image. The category list is cached for 30 minutes, and the image widget falls back to the category if an event image fails to load. This applies to Discover, Calendar, Dashboard, category views, and activity detail.
+
 ## Calendar choice
 
 Keep `table_calendar` for the current month-and-upcoming-events layout. The resolved version is 3.3.0; its API supports locale, event loading, month/week formats, and custom builders. The dependency constraint now names 3.3.0 explicitly. The calendar's Finnish weekday labels now use the active app locale.

@@ -100,6 +100,8 @@
   "noUpcomingActivities": "Brak nadchodzących wydarzeń",
   "all": "Wszystkie",
   "dashboardGreeting": "Dzień dobry",
+  "dashboardAfternoon": "Dzień dobry",
+  "dashboardEvening": "Dobry wieczór",
   "memberId": "Numer członkowski",
   "home": "Strona główna",
   "findNearby": "Odkryj coś ciekawego w pobliżu."

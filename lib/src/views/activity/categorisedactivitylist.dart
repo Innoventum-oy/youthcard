@@ -8,6 +8,7 @@ import 'package:youth_card/src/providers/image_provider.dart' as app_images;
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/util/activity_thumbnail.dart';
 import 'package:youth_card/src/util/navigator.dart';
+import 'package:youth_card/src/util/place_activity_matcher.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/views/activity/activity_category_browser.dart';
@@ -108,7 +109,8 @@ class _DiscoverFeedState extends State<CategorisedActivityList> {
       if (type == 'activity')
         'startfrom': DateFormat('yyyy-MM-dd').format(DateTime.now()),
       if (user.token != null) 'api_key': user.token!,
-      'fields': 'id,name,nexteventdate,startdate,coverpictureurl,city',
+      'fields':
+          'id,name,nexteventdate,startdate,coverpictureurl,city,address,latitude,longitude,activityclass,activitytype',
     };
     try {
       final next = await context.read<ActivityListProvider>().loadItems(
@@ -162,7 +164,12 @@ class _DiscoverFeedState extends State<CategorisedActivityList> {
       for (final activity in _activities.items) _FeedItem(activity, false),
     ];
     final places = [
-      for (final activity in _places.items) _FeedItem(activity, true),
+      for (final activity in _places.items)
+        if (PlaceActivityMatcher.atPlace(
+          activity,
+          _activities.items,
+        ).isNotEmpty)
+          _FeedItem(activity, true),
     ];
     final combined = switch (_filter) {
       _DiscoverFilter.activities => activities,
@@ -432,15 +439,16 @@ class _DiscoverFeedState extends State<CategorisedActivityList> {
 
   Widget _card(_FeedItem item, AppLocalizations strings) {
     final activity = item.activity;
+    final placeActivities = item.isPlace
+        ? PlaceActivityMatcher.atPlace(activity, _activities.items)
+        : const <Activity>[];
+    final preview = placeActivities.isEmpty ? null : placeActivities.first;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final date = activity.nexteventdate ?? activity.startdate;
     final locale = Localizations.localeOf(context).toString();
     final subtitle = item.isPlace
-        ? [
-            strings.places,
-            if (activity.city?.isNotEmpty == true) activity.city!,
-          ].join(' · ')
+        ? '${strings.comingUp}: ${preview?.name ?? strings.unnamedActivity}'
         : [
             strings.activity,
             if (date != null) DateFormat('d MMM', locale).format(date),
@@ -449,7 +457,12 @@ class _DiscoverFeedState extends State<CategorisedActivityList> {
       margin: const EdgeInsets.only(bottom: 20),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => goToActivity(context, activity),
+        onTap: () => goToActivity(
+          context,
+          activity,
+          isPlace: item.isPlace,
+          placePreview: preview,
+        ),
         child: SizedBox(
           height: 96,
           child: Padding(
@@ -457,7 +470,11 @@ class _DiscoverFeedState extends State<CategorisedActivityList> {
             child: Row(
               children: [
                 ActivityThumbnail(
-                  eventUrl: activity.coverpictureurl,
+                  eventUrl:
+                      activity.coverpictureurl ?? preview?.coverpictureurl,
+                  categoryId: activity.coverpictureurl == null
+                      ? preview?.activityClassId
+                      : activity.activityClassId,
                   width: 72,
                   height: 72,
                   borderRadius: BorderRadius.circular(12),

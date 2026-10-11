@@ -211,6 +211,8 @@ class ActivityListSliverState extends State<ActivityListSliver> {
                 ActivityThumbnail(
                   eventUrl: activity.coverpictureurl,
                   categoryUrl: widget.activityClass.coverpictureurl,
+                  categoryId: activity.activityClassId,
+                  categoryImageId: widget.activityClass.coverpicture,
                   width: double.infinity,
                   height: 116,
                 ),

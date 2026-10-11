@@ -548,6 +548,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get dashboardGreeting => 'Dzień dobry';
 
   @override
+  String get dashboardAfternoon => 'Dzień dobry';
+
+  @override
+  String get dashboardEvening => 'Dobry wieczór';
+
+  @override
   String get memberId => 'Numer członkowski';
 
   @override

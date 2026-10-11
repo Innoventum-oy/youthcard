@@ -547,6 +547,12 @@ class AppLocalizationsFi extends AppLocalizations {
   String get dashboardGreeting => 'Hyvää huomenta';
 
   @override
+  String get dashboardAfternoon => 'Hyvää iltapäivää';
+
+  @override
+  String get dashboardEvening => 'Hyvää iltaa';
+
+  @override
   String get memberId => 'Jäsennumero';
 
   @override

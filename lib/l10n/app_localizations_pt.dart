@@ -547,6 +547,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get dashboardGreeting => 'Bom dia';
 
   @override
+  String get dashboardAfternoon => 'Boa tarde';
+
+  @override
+  String get dashboardEvening => 'Boa noite';
+
+  @override
   String get memberId => 'Número de membro';
 
   @override

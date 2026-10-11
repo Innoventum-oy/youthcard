@@ -547,6 +547,12 @@ class AppLocalizationsHr extends AppLocalizations {
   String get dashboardGreeting => 'Dobro jutro';
 
   @override
+  String get dashboardAfternoon => 'Dobar dan';
+
+  @override
+  String get dashboardEvening => 'Dobra večer';
+
+  @override
   String get memberId => 'Članski broj';
 
   @override

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:youth_card/src/objects/formcategory.dart';
@@ -25,6 +27,12 @@ import 'package:intl/intl.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:youth_card/src/views/webpagetextcontent.dart';
 
+String dashboardGreetingForHour(AppLocalizations strings, int hour) {
+  if (hour < 12) return strings.dashboardGreeting;
+  if (hour < 18) return strings.dashboardAfternoon;
+  return strings.dashboardEvening;
+}
+
 class DashBoard extends StatefulWidget {
   final String viewTitle = 'dashboard';
   final objectmodel.ActivityListProvider provider =
@@ -37,6 +45,7 @@ class DashBoard extends StatefulWidget {
 }
 
 class DashBoardState extends State<DashBoard> {
+  Timer? _greetingTimer;
   final Map<String, LoadingState> _loadingStates = {};
   Map<String, List<Activity>> myActivities = {};
   List<FormCategory> formCategories = [];
@@ -52,12 +61,30 @@ class DashBoardState extends State<DashBoard> {
 
   @override
   void initState() {
-
-
+    super.initState();
+    _scheduleGreetingUpdate();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initFunction();
     });
-    super.initState();
+  }
+  void _scheduleGreetingUpdate() {
+    _greetingTimer?.cancel();
+    final now = DateTime.now();
+    final next = now.hour < 12
+        ? DateTime(now.year, now.month, now.day, 12)
+        : now.hour < 18
+            ? DateTime(now.year, now.month, now.day, 18)
+            : DateTime(now.year, now.month, now.day + 1);
+    _greetingTimer = Timer(next.difference(now), () {
+      if (mounted) setState(() {});
+      _scheduleGreetingUpdate();
+    });
+  }
+
+  @override
+  void dispose() {
+    _greetingTimer?.cancel();
+    super.dispose();
   }
   void initFunction()
   {
@@ -86,7 +113,7 @@ class DashBoardState extends State<DashBoard> {
       'startfrom': DateFormat('yyyy-MM-dd').format(DateTime.now()),
       'sort': 'nexteventdate',
       if (user.token != null) 'api_key': user.token!,
-      'fields': 'id,name,nexteventdate,startdate,coverpictureurl,description',
+      'fields': 'id,name,nexteventdate,startdate,coverpictureurl,description,activityclass',
     };
     try {
       final items = await context.read<objectmodel.ActivityListProvider>()
@@ -263,7 +290,7 @@ class DashBoardState extends State<DashBoard> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
         children: [
-          Text(strings.dashboardGreeting,
+          Text(dashboardGreetingForHour(strings, DateTime.now().hour),
               style: theme.textTheme.bodyLarge?.copyWith(
                   color: colors.onSurfaceVariant)),
           const SizedBox(height: 16),
@@ -343,6 +370,7 @@ class DashBoardState extends State<DashBoard> {
                   padding: const EdgeInsets.all(16),
                   child: Row(children: [
                     ActivityThumbnail(eventUrl: _upcoming!.coverpictureurl,
+                        categoryId: _upcoming!.activityClassId,
                         width: 76, height: 76,
                         borderRadius: BorderRadius.circular(12)),
                     const SizedBox(width: 14),

@@ -15,6 +15,8 @@ class Activity {
   String? longitude;
   Map<String, dynamic>? coverpicture;
   String? coverpictureurl;
+  int? activityClassId;
+  String? activityType;
   String? qrcode;
   int accesslevel;
   int? maxvisitors;
@@ -35,6 +37,8 @@ class Activity {
     this.longitude,
     this.coverpicture,
     this.coverpictureurl,
+    this.activityClassId,
+    this.activityType,
     this.qrcode,
     this.maxvisitors,
     this.registeredvisitorcount,
@@ -60,6 +64,10 @@ class Activity {
     }
 
     Map<String, dynamic> responseData = response['data'] ?? response;
+    final activityClass = responseData['activityclass'];
+    final rawClassId = activityClass is Map
+        ? activityClass['objectid'] ?? activityClass['id']
+        : activityClass;
 
     Map<String, dynamic> coverpicture;
     if (responseData['coverpicture'].runtimeType == String) {
@@ -112,6 +120,8 @@ class Activity {
       coverpictureurl: responseData['coverpictureurl'] is String
           ? responseData['coverpictureurl'] as String
           : null,
+      activityClassId: int.tryParse(rawClassId?.toString() ?? ''),
+      activityType: responseData['activitytype']?.toString(),
       registration:
           responseData['registration'] == 'true' ||
               responseData['registration'] == true
@@ -139,6 +149,8 @@ class Activity {
     'qrcode': qrcode,
     'coverpicture': coverpicture,
     'coverpictureurl': coverpictureurl,
+    'activityclass': activityClassId,
+    'activitytype': activityType,
     'accesslevel': accesslevel,
     'registration': registration,
     'maxvisitors': maxvisitors,

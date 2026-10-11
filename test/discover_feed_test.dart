@@ -22,11 +22,25 @@ class _DiscoverActivities extends ActivityListProvider {
     final request = Map<String, dynamic>.from(params as Map);
     requests.add(request);
     if (request['activitytype'] == 'location') {
-      return [Activity(id: 3, name: 'City library', city: 'Joensuu')];
+      return [
+        Activity(
+          id: 3,
+          name: 'City library',
+          city: 'Joensuu',
+          address: 'Library Road 2',
+          activityType: 'location',
+        ),
+        Activity(
+          id: 4,
+          name: 'Empty field',
+          address: 'Field Road 8',
+          activityType: 'location',
+        ),
+      ];
     }
     return [
-      Activity(id: 1, name: 'Creative weekend'),
-      Activity(id: 2, name: 'Youth sports club'),
+      Activity(id: 1, name: 'Creative weekend', address: 'Library Road 2'),
+      Activity(id: 2, name: 'Youth sports club', address: 'Sports Street 1'),
     ];
   }
 }
@@ -66,6 +80,7 @@ void main() {
     );
     expect(find.text('Creative weekend'), findsOneWidget);
     expect(find.text('City library'), findsOneWidget);
+    expect(find.text('Empty field'), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('discover-filter-places')));
     await tester.pumpAndSettle();
@@ -73,11 +88,20 @@ void main() {
     expect(find.text('Creative weekend'), findsNothing);
     expect(provider.requests.length, 2);
 
+    await tester.tap(find.text('City library'));
+    await tester.pumpAndSettle();
+    expect(provider.requests.last['address'], 'Library Road 2');
+    expect(find.text('Creative weekend'), findsOneWidget);
+    expect(find.text('Youth sports club'), findsNothing);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(const ValueKey('discover-filter-activities')));
     await tester.pumpAndSettle();
     expect(find.text('Creative weekend'), findsOneWidget);
     expect(find.text('City library'), findsNothing);
-    expect(provider.requests.length, 2);
+    expect(provider.requests.length, 3);
   });
 
   testWidgets('category events load only after opening a category', (

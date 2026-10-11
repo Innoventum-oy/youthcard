@@ -200,6 +200,8 @@
   "noUpcomingActivities": "Ei tulevia tapahtumia",
   "all": "Kaikki",
   "dashboardGreeting": "Hyvää huomenta",
+  "dashboardAfternoon": "Hyvää iltapäivää",
+  "dashboardEvening": "Hyvää iltaa",
   "memberId": "Jäsennumero",
   "home": "Etusivu",
   "findNearby": "Löydä kiinnostavaa tekemistä läheltä.",

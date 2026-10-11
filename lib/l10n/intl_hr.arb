@@ -87,6 +87,8 @@
   "noUpcomingActivities": "Nema nadolazećih aktivnosti",
   "all": "Sve",
   "dashboardGreeting": "Dobro jutro",
+  "dashboardAfternoon": "Dobar dan",
+  "dashboardEvening": "Dobra večer",
   "memberId": "Članski broj",
   "home": "Početna",
   "findNearby": "Pronađi nešto sjajno u blizini."

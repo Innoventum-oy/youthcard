@@ -549,6 +549,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dashboardGreeting => 'Guten Morgen';
 
   @override
+  String get dashboardAfternoon => 'Guten Tag';
+
+  @override
+  String get dashboardEvening => 'Guten Abend';
+
+  @override
   String get memberId => 'Mitgliedsnummer';
 
   @override

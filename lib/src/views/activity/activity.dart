@@ -16,6 +16,7 @@ import 'package:youth_card/src/views/utilviews.dart';
 import 'package:youth_card/src/views/meta_section.dart';
 import 'package:youth_card/src/views/qrscanner.dart';
 import 'package:youth_card/src/views/activity/activityparticipantlist.dart';
+import 'package:youth_card/src/util/activity_thumbnail.dart';
 class ActivityView extends StatefulWidget {
   final Activity _activity;
   final object_model.ActivityListProvider provider;
@@ -173,14 +174,13 @@ class ActivityViewState extends State<ActivityView> {
           children: <Widget>[
             Hero(
               tag: "Activity-Tag-${widget._activity.id}",
-              child: widget._activity.coverpictureurl != null
-                  ? FadeInImage.assetNetwork(
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      placeholder: 'images/activity-placeholder.png',
-                      image: widget._activity.coverpictureurl!,
-                    )
-                  : Image(image: AssetImage('images/activity-placeholder.png')),
+              child: ActivityThumbnail(
+                eventUrl: widget._activity.coverpictureurl,
+                categoryId: widget._activity.activityClassId,
+                width: double.infinity,
+                height: double.infinity,
+                borderRadius: BorderRadius.zero,
+              ),
             ),
             BottomGradient(),
             //_buildMetaSection(activity)
