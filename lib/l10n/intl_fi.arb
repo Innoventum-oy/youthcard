@@ -202,5 +202,13 @@
   "dashboardGreeting": "Hyvää huomenta",
   "memberId": "Jäsennumero",
   "home": "Etusivu",
-  "findNearby": "Löydä kiinnostavaa tekemistä läheltä."
+  "findNearby": "Löydä kiinnostavaa tekemistä läheltä.",
+  "places": "Paikat",
+  "searchDiscover": "Hae tapahtumia ja paikkoja",
+  "searchLoadedHint": "Haku koskee ladattuja kohteita. Lataa lisää hakeaksesi laajemmin.",
+  "featuredForYou": "Sinulle poimittua",
+  "browseCategories": "Kategoriat",
+  "loadMore": "Lataa lisää",
+  "noDiscoverResults": "Sopivia tapahtumia tai paikkoja ei löytynyt",
+  "refresh": "Päivitä"
 }

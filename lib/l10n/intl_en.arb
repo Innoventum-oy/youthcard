@@ -198,5 +198,13 @@
   "dashboardGreeting": "Good morning",
   "memberId": "Member ID",
   "home": "Home",
-  "findNearby": "Find something great nearby."
+  "findNearby": "Find something great nearby.",
+  "places": "Places",
+  "searchDiscover": "Search activities and places",
+  "searchLoadedHint": "Search covers items loaded so far. Load more to search further.",
+  "featuredForYou": "Featured for you",
+  "browseCategories": "Categories",
+  "loadMore": "Load more",
+  "noDiscoverResults": "No matching activities or places",
+  "refresh": "Refresh"
 }

@@ -88,7 +88,15 @@
     "visitAdded",
     "visitRemoved",
     "writeAnswerHere",
-    "youHaveToAgreeToSavingUserInformation"
+    "youHaveToAgreeToSavingUserInformation",
+    "places",
+    "searchDiscover",
+    "searchLoadedHint",
+    "featuredForYou",
+    "browseCategories",
+    "loadMore",
+    "noDiscoverResults",
+    "refresh"
   ],
 
   "de": [
@@ -156,7 +164,15 @@
     "visitAdded",
     "visitRemoved",
     "writeAnswerHere",
-    "youHaveToAgreeToSavingUserInformation"
+    "youHaveToAgreeToSavingUserInformation",
+    "places",
+    "searchDiscover",
+    "searchLoadedHint",
+    "featuredForYou",
+    "browseCategories",
+    "loadMore",
+    "noDiscoverResults",
+    "refresh"
   ],
 
   "fi": [
@@ -253,7 +269,15 @@
     "visitAdded",
     "visitRemoved",
     "writeAnswerHere",
-    "youHaveToAgreeToSavingUserInformation"
+    "youHaveToAgreeToSavingUserInformation",
+    "places",
+    "searchDiscover",
+    "searchLoadedHint",
+    "featuredForYou",
+    "browseCategories",
+    "loadMore",
+    "noDiscoverResults",
+    "refresh"
   ],
 
   "pl": [
@@ -335,7 +359,15 @@
     "visitAdded",
     "visitRemoved",
     "writeAnswerHere",
-    "youHaveToAgreeToSavingUserInformation"
+    "youHaveToAgreeToSavingUserInformation",
+    "places",
+    "searchDiscover",
+    "searchLoadedHint",
+    "featuredForYou",
+    "browseCategories",
+    "loadMore",
+    "noDiscoverResults",
+    "refresh"
   ],
 
   "pt": [
@@ -428,6 +460,14 @@
     "visitAdded",
     "visitRemoved",
     "writeAnswerHere",
-    "youHaveToAgreeToSavingUserInformation"
+    "youHaveToAgreeToSavingUserInformation",
+    "places",
+    "searchDiscover",
+    "searchLoadedHint",
+    "featuredForYou",
+    "browseCategories",
+    "loadMore",
+    "noDiscoverResults",
+    "refresh"
   ]
 }

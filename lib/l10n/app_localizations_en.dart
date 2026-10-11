@@ -553,4 +553,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get findNearby => 'Find something great nearby.';
+
+  @override
+  String get places => 'Places';
+
+  @override
+  String get searchDiscover => 'Search activities and places';
+
+  @override
+  String get searchLoadedHint =>
+      'Search covers items loaded so far. Load more to search further.';
+
+  @override
+  String get featuredForYou => 'Featured for you';
+
+  @override
+  String get browseCategories => 'Categories';
+
+  @override
+  String get loadMore => 'Load more';
+
+  @override
+  String get noDiscoverResults => 'No matching activities or places';
+
+  @override
+  String get refresh => 'Refresh';
 }

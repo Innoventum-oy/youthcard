@@ -554,4 +554,29 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get findNearby => 'Löydä kiinnostavaa tekemistä läheltä.';
+
+  @override
+  String get places => 'Paikat';
+
+  @override
+  String get searchDiscover => 'Hae tapahtumia ja paikkoja';
+
+  @override
+  String get searchLoadedHint =>
+      'Haku koskee ladattuja kohteita. Lataa lisää hakeaksesi laajemmin.';
+
+  @override
+  String get featuredForYou => 'Sinulle poimittua';
+
+  @override
+  String get browseCategories => 'Kategoriat';
+
+  @override
+  String get loadMore => 'Lataa lisää';
+
+  @override
+  String get noDiscoverResults => 'Sopivia tapahtumia tai paikkoja ei löytynyt';
+
+  @override
+  String get refresh => 'Päivitä';
 }

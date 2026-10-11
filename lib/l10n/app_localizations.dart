@@ -1187,6 +1187,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Find something great nearby.'**
   String get findNearby;
+
+  /// No description provided for @places.
+  ///
+  /// In en, this message translates to:
+  /// **'Places'**
+  String get places;
+
+  /// No description provided for @searchDiscover.
+  ///
+  /// In en, this message translates to:
+  /// **'Search activities and places'**
+  String get searchDiscover;
+
+  /// No description provided for @searchLoadedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search covers items loaded so far. Load more to search further.'**
+  String get searchLoadedHint;
+
+  /// No description provided for @featuredForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured for you'**
+  String get featuredForYou;
+
+  /// No description provided for @browseCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get browseCategories;
+
+  /// No description provided for @loadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get loadMore;
+
+  /// No description provided for @noDiscoverResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching activities or places'**
+  String get noDiscoverResults;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
 }
 
 class _AppLocalizationsDelegate
