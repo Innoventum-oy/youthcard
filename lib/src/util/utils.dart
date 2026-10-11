@@ -93,7 +93,7 @@ Future<void> feedbackAction(BuildContext context, User user) async {
         'data_content': feedback.text,
         'file_file': screenshotFile
       };
-      apiClient.sendFeedback(params, data)!.then((var response) async {
+      apiClient.sendFeedback(params, data)!.then((response) async {
         switch (response['status']) {
           case 'success':
             showDialog<String>(

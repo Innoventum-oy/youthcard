@@ -1,6 +1,8 @@
 # Miscellaneous
 *.class
 *.lock
+!/pubspec.lock
+!/Gemfile.lock
 *.log
 *.pyc
 *.swp
@@ -117,4 +119,4 @@ app.*.symbols
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
-!/dev/ci/**/Gemfile.lockandroid/key.properties
+!/dev/ci/**/Gemfile.lock

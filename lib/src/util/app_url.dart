@@ -7,6 +7,7 @@ class AppUrl {
   static const Map<String,String> servers = {
     'Nuortenjoensuu' : 'nuortenjoensuu.fi',
     'Nuortenliperi' : 'nuortenliperi.fi',
+ //   'Nuortenliperi DEV' : 'dev.nuortenliperi.fi',
  //   'Kontiolahti' : 'kontiolahti.harrastuskalenteri.fi',
   //  'Pirkkala'  : 'nuortenpirkkala.fi',
    // 'Lousada' : 'lousada.youthcard.pt',
@@ -19,6 +20,7 @@ class AppUrl {
   static const Map<String,String> serverImages = {
     'Nuortenjoensuu' : 'images/nuortenjoensuu.png',
     'Nuortenliperi' : 'images/nuortenliperi.png',
+    'Nuortenliperi DEV' : 'images/nuortenliperi.png',
 //    'Lousada' : 'images/lousada.png',
  //   'Kontiolahti': 'images/kontiolahti.png',
   //  'Pirkkala' : 'images/pirkkala-logo.png'

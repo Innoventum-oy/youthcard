@@ -29,8 +29,54 @@ class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey =
   GlobalKey<NavigatorState>();
 }
-class YouthCard extends StatelessWidget {
+
+ThemeData _appTheme(Brightness brightness) {
+  final dark = brightness == Brightness.dark;
+  final colors = ColorScheme.fromSeed(
+    seedColor: const Color(0xFF0A6059),
+    brightness: brightness,
+    primary: dark ? const Color(0xFF8DD7C9) : const Color(0xFF0A6059),
+    secondary: dark ? const Color(0xFFFFC6A6) : const Color(0xFF9B532E),
+    surface: dark ? const Color(0xFF111A1B) : const Color(0xFFFAFBF7),
+  );
+  return ThemeData(
+    useMaterial3: true,
+    brightness: brightness,
+    colorScheme: colors,
+    scaffoldBackgroundColor: colors.surface,
+    cardTheme: CardThemeData(
+      color: dark ? const Color(0xFF1B292A) : Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    ),
+    appBarTheme: AppBarTheme(
+      backgroundColor: colors.surface,
+      foregroundColor: colors.onSurface,
+      elevation: 0,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: colors.surfaceContainerLow,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+    ),
+  );
+}
+
+class YouthCard extends StatefulWidget {
   const YouthCard({super.key});
+
+  @override
+  State<YouthCard> createState() => _YouthCardState();
+}
+
+class _YouthCardState extends State<YouthCard> {
+  late final Future<User> _storedUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _storedUser = UserPreferences().getUser();
+  }
 
   // This widget is the root of Youth Card application.
   @override
@@ -50,19 +96,11 @@ class YouthCard extends StatelessWidget {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
 
-          theme: ThemeData(
-
-            primarySwatch: Colors.deepOrange,
-            colorScheme: Theme.of(context).colorScheme.copyWith(primary: Colors.deepOrange,secondary: Colors.teal,),
-
-            //accentColor: Colors.teal,
-            // This makes the visual density adapt to the platform that you run
-            // the app on. For desktop platforms, the controls will be smaller and
-            // closer together (more dense) than on mobile platforms.
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
+          theme: _appTheme(Brightness.light),
+          darkTheme: _appTheme(Brightness.dark),
+          themeMode: ThemeMode.system,
           home: FutureBuilder(
-              future: UserPreferences().getUser(),
+              future: _storedUser,
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
 

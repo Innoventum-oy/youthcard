@@ -14,7 +14,7 @@ class MobileFileStorage implements FileStorageInterface {
 
     final file = File(
         '${(await getApplicationDocumentsDirectory()).path}/$servername.$filename.json');
-    file.writeAsString(jsonEncode(data));
+    await file.writeAsString(jsonEncode(data), flush: true);
     return true;
   }
 
@@ -28,11 +28,11 @@ class MobileFileStorage implements FileStorageInterface {
         return jsonDecode(await file.readAsString());
       } else {
         DateTime date = await file.lastModified();
-        if (date.difference(DateTime.now()).inMinutes < expiration) {
+        if (DateTime.now().difference(date) < Duration(minutes: expiration)) {
           return jsonDecode(await file.readAsString());
         } else {
-
-          return delete(filename);
+          // Retain stale data for an offline fallback.
+          return false;
         }
       }
     }
@@ -42,18 +42,15 @@ class MobileFileStorage implements FileStorageInterface {
   @override
   Future<void> clear() async {
 
-    Directory dir = await getApplicationDocumentsDirectory();
-
-    var directoryListing = dir.listSync().whereType<File>();
-    for (var directoryEntry in directoryListing)
-    {
-      directoryEntry.delete();
-
-
+    final servername = await Settings().getServerName();
+    final dir = await getApplicationDocumentsDirectory();
+    await for (final entry in dir.list()) {
+      if (entry is File &&
+          entry.path.split(Platform.pathSeparator).last.startsWith('$servername.') &&
+          !entry.path.endsWith('.local_user.json')) {
+        await entry.delete();
+      }
     }
-    /* SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.clear();
-*/
   }
   @override
   Future<void> delete(String filename) async {
@@ -63,7 +60,7 @@ class MobileFileStorage implements FileStorageInterface {
         '${(await getApplicationDocumentsDirectory()).path}/$servername.$filename.json');
     if (await file.exists()) {
 
-      file.delete();
+      await file.delete();
     }
   }
 

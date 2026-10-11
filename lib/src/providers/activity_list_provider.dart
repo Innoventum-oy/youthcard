@@ -30,33 +30,33 @@ class ActivityListProvider extends ObjectProvider {
 
 
   @override
-  Future<List<Activity>> loadItems(params,{refresh =false}) async {
-
-    String filename = md5.convert(utf8.encode(params.toString())).toString();
-    // FileStorage.delete(filename);
-    var activitydata = await getFileStorage().read(filename,expiration: 30);
-    /* (activitydata as Activity).map<Activity>((data) => Activity.fromJson(data))
-        .toList();*/
-    if (activitydata != false && activitydata.length>0 && !refresh)
-    {
-
-      List <Activity> activities = [];
-
-      for(var data in activitydata) {
-
-        Activity a = Activity.fromJson(data);
-        activities.add(a);
-
-      }
-
-      _data = activities;
-      return activities;
+  Future<List<Activity>> loadItems(params,{refresh = false}) async {
+    final entries = (params as Map).entries
+        .map((entry) => MapEntry(entry.key.toString(), entry.value))
+        .toList()..sort((a, b) => a.key.compareTo(b.key));
+    final sortedParams = <String, dynamic>{for (final entry in entries) entry.key: entry.value};
+    final filename = 'activities_${md5.convert(utf8.encode(jsonEncode(sortedParams)))}';
+    final storage = getFileStorage();
+    final cached = await storage.read(filename, expiration: 30);
+    if (cached is List && !refresh) {
+      _data = cached.map((data) => Activity.fromJson(Map<String, dynamic>.from(data))).toList();
+      return _data!;
     }
 
-    final remoteactivitydata =  await _apiClient.loadActivities(params);
-    getFileStorage().write(remoteactivitydata,filename);
-    notifyListeners();
-    return remoteactivitydata;
+    try {
+      final remote = await _apiClient.loadActivities(sortedParams);
+      _data = remote;
+      await storage.write(remote, filename);
+      notifyListeners();
+      return remote;
+    } catch (_) {
+      final stale = cached is List ? cached : await storage.read(filename);
+      if (stale is List) {
+        _data = stale.map((data) => Activity.fromJson(Map<String, dynamic>.from(data))).toList();
+        return _data!;
+      }
+      rethrow;
+    }
 
   }
 
@@ -94,10 +94,16 @@ class ActivityListProvider extends ObjectProvider {
       }
     }
 
-    final remoteactivitydata = await _apiClient.getActivityDetails(activityId, user);
-
-    getFileStorage().write(remoteactivitydata,"activity_${activityId}_user_${user.id}");
-    return remoteactivitydata;
+    final key = "activity_${activityId}_user_${user.id}";
+    try {
+      final remoteActivityData = await _apiClient.getActivityDetails(activityId, user);
+      await getFileStorage().write(remoteActivityData, key);
+      return remoteActivityData;
+    } catch (_) {
+      final stale = await getFileStorage().read(key);
+      if (stale != false) return stale;
+      rethrow;
+    }
 
   }
 }

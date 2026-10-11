@@ -202,7 +202,7 @@ class DisplayFormState extends State<DisplayForm> {
         if (hasData) {
           _apiClient
               .saveFormData(params, requestData)!
-              .then((var response) async {
+              .then((response) async {
             if (response['answersetid'] is int) {
               answersetKey = response['answersetid'];
             }
@@ -380,11 +380,10 @@ class DisplayFormState extends State<DisplayForm> {
                 // print('handling file');
                 input = ElevatedButton(
                   onPressed: () async {
-                    FilePickerResult? result =
-                        await FilePicker.platform.pickFiles();
+                    final result = await FilePicker.pickFile();
 
-                    if (result != null) {
-                      File file = File(result.files.single.path as String);
+                    if (result?.path != null) {
+                      File file = File(result!.path!);
                       formData[e.id ?? 0] = file;
                     } else {
                       // User canceled the picker

@@ -1,0 +1,174 @@
+require 'fileutils'
+require 'json'
+
+ROOT = File.expand_path('..', __dir__)
+
+default_platform(:ios)
+
+def screenshot_name(options)
+  name = options[:name].to_s
+  UI.user_error!('Pass name:01_dashboard (or another numbered screen name)') unless name.match?(/\A[\w-]+\z/)
+  name
+end
+
+def screenshot_names(options)
+  (options[:names] || '01_dashboard,02_card,03_discover,04_calendar')
+    .split(',').map(&:strip).reject(&:empty?)
+end
+
+def screenshot_files(platform, locale)
+  root = platform == :ios ?
+    File.join(ROOT, 'fastlane', 'screenshots', locale) :
+    File.join(ROOT, 'fastlane', 'metadata', 'android', locale, 'images', 'phoneScreenshots')
+  Dir[File.join(root, '*.png')]
+end
+
+def validate_screenshot_files!(platform, locale)
+  files = screenshot_files(platform, locale)
+  UI.user_error!("No #{platform} screenshots for #{locale}; run the screenshots lane first") if files.empty?
+  UI.user_error!('One or more screenshots are empty') if files.any? { |file| File.size(file).zero? }
+  UI.success("Validated #{files.length} #{platform} screenshots for #{locale}")
+end
+
+def app_store_key!
+  key_path = ENV['APP_STORE_CONNECT_KEY_PATH']
+  key_id = ENV['APP_STORE_CONNECT_KEY_ID']
+  UI.user_error!('Set APP_STORE_CONNECT_KEY_PATH and APP_STORE_CONNECT_KEY_ID') if key_path.to_s.empty? || key_id.to_s.empty?
+  app_store_connect_api_key(
+    key_id: key_id,
+    issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
+    key_filepath: key_path
+  )
+end
+
+platform :ios do
+  desc 'Capture the currently displayed app screen from the booted iOS simulator'
+  lane :screenshot do |options|
+    name = screenshot_name(options)
+    locale = options[:locale] || 'en-US'
+    devices = JSON.parse(`xcrun simctl list devices booted -j`)
+    device = devices.fetch('devices').values.flatten.find { |entry| entry['state'] == 'Booted' }
+    UI.user_error!('Boot an iOS simulator and navigate to the screen first') unless device
+    output = File.join(ROOT, 'fastlane', 'screenshots', locale)
+    FileUtils.mkdir_p(output)
+    file = File.join(output, "#{device.fetch('name')}-#{name}.png")
+    sh('xcrun', 'simctl', 'io', device.fetch('udid'), 'screenshot', file)
+    UI.success("Captured #{file}")
+  end
+
+  desc 'Guide an operator through a set of iOS screenshots on the booted simulator'
+  lane :screenshots do |options|
+    screenshot_names(options).each do |name|
+      UI.input("Navigate to #{name}, wait for content, then press Enter")
+      screenshot(name: name, locale: options[:locale] || 'en-US')
+    end
+  end
+
+  desc 'Check local iOS screenshots before upload'
+  lane :validate_screenshots do |options|
+    validate_screenshot_files!(:ios, options[:locale] || 'en-US')
+  end
+
+  desc 'Upload reviewed iOS screenshots without a binary or metadata change'
+  lane :upload_screenshots do |options|
+    validate_screenshots(options)
+    upload_to_app_store(
+      api_key: app_store_key!,
+      app_identifier: 'eu.youthcard.youthCard',
+      screenshots_path: File.join(ROOT, 'fastlane', 'screenshots'),
+      skip_binary_upload: true,
+      skip_metadata: true,
+      overwrite_screenshots: false,
+      submit_for_review: false
+    )
+  end
+
+  desc 'Build a signed IPA for local review'
+  lane :build_candidate do
+    Dir.chdir(ROOT) { sh('flutter', 'build', 'ipa', '--release') }
+  end
+
+  desc 'Build and upload an IPA to TestFlight; does not submit for App Store review'
+  lane :beta do
+    api_key = app_store_key!
+    build_candidate
+    ipa = Dir[File.join(ROOT, 'build', 'ios', 'ipa', '*.ipa')].max_by { |path| File.mtime(path) }
+    UI.user_error!('No IPA was produced') unless ipa
+    upload_to_testflight(
+      ipa: ipa,
+      api_key: api_key,
+      skip_waiting_for_build_processing: true,
+      skip_submission: true
+    )
+  end
+end
+
+platform :android do
+  desc 'Capture the currently displayed app screen from a connected Android device'
+  lane :screenshot do |options|
+    name = screenshot_name(options)
+    locale = options[:locale] || 'en-US'
+    output = File.join(ROOT, 'fastlane', 'metadata', 'android', locale, 'images', 'phoneScreenshots')
+    FileUtils.mkdir_p(output)
+    file = File.join(output, "#{name}.png")
+    command = ['adb']
+    command += ['-s', ENV['ANDROID_SERIAL']] if ENV['ANDROID_SERIAL'] && !ENV['ANDROID_SERIAL'].empty?
+    command += ['exec-out', 'screencap', '-p']
+    File.open(file, 'wb') do |destination|
+      IO.popen(command, 'rb') { |stream| IO.copy_stream(stream, destination) }
+    end
+    UI.user_error!('Android screenshot failed; check adb device status') unless $?.success? && File.size?(file)
+    UI.success("Captured #{file}")
+  end
+
+  desc 'Guide an operator through a set of Android screenshots on the connected device'
+  lane :screenshots do |options|
+    screenshot_names(options).each do |name|
+      UI.input("Navigate to #{name}, wait for content, then press Enter")
+      screenshot(name: name, locale: options[:locale] || 'en-US')
+    end
+  end
+
+  desc 'Check local Android screenshots before upload'
+  lane :validate_screenshots do |options|
+    validate_screenshot_files!(:android, options[:locale] || 'en-US')
+  end
+
+  desc 'Upload reviewed Android screenshots without a binary or metadata change'
+  lane :upload_screenshots do |options|
+    validate_screenshots(options)
+    key_path = ENV['GOOGLE_PLAY_JSON_KEY']
+    UI.user_error!('Set GOOGLE_PLAY_JSON_KEY to a service-account JSON file') if key_path.to_s.empty?
+    upload_to_play_store(
+      json_key: key_path,
+      package_name: 'eu.youthcard.youth_card',
+      metadata_path: File.join(ROOT, 'fastlane', 'metadata', 'android'),
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true
+    )
+  end
+
+  desc 'Build a signed Android App Bundle for local review'
+  lane :build_candidate do
+    Dir.chdir(ROOT) { sh('flutter', 'build', 'appbundle', '--release') }
+  end
+
+  desc 'Build and upload a draft release to the Google Play internal track'
+  lane :internal do
+    key_path = ENV['GOOGLE_PLAY_JSON_KEY']
+    UI.user_error!('Set GOOGLE_PLAY_JSON_KEY to a service-account JSON file') if key_path.to_s.empty?
+    build_candidate
+    upload_to_play_store(
+      json_key: key_path,
+      package_name: 'eu.youthcard.youth_card',
+      aab: File.join(ROOT, 'build', 'app', 'outputs', 'bundle', 'release', 'app-release.aab'),
+      track: 'internal',
+      release_status: 'draft',
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end

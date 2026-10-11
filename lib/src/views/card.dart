@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
@@ -49,6 +50,7 @@ class MyCardState extends State<MyCard> {
     int targetId = widget.user?.id ?? (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
     //  print('_getUserInfo called, retrieving user information from userprovider for user '+targetId.toString());
     dynamic fielddata = await provider.getFields(targetId, Provider.of<UserProvider>(context, listen: false).user);
+    if (!mounted) return;
     setState(() {
 
       if(fielddata!=null) {
@@ -70,6 +72,7 @@ class MyCardState extends State<MyCard> {
     int targetId = widget.user?.id ?? (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
     //  print('_getUserInfo called, retrieving user information from userprovider for user '+targetId.toString());
     dynamic userdata = await provider.getObject(targetId, Provider.of<UserProvider>(context, listen: false).user);
+    if (!mounted) return;
     setState(() {
       if(userdata!=null) {
         user = User.fromJson(userdata['data'].first['data'],description:userdata['description']);
@@ -77,25 +80,25 @@ class MyCardState extends State<MyCard> {
       userLoaded = true;
       _benefitsLoadingState = LoadingState.done;
 
-      benefits = widget.user!.userbenefits;
+      benefits = user.userbenefits;
 
     });
   }
 
 
 
-  _loadBenefits(user) async {
-
+  _loadBenefits(User user) async {
 
     final Map<String, String> params = {
       'action': 'loaduserbenefits',
       'userid': user.id.toString(),
-      'api_key': user.token,
+      'api_key': user.token ?? '',
 
     };
 
     try {
       var result = await widget.userBenefitProvider.loadItems(params);
+      if (!mounted) return;
       setState(() {
         _benefitsLoadingState = LoadingState.done;
 
@@ -106,7 +109,7 @@ class MyCardState extends State<MyCard> {
     } catch (e) {
 
       errormessage = e.toString();
-      if (_benefitsLoadingState == LoadingState.loading) {
+      if (mounted && _benefitsLoadingState == LoadingState.loading) {
         setState(() => _benefitsLoadingState = LoadingState.error);
       }
     }
@@ -114,10 +117,14 @@ class MyCardState extends State<MyCard> {
 
   @override
   void initState() {
-    user =widget.user ?? Provider.of<UserProvider>(context, listen: false).user;
+    User user =widget.user ?? Provider.of<UserProvider>(context, listen: false).user;
+    this.user = user;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
 
       if(widget.user==null) {
+        if(kDebugMode) {
+          print('MyCard: user is null, using provider user');
+        }
         userLoaded = true;
         _loadBenefits(user);
       }
@@ -161,7 +168,7 @@ class MyCardState extends State<MyCard> {
       child:Column(
 
         children:[
-          if(user.email!=null) TextButton(
+          if( user.email != null) TextButton(
 
             onPressed:(){
               launchUrlString("mailto:${user.email??''}");
@@ -176,7 +183,7 @@ class MyCardState extends State<MyCard> {
                   children:
                   [
                     Icon(Icons.email),
-                    Flexible(child: Text(user.email ??'-',
+                    Flexible(child: Text(user.email!,
                       overflow: TextOverflow.clip,),
                     ),
                   ],
@@ -198,7 +205,7 @@ class MyCardState extends State<MyCard> {
               ),
             ),
           ),
-          if(user.data!['huoltajan_puhelinnumero']!=null)
+          if(user.data != null && user.data!['huoltajan_puhelinnumero']!=null)
             TextButton(
               onPressed:(){
                 launchUrlString("tel:${user.data!['huoltajan_puhelinnumero']??''}");
@@ -234,7 +241,7 @@ class MyCardState extends State<MyCard> {
           body: orientation == Orientation.portrait
               ? _portraitLayout(user)
               : _landscapeLayout(user),
-          bottomNavigationBar: bottomNavigation(context,currentIndex:2)
+          bottomNavigationBar: bottomNavigation(context,currentIndex:3)
       );
     });
   }
@@ -243,13 +250,26 @@ class MyCardState extends State<MyCard> {
     return ListView(
         shrinkWrap: true,
       children: [
-        SizedBox(height: 20),
-        Center(
-            child: user.qrcode != null && user.qrcode!.isNotEmpty
-                ? Image.network(user.qrcode!, height: 200)
-                : Container()),
-        SizedBox(height: 20),
-        Center(child: _loggedInView(context, user)),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Card(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(children: [
+                if (user.qrcode != null && user.qrcode!.isNotEmpty)
+                  Card(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Image.network(user.qrcode!, height: 190),
+                    ),
+                  ),
+                _loggedInView(context, user),
+              ]),
+            ),
+          ),
+        ),
         ...contactItems,
         SizedBox(height: 20),
        // Text('Access:'+user.accesslevel.toString()),
@@ -409,21 +429,18 @@ class MyCardState extends State<MyCard> {
     switch (_benefitsLoadingState) {
       case LoadingState.done:
         //data loaded
-
+        if (benefits.isEmpty) return const SizedBox.shrink();
         return SizedBox(
-           height:50,
-          child:Padding(
-            padding: EdgeInsets.only(left: 20, right: 20),
-            child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 120,
-                ),
-                itemCount: benefits.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _userBenefitListItem(benefits[index]);
-                }),
-
-        ),
+          height: 104,
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            scrollDirection: Axis.horizontal,
+            itemCount: benefits.length,
+            itemBuilder: (context, index) => SizedBox(
+              width: 110,
+              child: _userBenefitListItem(benefits[index]),
+            ),
+          ),
         );
       case LoadingState.error:
         //data loading returned error state
@@ -461,7 +478,8 @@ class MyCardState extends State<MyCard> {
       backgroundColor: Colors.white10,
       radius: 28.0,
     ),
-    Text(benefit.title ?? AppLocalizations.of(context)!.unnamed)
+    Text(benefit.title ?? AppLocalizations.of(context)!.unnamed,
+        maxLines: 1, overflow: TextOverflow.ellipsis)
           ],
         );
   }

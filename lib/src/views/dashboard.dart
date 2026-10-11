@@ -72,18 +72,17 @@ class DashBoardState extends State<DashBoard> {
   }
   /* load related page */
   _loadWebPage(user)async {
-
-    await Provider.of<WebPageProvider>(context,listen:false).loadItem({
+    try {
+      await Provider.of<WebPageProvider>(context,listen:false).loadItem({
       'language': Localizations.localeOf(context).toString(),
       'commonname': widget.viewTitle,
       'fields': 'id,commonname,pagetitle,textcontents,thumbnailurl',
       if (user.token != null) 'api_key': user.token,
-    });
-    setState(() {
-
-      //  this.page = Provider.of<WebPageProvider>(context, listen: false).page;
-    });
-
+      });
+      if (mounted) setState(() {});
+    } catch (error) {
+      if (mounted) setState(() => errormessage = error.toString());
+    }
   }
   /* Check if any forms are available
    */
@@ -97,17 +96,22 @@ class DashBoardState extends State<DashBoard> {
       'displayinapp': 'true',
       'api_key': user?.token,
     };
-    dynamic result = await objectmodel.FormCategoryProvider().loadItems(params);
-
-    if (result.length>0) {
-      formCategories =result;
+    try {
+      final result = await objectmodel.FormCategoryProvider().loadItems(params);
+      if (!mounted) return;
+      setState(() {
+        formCategories = result;
+        _loadingStates['formcategories'] = LoadingState.done;
+        _formsLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        errormessage = error.toString();
+        _loadingStates['formcategories'] = LoadingState.error;
+        _formsLoading = false;
+      });
     }
-
-    setState(() {
-      _loadingStates['formcategories'] = LoadingState.done;
-
-      _formsLoading = false;
-    });
   }
 
   /*
@@ -115,6 +119,7 @@ class DashBoardState extends State<DashBoard> {
    */
   _loadMyActivities(user, type) async {
     _isLoading = true;
+    _loadingStates[type] = LoadingState.loading;
     int offset = 0;
     int limit = 1;
     DateTime now = DateTime.now();
@@ -133,6 +138,7 @@ class DashBoardState extends State<DashBoard> {
     try {
     //  print('checking for user own activities of type ' + type);
       var nextActivities = await widget.provider.loadItems(params);
+      if (!mounted) return;
       setState(() {
         //   print(nextActivities.length.toString() + ' items loaded for ' + type);
         _loadingStates[type] = LoadingState.done;
@@ -147,7 +153,7 @@ class DashBoardState extends State<DashBoard> {
       _isLoading = false;
 
       errormessage = e.toString();
-      if (_loadingStates[type] == LoadingState.loading) {
+      if (mounted && _loadingStates[type] == LoadingState.loading) {
         setState(() => _loadingStates[type] = LoadingState.error);
       }
     }
@@ -175,51 +181,44 @@ class DashBoardState extends State<DashBoard> {
     }
 
 
-    ImageProvider backgroundImage = AssetImage("images/splash.png");
-
-    if(page.data!=null) {
-      if (page.data!['thumbnailurl'] != null) {
-        backgroundImage = NetworkImage(page.data!['thumbnailurl']);
-      }
-
-    }
-
     List<Widget> dashboardButtons = [];
 
       if (user.token != null) {
         dashboardButtons.add(
-        MaterialButton(
-          //padding: EdgeInsets.all(8.0),
-          textColor: Colors.white,
-          splashColor: Colors.greenAccent,
-          // elevation: 8.0,
-          child: Stack(children: [
-            Container(
-              decoration: BoxDecoration(
-
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: (user.image != null && user.image!.isNotEmpty
-                      ? CachedNetworkImageProvider(user.image!)
-                      : AssetImage('images/profile.png')
-                  as ImageProvider),
-                  fit: BoxFit.cover,
+          Card(
+            color: Theme.of(context).colorScheme.primary,
+            margin: const EdgeInsets.only(bottom: 20),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyCard()),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('YOUTH CARD', style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.85),
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    )),
+                    const SizedBox(height: 20),
+                    Text(user.fullname.trim().isEmpty
+                        ? AppLocalizations.of(context)!.myCard
+                        : user.fullname,
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 24),
+                    Text('${AppLocalizations.of(context)!.myCard}  →',
+                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold)),
+                  ],
                 ),
               ),
             ),
-            Center(
-              child: Text(AppLocalizations.of(context)!.myCard),
-            ),
-          ]),
-          // ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MyCard()),
-            );
-          },
-
-        ));
+          ),
+        );
       }
       if (user.token != null) {
         dashboardButtons.add(
@@ -281,23 +280,13 @@ class DashBoardState extends State<DashBoard> {
           IconButton(
               icon: Icon(Icons.refresh),
               onPressed: () {
-
-                setState(() {
-                  _loadingStates.forEach((key, value) {
-                    _loadingStates[key] = LoadingState.loading;
-                  });
-                  _isLoading = false;
-                  if (user.token != null) {
-                    for (var a in activityTypes) {
-                      _loadMyActivities(user, a);
-                    }
+                if (user.token != null) {
+                  for (final type in activityTypes) {
+                    _loadMyActivities(user, type);
                   }
-
-                  Provider.of<WebPageProvider>(context, listen: false)
-                      .refresh(user);
-
-                    _loadForms(user);
-                });
+                }
+                Provider.of<WebPageProvider>(context, listen: false).refresh(user);
+                _loadForms(user);
               }),
           if (user.token != null)
             InkWell(
@@ -316,23 +305,16 @@ class DashBoardState extends State<DashBoard> {
                 }),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-              image: backgroundImage,
-              fit: BoxFit.cover
-          ),
-        ),
-        constraints: BoxConstraints.expand(),
-        child: GridView.count(
-          // Create a grid with 2 columns. If you change the scrollDirection to
-          // horizontal, this produces 2 rows.
-          crossAxisCount: dashboardButtons.length>6 ?3 :2,
-          crossAxisSpacing: 0,
-          mainAxisSpacing: 0,
-          padding: EdgeInsets.only(top: 20, left: 20, right: 20,bottom:0),
-          children: dashboardButtons,
-        ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+        children: [
+          Text(AppLocalizations.of(context)!.youthcardDashboard,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              )),
+          const SizedBox(height: 24),
+          ...dashboardButtons,
+        ],
       ),
         bottomNavigationBar: bottomNavigation(context),
     );
@@ -396,30 +378,19 @@ class DashBoardState extends State<DashBoard> {
     );
   }
 
-  Widget dashboardButton(text, icon, action) {
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: ClipOval(
-        child: Material(
-          color: Theme.of(context).primaryColor, // button color
-          child: InkWell(
-            splashColor: Colors.green, // splash color
-            onTap: () => action(), // button pressed
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  icon,
-                  size: 40,
-                  color: Colors.white,
-                ), // icon
-                Text(text,
-                    style: TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,) // text
-              ],
-            ),
-          ),
+  Widget dashboardButton(String text, IconData icon, VoidCallback action) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+        leading: Icon(icon, size: 28, color: Theme.of(context).colorScheme.primary),
+        title: Text(
+          text,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+          textAlign: TextAlign.left,
         ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: action,
       ),
     );
   }

@@ -5,35 +5,32 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:youth_card/src/providers/index.dart' as object_model;
 import 'package:youth_card/src/views/activity/categorisedactivitylist.dart';
+import 'package:youth_card/src/views/calendar.dart';
 
-MaterialButton longButtons(String title, Function()? fun,
-    {Color color = const Color(0xff063057), Color textColor = Colors.white}) {
-  return MaterialButton(
-    onPressed: fun,
-    textColor: textColor,
-    color: color,
-    height: 45,
-    minWidth: 600,
-    shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10))),
-    child: SizedBox(
-      width: double.infinity,
-      child: Text(
-        title,
-        textAlign: TextAlign.center,
+Widget longButtons(String title, Function()? fun,
+    {Color? color, Color? textColor}) {
+  return Builder(builder: (context) => SizedBox(
+    width: double.infinity,
+    child: FilledButton(
+      onPressed: fun == null ? null : () => fun(),
+      style: FilledButton.styleFrom(
+        backgroundColor: color,
+        foregroundColor: textColor,
+        minimumSize: const Size.fromHeight(48),
       ),
+      child: Text(title, textAlign: TextAlign.center),
     ),
-  );
+  ));
 }
 
 label(String title) => Text(title);
 headingLabel(String title) => Text(title,style: TextStyle(fontWeight: FontWeight.bold),);
 InputDecoration buildInputDecoration(String hintText, IconData icon) {
   return InputDecoration(
-    prefixIcon: Icon(icon, color: Color.fromRGBO(50, 62, 72, 1.0)),
+    prefixIcon: Icon(icon),
     // hintText: hintText,
     contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-    border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
+    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14.0)),
   );
 }
 handleNotifications(dynamic notifications,context)
@@ -79,24 +76,30 @@ notifyDialog(String? titleText,Widget text, context)
 Widget bottomNavigation(context,{int currentIndex=0}) {
   object_model.ImageProvider imageprovider = object_model.ImageProvider();
   User user = Provider.of<UserProvider>(context).user;
-  return BottomNavigationBar(
-      currentIndex: currentIndex,
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+  return NavigationBar(
+      selectedIndex: currentIndex,
+      destinations: [
+        NavigationDestination(
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
           label: AppLocalizations.of(context)!.btnDashboard,
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.search),
+        NavigationDestination(
+          icon: const Icon(Icons.search),
           label: AppLocalizations.of(context)!.activities,
         ),
-       if(user.token!=null) BottomNavigationBarItem(
-          icon: Icon(Icons.card_membership),
+        NavigationDestination(
+          icon: const Icon(Icons.calendar_month_outlined),
+          selectedIcon: const Icon(Icons.calendar_month),
+          label: AppLocalizations.of(context)!.calendar,
+        ),
+       if(user.token!=null) NavigationDestination(
+          icon: const Icon(Icons.card_membership_outlined),
+          selectedIcon: const Icon(Icons.card_membership),
           label: AppLocalizations.of(context)!.myCard,
         ),
       ],
-      selectedItemColor: Colors.deepOrange,
-      onTap: (index) {
+      onDestinationSelected: (index) {
         switch (index) {
           case 0:
             Navigator.pushReplacementNamed(context, '/dashboard');
@@ -113,6 +116,14 @@ Widget bottomNavigation(context,{int currentIndex=0}) {
 
             break;
           case 2:
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ActivityCalendar(
+                object_model.ActivityListProvider(), imageprovider,
+              )),
+            );
+            break;
+          case 3:
             Navigator.pushReplacementNamed(context, '/card');
             break;
         }

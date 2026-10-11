@@ -74,6 +74,7 @@ class ActivityCalendarState extends State<ActivityCalendar> with TickerProviderS
     try {
       var nextActivities =
       await widget.provider.loadItems(params);
+      if (!mounted) return;
       setState(() {
         _loadingState = LoadingState.done;
 
@@ -107,7 +108,7 @@ class ActivityCalendarState extends State<ActivityCalendar> with TickerProviderS
     } catch (e) {
 
       errormessage = e.toString();
-      if (_loadingState == LoadingState.loading) {
+      if (mounted && _loadingState == LoadingState.loading) {
         setState(() => _loadingState = LoadingState.error);
       }
     }
@@ -187,7 +188,7 @@ class ActivityCalendarState extends State<ActivityCalendar> with TickerProviderS
             ]
         ),
         body: _getCalendarSection(user),
-      bottomNavigationBar: bottomNavigation(context),
+      bottomNavigationBar: bottomNavigation(context,currentIndex:2),
     );
   }
 
@@ -228,14 +229,27 @@ class ActivityCalendarState extends State<ActivityCalendar> with TickerProviderS
     final kNow = DateTime.now();
      kFirstDay = DateTime(kNow.year, kNow.month - 1, kNow.day);
      kLastDay = DateTime(kNow.year, kNow.month + 3, kNow.day);
+    final colors = Theme.of(context).colorScheme;
     return Column(
         children: [
-          TableCalendar<Activity>(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Card(
+              clipBehavior: Clip.antiAlias,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: TableCalendar<Activity>(
             firstDay: kFirstDay ?? kNow,
             lastDay: kLastDay ?? kNow,
             focusedDay: _focusedDay,
             calendarFormat: _calendarFormat,
             startingDayOfWeek: StartingDayOfWeek.monday,
+            headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
+            calendarStyle: CalendarStyle(
+              todayDecoration: BoxDecoration(color: colors.secondaryContainer, shape: BoxShape.circle),
+              todayTextStyle: TextStyle(color: colors.onSecondaryContainer),
+              selectedDecoration: BoxDecoration(color: colors.primary, shape: BoxShape.circle),
+            ),
             selectedDayPredicate: (day) {
               // Use `selectedDayPredicate` to determine which day is currently selected.
               // If this returns true, then `day` will be marked as selected.
@@ -258,7 +272,11 @@ class ActivityCalendarState extends State<ActivityCalendar> with TickerProviderS
               _focusedDay = focusedDay;
             },
             eventLoader: _getEventsForDay,
-          ), const SizedBox(height: 8.0),
+          ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8.0),
           Expanded(
             child: ValueListenableBuilder<List<Activity>>(
               valueListenable: _selectedEvents,

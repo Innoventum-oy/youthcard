@@ -9,21 +9,24 @@ class MetaSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  if(data==false) return Column();
+    if (data == null || data == false || data is! Map || data['data'] == null) {
+      return const SizedBox.shrink();
+    }
+    String? contactInfo = data['data']['contactinfo'];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
           AppLocalizations.of(context)!.about,
-          style: TextStyle(color: Colors.white),
+          style: Theme.of(context).textTheme.titleMedium,
         ),
         Container(
           height: 8.0,
         ),
-        data['data']['contactinfo'].toString().isNotEmpty? _parseHtml(data['data']['contactinfo']?? ''):Container(),
-        _getSectionOrContainer(AppLocalizations.of(context)!.address,'address',),
-        _getSectionOrContainer(AppLocalizations.of(context)!.postcode,'postcode'),
-        _getSectionOrContainer(AppLocalizations.of(context)!.city,'city'),
+        contactInfo != null ? _parseHtml(context, contactInfo):Container(),
+        _getSectionOrContainer(context, AppLocalizations.of(context)!.address,'address',),
+        _getSectionOrContainer(context, AppLocalizations.of(context)!.postcode,'postcode'),
+        _getSectionOrContainer(context, AppLocalizations.of(context)!.city,'city'),
 
       /*  _getSectionOrContainer('Original Title', 'original_name'),
         _getSectionOrContainer('Status', 'status'),
@@ -63,7 +66,7 @@ class MetaSection extends StatelessWidget {
         : _getMetaInfoSection(title, concatListToString(data[listKey], mapKey));
   }
 */
-  Widget _getSectionOrContainer(String title, String content,
+  Widget _getSectionOrContainer(BuildContext context, String title, String content,
       {dynamic formatterFunction, bool isLink = false}) {
 
 
@@ -75,20 +78,21 @@ class MetaSection extends StatelessWidget {
     return data['data'][content] == null
         ? Container()
         : _getMetaInfoSection(
+        context,
         title,
         (formatterFunction != null
             ? formatterFunction(data['data'][content])
             : data['data'][content]),
         isLink: isLink);
   }
-  Widget _parseHtml(content){
+  Widget _parseHtml(BuildContext context, content){
     //print('returning parsed content for '+content.toString());
     return Html(
         data: content,
-      style: {"*" : Style(color:Colors.white)}
+      style: {"*" : Style(color: Theme.of(context).colorScheme.onSurface)}
     );
   }
-  Widget _getMetaInfoSection(String title, String content, {bool isLink = false})
+  Widget _getMetaInfoSection(BuildContext context, String title, String content, {bool isLink = false})
   {
 
     var contentSection = Expanded(
@@ -98,7 +102,8 @@ class MetaSection extends StatelessWidget {
         child: Text(
           content,
           style: TextStyle(
-              color: isLink ? Colors.blue : Colors.white, fontSize: 12.0),
+              color: isLink ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface, fontSize: 14.0),
         ),
       ),
     );
@@ -111,7 +116,7 @@ class MetaSection extends StatelessWidget {
               flex: 2,
               child: Text(
                 '$title:',
-                style: TextStyle(color: Colors.white, fontSize: 12.0),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14.0),
               ),
             ),
             contentSection

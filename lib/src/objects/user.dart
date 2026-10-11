@@ -114,7 +114,7 @@ class User {
 
   @override
   String toString() {
-    return 'User{' ' id: $id,' ' firstname: $firstname,' ' lastname: $lastname,' ' email: $email,' ' phone: $phone,' ' type: $type,' ' token: $token,' ' renewalToken: $renewalToken, image: $image, qrcode: $qrcode }';
+    return 'User{id: $id, firstname: $firstname, lastname: $lastname, type: $type}';
   }
 
   User copyWith({
@@ -186,5 +186,4 @@ class User {
 
 //</editor-fold>
 }
-
 

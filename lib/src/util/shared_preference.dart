@@ -42,8 +42,8 @@ class UserPreferences {
     return(userdata!=false ? User.fromJson(userdata) : User());
     }
 
-  void removeUser() async {
-    getFileStorage().delete(filename);
+  Future<void> removeUser() async {
+    await getFileStorage().delete(filename);
 
   }
   Future<String> getToken(args) async {
@@ -106,9 +106,13 @@ class Settings{
     return token;
   }
   Future<bool> setValue(String arg,dynamic val) async {
-
+    // Check if arg is a string
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(arg,val);
     return true;
+  }
+  Future<void> clearValue(String arg) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(arg);
   }
 }

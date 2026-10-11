@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/activityclass.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/objects/user.dart';
-import 'package:youth_card/src/util/styles.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/views/activity/activitylistsliver.dart';
@@ -111,7 +110,7 @@ class CategorisedActivityListState extends State<CategorisedActivityList> {
     }
 
     return Scaffold(
-      backgroundColor: primary,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.activities),
           actions: [
@@ -144,10 +143,10 @@ class CategorisedActivityListState extends State<CategorisedActivityList> {
             padding: EdgeInsets.all(20),
             child:
             ListTile(
-              leading: Icon(Icons.error,color:Colors.white),
+              leading: const Icon(Icons.event_busy_outlined),
               title: Text(
                   AppLocalizations.of(context)!.noActivitiesFound,
-                  style:TextStyle(color:Colors.white)),
+                  ),
             ),
             ) :
         CustomScrollView(
@@ -187,7 +186,7 @@ class CategorisedActivityListState extends State<CategorisedActivityList> {
               leading: CircularProgressIndicator(),
               title: Text(AppLocalizations.of(context)!.loading,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white)
+                  style: Theme.of(context).textTheme.bodyMedium
               ),
             ),
           ),
@@ -201,7 +200,11 @@ class CategorisedActivityListState extends State<CategorisedActivityList> {
     object_model.ActivityListProvider activityProvider = object_model.ActivityListProvider();
     return
       Container(
-        decoration: BoxDecoration(color: const Color(0xff222128)),
+        margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary,
+          borderRadius: BorderRadius.circular(24),
+        ),
         child: Padding(
           padding:
           const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -209,14 +212,17 @@ class CategorisedActivityListState extends State<CategorisedActivityList> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(activityClass.name,
-                  style: const TextStyle(
-                      color: Colors.white,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
                       fontSize: 25.0,
                       fontWeight: FontWeight.bold),
                 ),
                 Container(
                   height: 400.0,
-                  decoration: BoxDecoration(color: primaryDark),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child:

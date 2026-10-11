@@ -44,18 +44,14 @@ class FormListState extends State<FormList> {
   bool categoriesLoaded = false;
   bool tasksLoaded = false;
   User? user;
+  String? loadError;
 
   @override
   void initState(){
-
-    loadFormCategories();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-
-      if(!categoriesLoaded) {
-        loadFormCategories();
-      }
-    });
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) loadFormCategories();
+    });
   }
 
   Future<void> loadForms(formCategory)
@@ -72,14 +68,17 @@ class FormListState extends State<FormList> {
 
     if(formCategory.loadingStatus==LoadingStatus.idle) {
       formCategory.loadingStatus = LoadingStatus.loading;
-      dynamic result = await widget.formProvider.loadItems(params);
-
-      setState(() {
-
-        formCategory.loadingStatus = LoadingStatus.ready;
-        formCategory.forms.addAll(result);
-
-      });
+      try {
+        dynamic result = await widget.formProvider.loadItems(params);
+        if (!mounted) return;
+        setState(() {
+          formCategory.loadingStatus = LoadingStatus.ready;
+          formCategory.forms.addAll(result);
+        });
+      } catch (error) {
+        if (!mounted) return;
+        setState(() => loadError = error.toString());
+      }
     }
     //else formCategory.tasksLoaded = true;
   }
@@ -87,25 +86,29 @@ class FormListState extends State<FormList> {
   Future<void> loadFormCategories()
   async {
 
+    user = Provider.of<UserProvider>(context, listen: false).user;
+
     Map<String,dynamic> params={
       'displayinapp' : 'true',
       'api_key': user?.token,
     };
-    dynamic result = await widget.formCategoryProvider.loadItems(params);
-
-    if(result!=null) {
-      categories = result;
-    }
-    categoriesLoaded = true;
-    if(categories.isNotEmpty)
-    {
-      for(icms_form_category.FormCategory c in categories) {
-        setState(() {
-          loadForms(c);
-        });
-        // Iterate tasks
-
+    try {
+      dynamic result = await widget.formCategoryProvider.loadItems(params);
+      if (!mounted) return;
+      setState(() {
+        categories = result ?? [];
+        categoriesLoaded = true;
+        loadError = null;
+      });
+      for (final category in categories) {
+        loadForms(category);
       }
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        loadError = error.toString();
+        categoriesLoaded = true;
+      });
     }
 
 
@@ -117,10 +120,13 @@ class FormListState extends State<FormList> {
     user = Provider.of<UserProvider>(context).user;
     for(icms_form_category.FormCategory c in categories) {
       categoryWidgets.add(Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Text(c.name.toString(),style:TextStyle(fontSize:20)),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+        child: Text(c.name.toString(), style: Theme.of(context).textTheme.titleLarge),
       ));
-      categoryWidgets.add(_getTasks(c, user));
+      categoryWidgets.add(Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Card(clipBehavior: Clip.antiAlias, child: _getTasks(c, user)),
+      ));
     }
 
     var loader=Align(
@@ -155,6 +161,17 @@ class FormListState extends State<FormList> {
           children: <Widget>[
 
             if(categoriesLoaded) ...categoryWidgets,
+            if(loadError != null) ListTile(
+              leading: const Icon(Icons.wifi_off_outlined),
+              title: Text(AppLocalizations.of(context)!.networkError),
+              trailing: IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  setState(() { categoriesLoaded = false; loadError = null; });
+                  loadFormCategories();
+                },
+              ),
+            ),
             if(!categoriesLoaded) loader ,
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

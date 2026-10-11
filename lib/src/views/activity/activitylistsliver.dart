@@ -58,7 +58,7 @@ class ActivityListSliverState extends State<ActivityListSliver> {
     DateTime now = DateTime.now();
     final Map<String, String> params = {
       'view':'activitylistsliver',
-      'activityclass': activityclass.id.toString(),
+      'activityclass': 'id:${activityclass.id}',
       'activitystatus': 'active',
       'activitytype': 'activity',
       'grouping':'activity.id',
@@ -119,10 +119,10 @@ class ActivityListSliverState extends State<ActivityListSliver> {
           padding: EdgeInsets.all(20),
           child:
           ListTile(
-            leading: Icon(Icons.error,color:Colors.white),
+            leading: Icon(Icons.error, color: Theme.of(context).colorScheme.onSurface),
             title: Text(
                 AppLocalizations.of(context)!.noActivitiesFound,
-                style:TextStyle(color:Colors.white)),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
           ),
         );
         }
@@ -158,7 +158,7 @@ class ActivityListSliverState extends State<ActivityListSliver> {
               leading: CircularProgressIndicator(),
               title: Text(AppLocalizations.of(context)!.loading,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white)),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             ),
           ),
         );
@@ -197,7 +197,7 @@ class ActivityListSliverState extends State<ActivityListSliver> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Card(
-                    elevation: 18.0,
+                    elevation: 0,
                     child: activity.coverpictureurl != null
                         ? Image.network(activity.coverpictureurl!,
                             width: 150, height: 230, fit: BoxFit.cover)
@@ -211,8 +211,8 @@ class ActivityListSliverState extends State<ActivityListSliver> {
                   ),
                   Text(
                       (activity.name ?? AppLocalizations.of(context)!.unnamedActivity)!,
-                      style: TextStyle(color: Colors.white)),
-                  Text(dateinfo, style: TextStyle(color: Colors.white)),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                  Text(dateinfo, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: buttons,

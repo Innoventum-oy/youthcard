@@ -1,8 +1,3 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:youth_card/src/objects/activityvisit.dart';
 import 'package:youth_card/src/objects/form.dart';
 import 'package:youth_card/src/objects/formcategory.dart';
@@ -17,7 +12,7 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/objects/userbenefit.dart';
 import 'package:youth_card/src/objects/contactmethod.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:core/core.dart' as core;
 
 class ApiClient {
   static final _client = ApiClient._internal();
@@ -35,68 +30,18 @@ class ApiClient {
   */
   Future<dynamic> _postJson(Uri uri, Map<String, dynamic> data) async {
     isProcessing = true;
-    Map softwareInfo = {
-      'appName': '',
-      'packageName': '',
-      'version': '',
-      'buildNumber': '',
-    };
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      softwareInfo['appName'] = packageInfo.appName;
-      softwareInfo['packageName'] = packageInfo.packageName;
-      softwareInfo['version'] = packageInfo.version;
-      softwareInfo['buildNumber'] = packageInfo.buildNumber;
-    });
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'User-Agent': "${softwareInfo['appName']} / ${softwareInfo['version']} ${softwareInfo['buildNumber']}",
-    };
-    var request = http.MultipartRequest("POST", uri);
-    headers.forEach((k, v) {
-      request.headers[k] = v;
-    });
-
-
-    data.forEach((key, value) async {
-      if (value is File) {
-
-        request.files.add(await http.MultipartFile.fromPath(key, value.path));
-      } else {
-
-        request.fields[key] = json.encode(value);
-      }
-    });
-
-    http.Response response =
-        await http.Response.fromStream(await request.send());
-    isProcessing = false;
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-
-        try {
-          Map<String, dynamic> responseData = json.decode(response.body);
-
-          //print(responseData);
-          return responseData;
-        } catch (e) {
-
-        }
-      } else {
-        if(kDebugMode){
-          print('response body was empty for uri .$uri');
-        }
-
-        return false;
-      }
-    } else {
-
-      if (response.body.isNotEmpty) {
-        Map<String, dynamic> responseData = json.decode(response.body);
-        //debug
-
-        return (responseData);
-      }
-      return false;
+    try {
+      final response = await core.ApiClient().requestMultipart(
+        uri: uri,
+        data: data,
+        timeout: const Duration(seconds: 30),
+      );
+      final responseData = response.rawData;
+      return responseData is Map
+          ? Map<String, dynamic>.from(responseData)
+          : false;
+    } finally {
+      isProcessing = false;
     }
   }
 
@@ -104,49 +49,21 @@ class ApiClient {
   * _getJson handles request and returns the json decoded data from server back to caller function
   */
   Future<dynamic> _getJson(Uri uri) async {
-    //debug
-
     isProcessing = true;
-    //Create software version header
-    Map softwareInfo = {
-      'appName': '',
-      'packageName': '',
-      'version': '',
-      'buildNumber': '',
-    };
-
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      softwareInfo['appName'] = packageInfo.appName;
-      softwareInfo['packageName'] = packageInfo.packageName;
-      softwareInfo['version'] = packageInfo.version;
-      softwareInfo['buildNumber'] = packageInfo.buildNumber;
-    });
-    String userAgent = "${softwareInfo['appName']} / ${softwareInfo['version']} ${softwareInfo['buildNumber']}";
-    Map<String, String> headers = {'User-Agent': userAgent};
-
-    var response = await http.get(uri, headers: headers);
-    //todo: better handling of statuscodes other than 200 or forwarding them to function calling _getJSON
-    // print(response.statusCode);
-    isProcessing = false;
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-        try {
-          Map<String, dynamic> body = json.decode(response.body);
-          return body;
-        } on FormatException {
-
-          return null;
-        }
-
-
-      } else {
-        if(kDebugMode) {
-          print('response body was empty for uri .$uri');
-        }
-        return false;
+    try {
+      final response = await core.ApiClient().requestJson(
+        method: core.ApiRequestMethod.get,
+        uri: uri,
+        timeout: const Duration(seconds: 20),
+      );
+      if (response.statusCode >= 500 || response.statusCode == 408) {
+        throw StateError(response.message ?? 'Request failed');
       }
-    } else {
-      return false;
+      if (response.statusCode != 200) return false;
+      final data = response.rawData;
+      return data is Map ? Map<String, dynamic>.from(data) : false;
+    } finally {
+      isProcessing = false;
     }
   }
 

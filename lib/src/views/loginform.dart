@@ -1,4 +1,5 @@
 import 'package:another_flushbar/flushbar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/auth.dart';
@@ -34,30 +35,57 @@ class LoginState extends State<Login> {
   String version = '';
   String buildNumber = '';
   bool openServerSelect = false;
-  LoginState() {
 
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) => setState(() {
-          appName = packageInfo.appName;
-          packageName = packageInfo.packageName;
-          version = packageInfo.version;
-          buildNumber = packageInfo.buildNumber;
-        }));
-    Settings().isServerSelected().then((val) => setState(() {
+
+  @override
+  void initState() {
+    super.initState();
+
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) { if (!mounted) return; setState(() {
+      appName = packageInfo.appName;
+      packageName = packageInfo.packageName;
+      version = packageInfo.version;
+      buildNumber = packageInfo.buildNumber;
+    }); });
+    Settings().isServerSelected().then((val) { if (!mounted) return; setState(() {
       openServerSelect = !val;
-    }));
+    }); });
 
-    Settings().getServer().then((val) =>  setState(() {
+    Settings().getServer().then((val) { if (!mounted) return; setState(() {
       serverUrl = val;
-    }));
-    Settings().getServerName().then((val) => setState(() {
+    }); });
+    Settings().getServerName().then((val) { if (!mounted) return; setState(() {
 
-          serverName = val;
-          if(AppUrl.anonymousApikeys.containsKey(serverName)) {
-            Settings().setValue(
-                'anonymousapikey', AppUrl.anonymousApikeys[serverName]);
-            //print("Anonymous api key for " + serverName + " set to " +AppUrl.anonymousApikeys[serverName]!);
-          }
-        }));
+      serverName = val;
+      if(AppUrl.anonymousApikeys.containsKey(serverName)) {
+        Settings().setValue(
+            'anonymousapikey', AppUrl.anonymousApikeys[serverName]);
+        //print("Anonymous api key for " + serverName + " set to " +AppUrl.anonymousApikeys[serverName]!);
+      }
+    }); });
+    if (kIsWeb) {
+      final host = Uri.base.host;
+      final servers = AppUrl.servers;
+      final foundEntry = servers.entries.firstWhere(
+            (entry) => Uri.parse(entry.value).host == host,
+        orElse: () => MapEntry('', ''),
+      );
+
+      if (foundEntry.key.isNotEmpty) {
+        serverName = foundEntry.key;
+        serverUrl = foundEntry.value;
+        Settings().setValue('server', serverUrl);
+        Settings().setValue('servername', serverName);
+        // Optionally set anonymousapikey if needed
+        if (AppUrl.anonymousApikeys.containsKey(serverName)) {
+          Settings().setValue('anonymousapikey', AppUrl.anonymousApikeys[serverName]);
+        }
+        openServerSelect = false;
+      } else {
+        openServerSelect = true;
+      }
+    }
+
   }
 
   @override
@@ -154,6 +182,7 @@ class LoginState extends State<Login> {
 
         try {
           final response = await auth.login(_contact!, _password!, server: serverUrl);
+          if (!mounted) return;
 
           if (response['status']) {
             User user = response['user'];
@@ -168,6 +197,7 @@ class LoginState extends State<Login> {
             ).show(context);
           }
         } catch (e) {
+          if (!mounted) return;
           Flushbar(
             title: AppLocalizations.of(context)!.loginFailed,
             message: AppLocalizations.of(context)!.networkError, // or e.toString()
@@ -183,15 +213,26 @@ class LoginState extends State<Login> {
         ));
     return SafeArea(
       child: Scaffold(
-          backgroundColor: AppUrl.backgroundColors.containsKey(serverName) ? AppUrl.backgroundColors[serverName] : Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).scaffoldBackgroundColor
+              : (AppUrl.backgroundColors[serverName] ?? Theme.of(context).scaffoldBackgroundColor),
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.youthcardLoginTitle),
           elevation: 0.1,
         ),
         body: SingleChildScrollView(
           child:Container(
-
-              padding: EdgeInsets.all(20.0),
+              margin: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+              padding: const EdgeInsets.all(24.0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [BoxShadow(
+                  color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.08),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                )],
+              ),
           child: Form(
             key: formKey,
             child:  Column(
@@ -273,8 +314,8 @@ class LoginState extends State<Login> {
                   MediaQuery.of(context).size.width *
                       0.9),
               child: SettingsTheme(
-                themeData: const SettingsThemeData(
-                  settingsTileTextColor: Colors.white,
+                themeData: SettingsThemeData(
+                  settingsTileTextColor: Theme.of(context).colorScheme.onSurface,
                 ),
                 platform: detectPlatform(context),
                 child:SettingsSection(
@@ -307,6 +348,9 @@ class LoginState extends State<Login> {
 
             serverName = serverTitle;
             serverUrl = itemUrl;
+            if(kDebugMode){
+              print('Server selected: $serverUrl :: $serverTitle ');
+            }
             Settings().setValue('server', serverUrl);
             Settings().setValue('servername', serverTitle);
             if (AppUrl.anonymousApikeys.containsKey(serverTitle)) {
@@ -315,7 +359,7 @@ class LoginState extends State<Login> {
 
             }
             else {
-              Settings().setValue('anonymousapikey', null);
+              Settings().clearValue('anonymousapikey');
             }
             UserPreferences().removeUser();
             //  Provider.of<UserProvider>(context, listen: false).clearUser();
@@ -332,25 +376,24 @@ class LoginState extends State<Login> {
 
   Widget trailingWidget(String currentname) {
     return (serverName == currentname)
-        ? Icon(Icons.check, color: Colors.blue)
+        ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary)
         : Icon(null);
   }
 
   Widget getVersionInfo() {
     return Text('$appName v.$version($buildNumber)',
-        style: TextStyle(color: Color(0xFF777777)));
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant));
   }
   Widget policyLink() {
     return TextButton(
         onPressed: () {
           //View policy page
-          setState(() {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => ContentPageView('privacy-policy')));
-          });
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => ContentPageView('privacy-policy')));
         },
         child: Text(AppLocalizations.of(context)!.privacyPolicy,
-            style: const TextStyle(
-                fontWeight: FontWeight.w300, color: Color(0xFFffe8d7))));
+            style: TextStyle(
+                fontWeight: FontWeight.w300,
+                color: Theme.of(context).colorScheme.primary)));
   }
 }

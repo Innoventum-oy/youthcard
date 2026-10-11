@@ -149,7 +149,7 @@ class UserFormState extends State<UserForm>{
           'api_key': Provider.of<UserProvider>(context, listen: false).user.token,
         };
 
-        _apiClient.saveObject(params,requestData).then((var response) async {
+        _apiClient.saveObject(params,requestData).then((response) async {
           if(response['objectid'] is int) {
             objectId = response['objectid'];
           }
@@ -338,10 +338,10 @@ class UserFormState extends State<UserForm>{
                   input = ElevatedButton(
                     onPressed: () async {
 
-                      FilePickerResult? result = await FilePicker.platform.pickFiles();
+                      final result = await FilePicker.pickFile();
 
-                      if(result != null) {
-                        File file = File(result.files.single.path as String);
+                      if (result?.path != null) {
+                        File file = File(result!.path!);
                         formData[name] = file;
                       } else {
                         // User canceled the picker

@@ -249,13 +249,12 @@ class RegisterState extends State<Register> {
         subtitle: TextButton(
             onPressed: () {
               //View account info page
-              setState(() {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => ContentPageView('privacy-policy')));
-              });
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => ContentPageView('privacy-policy')));
             },
-            child:Row(children:[Icon(Icons.info),Text(AppLocalizations.of(context)!.moreInformation,          style: const TextStyle(
-                fontWeight: FontWeight.w300, color: Color(0xFFffe8d7)))])
+            child:Row(children:[Icon(Icons.info),Text(AppLocalizations.of(context)!.moreInformation,
+                style: TextStyle(fontWeight: FontWeight.w300,
+                    color: Theme.of(context).colorScheme.primary))])
         )
     );
     var loading = Row(

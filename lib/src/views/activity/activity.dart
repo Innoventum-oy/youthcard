@@ -10,7 +10,6 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:youth_card/src/util/api_client.dart';
-import 'package:youth_card/src/util/styles.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/views/activity/activityvisitlist.dart';
 import 'package:youth_card/src/views/utilviews.dart';
@@ -101,7 +100,7 @@ class ActivityViewState extends State<ActivityView> {
           }),
         ],
         ),
-        backgroundColor: primary,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: CustomScrollView(
           slivers: <Widget>[
             _buildAppBar(widget._activity),
@@ -197,6 +196,7 @@ class ActivityViewState extends State<ActivityView> {
 
       Map<String,dynamic> result = await _apiClient.registerForActivity(
           activity.id, user);
+      if (!mounted) return;
       setState(() {
         switch(result['status'])
         {
@@ -226,7 +226,7 @@ class ActivityViewState extends State<ActivityView> {
       //print(details.toString());
       // print(details.runtimeType);
 
-      setState(() =>_activityDetails =details ?? false);
+      if (mounted) setState(() => _activityDetails = details);
     } catch (e) {
 
 
@@ -238,7 +238,7 @@ class ActivityViewState extends State<ActivityView> {
     try {
       var activityDateData =
           await widget.provider.getActivityDates(widget._activity, user);
-
+      if (!mounted) return;
       setState(() {
 
         if (activityDateData.isNotEmpty) {
@@ -311,10 +311,14 @@ class ActivityViewState extends State<ActivityView> {
     if(dateSectionHeight > 400) dateSectionHeight = 400;
     List<Widget> slivers = [
       Container(
-        decoration: BoxDecoration(color: const Color(0xff222128)),
+        margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary,
+          borderRadius: BorderRadius.circular(24),
+        ),
         child: Padding(
           padding:
-          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -322,18 +326,19 @@ class ActivityViewState extends State<ActivityView> {
                 activity.name != null
                     ? activity.name.toString()
                     : AppLocalizations.of(context)!.unnamedActivity,
-                style: const TextStyle(color: Colors.white),
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary),
               ),
               Container(
                 height: 8.0,
               ),
-              Text(dateinfo, style: const TextStyle(color: Colors.white)),
+              Text(dateinfo, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
               Container(
                 height: 8.0,
               ),
-              Text(activity.description!,
+              Text(activity.description ?? '',
                   style:
-                  const TextStyle(color: Colors.white, fontSize: 12.0)),
+                  TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 14.0)),
               Container(
                 height: 8.0,
               ),
@@ -350,8 +355,12 @@ class ActivityViewState extends State<ActivityView> {
     if(activity.accesslevel >=20) {
       slivers.add(
         Container(
+          margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           height: dateSectionHeight,
-          decoration: BoxDecoration(color: primaryDark),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(20),
+          ),
           //child: Padding(
           //  padding: const EdgeInsets.all(16.0),
           child: activityDates.isEmpty
@@ -379,8 +388,8 @@ class ActivityViewState extends State<ActivityView> {
       );
     }
 
-    slivers.add(Container(
-      decoration: BoxDecoration(color: primaryDark),
+    slivers.add(Card(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 20),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: _activityDetails == null
