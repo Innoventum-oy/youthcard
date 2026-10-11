@@ -1,0 +1,6 @@
+appName: Youth Card
+appId: youthcard
+apiVersion: ''
+servers:
+  Nuortenjoensuu: nuortenjoensuu.fi
+  Nuortenliperi: nuortenliperi.fi

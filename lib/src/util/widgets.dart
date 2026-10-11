@@ -116,7 +116,9 @@ Widget bottomNavigation(BuildContext context,{int currentIndex=0}) {
     top: false,
     child: Padding(
       padding: const EdgeInsets.fromLTRB(24, 6, 24, 8),
-      child: Material(
+      child: SizedBox(
+        height: 56,
+        child: Material(
         color: Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(20),
         child: Padding(
@@ -155,6 +157,7 @@ Widget bottomNavigation(BuildContext context,{int currentIndex=0}) {
                 ),
             ],
           ),
+        ),
         ),
       ),
     ),
