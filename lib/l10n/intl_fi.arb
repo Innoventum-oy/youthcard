@@ -212,5 +212,12 @@
   "browseCategories": "Kategoriat",
   "loadMore": "Lataa lisää",
   "noDiscoverResults": "Sopivia tapahtumia tai paikkoja ei löytynyt",
-  "refresh": "Päivitä"
+  "refresh": "Päivitä",
+  "ageRange": "Ikä",
+  "organizer": "Järjestäjä",
+  "price": "Hinta",
+  "free": "Maksuton",
+  "schedule": "Ajankohdat",
+  "showAllDates": "Näytä kaikki ajankohdat",
+  "showFewerDates": "Näytä vähemmän"
 }

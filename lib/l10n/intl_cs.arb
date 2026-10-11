@@ -93,5 +93,12 @@
   "dashboardEvening": "Dobrý večer",
   "memberId": "Členské číslo",
   "home": "Domů",
-  "findNearby": "Objev něco skvělého ve svém okolí."
+  "findNearby": "Objev něco skvělého ve svém okolí.",
+  "ageRange": "Věk",
+  "organizer": "Pořadatel",
+  "price": "Cena",
+  "free": "Zdarma",
+  "schedule": "Termíny",
+  "showAllDates": "Zobrazit všechny termíny",
+  "showFewerDates": "Zobrazit méně termínů"
 }

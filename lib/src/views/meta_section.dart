@@ -1,126 +1,116 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:youth_card/l10n/app_localizations.dart';
-import 'package:url_launcher/url_launcher.dart'; // important
+
+/// Additional information returned by the full iCMS activity endpoint.
 class MetaSection extends StatelessWidget {
+  const MetaSection(this.data, {super.key});
+
   final dynamic data;
 
-  const MetaSection(this.data, {super.key});
+  Map<String, dynamic>? get _fields {
+    if (data is! Map) return null;
+    final record = data['data'] is Map ? data['data'] : data;
+    return Map<String, dynamic>.from(record as Map);
+  }
+
+  String? _text(Map<String, dynamic> fields, String key) {
+    final value = fields[key];
+    if (value == null || value == false) return null;
+    final text = value.toString().trim();
+    return text.isEmpty || text == 'null' ? null : text;
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (data == null || data == false || data is! Map || data['data'] == null) {
-      return const SizedBox.shrink();
-    }
-    String? contactInfo = data['data']['contactinfo'];
+    final fields = _fields;
+    if (fields == null) return const SizedBox.shrink();
+    final strings = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final address = [
+      _text(fields, 'address'),
+      [
+        _text(fields, 'postcode'),
+        _text(fields, 'city'),
+      ].whereType<String>().join(' '),
+    ].whereType<String>().where((part) => part.isNotEmpty).join(', ');
+    final organizer = fields['organizer'] is Map
+        ? fields['organizer']['name']?.toString()
+        : _text(fields, 'organizer');
+    final minAge = _text(fields, 'agemin');
+    final maxAge = _text(fields, 'agemax');
+    final ages = [minAge, maxAge].whereType<String>().join('–');
+    final priceValue = _text(fields, 'price');
+    final price = priceValue == null
+        ? null
+        : (double.tryParse(priceValue) == 0 ? strings.free : priceValue);
+    final registered = _text(fields, 'registeredvisitorcount');
+    final capacity = _text(fields, 'maxvisitors');
+    final participants = capacity == null
+        ? null
+        : '${registered ?? '0'} / $capacity';
+    final contact = _text(fields, 'contactinfo');
+    final rows = <Widget>[
+      if (address.isNotEmpty) _row(context, strings.address, address),
+      if (ages.isNotEmpty) _row(context, strings.ageRange, ages),
+      if (participants != null)
+        _row(context, strings.participants, participants),
+      if (price != null) _row(context, strings.price, price),
+      if (organizer != null && organizer.isNotEmpty)
+        _row(context, strings.organizer, organizer),
+    ];
+    if (rows.isEmpty && contact == null) return const SizedBox.shrink();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
+      children: [
         Text(
-          AppLocalizations.of(context)!.about,
-          style: Theme.of(context).textTheme.titleMedium,
+          strings.about,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        Container(
-          height: 8.0,
-        ),
-        contactInfo != null ? _parseHtml(context, contactInfo):Container(),
-        _getSectionOrContainer(context, AppLocalizations.of(context)!.address,'address',),
-        _getSectionOrContainer(context, AppLocalizations.of(context)!.postcode,'postcode'),
-        _getSectionOrContainer(context, AppLocalizations.of(context)!.city,'city'),
-
-      /*  _getSectionOrContainer('Original Title', 'original_name'),
-        _getSectionOrContainer('Status', 'status'),
-        _getSectionOrContainer('Runtime', 'runtime',
-            formatterFunction: formatRuntime),
-        _getCollectionSectionOrContainer('Type', 'genres', 'name'),
-        _getCollectionSectionOrContainer('Creators', 'created_by', 'name'),
-        _getCollectionSectionOrContainer('Networks', 'networks', 'name'),
-        (data['number_of_seasons'] != null &&
-            data['number_of_episodes'] != null)
-            ? _getMetaInfoSection(
-            'Seasons',
-            formatSeasonsAndEpisodes(
-                data['number_of_seasons'], data['number_of_episodes']))
-            : Container(),
-        _getSectionOrContainer('Premiere', 'release_date',
-            formatterFunction: formatDate),
-        _getSectionOrContainer('Premiere', 'first_air_date',
-            formatterFunction: formatDate),
-        _getSectionOrContainer('Latest/Next Episode', 'last_air_date',
-            formatterFunction: formatDate),
-        _getSectionOrContainer('Budget', 'budget',
-            formatterFunction: formatNumberToDollars),
-        _getSectionOrContainer('Revenue', 'revenue',
-            formatterFunction: formatNumberToDollars),
-        _getSectionOrContainer('Homepage', 'homepage', isLink: true),
-        _getSectionOrContainer('Imdb', 'imdb_id',
-            formatterFunction: getImdbUrl, isLink: true),*/
+        if (rows.isNotEmpty) ...[const SizedBox(height: 12), ...rows],
+        if (contact != null) ...[
+          const SizedBox(height: 18),
+          Text(
+            strings.contactInformation,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Html(
+            data: contact,
+            style: {
+              '*': Style(color: colors.onSurface),
+              'body': Style(margin: Margins.zero, padding: HtmlPaddings.zero),
+            },
+          ),
+        ],
       ],
     );
   }
-/*
-  Widget _getCollectionSectionOrContainer(
-      String title, String listKey, String mapKey) {
-    return data[listKey] == null
-        ? Container()
-        : _getMetaInfoSection(title, concatListToString(data[listKey], mapKey));
-  }
-*/
-  Widget _getSectionOrContainer(BuildContext context, String title, String content,
-      {dynamic formatterFunction, bool isLink = false}) {
 
-
-    //print('_getSectionOrContainer called with title '+title+', content '+content);
-   // print('value is:'+data[content].toString());
-    //data.forEach((key, value) {print('$key = $value');});
-    //print('--DATA--');
-    //data['data'].forEach((key, value) {print('$key = $value');});
-    return data['data'][content] == null
-        ? Container()
-        : _getMetaInfoSection(
-        context,
-        title,
-        (formatterFunction != null
-            ? formatterFunction(data['data'][content])
-            : data['data'][content]),
-        isLink: isLink);
-  }
-  Widget _parseHtml(BuildContext context, content){
-    //print('returning parsed content for '+content.toString());
-    return Html(
-        data: content,
-      style: {"*" : Style(color: Theme.of(context).colorScheme.onSurface)}
-    );
-  }
-  Widget _getMetaInfoSection(BuildContext context, String title, String content, {bool isLink = false})
-  {
-
-    var contentSection = Expanded(
-      flex: 4,
-      child: GestureDetector(
-        onTap: () => isLink ? launchUrl(Uri.parse(content)) : null,
-        child: Text(
-          content,
-          style: TextStyle(
-              color: isLink ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface, fontSize: 14.0),
-        ),
-      ),
-    );
-
+  Widget _row(BuildContext context, String label, String value) {
+    final theme = Theme.of(context);
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              flex: 2,
-              child: Text(
-                '$title:',
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14.0),
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 112,
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-            contentSection
-          ],
-        ));
+          ),
+          Expanded(child: Text(value, style: theme.textTheme.bodyMedium)),
+        ],
+      ),
+    );
   }
 }

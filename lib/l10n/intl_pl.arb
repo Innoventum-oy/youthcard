@@ -104,5 +104,12 @@
   "dashboardEvening": "Dobry wieczór",
   "memberId": "Numer członkowski",
   "home": "Strona główna",
-  "findNearby": "Odkryj coś ciekawego w pobliżu."
+  "findNearby": "Odkryj coś ciekawego w pobliżu.",
+  "ageRange": "Wiek",
+  "organizer": "Organizator",
+  "price": "Cena",
+  "free": "Bezpłatnie",
+  "schedule": "Terminy",
+  "showAllDates": "Pokaż wszystkie terminy",
+  "showFewerDates": "Pokaż mniej terminów"
 }

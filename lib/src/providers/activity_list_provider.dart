@@ -23,6 +23,7 @@ class ActivityListProvider extends ObjectProvider {
        _clock = clock ?? DateTime.now;
 
   static const cacheLifetime = Duration(minutes: 30);
+  static const maxMemoryEntries = 48;
   final Future<List<Activity>> Function(Map<String, dynamic>) _loadRemote;
   final FileStorageInterface _storage;
   final Future<String> Function() _serverName;
@@ -117,7 +118,12 @@ class ActivityListProvider extends ObjectProvider {
 
   void _remember(String key, List<Activity> items) {
     _data = items;
+    _memory.remove(key);
     _memory[key] = _ActivitySnapshot(items, _clock().add(cacheLifetime));
+    _memory.removeWhere((_, snapshot) => !_clock().isBefore(snapshot.expiresAt));
+    while (_memory.length > maxMemoryEntries) {
+      _memory.remove(_memory.keys.first);
+    }
   }
 
   Future<dynamic> getActivityDates(Activity activity, user) async{

@@ -93,5 +93,12 @@
   "dashboardEvening": "Boa noite",
   "memberId": "Número de membro",
   "home": "Início",
-  "findNearby": "Descobre algo interessante por perto."
+  "findNearby": "Descobre algo interessante por perto.",
+  "ageRange": "Idades",
+  "organizer": "Organizador",
+  "price": "Preço",
+  "free": "Gratuito",
+  "schedule": "Datas",
+  "showAllDates": "Ver todas as datas",
+  "showFewerDates": "Ver menos datas"
 }

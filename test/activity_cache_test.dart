@@ -36,7 +36,39 @@ class MemoryFileStorage implements FileStorageInterface {
   Future<void> delete(String filename) async => values.remove(filename);
 }
 
+class NoopFileStorage implements FileStorageInterface {
+  @override
+  Future<dynamic> read(String filename, {int expiration = 0}) async => false;
+
+  @override
+  Future<bool> write(dynamic data, String filename) async => true;
+
+  @override
+  Future<void> clear() async {}
+
+  @override
+  Future<void> delete(String filename) async {}
+}
+
 void main() {
+  test('activity memory cache evicts older query pages', () async {
+    var remoteCalls = 0;
+    final provider = ActivityListProvider(
+      storage: NoopFileStorage(),
+      serverName: () async => 'test',
+      loadRemote: (_) async {
+        remoteCalls++;
+        return [Activity(id: remoteCalls)];
+      },
+    );
+    for (var i = 0; i <= ActivityListProvider.maxMemoryEntries; i++) {
+      await provider.loadItems({'offset': '$i'});
+    }
+    expect(remoteCalls, ActivityListProvider.maxMemoryEntries + 1);
+    await provider.loadItems({'offset': '0'});
+    expect(remoteCalls, ActivityListProvider.maxMemoryEntries + 2);
+  });
+
   test('reopening the calendar uses memory, then persisted data', () async {
     final storage = MemoryFileStorage();
     var remoteCalls = 0;

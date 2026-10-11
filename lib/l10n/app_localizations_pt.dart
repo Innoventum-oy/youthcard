@@ -585,4 +585,25 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get refresh => 'Refresh';
+
+  @override
+  String get ageRange => 'Idades';
+
+  @override
+  String get organizer => 'Organizador';
+
+  @override
+  String get price => 'Preço';
+
+  @override
+  String get free => 'Gratuito';
+
+  @override
+  String get schedule => 'Datas';
+
+  @override
+  String get showAllDates => 'Ver todas as datas';
+
+  @override
+  String get showFewerDates => 'Ver menos datas';
 }

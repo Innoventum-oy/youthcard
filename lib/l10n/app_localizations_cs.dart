@@ -584,4 +584,25 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get refresh => 'Refresh';
+
+  @override
+  String get ageRange => 'Věk';
+
+  @override
+  String get organizer => 'Pořadatel';
+
+  @override
+  String get price => 'Cena';
+
+  @override
+  String get free => 'Zdarma';
+
+  @override
+  String get schedule => 'Termíny';
+
+  @override
+  String get showAllDates => 'Zobrazit všechny termíny';
+
+  @override
+  String get showFewerDates => 'Zobrazit méně termínů';
 }

@@ -585,4 +585,25 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get refresh => 'Päivitä';
+
+  @override
+  String get ageRange => 'Ikä';
+
+  @override
+  String get organizer => 'Järjestäjä';
+
+  @override
+  String get price => 'Hinta';
+
+  @override
+  String get free => 'Maksuton';
+
+  @override
+  String get schedule => 'Ajankohdat';
+
+  @override
+  String get showAllDates => 'Näytä kaikki ajankohdat';
+
+  @override
+  String get showFewerDates => 'Näytä vähemmän';
 }

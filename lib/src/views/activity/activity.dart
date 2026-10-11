@@ -35,10 +35,22 @@ class ActivityViewState extends State<ActivityView> {
   Timer? _timer;
   int iteration = 1;
   int buildtime = 1;
+  bool _showAllDates = false;
+  bool _detailsFailed = false;
   //bool _visible = false;
 
   User? user;
-  dynamic _activityDetails; // this is json data, not converted to activity object!
+  Map<String, dynamic>? _activityDetails;
+
+  Activity get _displayActivity {
+    final details = _activityDetails;
+    if (details == null) return widget._activity;
+    try {
+      return Activity.fromJson(details);
+    } catch (_) {
+      return widget._activity;
+    }
+  }
 
   int calculateDifference(DateTime date) {
     DateTime now = DateTime.now();
@@ -47,7 +59,7 @@ class ActivityViewState extends State<ActivityView> {
         .inDays;
   }
 
-  notify(String text) {
+  void notify(String text) {
     final snackBar = SnackBar(
       content: Text(text),
     );
@@ -65,7 +77,7 @@ class ActivityViewState extends State<ActivityView> {
       User user = Provider.of<UserProvider>(context, listen: false).user;
 
       _loadDetails(user);
-      if (widget._activity.accesslevel >= 20)  _loadActivityDates(user);
+      _loadActivityDates(user);
     });
 
    // Timer(Duration(milliseconds: 100), () => setState(() => _visible = true));
@@ -84,7 +96,7 @@ class ActivityViewState extends State<ActivityView> {
     }
     return Scaffold(
         appBar: AppBar(
-            title: Text(widget._activity.name?? AppLocalizations.of(context)!.activity),
+            title: Text(_displayActivity.name?? AppLocalizations.of(context)!.activity),
             elevation: 0.1,
             actions: [
               if(isTester) IconButton(
@@ -95,17 +107,16 @@ class ActivityViewState extends State<ActivityView> {
           icon: Icon(Icons.refresh),
           onPressed: () {
 
-            setState(() {
-              _loadDetails(user,reload:true);
-            });
+            _loadDetails(user,reload:true);
+            _loadActivityDates(user);
           }),
         ],
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: CustomScrollView(
           slivers: <Widget>[
-            _buildAppBar(widget._activity),
-            _buildContentSection(widget._activity),
+            _buildAppBar(_displayActivity),
+            _buildContentSection(_displayActivity),
           ],
         ));
   }
@@ -165,31 +176,29 @@ class ActivityViewState extends State<ActivityView> {
   }
 
   Widget _buildAppBar(Activity activity) {
-    return SliverAppBar(
-      expandedHeight: 240.0,
-      pinned: true,
-      flexibleSpace: FlexibleSpaceBar(
-        background: Stack(
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        height: 240,
+        child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
             Hero(
-              tag: "Activity-Tag-${widget._activity.id}",
+              tag: "Activity-Tag-${activity.id}",
               child: ActivityThumbnail(
-                eventUrl: widget._activity.coverpictureurl,
-                categoryId: widget._activity.activityClassId,
+                eventUrl: activity.coverpictureurl,
+                categoryId: activity.activityClassId,
                 width: double.infinity,
                 height: double.infinity,
                 borderRadius: BorderRadius.zero,
               ),
             ),
             BottomGradient(),
-            //_buildMetaSection(activity)
           ],
         ),
       ),
     );
   }
-  void registerForActivity(activity,user) async
+  void registerForActivity(Activity activity, User user) async
   {
 
     if (!_apiClient.isProcessing) {
@@ -218,43 +227,39 @@ class ActivityViewState extends State<ActivityView> {
       });
     }
   }
-  void _loadDetails(user,{bool reload =false}) async {
+  void _loadDetails(User user,{bool reload =false}) async {
 
     try {
       dynamic details =
           await widget.provider.getDetails(widget._activity.id!, user,reload:reload);
-      //print(details.toString());
-      // print(details.runtimeType);
-
-      if (mounted) setState(() => _activityDetails = details);
-    } catch (e) {
-
-
-      e.toString();
+      if (!mounted) return;
+      setState(() {
+        _activityDetails = details is Map
+            ? Map<String, dynamic>.from(details['data'] is Map ? details['data'] : details)
+            : null;
+        _detailsFailed = _activityDetails == null;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _detailsFailed = true);
     }
   }
 
-  void _loadActivityDates(user) async {
+  void _loadActivityDates(User user) async {
     try {
       var activityDateData =
           await widget.provider.getActivityDates(widget._activity, user);
       if (!mounted) return;
       setState(() {
 
-        if (activityDateData.isNotEmpty) {
-          activityDates.addAll(activityDateData);
-
-        } else {
-
-        }
+        activityDates = List<ActivityDate>.from(activityDateData)
+          ..sort((a, b) => (a.startdate ?? DateTime(0))
+              .compareTo(b.startdate ?? DateTime(0)));
       });
-    } catch (e) {
-
-      //Notify(e.toString());
-      e.toString();
+    } catch (_) {
+      // The activity details remain available if dates cannot be loaded.
     }
   }
-  Widget activityDateRow(date,activity)
+  Widget activityDateRow(ActivityDate date, Activity activity)
   {
     String dateinfo = date.startdate == null
         ? ''
@@ -333,15 +338,15 @@ class ActivityViewState extends State<ActivityView> {
                 height: 8.0,
               ),
               Text(dateinfo, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
-              Container(
-                height: 8.0,
-              ),
-              Text(activity.description ?? '',
-                  style:
-                  TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 14.0)),
-              Container(
-                height: 8.0,
-              ),
+              if (activity.description?.trim().isNotEmpty == true) ...[
+                const SizedBox(height: 12),
+                Text(activity.description!.trim(),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: 15.0,
+                        height: 1.45)),
+                const SizedBox(height: 12),
+              ],
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: buttons(activity),
@@ -351,6 +356,54 @@ class ActivityViewState extends State<ActivityView> {
         ),
       ),
     ];
+
+    final today = DateTime.now();
+    final upcomingDates = activityDates.where((date) =>
+        date.startdate != null &&
+        !date.startdate!.isBefore(DateTime(today.year, today.month, today.day)))
+        .toList();
+    if (upcomingDates.isNotEmpty && activity.accesslevel < 20) {
+      final visibleDates = _showAllDates
+          ? upcomingDates
+          : upcomingDates.take(4).toList();
+      final locale = Localizations.localeOf(context).toString();
+      slivers.add(Card(
+        margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(AppLocalizations.of(context)!.schedule,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              for (final date in visibleDates)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(children: [
+                    const Icon(Icons.event_outlined, size: 20),
+                    const SizedBox(width: 12),
+                    Expanded(child: Text(
+                      DateFormat('EEE d MMM · HH:mm', locale)
+                          .format(date.startdate!) +
+                          (date.enddate == null ? '' :
+                          '–${DateFormat('HH:mm', locale).format(date.enddate!)}'),
+                    )),
+                  ]),
+                ),
+              if (upcomingDates.length > 4)
+                TextButton(
+                  onPressed: () => setState(() => _showAllDates = !_showAllDates),
+                  child: Text(_showAllDates
+                      ? AppLocalizations.of(context)!.showFewerDates
+                      : AppLocalizations.of(context)!.showAllDates),
+                ),
+            ],
+          ),
+        ),
+      ));
+    }
 
     if(activity.accesslevel >=20) {
       slivers.add(
@@ -392,7 +445,7 @@ class ActivityViewState extends State<ActivityView> {
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 20),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: _activityDetails == null
+        child: _activityDetails == null && !_detailsFailed
             ? Center(
           child: ListTile(
             leading: CircularProgressIndicator(),
@@ -400,7 +453,9 @@ class ActivityViewState extends State<ActivityView> {
                 textAlign: TextAlign.center),
           ),
         )
-            : MetaSection(_activityDetails),
+            : _detailsFailed && _activityDetails == null
+                ? Text(AppLocalizations.of(context)!.networkError)
+                : MetaSection(_activityDetails),
       ),
     ));
     return SliverList(

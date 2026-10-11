@@ -91,5 +91,12 @@
   "dashboardEvening": "Dobra večer",
   "memberId": "Članski broj",
   "home": "Početna",
-  "findNearby": "Pronađi nešto sjajno u blizini."
+  "findNearby": "Pronađi nešto sjajno u blizini.",
+  "ageRange": "Dob",
+  "organizer": "Organizator",
+  "price": "Cijena",
+  "free": "Besplatno",
+  "schedule": "Termini",
+  "showAllDates": "Prikaži sve termine",
+  "showFewerDates": "Prikaži manje termina"
 }

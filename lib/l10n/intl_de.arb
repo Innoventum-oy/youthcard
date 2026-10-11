@@ -117,5 +117,12 @@
   "dashboardEvening": "Guten Abend",
   "memberId": "Mitgliedsnummer",
   "home": "Startseite",
-  "findNearby": "Entdecke tolle Angebote in deiner Nähe."
+  "findNearby": "Entdecke tolle Angebote in deiner Nähe.",
+  "ageRange": "Alter",
+  "organizer": "Veranstalter",
+  "price": "Preis",
+  "free": "Kostenlos",
+  "schedule": "Termine",
+  "showAllDates": "Alle Termine anzeigen",
+  "showFewerDates": "Weniger Termine anzeigen"
 }

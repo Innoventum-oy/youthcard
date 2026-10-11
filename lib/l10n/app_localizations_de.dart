@@ -587,4 +587,25 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get refresh => 'Refresh';
+
+  @override
+  String get ageRange => 'Alter';
+
+  @override
+  String get organizer => 'Veranstalter';
+
+  @override
+  String get price => 'Preis';
+
+  @override
+  String get free => 'Kostenlos';
+
+  @override
+  String get schedule => 'Termine';
+
+  @override
+  String get showAllDates => 'Alle Termine anzeigen';
+
+  @override
+  String get showFewerDates => 'Weniger Termine anzeigen';
 }

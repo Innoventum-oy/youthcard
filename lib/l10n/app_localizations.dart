@@ -1247,6 +1247,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Refresh'**
   String get refresh;
+
+  /// No description provided for @ageRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Ages'**
+  String get ageRange;
+
+  /// No description provided for @organizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer'**
+  String get organizer;
+
+  /// No description provided for @price.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get price;
+
+  /// No description provided for @free.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get free;
+
+  /// No description provided for @schedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get schedule;
+
+  /// No description provided for @showAllDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all dates'**
+  String get showAllDates;
+
+  /// No description provided for @showFewerDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Show fewer dates'**
+  String get showFewerDates;
 }
 
 class _AppLocalizationsDelegate

@@ -208,5 +208,12 @@
   "browseCategories": "Categories",
   "loadMore": "Load more",
   "noDiscoverResults": "No matching activities or places",
-  "refresh": "Refresh"
+  "refresh": "Refresh",
+  "ageRange": "Ages",
+  "organizer": "Organizer",
+  "price": "Price",
+  "free": "Free",
+  "schedule": "Schedule",
+  "showAllDates": "Show all dates",
+  "showFewerDates": "Show fewer dates"
 }

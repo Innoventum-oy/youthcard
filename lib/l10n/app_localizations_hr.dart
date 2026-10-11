@@ -585,4 +585,25 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get refresh => 'Refresh';
+
+  @override
+  String get ageRange => 'Dob';
+
+  @override
+  String get organizer => 'Organizator';
+
+  @override
+  String get price => 'Cijena';
+
+  @override
+  String get free => 'Besplatno';
+
+  @override
+  String get schedule => 'Termini';
+
+  @override
+  String get showAllDates => 'Prikaži sve termine';
+
+  @override
+  String get showFewerDates => 'Prikaži manje termina';
 }
