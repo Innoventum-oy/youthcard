@@ -2,6 +2,8 @@
 version: 1.0
 date: 2026-10-11
 
+This is modernization work for the Youth Card application, detailing updates to the toolchain, design, core API handling, local storage decisions, and release process. The original app was created in the Youth Card Erasmus+ - funded project between 2019 and 2022.
+
 ## Toolchain
 
 - Flutter 3.47.1 / Dart 3.13.1; the project requires Flutter 3.47 and Dart 3.13 or later.
@@ -15,17 +17,13 @@ The Android project uses the legacy Kotlin Gradle plugin compatibility flags gen
 
 Editable mobile screen designs are in [Youth Card modern screens](https://www.figma.com/design/Qc215zClE0kqncDGYxF84I). They cover Welcome, Sign in, Dashboard, My card, Discover, Activity details, Calendar, Forms, and Settings.
 
-The app now uses a shared Material 3 color scheme and navigation bar. It follows the device's light or dark appearance automatically, including themed fields, buttons, cards, navigation, and text. The Figma file contains editable light and dark variants of all nine screens with a two-mode color variable collection. Welcome, sign in, dashboard, card, discovery list, activity detail, calendar, forms list, and settings received direct layout work. Dynamic form fields inherit the new theme. The detailed Figma compositions still need visual QA with live content and translations.
-
-The fresh brand concept supplies mint, navy, teal, and coral colors and vector wordmarks. These colors now drive the Flutter theme and both Figma modes. Welcome, sign in, dashboard, and card use the new brand artwork. Launcher icons and light/dark native splash screens are generated for Android, iOS, and web from the assets documented in [design/brand](../design/brand/README.md).
-
-Dashboard, Discover, and Calendar now include event thumbnails in their light and dark Figma views. The concept photos are kept in [design/concepts](../design/concepts/) as design references. In the app, lists use event cover images and fall back to category covers or a themed placeholder. The real images come from the iCMS API; the concept photos are not bundled into the app.
+The app now uses a shared Material 3 color scheme and navigation bar. Welcome, dashboard, discovery list, and settings received direct layout work. The remaining screens inherit the new theme; their detailed Figma compositions still require per-screen implementation and visual QA with live content and translations.
 
 ## Core API and loading
 
-GET requests use `core.ApiClient.requestJson` and multipart POST requests use `core.ApiClient.requestMultipart`, both with timeouts. Core prepares every attachment before sending and returns a typed response. Youth Card adapts `rawData` back to the legacy response maps expected by its existing callers. The older Core `postJson` attachment loop was also fixed to await each file.
+GET requests use `core.ApiClient.requestJson` and its typed response, with a timeout. Multipart POST remains local because Core's current multipart implementation starts asynchronous file work inside `forEach` and can send before attachments are ready. Youth Card's local multipart path awaits every attachment.
 
-Activity lists now reuse memory snapshots during a session and persisted JSON snapshots across app restarts. Both use stable sorted request keys and a 30-minute fresh window, with stale results available when offline. Calendar shares the app activity provider, so returning to it does not fetch the same request again. Discovery categories have the same persisted cache; explicit refresh bypasses fresh data. Event and category image requests use `cached_network_image`, which caches downloaded thumbnails separately. Activity details also fall back to stale data on request errors. Dashboard startup loads the saved user once; card, calendar, forms, and sign in guard key async UI updates after disposal. A wider migration of legacy object providers and models to Core's object model would need endpoint-by-endpoint response tests against an iCMS environment.
+The activity list cache now uses stable sorted request keys, a 30-minute fresh window, and an offline fallback. Activity details also fall back to stale data on request errors. Dashboard startup loads the saved user once; card, calendar, forms, and sign in now guard key async UI updates after disposal. A wider migration of legacy object providers and models to Core's object model would need endpoint-by-endpoint response tests against an iCMS environment.
 
 ## Local storage decision
 

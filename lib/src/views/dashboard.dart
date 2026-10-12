@@ -78,14 +78,15 @@ class DashBoardState extends State<DashBoard> {
       initFunction();
     });
   }
+
   void _scheduleGreetingUpdate() {
     _greetingTimer?.cancel();
     final now = DateTime.now();
     final next = now.hour < 12
         ? DateTime(now.year, now.month, now.day, 12)
         : now.hour < 18
-            ? DateTime(now.year, now.month, now.day, 18)
-            : DateTime(now.year, now.month, now.day + 1);
+        ? DateTime(now.year, now.month, now.day, 18)
+        : DateTime(now.year, now.month, now.day + 1);
     _greetingTimer = Timer(next.difference(now), () {
       if (mounted) setState(() {});
       _scheduleGreetingUpdate();
@@ -97,9 +98,8 @@ class DashBoardState extends State<DashBoard> {
     _greetingTimer?.cancel();
     super.dispose();
   }
-  void initFunction()
-  {
 
+  void initFunction() {
     User user = Provider.of<UserProvider>(context, listen: false).user;
     //Check if user has activities available that they can edit / log visits for
     if (user.token != null) {
@@ -111,7 +111,6 @@ class DashBoardState extends State<DashBoard> {
     _loadUpcoming(user);
     //See if info page exists for the view
     _loadWebPage(user);
-
   }
 
   Future<void> _loadUpcoming(User user, {bool refresh = false}) async {
@@ -127,34 +126,36 @@ class DashBoardState extends State<DashBoard> {
       'fields': 'id,name,nexteventdate,startdate,coverpictureurl,description,activityclass',
     };
     try {
-      final items = await context.read<objectmodel.ActivityListProvider>()
+      final items = await context
+          .read<objectmodel.ActivityListProvider>()
           .loadItems(params, refresh: refresh);
-      if (mounted) setState(() => _upcoming = items.isEmpty ? null : items.first);
+      if (mounted)
+        setState(() => _upcoming = items.isEmpty ? null : items.first);
     } catch (_) {
       // The dashboard remains usable when activities are unavailable.
     }
   }
+
   /* load related page */
-  _loadWebPage(user)async {
+  Future<void> _loadWebPage(user) async {
     try {
-      await Provider.of<WebPageProvider>(context,listen:false).loadItem({
-      'language': Localizations.localeOf(context).toString(),
-      'commonname': widget.viewTitle,
-      'fields': 'id,commonname,pagetitle,textcontents,thumbnailurl',
-      if (user.token != null) 'api_key': user.token,
+      await Provider.of<WebPageProvider>(context, listen: false).loadItem({
+        'language': Localizations.localeOf(context).toString(),
+        'commonname': widget.viewTitle,
+        'fields': 'id,commonname,pagetitle,textcontents,thumbnailurl',
+        if (user.token != null) 'api_key': user.token,
       });
       if (mounted) setState(() {});
     } catch (error) {
       if (mounted) setState(() => errormessage = error.toString());
     }
   }
+
   /* Check if any forms are available
    */
-  _loadForms(user) async {
-
+  Future<void> _loadForms(user) async {
     _formsLoading = true;
     _loadingStates['formcategories'] = LoadingState.loading;
-
 
     Map<String, dynamic> params = {
       'displayinapp': 'true',
@@ -181,7 +182,7 @@ class DashBoardState extends State<DashBoard> {
   /*
   Check if user has activities with MODIFY or greater access, for displaying 'my activities' link
    */
-  _loadMyActivities(user, type) async {
+  Future<void> _loadMyActivities(user, type) async {
     _isLoading = true;
     _loadingStates[type] = LoadingState.loading;
     int offset = 0;
@@ -200,7 +201,7 @@ class DashBoardState extends State<DashBoard> {
       params['startfrom'] = DateFormat('yyyy-MM-dd').format(now);
     }
     try {
-    //  print('checking for user own activities of type ' + type);
+      //  print('checking for user own activities of type ' + type);
       var nextActivities = await widget.provider.loadItems(params);
       if (!mounted) return;
       setState(() {
@@ -209,7 +210,6 @@ class DashBoardState extends State<DashBoard> {
         List<Activity> loadedActivities = [];
         loadedActivities.addAll(nextActivities);
         myActivities[type] = loadedActivities;
-
 
         _isLoading = false;
       });
@@ -237,17 +237,29 @@ class DashBoardState extends State<DashBoard> {
 
     final moreActions = <Widget>[
       if (myActivities['activity']?.isNotEmpty ?? false)
-        dashboardButton(strings.myActivities, Icons.list_alt_outlined,
-            openMyActivities),
+        dashboardButton(
+          strings.myActivities,
+          Icons.list_alt_outlined,
+          openMyActivities,
+        ),
       if (myActivities['location']?.isNotEmpty ?? false)
-        dashboardButton(strings.locations, Icons.place_outlined,
-            openLocationsList),
+        dashboardButton(
+          strings.locations,
+          Icons.place_outlined,
+          openLocationsList,
+        ),
       if (formCategories.isNotEmpty)
         dashboardButton(strings.forms, Icons.description_outlined, openForms),
-      dashboardButton(strings.settings, Icons.settings_outlined,
-          openSettingsScreen),
-      dashboardButton(signedIn ? strings.logout : strings.login,
-          signedIn ? Icons.logout : Icons.login, openLoginLink),
+      dashboardButton(
+        strings.settings,
+        Icons.settings_outlined,
+        openSettingsScreen,
+      ),
+      dashboardButton(
+        signedIn ? strings.logout : strings.login,
+        signedIn ? Icons.logout : Icons.login,
+        openLoginLink,
+      ),
     ];
 
     return Scaffold(
@@ -258,10 +270,12 @@ class DashBoardState extends State<DashBoard> {
           if (hasInfoPage)
             IconButton(
               icon: const Icon(Icons.info_outline_rounded),
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => ContentPageView(widget.viewTitle,
-                    providedPage: page),
-              )),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) =>
+                      ContentPageView(widget.viewTitle, providedPage: page),
+                ),
+              ),
             ),
           if (isTester)
             IconButton(
@@ -286,8 +300,10 @@ class DashBoardState extends State<DashBoard> {
               padding: const EdgeInsets.only(right: 16),
               child: InkWell(
                 borderRadius: BorderRadius.circular(22),
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => MyCard())),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => MyCard()),
+                ),
                 child: CircleAvatar(
                   radius: 20,
                   backgroundImage: user.image != null && user.image!.isNotEmpty
@@ -380,37 +396,56 @@ class DashBoardState extends State<DashBoard> {
               color: colors.primary,
               clipBehavior: Clip.antiAlias,
               child: InkWell(
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => MyCard())),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => MyCard()),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(children: [
-                        Expanded(child: Text('YOUTH CARD',
-                            style: theme.textTheme.labelMedium?.copyWith(
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'YOUTH CARD',
+                              style: theme.textTheme.labelMedium?.copyWith(
                                 color: colors.onPrimary,
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 1.1))),
-                        const BrandIcon(size: 46),
-                      ]),
+                                letterSpacing: 1.1,
+                              ),
+                            ),
+                          ),
+                          const BrandIcon(size: 46),
+                        ],
+                      ),
                       const SizedBox(height: 6),
-                      Text(user.fullname.trim().isEmpty
-                              ? strings.myCard : user.fullname,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                              color: colors.onPrimary,
-                              fontWeight: FontWeight.bold)),
+                      Text(
+                        user.fullname.trim().isEmpty
+                            ? strings.myCard
+                            : user.fullname,
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          color: colors.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       if (user.id != null)
-                        Text('${strings.memberId}  •  ${user.id}',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colors.onPrimary)),
+                        Text(
+                          '${strings.memberId}  •  ${user.id}',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colors.onPrimary,
+                          ),
+                        ),
                       const SizedBox(height: 12),
-                      Text('${strings.myCard}  →',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                              color: colors.onPrimary,
-                              fontWeight: FontWeight.bold)),
+                      Text(
+                        '${strings.myCard}  →',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: colors.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -418,20 +453,40 @@ class DashBoardState extends State<DashBoard> {
             ),
             const SizedBox(height: 24),
           ],
-          Text(strings.quickAccess,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold)),
+          Text(
+            strings.quickAccess,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 16),
-          Row(children: [
-            Expanded(child: _shortcut(Icons.qr_code_scanner,
-                strings.qrScanner, signedIn ? openQRScanner : openLoginLink)),
-            const SizedBox(width: 10),
-            Expanded(child: _shortcut(Icons.search,
-                strings.discover, openActivityList)),
-            const SizedBox(width: 10),
-            Expanded(child: _shortcut(Icons.calendar_month_outlined,
-                strings.calendar, openCalendar)),
-          ]),
+          Row(
+            children: [
+              Expanded(
+                child: _shortcut(
+                  Icons.qr_code_scanner,
+                  strings.qrScanner,
+                  signedIn ? openQRScanner : openLoginLink,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _shortcut(
+                  Icons.search,
+                  strings.discover,
+                  openActivityList,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _shortcut(
+                  Icons.calendar_month_outlined,
+                  strings.calendar,
+                  openCalendar,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 24),
           if (_upcoming != null) ...[
             Card(
@@ -444,36 +499,53 @@ class DashBoardState extends State<DashBoard> {
                 onTap: () => goToActivity(context, _upcoming!),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Row(children: [
-                    ActivityThumbnail(eventUrl: _upcoming!.coverpictureurl,
+                  child: Row(
+                    children: [
+                      ActivityThumbnail(
+                        eventUrl: _upcoming!.coverpictureurl,
                         categoryId: _upcoming!.activityClassId,
-                        width: 76, height: 76,
-                        borderRadius: BorderRadius.circular(12)),
-                    const SizedBox(width: 14),
-                    Expanded(child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(strings.comingUp.toUpperCase(),
-                            style: theme.textTheme.labelMedium?.copyWith(
+                        width: 76,
+                        height: 76,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              strings.comingUp.toUpperCase(),
+                              style: theme.textTheme.labelMedium?.copyWith(
                                 color: colors.primary,
-                                fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 6),
-                        Text(_upcoming!.name ?? strings.unnamedActivity,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold)),
-                        if (_upcoming!.nexteventdate != null) ...[
-                          const SizedBox(height: 6),
-                          Text(DateFormat('d MMM • HH:mm',
-                                  Localizations.localeOf(context).toString())
-                              .format(_upcoming!.nexteventdate!),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                  color: colors.onSurfaceVariant)),
-                        ],
-                      ],
-                    )),
-                  ]),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              _upcoming!.name ?? strings.unnamedActivity,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (_upcoming!.nexteventdate != null) ...[
+                              const SizedBox(height: 6),
+                              Text(
+                                DateFormat(
+                                  'd MMM • HH:mm',
+                                  Localizations.localeOf(context).toString(),
+                                ).format(_upcoming!.nexteventdate!),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colors.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -500,9 +572,14 @@ class DashBoardState extends State<DashBoard> {
             children: [
               Icon(icon, color: theme.colorScheme.primary, size: 27),
               const SizedBox(height: 8),
-              Text(label, maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.bold)),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ),
@@ -533,8 +610,7 @@ class DashBoardState extends State<DashBoard> {
   void openCalendar() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => const ActivityCalendar()),
+      MaterialPageRoute(builder: (context) => const ActivityCalendar()),
     );
   }
 
@@ -542,26 +618,28 @@ class DashBoardState extends State<DashBoard> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => CategorisedActivityList(imageprovider)),
+        builder: (context) => CategorisedActivityList(imageprovider),
+      ),
     );
   }
-  void openLocationsList()
-  {
+
+  void openLocationsList() {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => ActivityList(
-              provider, imageprovider,
-              viewType: 'locations')),
+        builder: (context) =>
+            ActivityList(provider, imageprovider, viewType: 'locations'),
+      ),
     );
   }
+
   void logoutAction() {
     UserPreferences().removeUser();
     Provider.of<UserProvider>(context, listen: false).clearUser();
     Navigator.pushReplacementNamed(context, '/login');
   }
-  void openForms()
-  {
+
+  void openForms() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => FormList()),
@@ -573,7 +651,11 @@ class DashBoardState extends State<DashBoard> {
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-        leading: Icon(icon, size: 28, color: Theme.of(context).colorScheme.primary),
+        leading: Icon(
+          icon,
+          size: 28,
+          color: Theme.of(context).colorScheme.primary,
+        ),
         title: Text(
           text,
           style: const TextStyle(fontWeight: FontWeight.w600),
@@ -586,31 +668,33 @@ class DashBoardState extends State<DashBoard> {
   }
 
   void formsLink(user) {
-      if(_loadingStates['formcategories'] == LoadingState.loading) {
-        if (!_formsLoading && user.token != null) {
-          _loadForms(user);
-        }
+    if (_loadingStates['formcategories'] == LoadingState.loading) {
+      if (!_formsLoading && user.token != null) {
+        _loadForms(user);
       }
+    }
   }
 
   void myLocationsListLink(user, userprovider, imageprovider) {
-    if(_loadingStates['location']==LoadingState.loading) {
+    if (_loadingStates['location'] == LoadingState.loading) {
       if (!_isLoading && user.token != null) {
         _loadMyActivities(user, 'location');
       }
     }
   }
-  void openMyActivities(){
+
+  void openMyActivities() {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => ActivityList(
-              provider, imageprovider,
-              viewType: 'own')),
+        builder: (context) =>
+            ActivityList(provider, imageprovider, viewType: 'own'),
+      ),
     );
   }
+
   void myActivitiesListLink(user, userprovider, imageprovider) {
-    if(_loadingStates['activity'] ==LoadingState.loading) {
+    if (_loadingStates['activity'] == LoadingState.loading) {
       if (!_isLoading && user.token != null) {
         _loadMyActivities(user, 'activity');
       }

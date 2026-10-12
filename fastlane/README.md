@@ -1,40 +1,53 @@
-# Youth Card release assistance
+# Youth Card store releases
 
-Run lanes from the repository root with `bundle exec fastlane ...` after `bundle install`.
+Run lanes from the repository root after `bundle install`. Keep signing material and store API keys outside Git.
 
 ## Screenshots
 
-Build and run the app in an iOS simulator or Android emulator, then sign in with a suitable test account. The guided lanes pause before each screen so you can navigate and wait for content:
+Use a demo account with display data suitable for the stores. The default `screenshots` lanes guide you through these seven views in order: landing, login, dashboard, Events / Discover, sample event detail, calendar, and own card. Wait for network content to load before each capture.
 
 ```sh
-bundle exec fastlane ios screenshots locale:en-US
-bundle exec fastlane android screenshots locale:en-US
+bundle exec fastlane ios prepare_screenshots
+bundle exec fastlane ios screenshots locale:fi device_label:iPhone_6_5
+bundle exec fastlane ios validate_screenshots locale:fi
+
+bundle exec fastlane android prepare_screenshots
+bundle exec fastlane android screenshots locale:fi-FI
+bundle exec fastlane android validate_screenshots locale:fi-FI
 ```
 
-Pass `names:01_dashboard,02_card` to change the list. For a single capture of the visible screen:
+The iOS preparation lane builds a simulator app with the debug server selector hidden. Boot the simulator first. The Android preparation lane builds and installs a release APK on an attached device or emulator. If the APK is already built, use `prepare_screenshots skip_build:true`. Set `ANDROID_SERIAL` when more than one Android device is connected.
+
+Capture a single visible screen with `ios screenshot name:05_event_detail locale:fi` or the corresponding `android screenshot` lane. The iOS images are in `fastlane/screenshots/<locale>/`; Android images are in `fastlane/metadata/android/<locale>/images/phoneScreenshots/`.
+
+Review the images, account details, localization, and store device requirements before invoking `upload_screenshots`. These lanes only stage screenshots; the binary release lanes skip screenshot and metadata uploads.
+
+## Store API access
+
+For iOS, set `APP_STORE_CONNECT_KEY_PATH`, `APP_STORE_CONNECT_KEY_ID`, and `APP_STORE_CONNECT_ISSUER_ID` to an App Store Connect API key. The equivalent `APP_STORE_CONNECT_API_KEY_*` names also work. For Android, set `GOOGLE_PLAY_JSON_KEY` (or `GOOGLE_PLAY_JSON_KEY_FILE`) to the service account JSON path. Verify access with:
 
 ```sh
-bundle exec fastlane ios screenshot name:01_dashboard locale:en-US
-bundle exec fastlane android screenshot name:01_dashboard locale:en-US
+bundle exec fastlane ios check_store_access
+bundle exec fastlane android check_store_access
 ```
 
-Repeat with `02_card`, `03_discover`, `04_calendar`, and other screens. iOS captures go to `fastlane/screenshots/<locale>/`; Android captures go to the Play metadata layout under `fastlane/metadata/android/<locale>/images/phoneScreenshots/`. Set `ANDROID_SERIAL` if multiple Android devices are connected. Capture each device size and locale required by the stores. Review images before uploading them.
+## Testing releases
 
-`validate_screenshots` checks that files exist and are nonempty. `upload_screenshots` uploads reviewed images only after you invoke it with store credentials.
-
-## Candidate builds
+Increment the version and build number in `pubspec.yaml` before building. The iOS lane uploads a signed IPA to TestFlight without submitting for App Store review. On a machine without the existing signing profile, set `IOS_SETUP_SIGNING=1` to let Fastlane fetch the distribution certificate and create a provisioning profile under the ignored `build/` directory.
 
 ```sh
-bundle exec fastlane ios build_candidate
-bundle exec fastlane android build_candidate
+IOS_SETUP_SIGNING=1 bundle exec fastlane ios build_candidate
+bundle exec fastlane ios beta skip_build:true
+bundle exec fastlane ios testflight_status
+bundle exec fastlane ios distribute_internal
 ```
 
-The iOS lane uses the signing setup in Xcode. The Android lane uses `android/key.properties` if available. Neither lane uploads a build.
+`bundle exec fastlane ios beta` builds and uploads in one run when signing is already configured. The status lane shows processing state and internal group access for the current `pubspec.yaml` version. Run the distribution lane after upload; it completes exempt encryption declaration for an uploaded build when needed and checks that the internal group has access. Apple's exempt encryption flag is also set in `ios/Runner/Info.plist` for future builds.
 
-## Store staging
+The Android lane builds a signed App Bundle and publishes it to the Google Play internal testing track as a completed release:
 
-Set `APP_STORE_CONNECT_KEY_PATH` (a `.p8` file), `APP_STORE_CONNECT_KEY_ID`, and, for team keys, `APP_STORE_CONNECT_ISSUER_ID` before `bundle exec fastlane ios beta`. It uploads to TestFlight without submitting for App Store review.
+```sh
+bundle exec fastlane android internal
+```
 
-Set `GOOGLE_PLAY_JSON_KEY` (a service account JSON file) before `bundle exec fastlane android internal`. It uploads a draft to the Play internal track. Credentials and signing files must stay outside Git.
-
-Store screenshots should be reviewed against the final app build, localization, and account data before staging.
+Use `android internal skip_build:true` only after confirming that `build/app/outputs/bundle/release/app-release.aab` matches the current source. Google Play policy declarations must be complete before the API can commit a release.

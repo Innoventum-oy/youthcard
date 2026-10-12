@@ -25,7 +25,7 @@ class ActivityListItem extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     User user = Provider.of<UserProvider>(context).user;
-    String dateinfo = activityItem.nexteventdate==null ? '':(calculateDifference(activityItem.nexteventdate!)!=0 ? DateFormat('kk:mm dd.MM.yyyy').format(activityItem.nexteventdate!) : 'Today ${DateFormat('kk:mm ').format(activityItem.nexteventdate!)}');
+    String dateinfo = activityItem.nexteventdate==null ? '':(calculateDifference(activityItem.nexteventdate!)!=0 ? DateFormat('kk:mm dd.MM.yyyy').format(activityItem.nexteventdate!) : '${AppLocalizations.of(context)!.today} ${DateFormat('HH:mm').format(activityItem.nexteventdate!)}');
     List<Widget> buttons=[];
     buttons.add(ElevatedButton(
       child: Text(AppLocalizations.of(context)!.readMore),

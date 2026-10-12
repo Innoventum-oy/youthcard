@@ -266,7 +266,7 @@ class ActivityViewState extends State<ActivityView> {
         : (calculateDifference(date.startdate!) != 0
         ? DateFormat('kk:mm dd.MM.yyyy')
         .format(date.startdate!)
-        : 'Today ${DateFormat('kk:mm ').format(date.startdate!)}');
+        : '${AppLocalizations.of(context)!.today} ${DateFormat('HH:mm').format(date.startdate!)}');
     return Center(
         child: Card(
             child: InkWell(
@@ -311,7 +311,7 @@ class ActivityViewState extends State<ActivityView> {
         ? ''
         : (calculateDifference(activity.nexteventdate!) != 0
             ? DateFormat('kk:mm dd.MM.yyyy').format(activity.nexteventdate!)
-            : 'Today ${DateFormat('kk:mm ').format(activity.nexteventdate!)}');
+            : '${AppLocalizations.of(context)!.today} ${DateFormat('HH:mm').format(activity.nexteventdate!)}');
     double dateSectionHeight = activityDates.length*80;
     if(dateSectionHeight > 400) dateSectionHeight = 400;
     List<Widget> slivers = [

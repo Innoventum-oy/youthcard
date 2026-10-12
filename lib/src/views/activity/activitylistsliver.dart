@@ -41,7 +41,7 @@ class ActivityListSliverState extends State<ActivityListSliver> {
   int _pageNumber = 0;
   String? errormessage;
 
-  notify(String text) {
+  void notify(String text) {
     final snackBar = SnackBar(content: Text(text));
 
     // Find the ScaffoldMessenger in the widget tree
@@ -58,7 +58,7 @@ class ActivityListSliverState extends State<ActivityListSliver> {
     ).difference(DateTime(now.year, now.month, now.day)).inDays;
   }
 
-  _loadNextPage(user, activityclass) async {
+  Future<void> _loadNextPage(user, activityclass) async {
     if (_isLoading || !_hasMore) return;
     _isLoading = true;
     int offset = limit * _pageNumber;
@@ -193,8 +193,7 @@ class ActivityListSliverState extends State<ActivityListSliver> {
         ? ''
         : (calculateDifference(activity.nexteventdate!) != 0
               ? DateFormat('kk:mm dd.MM.yyyy').format(activity.nexteventdate!)
-              : AppLocalizations.of(context)!.today +
-                    DateFormat('kk:mm ').format(activity.startdate!));
+              : '${AppLocalizations.of(context)!.today} ${DateFormat('HH:mm').format(activity.nexteventdate!)}');
 
     return SizedBox(
       width: 184,
@@ -222,9 +221,8 @@ class ActivityListSliverState extends State<ActivityListSliver> {
                       AppLocalizations.of(context)!.unnamedActivity,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(

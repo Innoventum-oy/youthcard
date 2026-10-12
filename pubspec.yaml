@@ -98,8 +98,8 @@ dev_dependencies:
 flutter_native_splash:
   color: "#F7FBF9"
   color_dark: "#17313D"
-  image: images/brand/wordmark-light.png
-  image_dark: images/brand/wordmark-dark.png
+  image: images/brand/splash-wordmark-light.png
+  image_dark: images/brand/splash-wordmark-dark.png
   android_12:
     color: "#F7FBF9"
     color_dark: "#17313D"

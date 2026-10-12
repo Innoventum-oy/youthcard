@@ -15,6 +15,8 @@ import 'package:youth_card/src/util/app_url.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:youth_card/src/views/webpagetextcontent.dart';
 
+const bool _storeScreenshots = bool.fromEnvironment('STORE_SCREENSHOTS');
+
 class Login extends StatefulWidget {
   final String viewTitle = 'login';
   final dynamic user;
@@ -136,8 +138,10 @@ class LoginState extends State<Login> {
       ],
     );
 
-    final forgotLabel = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final forgotLabel = Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 8,
+      runSpacing: 8,
       children: <Widget>[
         ElevatedButton(
           child: Text(AppLocalizations.of(context)!.forgotPassword,
@@ -249,7 +253,7 @@ class LoginState extends State<Login> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(
-                    child: kReleaseMode
+                    child: kReleaseMode || _storeScreenshots
                         ? titleText
                         : GestureDetector(
                             onTap: () => serverSelectDialog(context),
@@ -257,7 +261,7 @@ class LoginState extends State<Login> {
                           ),
                   ),
                   SizedBox(height: 5.0),
-                  if (!kReleaseMode)
+                  if (!kReleaseMode && !_storeScreenshots)
                     TextButton(
                       child: Text(
                           '${AppLocalizations.of(context)!.environment}: $serverName',
@@ -296,17 +300,12 @@ class LoginState extends State<Login> {
               ),
             ),
           ),
-        ),
-        bottomNavigationBar: BottomAppBar(
-          child:
-            Image.asset('images/erasmusplus.png',
-            height:40)
         )
       ),
     );
   }
   void serverSelectDialog(BuildContext context){
-    if (kReleaseMode) return;
+    if (kReleaseMode || _storeScreenshots) return;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(

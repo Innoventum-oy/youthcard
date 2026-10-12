@@ -11,8 +11,11 @@ import 'package:youth_card/l10n/app_localizations.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/util/widgets.dart';
 import 'package:youth_card/src/util/brand.dart';
+import 'package:youth_card/src/util/benefit_icon.dart';
 import 'package:youth_card/src/views/userform.dart';
+
 import '../views/deleteaccountform.dart';
+
 /*
 * User card
 */
@@ -38,63 +41,67 @@ class MyCardState extends State<MyCard> {
   bool fieldsLoaded = false;
   bool userLoaded = false;
   int? objectId;
-  Map<String,dynamic> fields = {};
+  Map<String, dynamic> fields = {};
 
   String? errormessage;
   User user = User();
 
   /// Returns available fields information from server
-  _getFields() async{
-
+  Future<void> _getFields() async {
     UserProvider provider = UserProvider();
     //target user:
-    int targetId = widget.user?.id ?? (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
+    int targetId =
+        widget.user?.id ??
+        (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
     //  print('_getUserInfo called, retrieving user information from userprovider for user '+targetId.toString());
-    dynamic fielddata = await provider.getFields(targetId, Provider.of<UserProvider>(context, listen: false).user);
+    dynamic fielddata = await provider.getFields(
+      targetId,
+      Provider.of<UserProvider>(context, listen: false).user,
+    );
     if (!mounted) return;
     setState(() {
-
-      if(fielddata!=null) {
+      if (fielddata != null) {
         fields = fielddata;
       }
 
       fieldsLoaded = true;
-
     });
   }
 
   /*
   Returns user information from server
    */
-  _getUserInfo() async{
-
+  Future<void> _getUserInfo() async {
     UserProvider provider = UserProvider();
     //target user:
-    int targetId = widget.user?.id ?? (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
+    int targetId =
+        widget.user?.id ??
+        (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
     //  print('_getUserInfo called, retrieving user information from userprovider for user '+targetId.toString());
-    dynamic userdata = await provider.getObject(targetId, Provider.of<UserProvider>(context, listen: false).user);
+    dynamic userdata = await provider.getObject(
+      targetId,
+      Provider.of<UserProvider>(context, listen: false).user,
+    );
     if (!mounted) return;
     setState(() {
-      if(userdata!=null) {
-        user = User.fromJson(userdata['data'].first['data'],description:userdata['description']);
+      if (userdata != null) {
+        user = User.fromJson(
+          userdata['data'].first['data'],
+          description: userdata['description'],
+        );
       }
       userLoaded = true;
       _benefitsLoadingState = LoadingState.done;
 
       benefits = user.userbenefits;
-
     });
   }
 
-
-
-  _loadBenefits(User user) async {
-
+  Future<void> _loadBenefits(User user) async {
     final Map<String, String> params = {
       'action': 'loaduserbenefits',
       'userid': user.id.toString(),
       'api_key': user.token ?? '',
-
     };
 
     try {
@@ -103,12 +110,9 @@ class MyCardState extends State<MyCard> {
       setState(() {
         _benefitsLoadingState = LoadingState.done;
 
-
         benefits.addAll(result);
-
       });
     } catch (e) {
-
       errormessage = e.toString();
       if (mounted && _benefitsLoadingState == LoadingState.loading) {
         setState(() => _benefitsLoadingState = LoadingState.error);
@@ -118,34 +122,35 @@ class MyCardState extends State<MyCard> {
 
   @override
   void initState() {
-    User user =widget.user ?? Provider.of<UserProvider>(context, listen: false).user;
+    User user =
+        widget.user ?? Provider.of<UserProvider>(context, listen: false).user;
     this.user = user;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-
-      if(widget.user==null) {
-        if(kDebugMode) {
+      if (widget.user == null) {
+        if (kDebugMode) {
           print('MyCard: user is null, using provider user');
         }
         userLoaded = true;
         _loadBenefits(user);
-      }
-      else {
+      } else {
         user = widget.user as User;
-       _getUserInfo();
+        _getUserInfo();
       }
       _getFields();
     });
     super.initState();
   }
 
-  Widget loader(context){
+  Widget loader(context) {
     return Align(
       alignment: Alignment.center,
       child: Center(
         child: ListTile(
           leading: CircularProgressIndicator(),
-          title: Text(AppLocalizations.of(context)!.loading,
-              textAlign: TextAlign.center),
+          title: Text(
+            AppLocalizations.of(context)!.loading,
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );
@@ -155,101 +160,108 @@ class MyCardState extends State<MyCard> {
   Widget build(BuildContext context) {
     User user = this.user;
     bool isTester = false;
-    if(user.data!=null) {
-
+    if (user.data != null) {
       if (user.data!['istester'] != null) {
         if (user.data!['istester'] == 'true') isTester = true;
       }
     }
 
-
     contactItems.clear();
-    contactItems.add(Padding(
-      padding:EdgeInsets.all(10),
-      child:Column(
-
-        children:[
-          if( user.email != null) TextButton(
-
-            onPressed:(){
-              launchUrlString("mailto:${user.email??''}");
-
-            },
-            child:
-            SingleChildScrollView(
-              child:SizedBox(
-                height: 30,
-                child:Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children:
-                  [
-                    Icon(Icons.email),
-                    Flexible(child: Text(user.email!,
-                      overflow: TextOverflow.clip,),
+    contactItems.add(
+      Padding(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          children: [
+            if (user.email != null)
+              TextButton(
+                onPressed: () {
+                  launchUrlString("mailto:${user.email ?? ''}");
+                },
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    height: 30,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.email),
+                        Flexible(
+                          child: Text(user.email!, overflow: TextOverflow.clip),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-          TextButton(
-            onPressed:(){
-              launchUrlString("tel:${user.phone??''}");
-            },
-            child: SizedBox(
-              height: 25,
-              child: Row(
-                  children:[
-                    Icon(Icons.phone_android),
-                    Text(user.phone??'-')
-                  ]
-              ),
-            ),
-          ),
-          if(user.data != null && user.data!['huoltajan_puhelinnumero']!=null)
             TextButton(
-              onPressed:(){
-                launchUrlString("tel:${user.data!['huoltajan_puhelinnumero']??''}");
+              onPressed: () {
+                launchUrlString("tel:${user.phone ?? ''}");
               },
               child: SizedBox(
                 height: 25,
                 child: Row(
-                    children:[
-                      Icon(Icons.phone_android),
-                      Text('${AppLocalizations.of(context)!.guardianPhone}: ${user.data!['huoltajan_puhelinnumero']}')
-                    ]
+                  children: [
+                    Icon(Icons.phone_android),
+                    Text(user.phone ?? '-'),
+                  ],
                 ),
               ),
             ),
-          if(user.accesslevel!= null && user.accesslevel! >= 20) ..._userInfoFields(user),
-        ]),
-    ),
+            if (user.data != null &&
+                user.data!['huoltajan_puhelinnumero'] != null)
+              TextButton(
+                onPressed: () {
+                  launchUrlString(
+                    "tel:${user.data!['huoltajan_puhelinnumero'] ?? ''}",
+                  );
+                },
+                child: SizedBox(
+                  height: 25,
+                  child: Row(
+                    children: [
+                      Icon(Icons.phone_android),
+                      Text(
+                        '${AppLocalizations.of(context)!.guardianPhone}: ${user.data!['huoltajan_puhelinnumero']}',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            if (user.accesslevel != null && user.accesslevel! >= 20)
+              ..._userInfoFields(user),
+          ],
+        ),
+      ),
     );
-    return OrientationBuilder(builder: (context, orientation) {
-      //  print(orientation);
-      // Choose between portraitlayout and landscapelayout based on device orientation
-      return Scaffold(
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        //  print(orientation);
+        // Choose between portraitlayout and landscapelayout based on device orientation
+        return Scaffold(
           appBar: AppBar(
             title: Text(AppLocalizations.of(context)!.myCard),
             actions: [
-              if(isTester) IconButton(
+              if (isTester)
+                IconButton(
                   icon: Icon(Icons.bug_report),
-                  onPressed:(){feedbackAction(context,user); }
-              ),
+                  onPressed: () {
+                    feedbackAction(context, user);
+                  },
+                ),
             ],
             elevation: 0.1,
           ),
           body: orientation == Orientation.portrait
               ? _portraitLayout(user)
               : _landscapeLayout(user),
-          bottomNavigationBar: bottomNavigation(context,currentIndex:3)
-      );
-    });
+          bottomNavigationBar: bottomNavigation(context, currentIndex: 3),
+        );
+      },
+    );
   }
 
   Widget _portraitLayout(user) {
     return ListView(
-        shrinkWrap: true,
+      shrinkWrap: true,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -257,80 +269,92 @@ class MyCardState extends State<MyCard> {
             color: Theme.of(context).colorScheme.primaryContainer,
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Column(children: [
-                Row(children: [
-                  const BrandIcon(size: 36),
-                  const SizedBox(width: 12),
-                  Text(
-                    'YOUTH CARD',
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.1,
-                    ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      const BrandIcon(size: 36),
+                      const SizedBox(width: 12),
+                      Text(
+                        'YOUTH CARD',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onPrimaryContainer,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                    ],
                   ),
-                ]),
-                const SizedBox(height: 16),
-                if (user.qrcode != null && user.qrcode!.isNotEmpty)
-                  Card(
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Image.network(user.qrcode!, height: 190),
+                  const SizedBox(height: 16),
+                  if (user.qrcode != null && user.qrcode!.isNotEmpty)
+                    Card(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Image.network(user.qrcode!, height: 190),
+                      ),
                     ),
-                  ),
-                _loggedInView(context, user),
-              ]),
+                  _loggedInView(context, user),
+                ],
+              ),
             ),
           ),
         ),
         ...contactItems,
         SizedBox(height: 20),
-       // Text('Access:'+user.accesslevel.toString()),
+        // Text('Access:'+user.accesslevel.toString()),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
-          children:[
-            if((user!.accesslevel!= null && user.accesslevel >= 20) ||(widget.user==null && Provider.of<UserProvider>(context, listen: false).user.id!=null)) ElevatedButton(
-          onPressed : (){
-            // notifyDialog('opening userform',context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>   UserForm(targetUser:user!),
+          children: [
+            if ((user!.accesslevel != null && user.accesslevel >= 20) ||
+                (widget.user == null &&
+                    Provider.of<UserProvider>(context, listen: false).user.id !=
+                        null))
+              ElevatedButton(
+                onPressed: () {
+                  // notifyDialog('opening userform',context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserForm(targetUser: user!),
+                    ),
+                  );
+                },
+                child: Text(AppLocalizations.of(context)!.btnEdit),
               ),
-            );
-
-          },
-          child: Text(AppLocalizations.of(context)!.btnEdit)
-      ),
-        ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(AppLocalizations.of(context)!.btnReturn)),
-        ]),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(AppLocalizations.of(context)!.btnReturn),
+            ),
+          ],
+        ),
         _getBenefitsSection(user),
         const DeleteAccountAction(),
-      //  ..._userInfoFields(user)
+        //  ..._userInfoFields(user)
       ],
     );
   }
 
   Widget _landscapeLayout(user) {
     return Padding(
-        padding: EdgeInsets.all(30),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            user.qrcode != null && user.qrcode!.isNotEmpty
-                ? Image.network(user.qrcode!, height: 200)
-                : Container(),
-            _loggedInView(context, user),
-            _getBenefitsSection(user),
-            const DeleteAccountAction(),
-          ],
-        ));
+      padding: EdgeInsets.all(30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          user.qrcode != null && user.qrcode!.isNotEmpty
+              ? Image.network(user.qrcode!, height: 200)
+              : Container(),
+          _loggedInView(context, user),
+          _getBenefitsSection(user),
+          const DeleteAccountAction(),
+        ],
+      ),
+    );
   }
 
   Widget _loggedInView(BuildContext context, user) {
@@ -340,25 +364,23 @@ class MyCardState extends State<MyCard> {
 
     String username = nameparts.join(' ');
     ImageProvider<Object> avatarImage;
-    if(user.data!=null && user.data!['userimageurl'] != null && user.data!['userimageurl']!.isNotEmpty) {
+    if (user.data != null &&
+        user.data!['userimageurl'] != null &&
+        user.data!['userimageurl']!.isNotEmpty) {
       avatarImage = NetworkImage(user.data!['userimageurl']);
-    } else if(user.image != null && user.image!.isNotEmpty) {
+    } else if (user.image != null && user.image!.isNotEmpty) {
       avatarImage = NetworkImage(user.image);
-    }
-    else {
-      avatarImage =Image.asset('images/profile.png').image ;
+    } else {
+      avatarImage = Image.asset('images/profile.png').image;
     }
     return Padding(
       padding: EdgeInsets.only(left: 20, right: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          _drawAvatar(avatarImage,
-              user),
+          _drawAvatar(avatarImage, user),
 
-            _drawLabel(context, username),
-
-
+          _drawLabel(context, username),
         ],
       ),
     );
@@ -366,14 +388,10 @@ class MyCardState extends State<MyCard> {
 
   Widget _drawLabel(BuildContext context, String label) {
     return Flexible(
-        child:
-      Padding(
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
-         child: Text(
-        label,
-        style: Theme.of(context).textTheme.titleLarge,
+        child: Text(label, style: Theme.of(context).textTheme.titleLarge),
       ),
-    ),
     );
   }
 
@@ -388,58 +406,58 @@ class MyCardState extends State<MyCard> {
       ),
     );
   }
-  List<Widget> _userInfoFields(user)
-  {
+
+  List<Widget> _userInfoFields(user) {
     List<Widget> widgets = [];
-    if(!(userLoaded && fieldsLoaded )) {
+    if (!(userLoaded && fieldsLoaded)) {
       widgets.add(loader(context));
-    } else if(fields.isNotEmpty )
-    {
-      Map<String,dynamic> userdata = this.user.toMap();
-      Map<String,dynamic> fields = this.fields; // targetUser.description ?? {};
+    } else if (fields.isNotEmpty) {
+      Map<String, dynamic> userdata = this.user.toMap();
+      Map<String, dynamic> fields =
+          this.fields; // targetUser.description ?? {};
 
       fields['fields'].forEach((name, definition) {
         dynamic value;
-        if(userdata.containsKey(name)) {
+        if (userdata.containsKey(name)) {
           //  print('user has own property '+name+' with value '+userdata[name].toString());
           value = userdata[name];
-        }
-        else if( user.data!.containsKey(name)) {
+        } else if (user.data!.containsKey(name)) {
           //print('user data includes '+name+' with value '+user.data![name].toString());
           value = user.data![name];
         }
         value ??= '-';
-       // if(value != null) {
+        // if(value != null) {
 
-          widgets.add(
-              Padding( padding:EdgeInsets.only(left: 20, right: 20),
-                  child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children:[
-                 Expanded(
-                   flex: 2,
-                   child:Text(definition['displayname'] ?? name,
-               //  overflow:TextOverflow.ellipsis,
-                 style:TextStyle(fontWeight: FontWeight.bold)),),
+        widgets.add(
+          Padding(
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    definition['displayname'] ?? name,
+                    //  overflow:TextOverflow.ellipsis,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
 
-                 Expanded(
-                   flex: 3,
-                   child: Text(value,
-                    overflow: TextOverflow.clip,),
-                  ),
-                ],
-                  ),
-              )
-          );
+                Expanded(
+                  flex: 3,
+                  child: Text(value, overflow: TextOverflow.clip),
+                ),
+              ],
+            ),
+          ),
+        );
         // }
-
       });
-
     }
     return widgets;
   }
-  Widget _getBenefitsSection(user) {
 
+  Widget _getBenefitsSection(user) {
     switch (_benefitsLoadingState) {
       case LoadingState.done:
         //data loaded
@@ -463,7 +481,8 @@ class MyCardState extends State<MyCard> {
           child: ListTile(
             leading: Icon(Icons.error),
             title: Text(
-                'Sorry, there was an error loading the data: $errormessage'),
+              'Sorry, there was an error loading the data: $errormessage',
+            ),
           ),
         );
 
@@ -474,8 +493,10 @@ class MyCardState extends State<MyCard> {
           child: Center(
             child: ListTile(
               leading: CircularProgressIndicator(),
-              title: Text(AppLocalizations.of(context)!.loadingBenefits,
-                  textAlign: TextAlign.center),
+              title: Text(
+                AppLocalizations.of(context)!.loadingBenefits,
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
         );
@@ -484,17 +505,16 @@ class MyCardState extends State<MyCard> {
     }
   }
 
-  Widget _userBenefitListItem(benefit) {
+  Widget _userBenefitListItem(UserBenefit benefit) {
     return Column(
-          children: [
-    CircleAvatar(
-      backgroundImage: NetworkImage(benefit.iconurl),
-      backgroundColor: Colors.white10,
-      radius: 28.0,
-    ),
-    Text(benefit.title ?? AppLocalizations.of(context)!.unnamed,
-        maxLines: 1, overflow: TextOverflow.ellipsis)
-          ],
-        );
+      children: [
+        BenefitIcon(url: benefit.iconurl, radius: 28),
+        Text(
+          benefit.title ?? AppLocalizations.of(context)!.unnamed,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
   }
 }

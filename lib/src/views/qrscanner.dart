@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
+
 import 'dart:async';
+
 //import 'dart:convert';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 
@@ -30,10 +33,7 @@ const backCamera = 'rearCamera';
 class QRScanner extends StatefulWidget {
   final Activity? activity;
 
-  const QRScanner({
-    this.activity,
-    super.key,
-  });
+  const QRScanner({this.activity, super.key});
 
   @override
   State<StatefulWidget> createState() => _QRScannerState();
@@ -42,7 +42,7 @@ class QRScanner extends StatefulWidget {
 class _QRScannerState extends State<QRScanner> {
   bool canShowQRScanner = false;
   String? sentcode;
-  List<String> codeQueue=[];
+  List<String> codeQueue = [];
   final queue = Queue(delay: const Duration(milliseconds: 100));
   Future<Position>? _currentPosition;
   String? _latitude;
@@ -53,7 +53,7 @@ class _QRScannerState extends State<QRScanner> {
   var cameraState = frontCamera;
   bool isPaused = false;
   User user = User();
-  List<Activity> myActivities=[];
+  List<Activity> myActivities = [];
   Activity selectedActivity = Activity();
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -89,7 +89,8 @@ class _QRScannerState extends State<QRScanner> {
     if (permission == LocationPermission.deniedForever) {
       // Permissions are denied forever, handle appropriately.
       return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
     }
     try {
       var location = await Geolocator.getCurrentPosition();
@@ -97,12 +98,9 @@ class _QRScannerState extends State<QRScanner> {
       _longitude = location.longitude.toString();
 
       return location;
-    }
-    catch(e)
-    {
+    } catch (e) {
       return Future.error('Error occurred in getting current position');
     }
-
   }
 
   // User user;
@@ -113,11 +111,11 @@ class _QRScannerState extends State<QRScanner> {
   @override
   void reassemble() {
     super.reassemble();
-    if(controller!=null){
+    if (controller != null) {
       if (Platform.isAndroid) {
         controller!.resumeCamera().catchError((error) {
           notify(error.toString());
-          });
+        });
       }
       controller!.resumeCamera().catchError((error) {
         notify(error.toString());
@@ -128,19 +126,19 @@ class _QRScannerState extends State<QRScanner> {
   //notification using alertdialog
 
   void showMessage(BuildContext context, String title, Widget content) {
-    showDialog(context: context, builder: (BuildContext builderContext) {
-      _timer = Timer(Duration(seconds: 5), () {
-        Navigator.of(context, rootNavigator: true).maybePop();
-      });
+    showDialog(
+      context: context,
+      builder: (BuildContext builderContext) {
+        _timer = Timer(Duration(seconds: 5), () {
+          Navigator.of(context, rootNavigator: true).maybePop();
+        });
 
-      return AlertDialog(
-        //backgroundColor: Colors.red,
-        title: Text(title),
-        content: SingleChildScrollView(
-          child: content,
-        ),
-      );
-    }
+        return AlertDialog(
+          //backgroundColor: Colors.red,
+          title: Text(title),
+          content: SingleChildScrollView(child: content),
+        );
+      },
     ).then((val) {
       if (_timer!.isActive) {
         _timer!.cancel();
@@ -150,10 +148,8 @@ class _QRScannerState extends State<QRScanner> {
 
   //Simple notification using snackBar
 
-  notify(String text) {
-    final snackBar = SnackBar(
-      content: Text(text),
-    );
+  void notify(String text) {
+    final snackBar = SnackBar(content: Text(text));
 
     // Find the ScaffoldMessenger in the widget tree
     // and use it to show a SnackBar.
@@ -162,10 +158,8 @@ class _QRScannerState extends State<QRScanner> {
 
   //Send scanner data to server
 
-  Future dataRequest(scannedcode) async
-  {
-
-    User user = Provider.of<UserProvider>(context,listen:false).user;
+  Future dataRequest(scannedcode) async {
+    User user = Provider.of<UserProvider>(context, listen: false).user;
     Map<String, String> params = {
       'action': 'handleqr',
       'qr': scannedcode.code,
@@ -173,9 +167,9 @@ class _QRScannerState extends State<QRScanner> {
       'method': 'json',
       'latitude': _latitude.toString(),
       'longitude': _longitude.toString(),
-      'api_key' : user.token.toString()
+      'api_key': user.token.toString(),
     };
-   // print('CURRENT ACTIVITY: '+selectedActivity.id.toString());
+    // print('CURRENT ACTIVITY: '+selectedActivity.id.toString());
     if (selectedActivity.id != null) {
       params['activityid'] = selectedActivity.id.toString();
     }
@@ -183,52 +177,57 @@ class _QRScannerState extends State<QRScanner> {
     //dispatcherrequest returns received JSON data or false
     dynamic response = await _apiClient.dispatcherRequest('activity', params);
     setState(() {
-      if(response==false)
-        {
-
-          queue.add(()=>dataRequest(scannedcode));
-        }
-      else{
+      if (response == false) {
+        queue.add(() => dataRequest(scannedcode));
+      } else {
         //todo: add message types to eventlog
         //Wait for 5 seconds before removing the code
-         Timer(Duration(seconds: 5), () => codeQueue.remove(scannedcode.code));
-
+        Timer(Duration(seconds: 5), () => codeQueue.remove(scannedcode.code));
 
         if (response['message'] != null) {
-          List<Widget> texts = [ Text(response['message'])];
-          if(response['benefits']!=null){
+          List<Widget> texts = [Text(response['message'])];
+          if (response['benefits'] != null) {
             texts.add(Text(AppLocalizations.of(context)!.benefits));
-            for(var benefit in response['benefits']) {
+            for (var benefit in response['benefits']) {
               texts.add(Text(benefit));
             }
           }
-          Widget content = Column(children:[
-            if(response['picture']!=null) Image.network(response['picture']),
-           ...texts,
-
-          ]);
-          String messageTitle = response['status'] == 'success' ? AppLocalizations.of(context)!.visitRecorded : AppLocalizations.of(context)!.error;
-          showMessage(context,messageTitle,content);
+          Widget content = Column(
+            children: [
+              if (response['picture'] != null)
+                Image.network(response['picture']),
+              ...texts,
+            ],
+          );
+          String messageTitle = response['status'] == 'success'
+              ? AppLocalizations.of(context)!.visitRecorded
+              : AppLocalizations.of(context)!.error;
+          showMessage(context, messageTitle, content);
           String statusType = response['status'];
-          switch(response['status']){
+          switch (response['status']) {
             case 'success':
               statusType = AppLocalizations.of(context)!.ok;
               break;
             case 'error':
-           //   statusType = AppLocalizations.of(context)!.error;
+              //   statusType = AppLocalizations.of(context)!.error;
               break;
           }
-          EventLog().saveMessage('$statusType: '+response['message']+(response['benefits']!=null ? '${AppLocalizations.of(context)!.benefits}: '+ response['benefits'].join(','):'' ));
+          EventLog().saveMessage(
+            '$statusType: ' +
+                response['message'] +
+                (response['benefits'] != null
+                    ? '${AppLocalizations.of(context)!.benefits}: ' +
+                          response['benefits'].join(',')
+                    : ''),
+          );
         }
       }
-
     });
   }
 
   // sendData reformatted to add scanned codes to codeQueue.
 
   Future<String> sendData(scannedcode) async {
-
     /* Todo: finalise position processing
     if (_currentPosition == null) {
       notify('Current position unknown, returning false from sendData. How to get the position first instead?');
@@ -239,8 +238,8 @@ class _QRScannerState extends State<QRScanner> {
     if (!codeQueue.contains(scannedcode.code)) {
       codeQueue.add(scannedcode.code);
       notify(AppLocalizations.of(context)!.codeScanned);
-    //  notify('Adding ' + scannedcode.code+' to queue');
-      queue.add(()=>dataRequest(scannedcode));
+      //  notify('Adding ' + scannedcode.code+' to queue');
+      queue.add(() => dataRequest(scannedcode));
     } else {
       //notify('code ' + scannedcode.code + ' already in server queue, returning false from sendData');
       return 'error';
@@ -250,7 +249,7 @@ class _QRScannerState extends State<QRScanner> {
   }
 
   //todo: move this to locationprovider or some util
-/*
+  /*
   _getAddressFromLatLng() async {
     try {
       List<Placemark> p = await geolocator.placemarkFromCoordinates(
@@ -266,28 +265,28 @@ class _QRScannerState extends State<QRScanner> {
   }
 */
 
-
   @override
   void initState() {
     _currentPosition = _getCurrentLocation();
     //get the user
     User user = Provider.of<UserProvider>(context, listen: false).user;
 
-    if(widget.activity!=null && selectedActivity.id==null) {
+    if (widget.activity != null && selectedActivity.id == null) {
       selectedActivity = widget.activity!;
-    }
-    else { //set the user for activitylistprovider
-      ActivityListProvider alp = Provider.of<ActivityListProvider>(context, listen: false);
+    } else {
+      //set the user for activitylistprovider
+      ActivityListProvider alp = Provider.of<ActivityListProvider>(
+        context,
+        listen: false,
+      );
       alp.setUser(user);
       alp.loadMyItems();
     }
     getCameraPermission();
     super.initState();
-
   }
 
   void getCameraPermission() async {
-
     var status = await Permission.camera.status;
     // prints PermissionStatus.granted
     if (!status.isGranted) {
@@ -298,23 +297,22 @@ class _QRScannerState extends State<QRScanner> {
         });
       } else {
         showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: Text('Camera Permission'),
-              content: Text(
-                  AppLocalizations.of(context)!.pleaseEnableCamera),
-              actions: <Widget>[
-                ElevatedButton(
-                  child: Text(AppLocalizations.of(context)!.noThankYou),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                ElevatedButton(
-                  child: Text(AppLocalizations.of(context)!.settings),
-                  onPressed: () => openAppSettings(),
-                ),
-              ],
-            ));
-
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text('Camera Permission'),
+            content: Text(AppLocalizations.of(context)!.pleaseEnableCamera),
+            actions: <Widget>[
+              ElevatedButton(
+                child: Text(AppLocalizations.of(context)!.noThankYou),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              ElevatedButton(
+                child: Text(AppLocalizations.of(context)!.settings),
+                onPressed: () => openAppSettings(),
+              ),
+            ],
+          ),
+        );
       }
     } else {
       setState(() {
@@ -322,18 +320,18 @@ class _QRScannerState extends State<QRScanner> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     //set up to date user in build
     user = Provider.of<UserProvider>(context).user;
 
-    myActivities = Provider.of<ActivityListProvider>(context).list ??[];
+    myActivities = Provider.of<ActivityListProvider>(context).list ?? [];
 
     String titleText = AppLocalizations.of(context)!.qrScanner;
 
     bool isTester = false;
-    if(user.data!=null) {
-
+    if (user.data != null) {
       if (user.data!['istester'] != null) {
         if (user.data!['istester'] == 'true') isTester = true;
       }
@@ -342,8 +340,8 @@ class _QRScannerState extends State<QRScanner> {
 
     if (widget.activity != null) {
       titleText += '\n${widget.activity!.name!}';
-    } else if (myActivities.isNotEmpty ) {
-      if(selectedActivity.id==null) {
+    } else if (myActivities.isNotEmpty) {
+      if (selectedActivity.id == null) {
         //set default selection
         selectedActivity = myActivities.first;
       }
@@ -354,17 +352,15 @@ class _QRScannerState extends State<QRScanner> {
         iconSize: 24,
         elevation: 16,
         style: const TextStyle(color: Colors.deepPurple),
-        underline: Container(
-          height: 2,
-          color: Colors.deepPurpleAccent,
-        ),
+        underline: Container(height: 2, color: Colors.deepPurpleAccent),
         onChanged: (Activity? newValue) {
           setState(() {
             selectedActivity = newValue!;
           });
         },
-        items: myActivities
-            .map<DropdownMenuItem<Activity>>((Activity activity) {
+        items: myActivities.map<DropdownMenuItem<Activity>>((
+          Activity activity,
+        ) {
           //print('adding item ' + activity.id.toString() + ' to dropdown menu');
           return DropdownMenuItem<Activity>(
             value: activity,
@@ -374,183 +370,223 @@ class _QRScannerState extends State<QRScanner> {
       );
     }
 
-//print('returning scaffold');
-        return Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(titleText),
-            elevation: 0.1,
-            actions: [
-              IconButton(
-                  icon: Icon(Icons.refresh),
-                  onPressed: () {
-                    setState(() {
-
-
-                    });
-                  }),
-              if(isTester) IconButton(
-                  icon: Icon(Icons.bug_report),
-                  onPressed:(){feedbackAction(context,user); }
-              ),
-             if(selectedActivity.id!=null) IconButton(
-                  icon: Icon(Icons.book),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ActivityVisitList(selectedActivity)),
-                     // MaterialPageRoute(builder: (context) => EventLogView()),
-                    );
-                  })
-            ],
+    //print('returning scaffold');
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(titleText),
+        elevation: 0.1,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {});
+            },
           ),
-          body: Column(
-            children: <Widget>[
-              if(widget.activity==null && myActivities.isNotEmpty) activitySelect,//Text('You have 0 activities '+(this.user.firstname ?? 'anonymous dude')),
-              // QR Scanner section
-              Expanded(flex: 4, child:canShowQRScanner ? _buildQrView(context) : ListTile(
-                  leading: Icon(Icons.error),
-                  title: Text(AppLocalizations.of(context)!
-                  .cameraNotAvailable),),
-              ),
-              //lower section
-              if(canShowQRScanner && controller!=null )Expanded(
-                flex: 2,
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      FutureBuilder(
-                          future: _currentPosition,
-                          builder: (context, data) {
-                            if (data.hasData) {
-
-                              return Row(children:[
-                                Icon(Icons.check_circle_outlined),
-                                Text(AppLocalizations.of(context)!
-                                    .locationRetrieved)
-                              ]);
-                            } else {
-                              return Row(children: [
-                                CircularProgressIndicator(),
-                                Text(AppLocalizations.of(context)!
-                                    .retrievingCoordinates),
-                              ]);
-                            }
-                          }),
-                      if (result != null)
-                        Text(AppLocalizations.of(context)!.codeScanned,style: TextStyle(fontSize: 20))
-                      else
-                        Text(AppLocalizations.of(context)!.readyToScan,style: TextStyle(fontSize: 20)),
-                      // Text(codeQueue.length.toString()+' items in queue'),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.all(8),
-                            child: ElevatedButton.icon(
-                              icon: Icon(flashState == flashOff
+          if (isTester)
+            IconButton(
+              icon: Icon(Icons.bug_report),
+              onPressed: () {
+                feedbackAction(context, user);
+              },
+            ),
+          if (selectedActivity.id != null)
+            IconButton(
+              icon: Icon(Icons.book),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ActivityVisitList(selectedActivity),
+                  ),
+                  // MaterialPageRoute(builder: (context) => EventLogView()),
+                );
+              },
+            ),
+        ],
+      ),
+      body: Column(
+        children: <Widget>[
+          if (widget.activity == null && myActivities.isNotEmpty) activitySelect, //Text('You have 0 activities '+(this.user.firstname ?? 'anonymous dude')),
+          // QR Scanner section
+          Expanded(
+            flex: 4,
+            child: canShowQRScanner
+                ? _buildQrView(context)
+                : ListTile(
+                    leading: Icon(Icons.error),
+                    title: Text(
+                      AppLocalizations.of(context)!.cameraNotAvailable,
+                    ),
+                  ),
+          ),
+          //lower section
+          if (canShowQRScanner && controller != null)
+            Expanded(
+              flex: 2,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    FutureBuilder(
+                      future: _currentPosition,
+                      builder: (context, data) {
+                        if (data.hasData) {
+                          return Row(
+                            children: [
+                              Icon(Icons.check_circle_outlined),
+                              Text(
+                                AppLocalizations.of(context)!.locationRetrieved,
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Row(
+                            children: [
+                              CircularProgressIndicator(),
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .retrievingCoordinates,
+                              ),
+                            ],
+                          );
+                        }
+                      },
+                    ),
+                    if (result != null)
+                      Text(
+                        AppLocalizations.of(context)!.codeScanned,
+                        style: TextStyle(fontSize: 20),
+                      )
+                    else
+                      Text(
+                        AppLocalizations.of(context)!.readyToScan,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    // Text(codeQueue.length.toString()+' items in queue'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.all(8),
+                          child: ElevatedButton.icon(
+                            icon: Icon(
+                              flashState == flashOff
                                   ? Icons.flash_on
-                                  : Icons.flash_off),
-                              onPressed: () {
-                                if (controller != null) {
-                                  controller!.toggleFlash().catchError((error) {
-                                    //print(error.toString());
-                                    notify(error.toString());
-                                  });
+                                  : Icons.flash_off,
+                            ),
+                            onPressed: () {
+                              if (controller != null) {
+                                controller!.toggleFlash().catchError((error) {
+                                  //print(error.toString());
+                                  notify(error.toString());
+                                });
 
-                                  if (_isFlashOn(flashState)) {
-                                    setState(() {
-                                      flashState = flashOff;
-                                    });
-                                  } else {
-                                    setState(() {
-                                      flashState = flashOn;
-                                    });
-                                  }
-                                }
-                              },
-                              label: Text(
-                                  flashState == flashOff
-                                      ? AppLocalizations.of(context)!.flashOff
-                                      : AppLocalizations.of(context)!.flashOn,
-                                  style: TextStyle(fontSize: 20)),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.all(8),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (controller != null) {
-                                  controller!.flipCamera().catchError((error) {
-                                    notify(error.toString());
-                                    return CameraFacing.back;
+                                if (_isFlashOn(flashState)) {
+                                  setState(() {
+                                    flashState = flashOff;
                                   });
-                                  if (_isBackCamera(cameraState)) {
-                                    setState(() {
-                                      cameraState = frontCamera;
-                                    });
-                                  } else {
-                                    setState(() {
-                                      cameraState = backCamera;
-                                    });
-                                  }
+                                } else {
+                                  setState(() {
+                                    flashState = flashOn;
+                                  });
                                 }
-                              },
-                              child: Text(
-                                  cameraState == backCamera
-                                      ? AppLocalizations.of(context)!.frontCamera
-                                      : AppLocalizations.of(context)!.rearCamera,
-                                  style: TextStyle(fontSize: 20)),
+                              }
+                            },
+                            label: Text(
+                              flashState == flashOff
+                                  ? AppLocalizations.of(context)!.flashOff
+                                  : AppLocalizations.of(context)!.flashOn,
+                              style: TextStyle(fontSize: 20),
                             ),
                           ),
-                          if(!isPaused)Container(
+                        ),
+                        Container(
+                          margin: EdgeInsets.all(8),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (controller != null) {
+                                controller!.flipCamera().catchError((error) {
+                                  notify(error.toString());
+                                  return CameraFacing.back;
+                                });
+                                if (_isBackCamera(cameraState)) {
+                                  setState(() {
+                                    cameraState = frontCamera;
+                                  });
+                                } else {
+                                  setState(() {
+                                    cameraState = backCamera;
+                                  });
+                                }
+                              }
+                            },
+                            child: Text(
+                              cameraState == backCamera
+                                  ? AppLocalizations.of(context)!.frontCamera
+                                  : AppLocalizations.of(context)!.rearCamera,
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ),
+                        ),
+                        if (!isPaused)
+                          Container(
                             margin: EdgeInsets.all(8),
                             child: ElevatedButton.icon(
                               icon: Icon(Icons.pause),
                               onPressed: () {
-                                controller?.pauseCamera().then((value){
-                                  setState(() {
-                                    isPaused = true;
-                                  });
-                                }).catchError((error) {
-                                  notify(error.toString());
-                                });
+                                controller
+                                    ?.pauseCamera()
+                                    .then((value) {
+                                      setState(() {
+                                        isPaused = true;
+                                      });
+                                    })
+                                    .catchError((error) {
+                                      notify(error.toString());
+                                    });
                               },
-                              label: Text(AppLocalizations.of(context)!.pause,
-                                  style: TextStyle(fontSize: 20)),
+                              label: Text(
+                                AppLocalizations.of(context)!.pause,
+                                style: TextStyle(fontSize: 20),
+                              ),
                             ),
                           ),
-                          if(isPaused) Container(
+                        if (isPaused)
+                          Container(
                             margin: EdgeInsets.all(8),
                             child: ElevatedButton.icon(
                               icon: Icon(Icons.play_arrow),
                               onPressed: () {
-                                controller?.resumeCamera().then((value){
-                                  setState(() {
-                                    isPaused = false;
-                                  });
-                                }).catchError((error) {
-                                  notify(error.toString());
-                                });
+                                controller
+                                    ?.resumeCamera()
+                                    .then((value) {
+                                      setState(() {
+                                        isPaused = false;
+                                      });
+                                    })
+                                    .catchError((error) {
+                                      notify(error.toString());
+                                    });
                               },
-                              label: Text(AppLocalizations.of(context)!.resume,
-                                  style: TextStyle(fontSize: 20)),
+                              label: Text(
+                                AppLocalizations.of(context)!.resume,
+                                style: TextStyle(fontSize: 20),
+                              ),
                             ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
+                          ),
+                      ],
+                    ),
+                  ],
                 ),
-              )
-            ],
-          ),
-        );
-      }
-
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 
   bool _isFlashOn(String current) {
     return flashOn == current;
@@ -562,54 +598,58 @@ class _QRScannerState extends State<QRScanner> {
 
   Widget _buildQrView(BuildContext context) {
     // fit the scanArea depending on the device screen measurements
-    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+    var scanArea =
+        (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
         ? 150.0
         : 300.0;
     // To ensure the Scanner view is properly sized after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
-    return canShowQRScanner ?  QRView(
-      key: qrKey,
-      onQRViewCreated: _onQRViewCreated,
-      overlay: QrScannerOverlayShape(
-          borderColor: Colors.red,
-          borderRadius: 10,
-          borderLength: 30,
-          borderWidth: 10,
-          cutOutSize: scanArea),
-      onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
-    ) : Padding(
-      padding:EdgeInsets.all(20),
-      child:
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-      children:[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-        children:[
-        Icon(Icons.error),
-        Text(AppLocalizations.of(context)!.cameraNotAvailable),
-      ]
-          ),
-        ElevatedButton(
-          child: Text(AppLocalizations.of(context)!.btnReturn),
-          onPressed: () => Navigator.of(context).pop(),
-        )
-    ]),
-    );
+    return canShowQRScanner
+        ? QRView(
+            key: qrKey,
+            onQRViewCreated: _onQRViewCreated,
+            overlay: QrScannerOverlayShape(
+              borderColor: Colors.red,
+              borderRadius: 10,
+              borderLength: 30,
+              borderWidth: 10,
+              cutOutSize: scanArea,
+            ),
+            onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
+          )
+        : Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error),
+                    Text(AppLocalizations.of(context)!.cameraNotAvailable),
+                  ],
+                ),
+                ElevatedButton(
+                  child: Text(AppLocalizations.of(context)!.btnReturn),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+          );
   }
+
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
     log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
     if (!p) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('no Permission')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('no Permission')));
     }
   }
-  void _onQRViewCreated(QRViewController controller) {
 
+  void _onQRViewCreated(QRViewController controller) {
     //print('qrview created');
     this.controller = controller;
     // if(controller.hasPermissions)
@@ -622,7 +662,5 @@ class _QRScannerState extends State<QRScanner> {
         });
       }
     });
-
   }
-
 }

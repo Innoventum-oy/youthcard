@@ -9,8 +9,6 @@ import 'package:youth_card/src/objects/user.dart';
 import 'package:youth_card/src/util/app_url.dart';
 import 'package:youth_card/src/util/shared_preference.dart';
 
-
-
 enum Status {
   notLoggedIn,
   notRegistered,
@@ -18,19 +16,19 @@ enum Status {
   registered,
   authenticating,
   registering,
-  loggedOut
+  loggedOut,
 }
-enum VerificationStatus{
+
+enum VerificationStatus {
   codeNotRequested,
   validating,
   userNotFound,
   codeReceived,
   verified,
-  passwordChanged
-
+  passwordChanged,
 }
-class AuthProvider with ChangeNotifier {
 
+class AuthProvider with ChangeNotifier {
   Status _loggedInStatus = Status.notLoggedIn;
   Status _registeredStatus = Status.notRegistered;
   VerificationStatus _verificationStatus = VerificationStatus.codeNotRequested;
@@ -46,50 +44,48 @@ class AuthProvider with ChangeNotifier {
   String? get userId => _userId;
   String? get singlePass => _singlePass;
 
-  void setRegisteredStatus(newStatus)
-  {
+  void setRegisteredStatus(newStatus) {
     _registeredStatus = newStatus;
   }
-  void setLoggedInStatus(newStatus)
-  {
+
+  void setLoggedInStatus(newStatus) {
     _loggedInStatus = newStatus;
   }
-  void setContactMethodId(newId)
-  {
+
+  void setContactMethodId(newId) {
     _contactMethodId = newId;
     notifyListeners();
   }
-  void setUserId(newId)
-  {
 
+  void setUserId(newId) {
     _userId = newId;
     notifyListeners();
   }
 
-  void setSinglePass(pass)
-  {
-
+  void setSinglePass(pass) {
     _singlePass = pass;
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>> login(String email, String password,{String? server}) async {
+  Future<Map<String, dynamic>> login(
+    String email,
+    String password, {
+    String? server,
+  }) async {
     Map<String, dynamic> result;
 
     String baseUrl = kReleaseMode
         ? await Settings().getServer()
         : server ?? await Settings().getServer();
     final Map<String, dynamic> loginData = {
-      'user': {
-        'email': email,
-        'password': password
-      }
+      'user': {'email': email, 'password': password},
     };
 
     _loggedInStatus = Status.authenticating;
     notifyListeners();
 
-    Response response = await post(Uri.https(baseUrl,AppUrl.login),
+    Response response = await post(
+      Uri.https(baseUrl, AppUrl.login),
       body: json.encode(loginData),
       headers: {'Content-Type': 'application/json'},
     );
@@ -108,12 +104,13 @@ class AuthProvider with ChangeNotifier {
 
       result = {'status': true, 'message': 'Success', 'user': authUser};
     } else {
-
       _loggedInStatus = Status.notLoggedIn;
       notifyListeners();
       result = {
         'status': false,
-        'message': response.body!="" ? json.decode(response.body)['error'] : 'Login failed'
+        'message': response.body != ""
+            ? json.decode(response.body)['error']
+            : 'Login failed',
       };
     }
     return result;
@@ -121,16 +118,13 @@ class AuthProvider with ChangeNotifier {
 
   // user logout method
   Future<bool> logout(User user) async {
-
     String baseUrl = await Settings().getServer();
     final Map<String, dynamic> logoutData = {
-       'user': {
-        'email': user.email,
-        'id' : user.id
-      }
+      'user': {'email': user.email, 'id': user.id},
     };
     //Send logout request to server
-    Response response = await post(Uri.https(baseUrl,AppUrl.logout),
+    Response response = await post(
+      Uri.https(baseUrl, AppUrl.logout),
       body: json.encode(logoutData),
       headers: {'Content-Type': 'application/json'},
     );
@@ -142,31 +136,24 @@ class AuthProvider with ChangeNotifier {
        // print(responseData);
        // User authUser = User.fromJson(responseData);
       }*/
-      setRegisteredStatus( Status.notRegistered );
+      setRegisteredStatus(Status.notRegistered);
       UserPreferences().removeUser();
 
       _loggedInStatus = Status.notLoggedIn;
       notifyListeners();
 
       return true;
-      }
+    }
 
     return false;
-
   }
 
-
-  void cancellogin()
-  {
-
+  void cancellogin() {
     _loggedInStatus = Status.notLoggedIn;
     notifyListeners();
-
-
   }
 
-  void setVerificationStatus(newstatus)
-  {
+  void setVerificationStatus(newstatus) {
     _verificationStatus = newstatus;
     notifyListeners();
   }
@@ -177,7 +164,6 @@ class AuthProvider with ChangeNotifier {
 
     //print(response.statusCode);
     if (response.statusCode == 200) {
-
       var userData = responseData['data'];
 
       User authUser = User.fromJson(userData);
@@ -186,24 +172,21 @@ class AuthProvider with ChangeNotifier {
       result = {
         'status': true,
         'message': 'Successfully registered',
-        'data': authUser
+        'data': authUser,
       };
     } else {
-//      if (response.statusCode == 401) Get.toNamed("/login");
+      //      if (response.statusCode == 401) Get.toNamed("/login");
       result = {
         'status': false,
         'message': 'Registration failed',
-        'data': responseData
+        'data': responseData,
       };
     }
 
     return result;
   }
 
-  static onError(error) {
-
+  static Map<String, dynamic> onError(error) {
     return {'status': false, 'message': 'Unsuccessful Request', 'data': error};
-
   }
-
 }

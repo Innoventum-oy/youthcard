@@ -1,9 +1,25 @@
 require 'fileutils'
 require 'json'
+require 'logger'
+require 'plist'
+require 'spaceship'
+require 'supply/client'
 
 ROOT = File.expand_path('..', __dir__)
+ENV['DEBUG'] = 'false' # Google API debug logs include authorization headers.
+Google::Apis.logger.level = Logger::WARN if defined?(Google::Apis) && Google::Apis.respond_to?(:logger) && Google::Apis.logger
+MARKETING_SCREENS = {
+  '01_landing' => 'the landing screen (signed out)',
+  '02_login' => 'the login screen (signed out)',
+  '03_dashboard' => 'the dashboard (signed in)',
+  '04_discover' => 'the Events / Discover view',
+  '05_event_detail' => 'a representative event detail card',
+  '06_calendar' => 'the calendar',
+  '07_own_card' => 'the own-card view'
+}.freeze
 
 default_platform(:ios)
+skip_docs
 
 def screenshot_name(options)
   name = options[:name].to_s
@@ -12,8 +28,13 @@ def screenshot_name(options)
 end
 
 def screenshot_names(options)
-  (options[:names] || '01_dashboard,02_card,03_discover,04_calendar')
+  (options[:names] || MARKETING_SCREENS.keys.join(','))
     .split(',').map(&:strip).reject(&:empty?)
+end
+
+def screenshot_prompt(name)
+  screen = MARKETING_SCREENS.fetch(name, name.tr('_', ' '))
+  UI.input("Show #{screen}, wait for its content to load, then press Enter to capture #{name}")
 end
 
 def screenshot_files(platform, locale)
@@ -27,21 +48,149 @@ def validate_screenshot_files!(platform, locale)
   files = screenshot_files(platform, locale)
   UI.user_error!("No #{platform} screenshots for #{locale}; run the screenshots lane first") if files.empty?
   UI.user_error!('One or more screenshots are empty') if files.any? { |file| File.size(file).zero? }
+  missing = MARKETING_SCREENS.keys.reject do |name|
+    files.any? { |file| File.basename(file, '.png').end_with?(name) }
+  end
+  UI.user_error!("Missing #{platform} screenshots for #{locale}: #{missing.join(', ')}") unless missing.empty?
   UI.success("Validated #{files.length} #{platform} screenshots for #{locale}")
 end
 
 def app_store_key!
-  key_path = ENV['APP_STORE_CONNECT_KEY_PATH']
-  key_id = ENV['APP_STORE_CONNECT_KEY_ID']
+  key_path = ENV['APP_STORE_CONNECT_KEY_PATH'] || ENV['APP_STORE_CONNECT_API_KEY_KEY_FILEPATH']
+  key_id = ENV['APP_STORE_CONNECT_KEY_ID'] || ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']
+  issuer_id = ENV['APP_STORE_CONNECT_ISSUER_ID'] || ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']
   UI.user_error!('Set APP_STORE_CONNECT_KEY_PATH and APP_STORE_CONNECT_KEY_ID') if key_path.to_s.empty? || key_id.to_s.empty?
   app_store_connect_api_key(
     key_id: key_id,
-    issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
+    issuer_id: issuer_id,
     key_filepath: key_path
   )
 end
 
+def google_play_key!
+  key_path = ENV['GOOGLE_PLAY_JSON_KEY'] || ENV['GOOGLE_PLAY_JSON_KEY_FILE']
+  UI.user_error!('Set GOOGLE_PLAY_JSON_KEY to a service-account JSON file') if key_path.to_s.empty? || !File.file?(key_path)
+  key_path
+end
+
+def android_adb_args
+  adb = File.join(ENV['ANDROID_SDK_ROOT'] || File.expand_path('~/Library/Android/sdk'), 'platform-tools', 'adb')
+  UI.user_error!("Android adb not found at #{adb}") unless File.executable?(adb)
+  args = [adb]
+  args += ['-s', ENV['ANDROID_SERIAL']] if ENV['ANDROID_SERIAL'] && !ENV['ANDROID_SERIAL'].empty?
+  args
+end
+
+def release_name
+  version = File.read(File.join(ROOT, 'pubspec.yaml'))[/^version:\s*([^\s]+)/, 1]
+  UI.user_error!('Set a version in pubspec.yaml before releasing') unless version && version.include?('+')
+  name, number = version.split('+', 2)
+  "#{name} (#{number}) internal test"
+end
+
+def prepare_ios_signing!
+  key = app_store_key!
+  team_id = '6GB259Z94P'
+  signing_dir = File.join(ROOT, 'build', 'fastlane', 'signing')
+  FileUtils.mkdir_p(signing_dir)
+  certificate_id = get_certificates(
+    api_key: key,
+    team_id: team_id,
+    development: false,
+    generate_apple_certs: true,
+    output_path: signing_dir,
+    platform: 'ios'
+  )
+  profile_name = 'Youth Card App Store'
+  get_provisioning_profile(
+    api_key: key,
+    team_id: team_id,
+    app_identifier: 'eu.youthcard.youthCard',
+    cert_id: certificate_id || ENV['CER_CERTIFICATE_ID'],
+    provisioning_name: profile_name,
+    filename: 'eu.youthcard.youthCard.AppStore.mobileprovision',
+    output_path: signing_dir,
+    platform: 'ios'
+  )
+  options_path = File.join(signing_dir, 'ExportOptions.plist')
+  File.write(options_path, {
+    'method' => 'app-store',
+    'teamID' => team_id,
+    'signingStyle' => 'manual',
+    'signingCertificate' => 'Apple Distribution',
+    'provisioningProfiles' => { 'eu.youthcard.youthCard' => profile_name },
+    'manageAppVersionAndBuildNumber' => false
+  }.to_plist)
+  options_path
+end
+
 platform :ios do
+  desc 'Build and install the current app on the booted simulator for store screenshots'
+  lane :prepare_screenshots do
+    Dir.chdir(ROOT) { sh('flutter', 'build', 'ios', '--simulator', '--debug', '--dart-define=STORE_SCREENSHOTS=true') }
+    sh('xcrun', 'simctl', 'install', 'booted', File.join(ROOT, 'build', 'ios', 'iphonesimulator', 'Runner.app'))
+  end
+
+  desc 'Verify that the configured App Store Connect key can access Youth Card'
+  lane :check_store_access do
+    app_store_key!
+    app = Spaceship::ConnectAPI::App.find('eu.youthcard.youthCard')
+    UI.user_error!('The API key cannot access Youth Card in App Store Connect') unless app
+    UI.success("App Store Connect access verified for #{app.name}")
+    latest = Spaceship::ConnectAPI::Build.all(app_id: app.id, limit: 1).first
+    UI.message("Latest uploaded iOS build: #{latest.app_version} (#{latest.version})") if latest
+  end
+
+  desc 'Show the current TestFlight build and internal tester groups'
+  lane :testflight_status do
+    app_store_key!
+    app = Spaceship::ConnectAPI::App.find('eu.youthcard.youthCard')
+    UI.user_error!('Youth Card not found in App Store Connect') unless app
+    version, number = File.read(File.join(ROOT, 'pubspec.yaml'))[/^version:\s*([^\s]+)/, 1].split('+', 2)
+    build = Spaceship::ConnectAPI::Build.all(app_id: app.id, version: version, build_number: number, limit: 1).first
+    UI.user_error!("Build #{version} (#{number}) has not reached App Store Connect") unless build
+    UI.message("Build #{version} (#{number}): #{build.processing_state}; internal: #{build.build_beta_detail&.internal_build_state}")
+    app.get_beta_groups.select(&:is_internal_group).each do |group|
+      associated = group.fetch_builds.any? { |item| item.id == build.id }
+      UI.message("Internal group #{group.name}: #{associated ? 'has build' : 'no build'}; all-build access: #{group.has_access_to_all_builds}")
+    end
+  end
+
+  desc 'Distribute the current uploaded build to internal TestFlight groups'
+  lane :distribute_internal do
+    app_store_key!
+    app = Spaceship::ConnectAPI::App.find('eu.youthcard.youthCard')
+    UI.user_error!('Youth Card not found in App Store Connect') unless app
+    version, number = File.read(File.join(ROOT, 'pubspec.yaml'))[/^version:\s*([^\s]+)/, 1].split('+', 2)
+    build = Spaceship::ConnectAPI::Build.all(app_id: app.id, version: version, build_number: number, limit: 1).first
+    UI.user_error!("Build #{version} (#{number}) has not reached App Store Connect") unless build
+    state = build.build_beta_detail&.internal_build_state
+    if state == 'MISSING_EXPORT_COMPLIANCE'
+      Spaceship::ConnectAPI.patch_builds(build_id: build.id, attributes: { usesNonExemptEncryption: false })
+      UI.message('Declared use of exempt encryption; waiting for App Store Connect to process the build')
+      build = FastlaneCore::BuildWatcher.wait_for_build_processing_to_be_complete(
+        app_id: app.id,
+        platform: Spaceship::ConnectAPI::Platform::IOS,
+        app_version: version,
+        build_version: number,
+        poll_interval: 15,
+        timeout_duration: 600,
+        return_spaceship_testflight_build: false,
+        wait_for_build_beta_detail_processing: true
+      )
+      state = build.build_beta_detail&.internal_build_state
+    end
+    UI.user_error!("Build #{version} (#{number}) is not ready for internal testing (#{state})") unless %w[READY_FOR_BETA_TESTING IN_BETA_TESTING].include?(state)
+    groups = app.get_beta_groups.select(&:is_internal_group)
+    UI.user_error!('No internal TestFlight groups exist') if groups.empty?
+    groups.each do |group|
+      next if group.has_access_to_all_builds || group.fetch_builds.any? { |item| item.id == build.id }
+      build.add_beta_groups(beta_groups: [group])
+      UI.success("Added build #{version} (#{number}) to #{group.name}")
+    end
+    testflight_status
+  end
+
   desc 'Capture the currently displayed app screen from the booted iOS simulator'
   lane :screenshot do |options|
     name = screenshot_name(options)
@@ -51,7 +200,10 @@ platform :ios do
     UI.user_error!('Boot an iOS simulator and navigate to the screen first') unless device
     output = File.join(ROOT, 'fastlane', 'screenshots', locale)
     FileUtils.mkdir_p(output)
-    file = File.join(output, "#{device.fetch('name')}-#{name}.png")
+    device_label = (options[:device_label] || device.fetch('name')).to_s
+    UI.user_error!('Device label must use letters, numbers, spaces, underscores, or hyphens') unless device_label.match?(/\A[\w -]+\z/)
+    file = File.join(output, "#{device_label}-#{name}.png")
+    sh('xcrun', 'simctl', 'status_bar', device.fetch('udid'), 'override', '--time', '9:41', '--batteryLevel', '100', '--wifiMode', 'active', '--wifiBars', '3', '--cellularMode', 'active', '--cellularBars', '4')
     sh('xcrun', 'simctl', 'io', device.fetch('udid'), 'screenshot', file)
     UI.success("Captured #{file}")
   end
@@ -59,8 +211,8 @@ platform :ios do
   desc 'Guide an operator through a set of iOS screenshots on the booted simulator'
   lane :screenshots do |options|
     screenshot_names(options).each do |name|
-      UI.input("Navigate to #{name}, wait for content, then press Enter")
-      screenshot(name: name, locale: options[:locale] || 'en-US')
+      screenshot_prompt(name)
+      screenshot(name: name, locale: options[:locale] || 'en-US', device_label: options[:device_label])
     end
   end
 
@@ -85,13 +237,19 @@ platform :ios do
 
   desc 'Build a signed IPA for local review'
   lane :build_candidate do
-    Dir.chdir(ROOT) { sh('flutter', 'build', 'ipa', '--release') }
+    export_options = prepare_ios_signing! if ENV['IOS_SETUP_SIGNING'] == '1'
+    started_at = Time.now
+    args = ['flutter', 'build', 'ipa', '--release']
+    args << "--export-options-plist=#{export_options}" if export_options
+    Dir.chdir(ROOT) { sh(*args) }
+    ipa = Dir[File.join(ROOT, 'build', 'ios', 'ipa', '*.ipa')].max_by { |path| File.mtime(path) }
+    UI.user_error!('iOS archive built, but IPA export failed; check signing assets') unless ipa && File.mtime(ipa) >= started_at
   end
 
   desc 'Build and upload an IPA to TestFlight; does not submit for App Store review'
-  lane :beta do
+  lane :beta do |options|
     api_key = app_store_key!
-    build_candidate
+    build_candidate unless options[:skip_build].to_s == 'true'
     ipa = Dir[File.join(ROOT, 'build', 'ios', 'ipa', '*.ipa')].max_by { |path| File.mtime(path) }
     UI.user_error!('No IPA was produced') unless ipa
     upload_to_testflight(
@@ -104,6 +262,29 @@ platform :ios do
 end
 
 platform :android do
+  desc 'Build and install the current release app on the connected Android device'
+  lane :prepare_screenshots do |options|
+    Dir.chdir(ROOT) { sh('flutter', 'build', 'apk', '--release') } unless options[:skip_build].to_s == 'true'
+    UI.user_error!('No release APK found; run prepare_screenshots without skip_build first') unless File.file?(File.join(ROOT, 'build', 'app', 'outputs', 'flutter-apk', 'app-release.apk'))
+    sh(*(android_adb_args + ['install', '-r', File.join(ROOT, 'build', 'app', 'outputs', 'flutter-apk', 'app-release.apk')]))
+  end
+
+  desc 'Verify Google Play API access and read the internal testing track'
+  lane :check_store_access do
+    client = Supply::Client.make_from_config(params: { json_key: google_play_key!, timeout: 300 })
+    begin
+      client.begin_edit(package_name: 'eu.youthcard.youth_card')
+      client.tracks('internal').each do |track|
+        (track.releases || []).each do |release|
+          UI.message("Internal track: #{release.status} #{(release.version_codes || []).join(', ')}")
+        end
+      end
+      UI.success('Google Play API access verified for Youth Card')
+    ensure
+      client.abort_current_edit if client.current_edit
+    end
+  end
+
   desc 'Capture the currently displayed app screen from a connected Android device'
   lane :screenshot do |options|
     name = screenshot_name(options)
@@ -111,8 +292,7 @@ platform :android do
     output = File.join(ROOT, 'fastlane', 'metadata', 'android', locale, 'images', 'phoneScreenshots')
     FileUtils.mkdir_p(output)
     file = File.join(output, "#{name}.png")
-    command = ['adb']
-    command += ['-s', ENV['ANDROID_SERIAL']] if ENV['ANDROID_SERIAL'] && !ENV['ANDROID_SERIAL'].empty?
+    command = android_adb_args
     command += ['exec-out', 'screencap', '-p']
     File.open(file, 'wb') do |destination|
       IO.popen(command, 'rb') { |stream| IO.copy_stream(stream, destination) }
@@ -124,7 +304,7 @@ platform :android do
   desc 'Guide an operator through a set of Android screenshots on the connected device'
   lane :screenshots do |options|
     screenshot_names(options).each do |name|
-      UI.input("Navigate to #{name}, wait for content, then press Enter")
+      screenshot_prompt(name)
       screenshot(name: name, locale: options[:locale] || 'en-US')
     end
   end
@@ -137,10 +317,8 @@ platform :android do
   desc 'Upload reviewed Android screenshots without a binary or metadata change'
   lane :upload_screenshots do |options|
     validate_screenshots(options)
-    key_path = ENV['GOOGLE_PLAY_JSON_KEY']
-    UI.user_error!('Set GOOGLE_PLAY_JSON_KEY to a service-account JSON file') if key_path.to_s.empty?
     upload_to_play_store(
-      json_key: key_path,
+      json_key: google_play_key!,
       package_name: 'eu.youthcard.youth_card',
       metadata_path: File.join(ROOT, 'fastlane', 'metadata', 'android'),
       skip_upload_aab: true,
@@ -155,20 +333,22 @@ platform :android do
     Dir.chdir(ROOT) { sh('flutter', 'build', 'appbundle', '--release') }
   end
 
-  desc 'Build and upload a draft release to the Google Play internal track'
-  lane :internal do
-    key_path = ENV['GOOGLE_PLAY_JSON_KEY']
-    UI.user_error!('Set GOOGLE_PLAY_JSON_KEY to a service-account JSON file') if key_path.to_s.empty?
-    build_candidate
+  desc 'Build and publish to the Google Play internal testing track'
+  lane :internal do |options|
+    key_path = google_play_key!
+    build_candidate unless options[:skip_build].to_s == 'true'
+    UI.user_error!('No release App Bundle found; run internal without skip_build first') unless File.file?(File.join(ROOT, 'build', 'app', 'outputs', 'bundle', 'release', 'app-release.aab'))
     upload_to_play_store(
       json_key: key_path,
       package_name: 'eu.youthcard.youth_card',
       aab: File.join(ROOT, 'build', 'app', 'outputs', 'bundle', 'release', 'app-release.aab'),
       track: 'internal',
-      release_status: 'draft',
+      release_status: 'completed',
+      version_name: release_name,
       skip_upload_metadata: true,
       skip_upload_images: true,
-      skip_upload_screenshots: true
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true
     )
   end
 end

@@ -17,11 +17,13 @@ import 'package:youth_card/src/util/shared_preference.dart';
 import 'package:youth_card/src/util/brand.dart';
 import 'package:provider/provider.dart';
 import 'package:feedback/feedback.dart';
+import 'package:youth_card/src/util/feedback_localizations.dart';
 import 'src/objects/user.dart';
 
 void main() {
   runApp(
       BetterFeedback(
+          localizationsDelegates: [YouthCardFeedbackLocalizationsDelegate()],
           child:YouthCard(),
       )
   );

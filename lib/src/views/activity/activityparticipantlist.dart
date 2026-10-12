@@ -12,17 +12,20 @@ import 'package:youth_card/src/util/api_client.dart';
 import 'package:youth_card/src/util/utils.dart';
 import 'package:youth_card/src/views/card.dart';
 
-
 class ActivityParticipantList extends StatefulWidget {
   final ActivityDate _activityDate;
   final Activity _activity;
   final object_model.ActivityListProvider activityProvider;
 
-  const ActivityParticipantList(this._activityDate,this._activity, this.activityProvider, {super.key});
+  const ActivityParticipantList(
+    this._activityDate,
+    this._activity,
+    this.activityProvider, {
+    super.key,
+  });
 
   @override
-  ActivityParticipantListState createState() =>
-      ActivityParticipantListState();
+  ActivityParticipantListState createState() => ActivityParticipantListState();
 }
 
 class ActivityParticipantListState extends State<ActivityParticipantList> {
@@ -30,104 +33,119 @@ class ActivityParticipantListState extends State<ActivityParticipantList> {
   bool userListLoaded = false;
   bool visitListLoaded = false;
   List<User> users = [];
-  Map<dynamic,String> activityVisitData ={};
-  notify(String text) {
-    final snackBar = SnackBar(
-      content: Text(text),
-    );
+  Map<dynamic, String> activityVisitData = {};
+  void notify(String text) {
+    final snackBar = SnackBar(content: Text(text));
 
     // Find the ScaffoldMessenger in the widget tree
     // and use it to show a SnackBar.
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void _loadActivityUsers(activityDate,user) async {
+  void _loadActivityUsers(activityDate, user) async {
     try {
-      var activityUserData =
-      await widget.activityProvider.getActivityUsers(widget._activity.id!,user);
+      var activityUserData = await widget.activityProvider.getActivityUsers(
+        widget._activity.id!,
+        user,
+      );
 
       setState(() {
         userListLoaded = true;
         if (activityUserData.isNotEmpty) {
           users.addAll(activityUserData);
-          _loadActivityVisits(widget._activity.id!,widget._activityDate,user);
-        } else {
-        }
+          _loadActivityVisits(widget._activity.id!, widget._activityDate, user);
+        } else {}
       });
     } catch (e) {
       //Notify(e.toString());
       e.toString();
     }
   }
-  void _loadActivityVisits(activity,activitydate,user) async {
+
+  void _loadActivityVisits(activity, activitydate, user) async {
     try {
-      activityVisitData =
-      await widget.activityProvider.getActivityDateVisits(widget._activity.id!,activitydate,user);
+      activityVisitData = await widget.activityProvider.getActivityDateVisits(
+        widget._activity.id!,
+        activitydate,
+        user,
+      );
 
       setState(() {
         visitListLoaded = true;
         if (activityVisitData.isNotEmpty) {
-        } else {
-        }
+        } else {}
       });
     } catch (e) {
       //Notify(e.toString());
       e.toString();
     }
   }
+
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      User user = Provider.of<UserProvider>(context, listen: false).user; //current user
-      _loadActivityUsers(widget._activityDate,user);
-
+      User user = Provider.of<UserProvider>(
+        context,
+        listen: false,
+      ).user; //current user
+      _loadActivityUsers(widget._activityDate, user);
     });
 
-   // Timer(Duration(milliseconds: 100), () => setState(() => _visible = true));
+    // Timer(Duration(milliseconds: 100), () => setState(() => _visible = true));
   }
 
   @override
   Widget build(BuildContext context) {
     var titleDateFormat = DateFormat('dd.MM hh:mm');
     return Scaffold(
-        appBar: AppBar(
-          title: Text('${AppLocalizations.of(context)!.participants} ${widget._activityDate.startdate !=null ? titleDateFormat.format(widget._activityDate.startdate ?? DateTime.now()).toString() : ''}')
+      appBar: AppBar(
+        title: Text(
+          '${AppLocalizations.of(context)!.participants} ${widget._activityDate.startdate != null ? titleDateFormat.format(widget._activityDate.startdate ?? DateTime.now()).toString() : ''}',
         ),
-        body: userListLoaded ? userList() : Center(child:CircularProgressIndicator(),
-        ),
+      ),
+      body: userListLoaded
+          ? userList()
+          : Center(child: CircularProgressIndicator()),
     );
-
   }
-  Widget userList()
-  {
+
+  Widget userList() {
     final loggedInUser = Provider.of<UserProvider>(context, listen: false).user;
-    if(users.isEmpty) {
+    if (users.isEmpty) {
       return Align(
-          alignment: Alignment.center,
-          child:Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children:[
-              Icon(Icons.info),
-              Text(AppLocalizations.of(context)!.noUsersFound,textAlign:TextAlign.center,)
-          ]),
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.info),
+            Text(
+              AppLocalizations.of(context)!.noUsersFound,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       );
     }
     return ListView.builder(
-        itemBuilder: (context,index){
-          User user = users[index];
+      itemBuilder: (context, index) {
+        User user = users[index];
         //  print(user.data!['huoltajan_puhelinnumero']);
-      return SwitchListTile(
-      //  isThreeLine: true,
-        value: activityVisitData[user.id.toString()]=='visited' ?true:false,
-        title: Text('${user.firstname!} ${user.lastname!}'),
-       // subtitle:
-        secondary: InkWell(
+        return SwitchListTile(
+          //  isThreeLine: true,
+          value: activityVisitData[user.id.toString()] == 'visited'
+              ? true
+              : false,
+          title: Text('${user.firstname!} ${user.lastname!}'),
+          // subtitle:
+          secondary: InkWell(
             child: CircleAvatar(
               radius: 20,
-              backgroundImage: user.data!['userimageurl'] != null && user.data!['userimageurl']!.isNotEmpty
+              backgroundImage:
+                  user.data!['userimageurl'] != null &&
+                      user.data!['userimageurl']!.isNotEmpty
                   ? CachedNetworkImageProvider(user.data!['userimageurl']!)
                   : null,
               child: getInitials(user),
@@ -135,26 +153,33 @@ class ActivityParticipantListState extends State<ActivityParticipantList> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MyCard(user:user)),
+                MaterialPageRoute(builder: (context) => MyCard(user: user)),
               );
-
-            }),//Icon(Icons.supervised_user_circle_sharp),
-        onChanged: (bool value) async {
-
-            notify(value ? AppLocalizations.of(context)!.visitAdded : AppLocalizations.of(context)!.visitRemoved);
-            Map<String,dynamic> result = await _apiClient.updateActivityRegistration(activityId:widget._activity.id!,visitStatus:value ? 'visited':'cancelled',visitor: user,user:loggedInUser,visitDate:widget._activityDate) ;
+            },
+          ), //Icon(Icons.supervised_user_circle_sharp),
+          onChanged: (bool value) async {
+            notify(
+              value
+                  ? AppLocalizations.of(context)!.visitAdded
+                  : AppLocalizations.of(context)!.visitRemoved,
+            );
+            Map<String, dynamic> result = await _apiClient
+                .updateActivityRegistration(
+                  activityId: widget._activity.id!,
+                  visitStatus: value ? 'visited' : 'cancelled',
+                  visitor: user,
+                  user: loggedInUser,
+                  visitDate: widget._activityDate,
+                );
             setState(() {
-            if(result['visitstatus']!=null) {
-              activityVisitData[result['userid']] = result['visitstatus'];
-            }
-
-          });
-
-        }
-      );
-    },
-    itemCount:users.length
+              if (result['visitstatus'] != null) {
+                activityVisitData[result['userid']] = result['visitstatus'];
+              }
+            });
+          },
+        );
+      },
+      itemCount: users.length,
     );
   }
 }
-

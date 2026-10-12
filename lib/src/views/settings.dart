@@ -24,11 +24,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     PackageInfo.fromPlatform().then((package) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => _version =
               '${package.appName} ${package.version} (${package.buildNumber})',
         );
+      }
     });
   }
 
@@ -89,12 +90,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               strings.clearCache,
               () async {
                 await getFileStorage().clear();
-                if (context.mounted)
+                if (context.mounted) {
                   context.read<ActivityListProvider>().clearMemoryCache();
-                if (context.mounted)
+                }
+                if (context.mounted) {
                   ScaffoldMessenger.of(
                     context,
                   ).showSnackBar(SnackBar(content: Text(strings.clearCache)));
+                }
               },
             ),
             _tile(
