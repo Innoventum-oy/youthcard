@@ -1,0 +1,7 @@
+Nuorisokortti - sovellus on käytössä seuraavien verkkosivustojen yhteydessä:
+Nuorten Joensuu 
+Nuorten Liperi
+Nuorten Kontiolahti
+Nuorten Pirkkala. 
+Se sisältää tapahtumakalenterin, tapahtumalistan ja QR-koodiskannerin jolla voit itse merkitä osallistumisesi harrastuksiin ja käyntisi nuokkareilla.
+Nuoriso-ohjaajat voivat käyttää sovellusta nuorten käyntien skannaamiseen sekä tiloihin että järjestettyihin tapahtumiin.

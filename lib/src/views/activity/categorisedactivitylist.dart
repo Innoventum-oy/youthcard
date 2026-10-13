@@ -291,7 +291,7 @@ class _DiscoverFeedState extends State<CategorisedActivityList> {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 sliver: SliverList.builder(
                   itemCount: items.length,
-                  itemBuilder: (context, index) => _card(items[index], strings),
+                  itemBuilder: (context, index) => _card(items[index], strings, index),
                 ),
               ),
             SliverToBoxAdapter(
@@ -437,7 +437,7 @@ class _DiscoverFeedState extends State<CategorisedActivityList> {
     );
   }
 
-  Widget _card(_FeedItem item, AppLocalizations strings) {
+  Widget _card(_FeedItem item, AppLocalizations strings, int index) {
     final activity = item.activity;
     final placeActivities = item.isPlace
         ? PlaceActivityMatcher.atPlace(activity, _activities.items)
@@ -457,6 +457,7 @@ class _DiscoverFeedState extends State<CategorisedActivityList> {
       margin: const EdgeInsets.only(bottom: 20),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
+        key: ValueKey('discover-card-$index'),
         onTap: () => goToActivity(
           context,
           activity,

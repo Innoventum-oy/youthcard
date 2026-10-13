@@ -1,0 +1,7 @@
+Youth Card App lets you browse activities available for youth in your region, register to them and log visits. It displays your personal QR code and includes a QR scanner for scanning visits yourself.
+The activities and events are managed on regional Youth Card websites:
+Finland - https://nuortenjoensuu.fi
+Germany - https://dresden-youthcard.eu
+Czech Republic - https://youthcard.cz
+Croatia - https://medimurje.youthcard.eu/
+Portugal - https://lousada.youthcard.pt

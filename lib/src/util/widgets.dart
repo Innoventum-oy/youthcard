@@ -116,6 +116,7 @@ Widget bottomNavigation(BuildContext context, {int currentIndex = 0}) {
   }
 
   return SafeArea(
+    key: const ValueKey('store-bottom-nav'),
     top: false,
     child: Padding(
       padding: const EdgeInsets.fromLTRB(24, 6, 24, 8),

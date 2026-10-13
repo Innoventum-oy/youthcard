@@ -5,6 +5,7 @@
 
   "accountCreated" : "Tili luotu",
   "accountDeleted" : "Käyttäjätili poistettu",
+  "accountCreationAccepted": "Hyväksyn, että tietoni tallennetaan Youth Card -palveluun",
   "accountDeletion": "Tilin poistaminen",
   "activities": "Tapahtumat",
   "activity": "Tapahtuma",

@@ -1,0 +1,1 @@
+Nuorisokortti - sovellus on käytössä Nuortenjoensuu ja Nuortenliperi -palvelujen yhteydessä. Se sisältää tapahtumakalenterin, tapahtumalistan ja QR-koodiskannerin jolla voit itse merkitä osallistumisesi harrastuksiin ja käyntisi nuokkareilla.

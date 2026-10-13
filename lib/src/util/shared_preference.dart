@@ -55,7 +55,8 @@ class UserPreferences {
 }
 
 class Settings{
-  Settings({bool? releaseMode}) : _releaseMode = releaseMode ?? kReleaseMode;
+  Settings({bool? releaseMode}) : _releaseMode = releaseMode ??
+      (kReleaseMode || const bool.fromEnvironment('STORE_SCREENSHOTS'));
 
   final bool _releaseMode;
 

@@ -20,7 +20,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountCreationAccepted =>
-      'I acknowledge and accept that my information is saved to the database of the Sivulla application';
+      'I acknowledge and accept that my information is saved to the Youth Card service';
 
   @override
   String get accountDeletion => 'Account Deletion';

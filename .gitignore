@@ -116,6 +116,7 @@ app.*.symbols
 
 # Fastlane run reports
 fastlane/report.xml
+fastlane/.env
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3

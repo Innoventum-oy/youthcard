@@ -7,8 +7,7 @@ class YouthCardFeedbackLocalizationsDelegate
   YouthCardFeedbackLocalizationsDelegate() {
     supportedLocales.addAll({
       const Locale('fi'): const _FinnishFeedbackLocalizations(),
-      const Locale('cs'): const _CzechFeedbackLocalizations(),
-      const Locale('hr'): const _CroatianFeedbackLocalizations(),
+      const Locale('sv'): const _SwedishFeedbackLocalizations(),
     });
   }
 }
@@ -26,28 +25,15 @@ class _FinnishFeedbackLocalizations extends FeedbackLocalizations {
   String get draw => 'Piirrä';
 }
 
-class _CzechFeedbackLocalizations extends FeedbackLocalizations {
-  const _CzechFeedbackLocalizations();
+class _SwedishFeedbackLocalizations extends FeedbackLocalizations {
+  const _SwedishFeedbackLocalizations();
 
   @override
-  String get submitButtonText => 'Odeslat';
+  String get submitButtonText => 'Skicka';
   @override
-  String get feedbackDescriptionText => 'Co bychom mohli zlepšit?';
+  String get feedbackDescriptionText => 'Vad kan vi förbättra?';
   @override
-  String get navigate => 'Procházet';
+  String get navigate => 'Bläddra';
   @override
-  String get draw => 'Kreslit';
-}
-
-class _CroatianFeedbackLocalizations extends FeedbackLocalizations {
-  const _CroatianFeedbackLocalizations();
-
-  @override
-  String get submitButtonText => 'Pošalji';
-  @override
-  String get feedbackDescriptionText => 'Što bismo mogli poboljšati?';
-  @override
-  String get navigate => 'Pregledaj';
-  @override
-  String get draw => 'Crtaj';
+  String get draw => 'Rita';
 }

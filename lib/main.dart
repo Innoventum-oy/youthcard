@@ -20,6 +20,9 @@ import 'package:feedback/feedback.dart';
 import 'package:youth_card/src/util/feedback_localizations.dart';
 import 'src/objects/user.dart';
 
+const bool _storeScreenshots = bool.fromEnvironment('STORE_SCREENSHOTS');
+const String _screenshotLocale = String.fromEnvironment('SCREENSHOT_LOCALE');
+
 void main() {
   runApp(
       BetterFeedback(
@@ -100,6 +103,9 @@ class _YouthCardState extends State<YouthCard> {
       ],
       child: MaterialApp(
           title: 'Youth Card',
+          locale: _storeScreenshots && _screenshotLocale.isNotEmpty
+              ? Locale(_screenshotLocale)
+              : null,
           navigatorKey: NavigationService.navigatorKey,
           debugShowCheckedModeBanner: false,
           localizationsDelegates: AppLocalizations.localizationsDelegates,

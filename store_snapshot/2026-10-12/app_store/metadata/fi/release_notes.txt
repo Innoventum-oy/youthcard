@@ -1,0 +1,1 @@
+Tilin luonnin yhteydessä on nyt käyttäjän iän tarkistus. Alle 18-vuotiaiden käyttäjien tulee antaa myös huoltajan yhteystieto.

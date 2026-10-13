@@ -4,6 +4,10 @@ require 'logger'
 require 'plist'
 require 'spaceship'
 require 'supply/client'
+require 'open-uri'
+require 'dotenv'
+require 'shellwords'
+require 'open3'
 
 ROOT = File.expand_path('..', __dir__)
 ENV['DEBUG'] = 'false' # Google API debug logs include authorization headers.
@@ -17,6 +21,17 @@ MARKETING_SCREENS = {
   '06_calendar' => 'the calendar',
   '07_own_card' => 'the own-card view'
 }.freeze
+IOS_STORE_SCREEN_NAMES = {
+  'iphone_61' => %w[01_dashboard 02_discover 03_event_detail 04_my_card],
+  'ipad_13' => %w[01_dashboard 02_discover 03_event_detail 04_my_card]
+}.freeze
+IOS_STORE_SCREEN_LOCALES = { 'en-GB' => 'en', 'fi' => 'fi', 'sv' => 'sv' }.freeze
+IOS_STORE_SCREEN_TARGETS = {
+  'iphone_61' => { name: 'iPhone 15 Pro', size: [1179, 2556], label: 'iPhone_6_1' },
+  'ipad_13' => { name: 'iPad Pro 13-inch (M5)', size: [2064, 2752], label: 'iPad_13' }
+}.freeze
+IOS_STORE_RAW_PATH = File.join(ROOT, 'build', 'fastlane', 'raw', 'ios')
+IOS_STORE_UPLOAD_PATH = File.join(ROOT, 'build', 'fastlane', 'screenshots', 'ios_current')
 
 default_platform(:ios)
 skip_docs
@@ -48,6 +63,11 @@ def validate_screenshot_files!(platform, locale)
   files = screenshot_files(platform, locale)
   UI.user_error!("No #{platform} screenshots for #{locale}; run the screenshots lane first") if files.empty?
   UI.user_error!('One or more screenshots are empty') if files.any? { |file| File.size(file).zero? }
+  if platform == :android
+    UI.user_error!('Google Play requires 2–8 phone screenshots') unless (2..8).cover?(files.length)
+    UI.success("Validated #{files.length} #{platform} screenshots for #{locale}")
+    return
+  end
   missing = MARKETING_SCREENS.keys.reject do |name|
     files.any? { |file| File.basename(file, '.png').end_with?(name) }
   end
@@ -56,6 +76,8 @@ def validate_screenshot_files!(platform, locale)
 end
 
 def app_store_key!
+  env_file = ENV['APP_STORE_CONNECT_ENV_FILE']
+  Dotenv.load(env_file) if env_file && !env_file.empty?
   key_path = ENV['APP_STORE_CONNECT_KEY_PATH'] || ENV['APP_STORE_CONNECT_API_KEY_KEY_FILEPATH']
   key_id = ENV['APP_STORE_CONNECT_KEY_ID'] || ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']
   issuer_id = ENV['APP_STORE_CONNECT_ISSUER_ID'] || ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']
@@ -65,6 +87,83 @@ def app_store_key!
     issuer_id: issuer_id,
     key_filepath: key_path
   )
+end
+
+def ios_store_version
+  version = File.read(File.join(ROOT, 'pubspec.yaml'))[/^version:\s*([^\s]+)/, 1]&.split('+', 2)&.first
+  UI.user_error!('Set a version in pubspec.yaml before uploading iOS screenshots') if version.to_s.empty?
+  version
+end
+
+def ios_store_device(target, options)
+  requested = options[:device] || ENV["SCREENSHOT_#{target.upcase}_DEVICE"]
+  return requested unless requested.to_s.empty?
+  name = IOS_STORE_SCREEN_TARGETS.fetch(target).fetch(:name)
+  devices = JSON.parse(`xcrun simctl list devices available -j`).fetch('devices').values.flatten
+  device = devices.select { |entry| entry['name'] == name && entry['isAvailable'] }.last
+  UI.user_error!("No available simulator named #{name}; pass device:<UDID>") unless device
+  device.fetch('udid')
+end
+
+def capture_ios_store_screenshots(target, options)
+  config = IOS_STORE_SCREEN_TARGETS.fetch(target)
+  defines = ENV['SCREENSHOT_DEFINES_FILE'] || options[:defines]
+  UI.user_error!('Set SCREENSHOT_DEFINES_FILE to a private JSON file containing SCREENSHOT_DEMO_EMAIL and SCREENSHOT_DEMO_PASSWORD') unless defines && File.file?(defines)
+  device = ios_store_device(target, options)
+  sh('xcrun', 'simctl', 'boot', device) unless JSON.parse(`xcrun simctl list devices booted -j`).fetch('devices').values.flatten.any? { |entry| entry['udid'] == device }
+  sh('xcrun', 'simctl', 'bootstatus', device, '-b')
+  IOS_STORE_SCREEN_LOCALES.each do |locale, language|
+    next if options[:locale] && options[:locale] != locale
+    if target == 'ipad_13'
+      system_locale = { 'en-GB' => 'en_GB', 'fi' => 'fi_FI', 'sv' => 'sv_SE' }.fetch(locale)
+      current_locale, = Open3.capture3('xcrun', 'simctl', 'spawn', device, 'defaults', 'read', '-g', 'AppleLocale')
+      if current_locale.strip != system_locale
+        sh('xcrun', 'simctl', 'spawn', device, 'defaults', 'write', '-g', 'AppleLanguages', '-array', system_locale.tr('_', '-'))
+        sh('xcrun', 'simctl', 'spawn', device, 'defaults', 'write', '-g', 'AppleLocale', system_locale)
+        sh('xcrun', 'simctl', 'shutdown', device)
+        sh('xcrun', 'simctl', 'boot', device)
+        sh('xcrun', 'simctl', 'bootstatus', device, '-b')
+      end
+    end
+    sh('xcrun', 'simctl', 'status_bar', device, 'override', '--time', '9:41', '--batteryLevel', '100', '--wifiMode', 'active', '--wifiBars', '3')
+    output = File.join(IOS_STORE_RAW_PATH, target, locale)
+    FileUtils.mkdir_p(output)
+    args = [
+      'flutter', 'drive', '--driver=test_driver/store_screenshots.dart',
+      '--target=integration_test/store_screenshots_test.dart', '-d', device,
+      '--dart-define=STORE_SCREENSHOTS=true',
+      "--dart-define=SCREENSHOT_TARGET=#{target}",
+      "--dart-define=SCREENSHOT_LOCALE=#{language}"
+    ]
+    UI.message("Capturing #{locale} on #{config.fetch(:name)}")
+    success = system({ 'SCREENSHOT_OUTPUT_DIR' => output, 'SCREENSHOT_DEVICE' => device, 'SCREENSHOT_DEFINES_FILE' => File.expand_path(defines) }, *args, chdir: ROOT)
+    UI.user_error!("Screenshot capture failed for #{locale}/#{target}") unless success
+  end
+end
+
+def screenshot_dimensions(path)
+  output = `sips -g pixelWidth -g pixelHeight #{Shellwords.escape(path)}`
+  [output[/pixelWidth: (\d+)/, 1], output[/pixelHeight: (\d+)/, 1]].map(&:to_i)
+end
+
+def stage_ios_store_screenshots!
+  FileUtils.rm_rf(IOS_STORE_UPLOAD_PATH)
+  IOS_STORE_SCREEN_LOCALES.each_key do |locale|
+    IOS_STORE_SCREEN_TARGETS.each do |target, config|
+      IOS_STORE_SCREEN_NAMES.fetch(target).each do |name|
+        source = File.join(IOS_STORE_RAW_PATH, target, locale, "#{name}.png")
+        UI.user_error!("Missing screenshot #{source}") unless File.file?(source)
+        UI.user_error!("Wrong screenshot size for #{source}: #{screenshot_dimensions(source).join('x')}") unless screenshot_dimensions(source) == config.fetch(:size)
+        destination = File.join(IOS_STORE_UPLOAD_PATH, locale, "#{config.fetch(:label)}-#{name}.png")
+        FileUtils.mkdir_p(File.dirname(destination))
+        success = system('magick', source, '-alpha', 'off', '-type', 'TrueColor', "PNG24:#{destination}")
+        UI.user_error!("Could not prepare opaque PNG #{destination}") unless success && File.file?(destination)
+        UI.user_error!("Prepared screenshot has wrong size: #{destination}") unless screenshot_dimensions(destination) == config.fetch(:size)
+        UI.user_error!("Prepared screenshot has transparency: #{destination}") unless `sips -g hasAlpha #{Shellwords.escape(destination)}`.include?('hasAlpha: no')
+      end
+    end
+  end
+  UI.success("Prepared #{IOS_STORE_SCREEN_NAMES.values.sum(&:length) * IOS_STORE_SCREEN_LOCALES.length} opaque screenshots at #{IOS_STORE_UPLOAD_PATH}")
 end
 
 def google_play_key!
@@ -86,6 +185,19 @@ def release_name
   UI.user_error!('Set a version in pubspec.yaml before releasing') unless version && version.include?('+')
   name, number = version.split('+', 2)
   "#{name} (#{number}) internal test"
+end
+
+def store_snapshot_path(store, options)
+  File.expand_path(options[:path] || File.join(ROOT, 'store_snapshot', Time.now.strftime('%Y-%m-%d'), store, 'fastlane'))
+end
+
+def ensure_new_snapshot_path!(path)
+  UI.user_error!("Snapshot already exists at #{path}; pass path: to use a new directory") if File.exist?(path)
+end
+
+def write_store_text(path, value)
+  FileUtils.mkdir_p(File.dirname(path))
+  File.write(path, "#{value}\n")
 end
 
 def prepare_ios_signing!
@@ -125,6 +237,117 @@ def prepare_ios_signing!
 end
 
 platform :ios do
+  desc 'Capture English, Finnish, and Swedish iPhone 6.1 and iPad 13 screenshots using a private demo-account define file'
+  lane :capture_store_screenshots do |options|
+    targets = options[:target] ? [options[:target]] : IOS_STORE_SCREEN_TARGETS.keys
+    targets.each do |target|
+      UI.user_error!("Unknown screenshot target #{target}") unless IOS_STORE_SCREEN_TARGETS.key?(target)
+      capture_ios_store_screenshots(target, options)
+    end
+  end
+
+  desc 'Validate and stage opaque iOS screenshots for App Store Connect'
+  lane :prepare_store_screenshots do
+    stage_ios_store_screenshots!
+  end
+
+  desc 'Upload staged iOS screenshots for the current version without changing the binary or listing text'
+  lane :upload_store_screenshots do
+    stage_ios_store_screenshots!
+    upload_to_app_store(
+      api_key: app_store_key!,
+      app_identifier: 'eu.youthcard.youthCard',
+      app_version: ios_store_version,
+      metadata_path: File.join(ROOT, 'fastlane', 'metadata', 'ios'),
+      screenshots_path: IOS_STORE_UPLOAD_PATH,
+      skip_binary_upload: true,
+      skip_metadata: true,
+      overwrite_screenshots: false,
+      submit_for_review: false,
+      run_precheck_before_submit: false,
+      force: true
+    )
+  end
+
+  desc 'Verify the editable iOS listing has all six required screenshot sets'
+  lane :verify_store_screenshots do
+    app_store_key!
+    app = Spaceship::ConnectAPI::App.find('eu.youthcard.youthCard')
+    UI.user_error!('Youth Card not found in App Store Connect') unless app
+    version = app.get_edit_app_store_version(platform: Spaceship::ConnectAPI::Platform::IOS)
+    expected_version = ios_store_version
+    UI.user_error!("Editable iOS #{expected_version} version not found") unless version&.version_string == expected_version
+    expected_types = %w[APP_IPHONE_61 APP_IPAD_PRO_3GEN_129]
+    localizations = version.get_app_store_version_localizations
+    IOS_STORE_SCREEN_LOCALES.each_key do |locale|
+      localization = localizations.find { |item| item.locale == locale }
+      UI.user_error!("Missing #{locale} localization") unless localization
+      sets = localization.get_app_screenshot_sets
+      expected_types.each do |type|
+        set = sets.find { |item| item.screenshot_display_type == type }
+        count = set&.app_screenshots&.length || 0
+        UI.user_error!("Expected four #{locale}/#{type} screenshots, found #{count}") unless count == 4
+        UI.success("#{locale} #{type}: #{count} screenshots")
+      end
+    end
+  end
+
+  desc 'Download the live App Store listing and screenshots without review credentials'
+  lane :download_store_listing do |options|
+    app_store_key!
+    app = Spaceship::ConnectAPI::App.find('eu.youthcard.youthCard')
+    UI.user_error!('Youth Card not found in App Store Connect') unless app
+    version = app.get_live_app_store_version(platform: Spaceship::ConnectAPI::Platform::IOS)
+    UI.user_error!('No live iOS version found') unless version
+    root = store_snapshot_path('app_store', options)
+    ensure_new_snapshot_path!(root)
+    metadata = File.join(root, 'metadata')
+    screenshots = File.join(root, 'screenshots')
+    info = app.fetch_live_app_info
+    info.get_app_info_localizations.each do |locale|
+      %w[name subtitle privacy_policy_url].each do |field|
+        file = field == 'privacy_policy_url' ? 'privacy_url' : field
+        write_store_text(File.join(metadata, locale.locale, "#{file}.txt"), locale.public_send(field))
+      end
+    end
+    version.get_app_store_version_localizations.each do |locale|
+      {
+        'description' => 'description', 'keywords' => 'keywords',
+        'release_notes' => 'whats_new', 'support_url' => 'support_url',
+        'marketing_url' => 'marketing_url', 'promotional_text' => 'promotional_text'
+      }.each do |file, field|
+        write_store_text(File.join(metadata, locale.locale, "#{file}.txt"), locale.public_send(field))
+      end
+      locale.get_app_screenshot_sets.each do |set|
+        set.app_screenshots.each_with_index do |shot, index|
+          extension = File.extname(shot.file_name).downcase
+          next unless %w[.png .jpg .jpeg].include?(extension)
+          url = shot.image_asset_url(type: extension.delete_prefix('.'))
+          next unless url
+          path = File.join(screenshots, locale.locale, "#{set.screenshot_display_type}_#{format('%02d', index + 1)}#{extension}")
+          FileUtils.mkdir_p(File.dirname(path))
+          URI.open(url) { |source| File.open(path, 'wb') { |target| IO.copy_stream(source, target) } }
+        end
+      end
+    end
+    write_store_text(File.join(metadata, 'copyright.txt'), version.copyright)
+    UI.success("Downloaded App Store #{version.version_string} listing to #{root}")
+  end
+
+  desc 'Upload reviewed App Store text and screenshots without submitting for review'
+  lane :upload_store_listing do
+    upload_to_app_store(
+      api_key: app_store_key!,
+      app_identifier: 'eu.youthcard.youthCard',
+      metadata_path: File.join(ROOT, 'fastlane', 'metadata', 'ios'),
+      screenshots_path: File.join(ROOT, 'fastlane', 'screenshots'),
+      skip_binary_upload: true,
+      skip_metadata: false,
+      skip_screenshots: false,
+      submit_for_review: false
+    )
+  end
+
   desc 'Build and install the current app on the booted simulator for store screenshots'
   lane :prepare_screenshots do
     Dir.chdir(ROOT) { sh('flutter', 'build', 'ios', '--simulator', '--debug', '--dart-define=STORE_SCREENSHOTS=true') }
@@ -237,7 +460,12 @@ platform :ios do
 
   desc 'Build a signed IPA for local review'
   lane :build_candidate do
-    export_options = prepare_ios_signing! if ENV['IOS_SETUP_SIGNING'] == '1'
+    export_options = if ENV['IOS_SETUP_SIGNING'] == '1'
+      prepare_ios_signing!
+    else
+      existing_options = File.join(ROOT, 'build', 'fastlane', 'signing', 'ExportOptions.plist')
+      existing_options if File.file?(existing_options)
+    end
     started_at = Time.now
     args = ['flutter', 'build', 'ipa', '--release']
     args << "--export-options-plist=#{export_options}" if export_options
@@ -262,6 +490,46 @@ platform :ios do
 end
 
 platform :android do
+  desc 'Replace the Google Play listing icon with the reviewed 512px brand icon'
+  lane :upload_store_icon do
+    icon = File.join(ROOT, 'fastlane', 'metadata', 'android', 'en-GB', 'images', 'icon.png')
+    UI.user_error!("Missing store icon at #{icon}") unless File.file?(icon)
+    upload_to_play_store(
+      json_key: google_play_key!,
+      package_name: 'eu.youthcard.youth_card',
+      metadata_path: File.join(ROOT, 'fastlane', 'metadata', 'android'),
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true
+    )
+  end
+
+  desc 'Download current Google Play text, images, screenshots, and release notes'
+  lane :download_store_listing do |options|
+    path = store_snapshot_path('google_play', options)
+    ensure_new_snapshot_path!(path)
+    download_from_play_store(
+      json_key: google_play_key!,
+      package_name: 'eu.youthcard.youth_card',
+      track: 'internal',
+      metadata_path: path
+    )
+  end
+
+  desc 'Upload reviewed Google Play text, images, and screenshots without a bundle'
+  lane :upload_store_listing do
+    upload_to_play_store(
+      json_key: google_play_key!,
+      package_name: 'eu.youthcard.youth_card',
+      metadata_path: File.join(ROOT, 'fastlane', 'metadata', 'android'),
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_changelogs: true
+    )
+  end
+
   desc 'Build and install the current release app on the connected Android device'
   lane :prepare_screenshots do |options|
     Dir.chdir(ROOT) { sh('flutter', 'build', 'apk', '--release') } unless options[:skip_build].to_s == 'true'
@@ -324,6 +592,7 @@ platform :android do
       skip_upload_aab: true,
       skip_upload_apk: true,
       skip_upload_metadata: true,
+      skip_upload_changelogs: true,
       skip_upload_images: true
     )
   end

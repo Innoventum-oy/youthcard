@@ -24,7 +24,7 @@ class LanguagesScreenState extends State<LanguagesScreen> {
    // List<SettingsTile> tiles;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Languages')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.language)),
       body: SettingsList(
         sections: [
           SettingsSection(tiles: languageOptions()),
@@ -39,7 +39,11 @@ class LanguagesScreenState extends State<LanguagesScreen> {
       {
       options.add(
         SettingsTile(
-          title: Text(locale.toLanguageTag(),
+          title: Text(switch (locale.languageCode) {
+            'fi' => 'Suomi',
+            'sv' => 'Svenska',
+            _ => 'English',
+          },
           style: TextStyle(fontSize: 13),
           ),
           leading: trailingWidget(locale.languageCode),

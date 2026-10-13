@@ -20,7 +20,7 @@ class AppLocalizationsFi extends AppLocalizations {
 
   @override
   String get accountCreationAccepted =>
-      'I acknowledge and accept that my information is saved to the database of the Sivulla application';
+      'Hyväksyn, että tietoni tallennetaan Youth Card -palveluun';
 
   @override
   String get accountDeletion => 'Tilin poistaminen';

@@ -84,36 +84,42 @@ class AuthProvider with ChangeNotifier {
     _loggedInStatus = Status.authenticating;
     notifyListeners();
 
-    Response response = await post(
-      Uri.https(baseUrl, AppUrl.login),
-      body: json.encode(loginData),
-      headers: {'Content-Type': 'application/json'},
-    );
+    try {
+      final Response response = await post(
+        Uri.https(baseUrl, AppUrl.login),
+        body: json.encode(loginData),
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(const Duration(seconds: 15));
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
 
-      var userData = responseData['data'];
+        var userData = responseData['data'];
 
-      User authUser = User.fromJson(userData);
+        User authUser = User.fromJson(userData);
 
-      UserPreferences().saveUser(authUser);
+        UserPreferences().saveUser(authUser);
 
-      _loggedInStatus = Status.loggedIn;
-      notifyListeners();
+        _loggedInStatus = Status.loggedIn;
+        notifyListeners();
 
-      result = {'status': true, 'message': 'Success', 'user': authUser};
-    } else {
+        result = {'status': true, 'message': 'Success', 'user': authUser};
+      } else {
+        _loggedInStatus = Status.notLoggedIn;
+        notifyListeners();
+        result = {
+          'status': false,
+          'message': response.body != ""
+              ? json.decode(response.body)['error']
+              : 'Login failed',
+        };
+      }
+      return result;
+    } catch (_) {
       _loggedInStatus = Status.notLoggedIn;
       notifyListeners();
-      result = {
-        'status': false,
-        'message': response.body != ""
-            ? json.decode(response.body)['error']
-            : 'Login failed',
-      };
+      rethrow;
     }
-    return result;
   }
 
   // user logout method

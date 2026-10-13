@@ -1,0 +1,3 @@
+Youth Card auttaa nuoria löytämään oman alueensa harrastuksia ja tapahtumia. Selaa tarjontaa, ilmoittaudu mukaan silloin kun ilmoittautuminen on käytössä ja käytä omaa korttiasi sovelluksessa.
+
+Kortissasi on QR-koodi. Voit myös skannata QR-koodeja harrastuskäyntien merkitsemiseksi. Saatavilla olevat harrastukset ja edut vaihtelevat alueittain.
