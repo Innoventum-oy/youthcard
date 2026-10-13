@@ -21,7 +21,10 @@ class User {
   factory User.fromJson(Map<String, dynamic> responseData,{description}) {
 
 
-    if(responseData['data']!=null && responseData['data'].length>0) responseData = responseData['data'];
+    final nestedData = responseData['data'];
+    if (nestedData is Map && nestedData.isNotEmpty) {
+      responseData = Map<String, dynamic>.from(nestedData);
+    }
     int accesslevel = responseData['accesslevel']!=null ? (responseData['accesslevel'] is int ? responseData['accesslevel']: int.parse(responseData['accesslevel'])) : 0;
      responseData.forEach((key, value) { });
     //print('User object description: '+description.toString());
@@ -41,6 +44,17 @@ class User {
       description: description
     );
 
+  }
+
+  factory User.fromObjectResponse(Map<String, dynamic> response) {
+    final records = response['data'];
+    if (records is! List || records.isEmpty || records.first is! Map) {
+      throw const FormatException('User response is missing its data record');
+    }
+    return User.fromJson(
+      Map<String, dynamic>.from(records.first as Map),
+      description: response['description'],
+    );
   }
   String get fullname => '${firstname ?? ''} ${lastname??''}';
 
@@ -186,4 +200,3 @@ class User {
 
 //</editor-fold>
 }
-

@@ -26,6 +26,7 @@ class UserFormState extends State<UserForm> {
   final ApiClient _apiClient = ApiClient();
   bool userLoaded = false;
   bool fieldsLoaded = false;
+  bool loadFailed = false;
   User user = User();
   int? objectId;
   Map<String, dynamic> fields = {};
@@ -35,49 +36,43 @@ class UserFormState extends State<UserForm> {
   Returns user information from server
    */
   Future<void> _getUserInfo() async {
-    UserProvider provider = UserProvider();
-    //target user:
-    int targetId =
-        widget.targetUser?.id ??
-        (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
-    //  print('_getUserInfo called, retrieving user information from userprovider for user '+targetId.toString());
-    dynamic userdata = await provider.getObject(
-      targetId,
-      Provider.of<UserProvider>(context, listen: false).user,
-    );
-    setState(() {
-      if (userdata != null) {
-        user = User.fromJson(
-          userdata['data'].first['data'],
-          description: userdata['description'],
-        );
-        //  print('user loaded by provider!');
-      }
-      // else print('No userdata returned by provider!!');
-      userLoaded = true;
-      // this.myContacts = provider.contacts;
-    });
+    final provider = context.read<UserProvider>();
+    final targetId = widget.targetUser?.id ?? provider.user.id;
+    try {
+      if (targetId == null) throw const FormatException('Missing user ID');
+      final userdata = await provider.getObject(targetId, provider.user);
+      if (userdata is! Map) throw const FormatException('Missing user data');
+      final loadedUser = User.fromObjectResponse(
+        Map<String, dynamic>.from(userdata),
+      );
+      if (!mounted) return;
+      setState(() {
+        user = loadedUser;
+        userLoaded = true;
+      });
+    } catch (_) {
+      if (mounted) setState(() => loadFailed = true);
+    }
   }
 
   /// Returns available fields information from server
   Future<void> _getFields() async {
-    UserProvider provider = UserProvider();
-    //target user:
-    int targetId =
-        widget.targetUser?.id ??
-        (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
-    //  print('_getUserInfo called, retrieving user information from userprovider for user '+targetId.toString());
-    dynamic fielddata = await provider.getFields(
-      targetId,
-      Provider.of<UserProvider>(context, listen: false).user,
-    );
-    setState(() {
-      if (fielddata != null) {
-        fields = fielddata;
+    final provider = context.read<UserProvider>();
+    final targetId = widget.targetUser?.id ?? provider.user.id;
+    try {
+      if (targetId == null) throw const FormatException('Missing user ID');
+      final fielddata = await provider.getFields(targetId, provider.user);
+      if (fielddata is! Map || fielddata['fields'] is! Map) {
+        throw const FormatException('Missing profile fields');
       }
-
-      fieldsLoaded = true;
-    });
+      if (!mounted) return;
+      setState(() {
+        fields = Map<String, dynamic>.from(fielddata);
+        fieldsLoaded = true;
+      });
+    } catch (_) {
+      if (mounted) setState(() => loadFailed = true);
+    }
   }
 
   @override
@@ -130,7 +125,12 @@ class UserFormState extends State<UserForm> {
         ],
       ),
       body: SingleChildScrollView(
-        child: userLoaded && fieldsLoaded
+        child: loadFailed
+            ? ListTile(
+                leading: const Icon(Icons.error_outline),
+                title: Text(AppLocalizations.of(context)!.networkError),
+              )
+            : userLoaded && fieldsLoaded
             ? Form(key: formKey, child: formBody(user))
             : loader(context),
       ),
@@ -221,7 +221,6 @@ class UserFormState extends State<UserForm> {
       Map<String, dynamic> fields =
           this.fields; // targetUser.description ?? {};
 
-      user.data!.forEach((key, value) {});
       fields['fields'].forEach(
         (name, definition) {
           input = null;
@@ -248,7 +247,7 @@ class UserFormState extends State<UserForm> {
           if (userdata.containsKey(name)) {
             //  print('user has own property '+name+' with value '+userdata[name].toString());
             formData[name] = userdata[name];
-          } else if (user.data!.containsKey(name)) {
+          } else if (user.data?.containsKey(name) ?? false) {
             //print('user data includes '+name+' with value '+user.data![name].toString());
             formData[name] = user.data![name];
           }

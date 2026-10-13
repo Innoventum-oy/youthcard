@@ -537,14 +537,16 @@ platform :android do
     sh(*(android_adb_args + ['install', '-r', File.join(ROOT, 'build', 'app', 'outputs', 'flutter-apk', 'app-release.apk')]))
   end
 
-  desc 'Verify Google Play API access and read the internal testing track'
+  desc 'Verify Google Play API access and read the production and internal tracks'
   lane :check_store_access do
     client = Supply::Client.make_from_config(params: { json_key: google_play_key!, timeout: 300 })
     begin
       client.begin_edit(package_name: 'eu.youthcard.youth_card')
-      client.tracks('internal').each do |track|
-        (track.releases || []).each do |release|
-          UI.message("Internal track: #{release.status} #{(release.version_codes || []).join(', ')}")
+      %w[production internal].each do |name|
+        client.tracks(name).each do |track|
+          (track.releases || []).each do |release|
+            UI.message("#{name} track: #{release.status} #{(release.version_codes || []).join(', ')} (#{release.name})")
+          end
         end
       end
       UI.success('Google Play API access verified for Youth Card')
@@ -619,5 +621,31 @@ platform :android do
       skip_upload_screenshots: true,
       skip_upload_changelogs: true
     )
+  end
+
+  desc 'Promote the current internal Android build to production without uploading the bundle again'
+  lane :promote_production do
+    version = File.read(File.join(ROOT, 'pubspec.yaml'))[/^version:\s*([^\s]+)/, 1]
+    UI.user_error!('Set a version and code in pubspec.yaml before promoting') unless version&.include?('+')
+    name, code = version.split('+', 2)
+    Supply.config ||= FastlaneCore::Configuration.create(Supply::Options.available_options, {})
+    client = Supply::Client.make_from_config(params: { json_key: google_play_key!, timeout: 300 })
+    begin
+      client.begin_edit(package_name: 'eu.youthcard.youth_card')
+      internal = client.tracks('internal').first
+      release = internal&.releases&.find { |item| (item.version_codes || []).include?(code) }
+      UI.user_error!("Internal track does not contain build #{code}") unless release
+      release.name = "#{name} (#{code})"
+      release.status = 'completed'
+      release.user_fraction = nil
+      production = client.tracks('production').first || AndroidPublisher::Track.new(track: 'production')
+      production.releases = [release]
+      client.update_track('production', production)
+      client.validate_current_edit!
+      client.commit_current_edit!
+      UI.success("Promoted Android #{name} (#{code}) to production")
+    ensure
+      client.abort_current_edit if client.current_edit
+    end
   end
 end

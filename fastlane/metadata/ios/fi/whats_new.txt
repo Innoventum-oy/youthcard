@@ -1,1 +1,1 @@
-Youth Card 2.0 tuo uuden ilmeen, selkeämmän tavan löytää harrastuksia ja paikkoja sekä ruotsinkielisen käyttöliittymän.
+Korjasimme profiilin muokkauksen ja paransimme Oma kortti -näkymää leveillä näytöillä.

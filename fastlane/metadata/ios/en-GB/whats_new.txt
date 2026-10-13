@@ -1,1 +1,1 @@
-Youth Card 2.0 brings a new look, clearer ways to discover activities and places, and Swedish language support.
+Fixed profile editing and improved the My Card layout on wide screens.

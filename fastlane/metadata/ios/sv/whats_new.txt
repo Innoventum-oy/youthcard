@@ -1,1 +1,1 @@
-Youth Card 2.0 har fått ett nytt utseende, tydligare sätt att hitta aktiviteter och platser samt ett svenskt gränssnitt.
+Vi har åtgärdat profilredigeringen och förbättrat vyn Mitt kort på breda skärmar.

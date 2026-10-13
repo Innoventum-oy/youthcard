@@ -48,53 +48,51 @@ class MyCardState extends State<MyCard> {
 
   /// Returns available fields information from server
   Future<void> _getFields() async {
-    UserProvider provider = UserProvider();
-    //target user:
-    int targetId =
-        widget.user?.id ??
-        (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
-    //  print('_getUserInfo called, retrieving user information from userprovider for user '+targetId.toString());
-    dynamic fielddata = await provider.getFields(
-      targetId,
-      Provider.of<UserProvider>(context, listen: false).user,
-    );
-    if (!mounted) return;
-    setState(() {
-      if (fielddata != null) {
-        fields = fielddata;
-      }
-
-      fieldsLoaded = true;
-    });
+    final provider = context.read<UserProvider>();
+    final targetId = widget.user?.id ?? provider.user.id;
+    try {
+      if (targetId == null) throw const FormatException('Missing user ID');
+      final fielddata = await provider.getFields(targetId, provider.user);
+      if (!mounted) return;
+      setState(() {
+        if (fielddata is Map && fielddata['fields'] is Map) {
+          fields = Map<String, dynamic>.from(fielddata);
+        }
+        fieldsLoaded = true;
+      });
+    } catch (_) {
+      if (mounted) setState(() => fieldsLoaded = true);
+    }
   }
 
   /*
   Returns user information from server
    */
   Future<void> _getUserInfo() async {
-    UserProvider provider = UserProvider();
-    //target user:
-    int targetId =
-        widget.user?.id ??
-        (Provider.of<UserProvider>(context, listen: false).user.id ?? 0);
-    //  print('_getUserInfo called, retrieving user information from userprovider for user '+targetId.toString());
-    dynamic userdata = await provider.getObject(
-      targetId,
-      Provider.of<UserProvider>(context, listen: false).user,
-    );
-    if (!mounted) return;
-    setState(() {
-      if (userdata != null) {
-        user = User.fromJson(
-          userdata['data'].first['data'],
-          description: userdata['description'],
-        );
-      }
-      userLoaded = true;
-      _benefitsLoadingState = LoadingState.done;
-
-      benefits = user.userbenefits;
-    });
+    final provider = context.read<UserProvider>();
+    final targetId = widget.user?.id ?? provider.user.id;
+    try {
+      if (targetId == null) throw const FormatException('Missing user ID');
+      final userdata = await provider.getObject(targetId, provider.user);
+      if (userdata is! Map) throw const FormatException('Missing user data');
+      final loadedUser = User.fromObjectResponse(
+        Map<String, dynamic>.from(userdata),
+      );
+      if (!mounted) return;
+      setState(() {
+        user = loadedUser;
+        userLoaded = true;
+        _benefitsLoadingState = LoadingState.done;
+        benefits = user.userbenefits;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        userLoaded = true;
+        errormessage = AppLocalizations.of(context)!.networkError;
+        _benefitsLoadingState = LoadingState.error;
+      });
+    }
   }
 
   Future<void> _loadBenefits(User user) async {
@@ -232,36 +230,31 @@ class MyCardState extends State<MyCard> {
         ),
       ),
     );
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        //  print(orientation);
-        // Choose between portraitlayout and landscapelayout based on device orientation
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(AppLocalizations.of(context)!.myCard),
-            actions: [
-              if (isTester)
-                IconButton(
-                  icon: Icon(Icons.bug_report),
-                  onPressed: () {
-                    feedbackAction(context, user);
-                  },
-                ),
-            ],
-            elevation: 0.1,
-          ),
-          body: orientation == Orientation.portrait
-              ? _portraitLayout(user)
-              : _landscapeLayout(user),
-          bottomNavigationBar: bottomNavigation(context, currentIndex: 3),
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.myCard),
+        actions: [
+          if (isTester)
+            IconButton(
+              icon: Icon(Icons.bug_report),
+              onPressed: () => feedbackAction(context, user),
+            ),
+        ],
+        elevation: 0.1,
+      ),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 760),
+          child: _cardLayout(user),
+        ),
+      ),
+      bottomNavigationBar: bottomNavigation(context, currentIndex: 3),
     );
   }
 
-  Widget _portraitLayout(user) {
+  Widget _cardLayout(User user) {
     return ListView(
-      shrinkWrap: true,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -309,17 +302,16 @@ class MyCardState extends State<MyCard> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
           children: [
-            if ((user!.accesslevel != null && user.accesslevel >= 20) ||
+            if ((user.accesslevel != null && user.accesslevel! >= 20) ||
                 (widget.user == null &&
                     Provider.of<UserProvider>(context, listen: false).user.id !=
                         null))
               ElevatedButton(
                 onPressed: () {
-                  // notifyDialog('opening userform',context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => UserForm(targetUser: user!),
+                      builder: (context) => UserForm(targetUser: user),
                     ),
                   );
                 },
@@ -337,23 +329,6 @@ class MyCardState extends State<MyCard> {
         const DeleteAccountAction(),
         //  ..._userInfoFields(user)
       ],
-    );
-  }
-
-  Widget _landscapeLayout(user) {
-    return Padding(
-      padding: EdgeInsets.all(30),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          user.qrcode != null && user.qrcode!.isNotEmpty
-              ? Image.network(user.qrcode!, height: 200)
-              : Container(),
-          _loggedInView(context, user),
-          _getBenefitsSection(user),
-          const DeleteAccountAction(),
-        ],
-      ),
     );
   }
 
